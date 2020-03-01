@@ -1,0 +1,25 @@
+# Mac
+.DS_Store
+
+# Node
+node_modules
+
+# Error Log
+npm-debug.log*
+yarn-error.log
+
+# Complie
+/lib
+/es
+
+# Editor
+*.swp
+.vscode
+
+# Lock File
+package-lock.json
+yarn.lock
+
+# Test
+coverage
+.nyc_output

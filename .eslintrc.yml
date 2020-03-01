@@ -1,0 +1,171 @@
+extends:
+  - eslint:recommended
+  - plugin:@typescript-eslint/eslint-recommended
+  - plugin:@typescript-eslint/recommended
+plugins:
+  - '@typescript-eslint'
+parserOptions:
+  project: ./tsconfig.json
+  ecmaVersion: 6
+  sourceType: module
+env:
+  es6: true
+  node: true
+rules:
+  func-call-spacing: off
+  no-unused-vars: off
+  require-atomic-updates: off
+  eqeqeq: error
+  no-floating-decimal: error
+  no-var: error
+  no-implicit-coercion: error
+  no-multi-spaces: error
+  no-useless-return: error
+  no-undef-init: error
+  no-trailing-spaces: error
+  no-unneeded-ternary: error
+  no-whitespace-before-property: error
+  nonblock-statement-body-position: error
+  space-infix-ops: error
+  space-unary-ops: error
+  switch-colon-spacing: error
+  arrow-body-style: error
+  arrow-spacing: error
+  generator-star-spacing: error
+  no-useless-computed-key: error
+  no-useless-rename: error
+  new-cap: error
+  no-lonely-if: error
+  no-console: off
+  multiline-comment-style: off
+  object-shorthand: error
+  prefer-const: error
+  prefer-spread: error
+  prefer-template: error
+  rest-spread-spacing: error
+  sort-imports: off
+  template-curly-spacing: error
+  yield-star-spacing: error
+  yoda:
+    - error
+    - never
+  curly:
+    - error
+    - multi-line
+    - consistent
+  semi: off
+  quotes:
+    - error
+    - single
+    - avoidEscape: true
+  dot-location:
+    - error
+    - property
+  array-bracket-spacing:
+    - error
+    - never
+  array-bracket-newline:
+    - error
+    - consistent
+  block-spacing:
+    - error
+    - always
+  brace-style:
+    - error
+    - 1tbs
+  comma-dangle:
+    - error
+    - always-multiline
+  comma-style:
+    - error
+    - last
+  computed-property-spacing:
+    - error
+    - never
+  function-paren-newline:
+    - error
+    - multiline
+  implicit-arrow-linebreak:
+    - error
+    - beside
+  indent: off
+  key-spacing:
+    - error
+    - afterColon: true
+      beforeColon: false
+      mode: strict
+  keyword-spacing:
+    - error
+    - before: true
+      after: true
+  line-comment-position:
+    - error
+    - above
+  linebreak-style:
+    - error
+    - unix
+  lines-between-class-members:
+    - error
+    - always
+  no-multiple-empty-lines:
+    - error
+    - max: 2
+  no-empty:
+    - error
+    - allowEmptyCatch: true
+  object-curly-newline:
+    - error
+    - multiline: true
+      consistent: true
+  object-curly-spacing:
+    - error
+    - always
+  one-var-declaration-per-line:
+    - error
+    - initializations
+  padded-blocks:
+    - error
+    - never
+  quote-props:
+    - error
+    - as-needed
+  space-before-blocks:
+    - error
+    - always
+  space-before-function-paren:
+    - error
+    - never
+  space-in-parens:
+    - error
+    - never
+  spaced-comment:
+    - error
+    - always
+  arrow-parens:
+    - error
+    - as-needed
+  '@typescript-eslint/semi':
+    - error
+    - never
+  '@typescript-eslint/indent':
+    - error
+    - 2
+  '@typescript-eslint/explicit-function-return-type':
+    - error
+    - allowHigherOrderFunctions: true
+      allowExpressions: true
+      allowTypedFunctionExpressions: true
+  '@typescript-eslint/member-delimiter-style':
+    - error
+    - multiline:
+        delimiter: none
+  '@typescript-eslint/no-unused-vars': error
+  '@typescript-eslint/func-call-spacing':
+    - error
+    - never
+  '@typescript-eslint/explicit-member-accessibility':
+    - error
+    - overrides:
+        accessors: off
+        constructors: off
+        properties: no-public

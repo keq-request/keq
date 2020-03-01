@@ -1,0 +1,51 @@
+{
+  "name": "keq",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "ava",
+    "test:debug": "ava --verbose",
+    "test:update": "ava -u",
+    "report": "nyc --reporter=html --reporter=text-summary --skip-full ava",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "ci": "git-cz",
+    "ca": "git add -A && git-cz -av",
+    "release": "standard-version --no-verify",
+    "release:alpha": "standard-version --prerelease alpha",
+    "release:first": "standard-version --first-release",
+    "prepublishOnly": "npm test && npm run build",
+    "postpublish": "git push",
+    "clean": "rm -rf ./lib/*",
+    "prebuild": "npm run clean",
+    "build:es": "ttsc -p build/tsconfig.es.json",
+    "build:lib": "ttsc -p build/tsconfig.lib.json",
+    "build": "npm run build:lib && npm run build:es",
+    "watch": "NODE_ENV=development ttsc -p build/tsconfig.lib.json -w"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.3.5",
+    "@commitlint/config-conventional": "^8.3.4",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.1.0",
+    "standard-version": "^7.1.0",
+    "nyc": "^15.0.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "ts-node": "^8.6.2",
+    "ava": "^3.2.0",
+    "coveralls": "^3.0.9",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "@typescript-eslint/parser": "^2.19.0",
+    "eslint": "^6.8.0",
+    "lint-staged": "^10.0.7",
+    "husky": "^4.2.1",
+    "sinon": "^8.1.1",
+    "tsconfig-paths": "^3.9.0",
+    "ttypescript": "^1.5.10",
+    "typescript": "^3.7.5",
+    "typescript-transform-paths": "^1.1.14"
+  },
+  "dependencies": {
+    "@types/node": "^13.7.0"
+  }
+}
