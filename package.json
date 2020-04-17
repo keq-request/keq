@@ -36,7 +36,6 @@
     "coveralls": "^3.0.9",
     "cz-conventional-changelog": "^3.1.0",
     "eslint": "^6.8.0",
-    "formdata-node": "^2.1.1",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.7",
     "nyc": "^15.0.0",
@@ -54,6 +53,7 @@
     "clone": "^2.1.2",
     "cross-fetch": "^3.0.4",
     "formidable": "^2.0.0-canary.20200226.1",
+    "formdata-node": "^2.1.1",
     "querystring": "^0.2.0",
     "url": "^0.11.0"
   }
