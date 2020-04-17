@@ -1,0 +1,333 @@
+import url, { UrlWithParsedQuery } from 'url'
+import fetch, { Headers } from 'cross-fetch'
+import clone from 'clone'
+import { Middleware, MiddlewareMatcher, matchHost, matchMiddleware, compose } from './middleware'
+import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse } from './context'
+import { SerializeBodyFn, serializeBodyByMap, serializeMap, KeqBody } from './serialize'
+import { ParsedUrlQuery } from 'querystring'
+import { encodeBase64 } from './base64'
+import { messages } from './const'
+import { FormData } from './polyfill'
+import { isFormData, isFile, isBrowser } from './utils'
+import { FormDataFieldOptions } from './form-data-fields'
+import { fixType, ShorthandContentType } from './fix-type'
+import { getTypeByBody } from './get-type-by-body'
+import { parseFormData, getBoundaryByContentType } from './parse-form-data'
+import { Stream } from 'stream'
+
+export class Keq<T> {
+  private requestPromise?: Promise<T>
+
+  private urlObj: UrlWithParsedQuery
+  private method: RequestMethod
+  private headers: Headers = new Headers()
+  private middlewares: Middleware[] = []
+  private opts: Options = { resolveWithFullResponse: false }
+  private body: KeqBody
+  private serializeBodyFn: SerializeBodyFn = serializeBodyByMap(serializeMap)
+  private retryTime = 0
+  private retryCallback?: Function
+
+  public constructor(urlObj: UrlWithParsedQuery, method: RequestMethod, middlewares: Middleware[]) {
+    this.urlObj = urlObj
+    this.method = method
+    this.middlewares = middlewares
+  }
+
+  /**
+   * Set request header
+   */
+  public set(headers: Headers): Keq<T>
+  public set(headers: Record<string, string>): Keq<T>
+  public set(name: string, value: string): Keq<T>
+  public set(headersOrName: string | Record<string, string> | Headers, value?: string): Keq<T> {
+    if (headersOrName instanceof Headers) {
+      headersOrName.forEach((value, key) => {
+        this.headers.set(key, value)
+      })
+    } else if (typeof headersOrName === 'string' && value) {
+      this.headers.set(headersOrName, value)
+    } else if (typeof headersOrName === 'object') {
+      for (const [key, value] of Object.entries(headersOrName)) {
+        this.headers.set(key, value)
+      }
+    }
+    return this
+  }
+
+  /**
+   * Setting the Content-Type
+   */
+  public type(contentType: ShorthandContentType | string): Keq<T> {
+    const type = fixType(contentType)
+    if (!type) throw new Error(messages.unknowContentType)
+    this.headers.set('Content-Type', type)
+
+    return this
+  }
+
+  /**
+   * Http Basic Authentication
+   */
+  public auth(username: string, password: string): Keq<T> {
+    this.headers.set('Authorization', `Basic ${encodeBase64(`${username}:${password}`)}`)
+    return this
+  }
+
+  private appendFormDate(formData: FormData): void {
+    if (!this.body) this.body = {}
+    const body = this.body
+
+    formData.forEach((value, key) => {
+      if (key in body && Array.isArray(body[key])) {
+        body[key].push(value)
+      } else if (key in body && !Array.isArray(body[key])) {
+        body[key] = [body[key]]
+        body[key].push(value)
+      } else {
+        body[key] = value
+      }
+    })
+  }
+
+  private setType(contentType: ShorthandContentType | string): void {
+    if (!this.headers.has('Content-Type')) this.type(contentType)
+  }
+
+  /**
+   * set request body
+   * @param value POST/PUT request body
+   */
+  public send(value: FormData | Record<string, any> | any[] | string): Keq<T> {
+    if (Array.isArray(this.body)) {
+      throw new Error('Cannot merge or overwrite body. Because it has been set as an array. ')
+    }
+
+    if (isFormData(value)) {
+      if (Array.isArray(this.body)) throw new Error(messages.overwriteArrayBodyError)
+      this.appendFormDate(value as FormData)
+      this.setType('form-data')
+    } else if (typeof value === 'object') {
+      if (Array.isArray(value)) this.body = value
+      else this.body = { ...this.body, ...value }
+      this.setType('json')
+    } else if (typeof value === 'string') {
+      const arr = value.split('=')
+      if (arr.length !== 2) throw new Error('string is not expect')
+      if (!this.body) this.body = {}
+      this.body[arr[0]] = arr[1]
+      this.setType('form')
+    }
+
+    return this
+  }
+
+  public field(arg1: string, value: string): Keq<T>
+  public field(arg1: Record<string, string>): Keq<T>
+  public field(arg1: string | Record<string, string>, arg2?: any): Keq<T> {
+    if (Array.isArray(this.body)) {
+      throw new Error('Cannot merge or overwrite body. Because it has been set as an array. ')
+    }
+
+    const formData = new FormData()
+    if (typeof arg1 === 'object') {
+      for (const key in arg1) {
+        formData.append(key, arg1[key])
+      }
+    } else if (arg2) {
+      formData.append(arg1, arg2)
+    } else {
+      throw new Error('Need value')
+    }
+
+    this.appendFormDate(formData as FormData)
+    this.setType('form-data')
+    return this
+  }
+
+  public attach(key: string, file: Blob | File | Buffer | Stream): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer | Stream, filename: string): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer | Stream, options: FormDataFieldOptions): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer | Stream, arg3: string | FormDataFieldOptions = 'blob'): Keq<T> {
+    if (Array.isArray(this.body)) throw new Error(messages.overwriteArrayBodyError)
+
+    if (!this.body) this.body = {}
+    if (!isFile(file)) throw new Error(messages.fileExpected)
+
+    const formData = new FormData()
+    if (isBrowser && typeof arg3 === 'object') formData.set(key, file as any, arg3.filename)
+    else formData.set(key, file as any, arg3 as any)
+
+    this.appendFormDate(formData as FormData)
+    this.setType('form-data')
+    return this
+  }
+
+  public serialize(fn: SerializeBodyFn): Keq<T> {
+    this.serializeBodyFn = fn
+    return this
+  }
+
+  public use(middleware: Middleware): Keq<T>
+  public use(host: string, middleware: Middleware): Keq<T>
+  public use(matcher: MiddlewareMatcher, middleware: Middleware): Keq<T>
+  public use(m: MiddlewareMatcher | string | Middleware, middleware?: Middleware): Keq<T> {
+    if (!middleware) this.middlewares.push(m as Middleware)
+    else if (typeof m === 'string') this.middlewares.push(matchMiddleware(matchHost(m), middleware))
+    else this.middlewares.push(matchMiddleware(m as MiddlewareMatcher, middleware))
+
+    return this
+  }
+
+  public query(key: Record<string, string | string[]>): Keq<T>
+  public query(key: string, value: string | string[]): Keq<T>
+  public query(key: string | Record<string, string | string[]>, value?: string | string[]): Keq<T> {
+    if (typeof key === 'string' && value) this.urlObj.query[key] = value
+    else if (typeof key === 'object') this.urlObj.query = { ...this.urlObj.query, ...key }
+    else throw new Error('please set query value')
+    return this
+  }
+
+  public option(key: keyof BuildInOptions, value?: any): Keq<T>
+  public option(key: string, value?: any): Keq<T>
+  public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> {
+    this.opts[key] = value
+    return this
+  }
+
+  public options(opts: OptionsWithoutFullResponse): Keq<T>
+  public options(opts: OptionsWithFullResponse): Keq<Response>
+  public options(opts: Options): Keq<T> | Keq<Response>
+  public options(opts: Options): Keq<T> | Keq<Response> {
+    this.opts = { ...this.options, ...opts }
+    return this
+  }
+
+  public retry(retryTime: number, retryCallback?: Function): Keq<T> {
+    this.retryTime = retryTime
+    this.retryCallback = retryCallback
+    return this
+  }
+
+  private async fetch(ctx: Context): Promise<void> {
+    const uri = url.format(ctx.request.url)
+
+    const fetchOptions = {
+      method: ctx.request.method.toUpperCase(),
+      headers: ctx.request.headers,
+      body: this.serializeBodyFn(ctx.request.body, ctx),
+      ...ctx.request.options,
+    }
+
+    if (!fetchOptions.headers.has('Content-Type')) {
+      fetchOptions.headers.set('Content-Type', getTypeByBody(fetchOptions.body))
+    }
+
+    const res = await ctx.options.fetchAPI(uri, fetchOptions)
+
+    const cache = {}
+    ctx.res = new Proxy(res, {
+      get(obj, prop) {
+        if (typeof prop === 'string' && ['json', 'text', 'formData'].includes(prop)) {
+          if (!isBrowser && prop === 'formData') {
+            // node-fetch does not implement Response.formData ()
+            return async() => {
+              cache['text'] = cache['text'] || obj['text']()
+              const str = await cache['text']
+              const contentType = res.headers.get('content-type')
+              if (!contentType) throw new Error('Cannot parse form-data body without content-type')
+              const boundary = getBoundaryByContentType(contentType)
+              return parseFormData(str, boundary)
+            }
+          }
+
+          return async() => {
+            if (cache[prop]) return cache[prop]
+            cache[prop] = obj[prop]()
+            return cache[prop]
+          }
+        }
+
+        return obj[prop]
+      },
+    })
+
+    if (this.opts.resolveWithFullResponse) {
+      ctx.output = ctx.res
+    } else {
+      const contentType = res.headers.get('content-type') || ''
+      if (contentType.includes('application/json')) ctx.output = await ctx.res.json()
+      else if (contentType.includes('multipart/form-data')) ctx.output = await ctx.res.formData()
+      else if (contentType.includes('plain/text')) ctx.output = await ctx.res.text()
+      else ctx.output = await ctx.res.body
+    }
+  }
+
+  private async run(): Promise<T> {
+    const headers = new Headers()
+    this.headers.forEach((value, key) => {
+      headers.set(key, value)
+    })
+
+    const request: RequestContext = {
+      method: this.method,
+      url: clone(this.urlObj),
+      headers,
+      body: clone(this.body),
+      options: {},
+    }
+
+    const ctx: Context = {
+      request,
+      options: clone({ ...this.opts, fetchAPI: this.opts.fetchAPI || fetch }),
+      get query(): ParsedUrlQuery {
+        return ctx.request.url.query
+      },
+      set query(value: ParsedUrlQuery) {
+        ctx.request.url.query = value
+      },
+      output: undefined,
+    }
+
+    const middleware = compose([...this.middlewares, this.fetch.bind(this)])
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    await middleware(ctx, async() => {})
+
+    return ctx.output
+  }
+
+  public async end(): Promise<T> {
+    let times = this.retryTime + 1
+    let result: T | undefined
+    let error: any
+
+    while (times) {
+      try {
+        result = await this.run()
+        break
+      } catch (e) {
+        times -= 1
+        error = e
+        if (this.retryCallback) await this.retryCallback(e)
+      }
+    }
+
+    if (!result) throw error
+    return result
+  }
+
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  public then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2> {
+    if (!this.requestPromise) this.requestPromise = this.end()
+    return this.requestPromise.then(onfulfilled, onrejected)
+  }
+
+  public catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult> {
+    return this.end().catch(onrejected)
+  }
+}

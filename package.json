@@ -3,6 +3,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "version": "0.0.1",
+  "license": "MIT",
   "scripts": {
     "test": "ava",
     "test:debug": "ava --verbose",
@@ -26,26 +27,34 @@
   "devDependencies": {
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "commitizen": "^4.0.3",
-    "cz-conventional-changelog": "^3.1.0",
-    "standard-version": "^7.1.0",
-    "nyc": "^15.0.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "ts-node": "^8.6.2",
-    "ava": "^3.2.0",
-    "coveralls": "^3.0.9",
+    "@types/sinon": "^7.5.2",
     "@typescript-eslint/eslint-plugin": "^2.19.0",
     "@typescript-eslint/parser": "^2.19.0",
+    "ava": "^3.2.0",
+    "commitizen": "^4.0.3",
+    "coveralls": "^3.0.9",
+    "cz-conventional-changelog": "^3.1.0",
     "eslint": "^6.8.0",
+    "formdata-node": "^2.1.1",
+    "husky": "^4.2.3",
     "lint-staged": "^10.0.7",
-    "husky": "^4.2.1",
+    "nyc": "^15.0.0",
     "sinon": "^8.1.1",
+    "standard-version": "^7.1.0",
+    "ts-node": "^8.6.2",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.10",
     "typescript": "^3.7.5",
     "typescript-transform-paths": "^1.1.14"
   },
   "dependencies": {
-    "@types/node": "^13.7.0"
+    "@types/node": "^13.7.0",
+    "blob": "^0.1.0",
+    "clone": "^2.1.2",
+    "cross-fetch": "^3.0.4",
+    "formidable": "^2.0.0-canary.20200226.1",
+    "querystring": "^0.2.0",
+    "url": "^0.11.0"
   }
 }

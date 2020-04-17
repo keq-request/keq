@@ -5,7 +5,9 @@ extends:
 plugins:
   - '@typescript-eslint'
 parserOptions:
-  project: ./tsconfig.json
+  project:
+    - ./tsconfig.json
+    - ./tests/tsconfig.json
   ecmaVersion: 6
   sourceType: module
 env:
@@ -107,6 +109,7 @@ rules:
   lines-between-class-members:
     - error
     - always
+    - exceptAfterSingleLine: true
   no-multiple-empty-lines:
     - error
     - max: 2

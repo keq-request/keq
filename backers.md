@@ -1,7 +1,7 @@
 <h1 align="center">Sponsors &amp; Backers</h1>
 
 keq is an MIT-licensed open source project.
-It's an independent project with its ongoing development made possible entirely thanks to the support by these awesome [backers](https://github.com/Val-istar-Guo/krequest/blob/master/backer.md).
+It's an independent project with its ongoing development made possible entirely thanks to the support by these awesome [backers](https://github.com/Val-istar-Guo/keq/blob/master/backer.md).
 If you'd like to join them, please consider [become a backer or sponsor on Patreon](https://www.patreon.com/val_istar_guo).
 
 <h2 align="center">Gold Sponsors</h2>
