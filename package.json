@@ -53,7 +53,8 @@
     "clone": "^2.1.2",
     "cross-fetch": "^3.0.4",
     "formidable": "^2.0.0-canary.20200226.1",
-    "formdata-node": "^2.1.1",
+    "mime-types": "^2.1.26",
+    "nanoid": "^2.1.11",
     "querystring": "^0.2.0",
     "url": "^0.11.0"
   }

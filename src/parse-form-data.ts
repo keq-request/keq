@@ -1,4 +1,4 @@
-import FormData from 'formdata-node'
+import { FormData } from './polyfill'
 import MultipartParser from 'formidable/src/parsers/Multipart'
 
 
@@ -56,7 +56,7 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
 
     const appendPartToFormData = (): void => {
       if (part.name && part.filename) {
-        formData.append(part.name, part.body, part.filename)
+        formData.append(part.name, part.body as any, part.filename)
       } else if (part.name) {
         formData.append(part.name, part.body.toString())
       }
@@ -140,7 +140,7 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
             return reject(new Error('unknown transfer-encoding'))
         }
       } else if (name === 'end') {
-        resolve(formData)
+        resolve(formData as FormData)
       }
     })
 

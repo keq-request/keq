@@ -179,12 +179,18 @@ export class Keq<T> {
     return this
   }
 
-  public query(key: Record<string, string | string[]>): Keq<T>
-  public query(key: string, value: string | string[]): Keq<T>
-  public query(key: string | Record<string, string | string[]>, value?: string | string[]): Keq<T> {
-    if (typeof key === 'string' && value) this.urlObj.query[key] = value
-    else if (typeof key === 'object') this.urlObj.query = { ...this.urlObj.query, ...key }
-    else throw new Error('please set query value')
+  public query(key: Record<string, string | number | string[] | number[]>): Keq<T>
+  public query(key: string, value: string | number | string[] | number[]): Keq<T>
+  public query(key: string | Record<string, string | number | string[] | number[]>, value?: string | number | string[] | number[]): Keq<T> {
+    if (typeof key === 'string' && value !== undefined) {
+      this.urlObj.query[key] = String(value)
+    } else if (typeof key === 'object') {
+      for (const [k, v] of Object.entries(key)) {
+        this.urlObj.query[k] = String(v)
+      }
+    } else {
+      throw new Error('please set query value')
+    }
     return this
   }
 
@@ -225,15 +231,16 @@ export class Keq<T> {
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
-    const cache = {}
-    ctx.res = new Proxy(res, {
+    let cloneRes = res
+    ctx.response = new Proxy(res, {
       get(obj, prop) {
         if (typeof prop === 'string' && ['json', 'text', 'formData'].includes(prop)) {
           if (!isBrowser && prop === 'formData') {
             // node-fetch does not implement Response.formData ()
             return async() => {
-              cache['text'] = cache['text'] || obj['text']()
-              const str = await cache['text']
+              const r = cloneRes
+              cloneRes = r.clone()
+              const str = await r.text()
               const contentType = res.headers.get('content-type')
               if (!contentType) throw new Error('Cannot parse form-data body without content-type')
               const boundary = getBoundaryByContentType(contentType)
@@ -242,9 +249,9 @@ export class Keq<T> {
           }
 
           return async() => {
-            if (cache[prop]) return cache[prop]
-            cache[prop] = obj[prop]()
-            return cache[prop]
+            const r = cloneRes
+            cloneRes = r.clone()
+            return await r[prop]()
           }
         }
 
@@ -253,13 +260,13 @@ export class Keq<T> {
     })
 
     if (this.opts.resolveWithFullResponse) {
-      ctx.output = ctx.res
+      ctx.output = ctx.response
     } else {
       const contentType = res.headers.get('content-type') || ''
-      if (contentType.includes('application/json')) ctx.output = await ctx.res.json()
-      else if (contentType.includes('multipart/form-data')) ctx.output = await ctx.res.formData()
-      else if (contentType.includes('plain/text')) ctx.output = await ctx.res.text()
-      else ctx.output = await ctx.res.body
+      if (contentType.includes('application/json')) ctx.output = await ctx.response.json()
+      else if (contentType.includes('multipart/form-data')) ctx.output = await ctx.response.formData()
+      else if (contentType.includes('plain/text')) ctx.output = await ctx.response.text()
+      else ctx.output = await ctx.response.body
     }
   }
 
