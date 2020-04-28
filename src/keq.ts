@@ -184,6 +184,8 @@ export class Keq<T> {
   public query(key: string | Record<string, string | number | string[] | number[]>, value?: string | number | string[] | number[]): Keq<T> {
     if (typeof key === 'string' && value !== undefined) {
       this.urlObj.query[key] = String(value)
+    } else if (typeof key === 'string' && value === undefined) {
+      // ignore query
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
         this.urlObj.query[k] = String(v)
