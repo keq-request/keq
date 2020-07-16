@@ -32,7 +32,15 @@ export const serializeMap: SerializeMap = {
     if (Array.isArray(body)) return
 
     const form = new URLSearchParams()
-    Object.entries(body as Record<string, any>).map(([key, value]) => form.set(key, value))
+    Object.entries(body as Record<string, any>).map(([key, value]) => {
+      if (Array.isArray(value)) {
+        for (const v of value) {
+          form.append(key, v)
+        }
+      } else {
+        form.append(key, value)
+      }
+    })
     return form
   },
 }
