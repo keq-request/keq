@@ -250,10 +250,21 @@ import { request } from 'keq'
 await request
   .post('/user')
   .send({foo: 'bar'})
-  .serialize(obj => {
+  .serialize((obj, ctx) => {
       return 'string generated from obj';
   });
 ```
+
+The return value of `callback` in the `.serialize(callback)` method will be directly used as the `body` parameter of [`Fetch API`][FETCH API].
+
+The `callback(obj, ctx)` arguments：
+
+ **Arguments**                                 | **Description**
+:----------------------------------------------|:------------------------------------
+ `obj`(first argument)                         | Un-serializing request body
+ `ctx`(second argument)                        | Keq Context
+
+
 
 ### Keq Internal Options
 
@@ -326,10 +337,14 @@ Add an global middleware that only enabled at the `host`.
 
 #### write an middleware
 
-Middleware should be an asnyc-function that accept two argument.
-The first is the keq context that includes request parameters, keq options...
-The second is the `next()` function used to execute the next middleware.
-The last `next()` function will send request and bind the [`Response`][Response MDN] object to `context.res`.
+Middleware should be an asnyc-function that accept two argument:
+
+ **Arguments**                                 | **Description**
+:----------------------------------------------|:------------------------------------
+ `ctx`(first argument)                         | Keq Context
+ `next`(second argument)                       | Used to execute the next middleware. The last `next()` function will send request and bind the [`Response`][Response MDN] object to `context.res`. Don't forget to call `next()` unless you don't want to send the request.
+
+Keq's context object has many parameters. The following lists all the built-in context attributes of `Keq`:
 
 **Property**                  | **Type**
 :-----------------------------|:------------------------------------
@@ -343,7 +358,7 @@ The last `next()` function will send request and bind the [`Response`][Response 
 `context.query`               | Access to `context.request.url.query`.
 `context.headers`             | Access to `context.request.headers`.
 `context.body`                | Access to `context.request.body`.
-`context.options`             | It is an object includes request options.(example: `context.options.resolveWithFullResponse`).
+`context.options`             | It is an object includes request options.(example: `context.options.resolveWithFullResponse`). Middleware can get custom options from here.
 `context.res`                 | The origin [`Response`][Response MDN] Object. It will be undefined before run `await next()` or error throwed.
 `context.response`            | Cloned from `ctx.res`.
 `context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true.
