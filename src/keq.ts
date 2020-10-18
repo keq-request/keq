@@ -4,7 +4,6 @@ import clone from 'clone'
 import { Middleware, MiddlewareMatcher, matchHost, matchMiddleware, compose } from './middleware'
 import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse } from './context'
 import { SerializeBodyFn, serializeBodyByMap, serializeMap, KeqBody } from './serialize'
-import { ParsedUrlQuery } from 'querystring'
 import { encodeBase64 } from './base64'
 import { messages } from './const'
 import { FormData } from './polyfill'
@@ -12,8 +11,11 @@ import { isFormData, isFile, isBrowser } from './utils'
 import { FormDataFieldOptions } from './form-data-fields'
 import { fixType, ShorthandContentType } from './fix-type'
 import { getTypeByBody } from './get-type-by-body'
-import { parseFormData, getBoundaryByContentType } from './parse-form-data'
 import { Stream } from 'stream'
+import { getBoundaryByContentType, parseFormData } from './parse-form-data'
+
+
+type RetryCallback = (error: Error) => void
 
 export class Keq<T> {
   private requestPromise?: Promise<T>
@@ -26,7 +28,7 @@ export class Keq<T> {
   private body: KeqBody
   private serializeBodyFn: SerializeBodyFn = serializeBodyByMap(serializeMap)
   private retryTime = 0
-  private retryCallback?: Function
+  private retryCallback?: RetryCallback
 
   public constructor(urlObj: UrlWithParsedQuery, method: RequestMethod, middlewares: Middleware[]) {
     this.urlObj = urlObj
@@ -211,7 +213,7 @@ export class Keq<T> {
     return this
   }
 
-  public retry(retryTime: number, retryCallback?: Function): Keq<T> {
+  public retry(retryTime: number, retryCallback?: RetryCallback): Keq<T> {
     this.retryTime = retryTime
     this.retryCallback = retryCallback
     return this
@@ -233,42 +235,16 @@ export class Keq<T> {
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
-    let cloneRes = res
-    ctx.response = new Proxy(res, {
-      get(obj, prop) {
-        if (typeof prop === 'string' && ['json', 'text', 'formData'].includes(prop)) {
-          if (!isBrowser && prop === 'formData') {
-            // node-fetch does not implement Response.formData ()
-            return async() => {
-              const r = cloneRes
-              cloneRes = r.clone()
-              const str = await r.text()
-              const contentType = res.headers.get('content-type')
-              if (!contentType) throw new Error('Cannot parse form-data body without content-type')
-              const boundary = getBoundaryByContentType(contentType)
-              return parseFormData(str, boundary)
-            }
-          }
-
-          return async() => {
-            const r = cloneRes
-            cloneRes = r.clone()
-            return await r[prop]()
-          }
-        }
-
-        return obj[prop]
-      },
-    })
+    ctx.res = res
 
     if (this.opts.resolveWithFullResponse) {
       ctx.output = ctx.response
     } else {
       const contentType = res.headers.get('content-type') || ''
-      if (contentType.includes('application/json')) ctx.output = await ctx.response.json()
-      else if (contentType.includes('multipart/form-data')) ctx.output = await ctx.response.formData()
-      else if (contentType.includes('plain/text')) ctx.output = await ctx.response.text()
-      else ctx.output = await ctx.response.body
+      if (contentType.includes('application/json')) ctx.output = ctx.response && await ctx.response.json()
+      else if (contentType.includes('multipart/form-data')) ctx.output = ctx.response && await ctx.response.formData()
+      else if (contentType.includes('plain/text')) ctx.output = ctx.response && await ctx.response.text()
+      else ctx.output = ctx.response && await ctx.response.body
     }
   }
 
@@ -288,15 +264,59 @@ export class Keq<T> {
 
     const ctx: Context = {
       request,
+
       options: clone({ ...this.opts, fetchAPI: this.opts.fetchAPI || fetch }),
-      get query(): ParsedUrlQuery {
-        return ctx.request.url.query
-      },
-      set query(value: ParsedUrlQuery) {
-        ctx.request.url.query = value
-      },
       output: undefined,
+
+      get url() {
+        return this.request.url
+      },
+      set url(value: RequestContext['url']) {
+        this.request.url = value
+      },
+
+      get query() {
+        return this.url.query
+      },
+      set query(value: RequestContext['url']['query']) {
+        this.url.query = value
+      },
+
+      get headers() {
+        return this.request.headers
+      },
+      set headers(value: RequestContext['headers']) {
+        this.request.headers = value
+      },
+
+      get body() {
+        return this.request.body
+      },
+      set body(value: RequestContext['body']) {
+        this.request.body = value
+      },
+
+
+      get response() {
+        if (!this.res) return this.res
+
+        const res = this.res.clone()
+
+        if (!isBrowser) {
+          // node-fetch does not implement Response.formData()
+          res.formData = async function() {
+            const str = await this.text()
+            const contentType = this.headers.get('content-type')
+            if (!contentType) throw new Error('Cannot parse form-data body without content-type')
+            const boundary = getBoundaryByContentType(contentType)
+            return parseFormData(str, boundary)
+          }
+        }
+
+        return res
+      },
     }
+
 
     const middleware = compose([...this.middlewares, this.fetch.bind(this)])
     // eslint-disable-next-line @typescript-eslint/no-empty-function

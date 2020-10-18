@@ -1,7 +1,7 @@
 mili:
   version: 3.8.1
 template:
-  repository: 'https://github.com/Val-istar-Guo/component-template.git'
+  repository: npm:@mtpl/component
   version: 2.8.1
 answers:
   ci: true

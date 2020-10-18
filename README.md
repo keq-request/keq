@@ -327,39 +327,24 @@ Add an global middleware that only enabled at the `host`.
 Middleware should be an asnyc-function that accept two argument.
 The first is the keq context that includes request parameters, keq options...
 The second is the `next()` function used to execute the next middleware.
-The last `next()` function will send request and bind the [`Response`][Response MDN] object to context.
-
-##### context.request
-
-`context.request` includes request options for Fetch API.
+The last `next()` function will send request and bind the [`Response`][Response MDN] object to `context.res`.
 
 **Property**                  | **Type**
 :-----------------------------|:------------------------------------
+`context.request`             | Includes request options for Fetch API.
 `context.request.url`         | The return type of `url.parse('http://example.com', true)`.
 `context.request.method`      | One of 'get', 'post', 'put', 'patch', 'head', 'delete'.
 `context.request.body`        | Object, Array, Stream, Blob or undefined.
 `context.request.headers`     | The [`Headers`][Headers MDN] Object.
-`context.request.options`     | Other options that can be passed into the Fetch API
-
-##### context.query
-
-The getter/setter for context.request.url.query
-
-##### context.options
-
-It is an object includes request options.
-example: `context.options.resolveWithFullResponse`.
-
-##### context.response
-
-The [`Response`][Response MDN] Object returned by Fetch API.
-It should be used after `await next()` and may be undefined when error throwed.
-
-##### context.output
-
-The return value of `await request()`.
-By defaulted, `context.output` is the parsed body of response.
-`context.output` will be the [`Response`](Response MDN) Object When `options.resolveWithFullResponse` is true.
+`context.request.options`     | Other options that can be passed into the Fetch API.
+`context.url`                 | Access to `context.request.url`.
+`context.query`               | Access to `context.request.url.query`.
+`context.headers`             | Access to `context.request.headers`.
+`context.body`                | Access to `context.request.body`.
+`context.options`             | It is an object includes request options.(example: `context.options.resolveWithFullResponse`).
+`context.res`                 | The origin [`Response`][Response MDN] Object. It will be undefined before run `await next()` or error throwed.
+`context.response`            | Cloned from `ctx.res`.
+`context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true.
 
 <!-- usage -->
 
@@ -388,6 +373,12 @@ keq.then(onfulfilled, onrejected)
 keq.end()
 keq.end()
 ```
+
+### The diffirent between `ctx.res` and `ctx.response`
+
+`ctx.response` will allways return a new [`Response`][Response MDN] created by `ctx.res && ctx.res.clone()`. Sothat each middleware could calling `ctx.response.json()`, `ctx.response.text()`, `ctx.response.formData()`.
+
+What's more, The `.formData()` function isn't existed in `Response` returned by `node-fetch`. keq will append it to `Response` after clone, if in `NodeJS`.
 
 
 ## See More

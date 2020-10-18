@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 import isBlob from './is-blob'
-import File from './File'
+import File from './file'
 
 const { isBuffer } = Buffer
 

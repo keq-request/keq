@@ -1,6 +1,6 @@
-import { ParsedUrlQuery } from 'querystring'
 import { UrlWithParsedQuery } from 'url'
 import { KeqBody } from './serialize'
+
 
 export type RequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch'
 
@@ -42,13 +42,22 @@ export type Options = OptionsWithFullResponse | OptionsWithoutFullResponse
 
 export interface Context {
   request: RequestContext
-  /** equal request.url.query */
-  query: ParsedUrlQuery
-  response?: Response
+  res?: Response
+
   /** the result get by user */
   output: any
 
   options: Required<Options>
+
+  /** delegate res */
+  response?: Response
+
+  /** delegate request */
+  url: RequestContext['url']
+  query: RequestContext['url']['query']
+  headers: RequestContext['headers']
+  body: RequestContext['body']
+
   /** extends by middleware */
   [key: string]: any
 }

@@ -114,7 +114,6 @@ test('HEAD Request', async t => {
   t.is('http://example.com/', fakeFetchAPI.getCall(0).args[0])
 })
 
-
 test('DELETE Request', async t => {
   const content = '{}'
   const responseHeaders = {

@@ -212,7 +212,6 @@ test('resolveWithFullResponse', async t => {
   t.is(fakeFetchAPI.callCount, 1)
   t.is(uri, fakeFetchAPI.getCall(0).args[0])
   t.deepEqual(body, JSON.parse(content))
-  await t.notThrowsAsync(res.json())
 })
 
 test('retry request', async t => {
@@ -228,4 +227,36 @@ test('retry request', async t => {
 
   t.is(fakeCallback.callCount, 2)
   t.is(fakeFetchAPI.callCount, 2)
+})
+
+test('consume response steam multiple times', async t => {
+  const content = '{}'
+  const responseHeaders = {
+    'content-type': 'application/json',
+  }
+  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+
+  const uri = url.format(url.parse('http://test.com'))
+
+  const consume1: Middleware = async(ctx, next) => {
+    await next()
+    t.truthy(ctx.response)
+    t.notThrows(() => ctx.response && ctx.response.json())
+  }
+  const consume2: Middleware = async(ctx, next) => {
+    await next()
+    t.truthy(ctx.response)
+    t.notThrows(() => ctx.response && ctx.response.json())
+  }
+
+
+  const res = await request
+    .get(uri)
+    .use(consume1)
+    .use(consume2)
+    .option('fetchAPI', fakeFetchAPI)
+    .option('resolveWithFullResponse', true)
+
+
+  await t.notThrowsAsync(res.json())
 })
