@@ -13,6 +13,8 @@
 [Response MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Response
 [FormData MDN]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 
+[简体中文](./doc/zh-cn/readme.md)
+
 Keq is a request API write by Typescript for flexibility, readability, and a low learning curve. It also works with Node.js!
 
 Keq wraps the [cross-fetch](https://www.npmjs.com/package/cross-fetch) and use Fetch APIs whenever possible.
