@@ -19,18 +19,22 @@
     "postpublish": "git push",
     "clean": "rm -rf ./lib/*",
     "prebuild": "npm run clean",
-    "build:es": "ttsc -p build/tsconfig.es.json",
-    "build:lib": "ttsc -p build/tsconfig.lib.json",
+    "build:es": "ttsc -p build/tsconfig.es.json && npm run copyfile:es:js && npm run copyfile:es:dts",
+    "build:lib": "ttsc -p build/tsconfig.lib.json && npm run copyfile:lib:js && npm run copyfile:lib:dts",
     "build": "npm run build:lib && npm run build:es",
-    "watch": "NODE_ENV=development ttsc -p build/tsconfig.lib.json -w"
+    "watch": "NODE_ENV=development ttsc -p build/tsconfig.lib.json -w",
+    "copyfile:es:js": "copyfiles -e \"@(build|es|lib)/**/*.js\" **/*.js es",
+    "copyfile:es:dts": "copyfiles -e \"@(build|es|lib)/**/*.d.ts\" **/*.d.ts es",
+    "copyfile:lib:js": "copyfiles -e \"@(build|es|lib)/**/*.js\" **/*.js lib",
+    "copyfile:lib:dts": "copyfiles -e \"@(build|es|lib)/**/*.d.ts\" **/*.d.ts lib"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/sinon": "^9.0.4",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.4.0",
+    "@typescript-eslint/parser": "^4.4.0",
     "ava": "^3.10.1",
     "commitizen": "^4.1.2",
     "coveralls": "^3.1.0",
@@ -44,8 +48,9 @@
     "ts-node": "^8.10.2",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.10",
-    "typescript": "^3.9.6",
-    "typescript-transform-paths": "^1.1.14"
+    "typescript": "^4.0.3",
+    "typescript-transform-paths": "^2.0.1",
+    "copyfiles": "^2.3.0"
   },
   "dependencies": {
     "@types/node": "^14.0.23",
