@@ -296,6 +296,7 @@ await request
 :-------------------------|:---------------------------
 `resolveWithFullResponse` | 获取 [`Response`][Response MDN]。
 `fetchAPI`                | 替换Keq内部包装的[`Fetch API`][FETCH API]。
+`highWaterMark`           | When using in NodeJS, if the size of the response body exceeds 16KB, `highWaterMark` needs to be set to a value larger than the volume of the response body (unit: `KB`)。[See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
 
 
 ### 中间件
