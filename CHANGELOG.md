@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/Val-istar-Guo/keq/compare/v0.0.7...v0.0.8) (2020-11-20)
+
+
+### Features
+
+* support highWaterMark ([85c77ff](https://github.com/Val-istar-Guo/keq/commit/85c77ff0cb74fd90ad0c3e67dbe5d94d7f314863))
+
+
+### Bug Fixes
+
+* middleware cannot modified resolveWithFullResponse ([329b766](https://github.com/Val-istar-Guo/keq/commit/329b766c79b945185412f7b3fc13d320f7452f00))
+
 ### [0.0.7](https://github.com/Val-istar-Guo/keq/compare/v0.0.6...v0.0.7) (2020-11-20)
 
 
