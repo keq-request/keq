@@ -23,6 +23,11 @@ export interface BuildInOptions {
   fetchAPI?: typeof fetch
   /** get original response object, defaulted `false` */
   resolveWithFullResponse?: boolean
+  /**
+   * the maximum number of bytes to store in the internal buffer
+   * before ceasing to read from the underlying resource.
+   */
+  highWaterMark?: number
 }
 
 interface BaseOptions extends BuildInOptions {

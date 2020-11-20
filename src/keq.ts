@@ -233,6 +233,9 @@ export class Keq<T> {
       fetchOptions.headers.set('Content-Type', getTypeByBody(fetchOptions.body))
     }
 
+    if (ctx.options.highWaterMark) {
+      fetchOptions['highWaterMark'] = ctx.options.highWaterMark
+    }
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
     ctx.res = res
