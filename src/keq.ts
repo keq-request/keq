@@ -1,6 +1,6 @@
-import url, { UrlWithParsedQuery } from 'url'
+import * as url from 'url'
 import fetch, { Headers } from 'cross-fetch'
-import clone from 'clone'
+import * as clone from 'clone'
 import { Middleware, MiddlewareMatcher, matchHost, matchMiddleware, compose } from './middleware'
 import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse } from './context'
 import { SerializeBodyFn, serializeBodyByMap, serializeMap, KeqBody } from './serialize'
@@ -20,7 +20,7 @@ type RetryCallback = (error: Error) => void
 export class Keq<T> {
   private requestPromise?: Promise<T>
 
-  private urlObj: UrlWithParsedQuery
+  private urlObj: url.UrlWithParsedQuery
   private method: RequestMethod
   private headers: Headers = new Headers()
   private middlewares: Middleware[] = []
@@ -30,7 +30,7 @@ export class Keq<T> {
   private retryTime = 0
   private retryCallback?: RetryCallback
 
-  public constructor(urlObj: UrlWithParsedQuery, method: RequestMethod, middlewares: Middleware[]) {
+  public constructor(urlObj: url.UrlWithParsedQuery, method: RequestMethod, middlewares: Middleware[]) {
     this.urlObj = urlObj
     this.method = method
     this.middlewares = middlewares

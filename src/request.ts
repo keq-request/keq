@@ -1,7 +1,7 @@
 import { Keq } from './keq'
 import { RequestMethod, Options, OptionsWithoutFullResponse, OptionsWithFullResponse } from './context'
-import url from 'url'
-import clone from 'clone'
+import * as url from 'url'
+import * as clone from 'clone'
 import { Middleware, MiddlewareMatcher, matchMiddleware, matchHost } from './middleware'
 
 

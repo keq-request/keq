@@ -1,5 +1,5 @@
 import { FormData } from './polyfill'
-import MultipartParser from 'formidable/src/parsers/Multipart'
+import * as MultipartParser from 'formidable/src/parsers/Multipart'
 
 
 export function getBoundaryByContentType(contentType: string): string {

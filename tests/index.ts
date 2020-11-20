@@ -1,7 +1,7 @@
 import test from 'ava'
-import sinon from 'sinon'
+import * as sinon from 'sinon'
 import { request, Response, Middleware, FormData } from '../src'
-import url from 'url'
+import * as url from 'url'
 
 
 test('JSON Response', async t => {
@@ -65,7 +65,7 @@ test('Form-Data Request', async t => {
   const formData = new FormData()
   formData.append('key3', 'value3')
   formData.append('key3', 'value3')
-  const file = new Buffer('file')
+  const file = Buffer.from('file')
 
   const body = await request
     .put(uri)
