@@ -229,7 +229,7 @@ export class Keq<T> {
       ...ctx.request.options,
     }
 
-    if (!fetchOptions.headers.has('Content-Type')) {
+    if (!fetchOptions.headers.has('Content-Type') && fetchOptions.body) {
       fetchOptions.headers.set('Content-Type', getTypeByBody(fetchOptions.body))
     }
 
