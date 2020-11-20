@@ -240,7 +240,7 @@ export class Keq<T> {
 
     ctx.res = res
 
-    if (this.opts.resolveWithFullResponse) {
+    if (ctx.options.resolveWithFullResponse) {
       ctx.output = ctx.response
     } else {
       const contentType = res.headers.get('content-type') || ''
