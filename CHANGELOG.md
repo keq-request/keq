@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/Val-istar-Guo/keq/compare/v0.0.6...v0.0.7) (2020-11-20)
+
+
+### Bug Fixes
+
+* don't set content-type when no request body ([291bb65](https://github.com/Val-istar-Guo/keq/commit/291bb65854ba2c70c11c367187c9021962d66ee3))
+
 ### [0.0.6](https://github.com/Val-istar-Guo/keq/compare/v0.0.5...v0.0.6) (2020-11-13)
 
 ### [0.0.5](https://github.com/Val-istar-Guo/keq/compare/v0.0.4...v0.0.5) (2020-10-18)
