@@ -297,7 +297,7 @@ await request
 `resolveWithFullResponse`     | 获取 [`Response`][Response MDN]。（获取的是原始[`Response`][Response MDN]的克隆）
 `resolveWithOriginalResponse` | 获取原始的 [`Response`][Response MDN]。在NodeJS中，`node-fetch`的`.clone()`有时候并不能如期望那样运行（根本原因是`highWaterMark`导致的）。在这种情况下可以使用`resolveWithOriginalResponse`获取原始[`Response`][Response MDN]进行处理。但是需要注意，避免重复调用`.json()`，`.text()`等[`Response`][Response MDN]对象的方法。
 `fetchAPI`                    | 替换Keq内部包装的[`Fetch API`][FETCH API]。
-`highWaterMark`               | When using in NodeJS, if the size of the response body exceeds 16KB, `highWaterMark` needs to be set to a value larger than the volume of the response body (unit: `KB`)。[See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
+`highWaterMark`               | NodeJS中`Stream`默认情况下会有16KB的限制, `highWaterMark` 当请求体大于16KB时候，需要将这个参数设定为更大的一个数值 (单位: `KB`)。[查看更多Node Fetch说明](https://github.com/node-fetch/node-fetch#custom-highwatermark)。此功能需要`node-fetch@3.0.0-beta.9`支持，需要用户手动设置`fetchAPI`。不过目前不建议使用，因为`node-fetch@3.0.0-beta.9`依旧存在一些问题，例如：某些文件下载请求使用`res.clone().buffer()`并不能正常工作，即便你将`highWaterMark`设定在一个正确值上。
 
 
 ### 中间件
