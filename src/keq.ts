@@ -24,7 +24,7 @@ export class Keq<T> {
   private method: RequestMethod
   private headers: Headers = new Headers()
   private middlewares: Middleware[] = []
-  private opts: Options = { resolveWithFullResponse: false }
+  private opts: Options = { resolveWithFullResponse: false, resolveWithOriginalResponse: false }
   private body: KeqBody
   private serializeBodyFn: SerializeBodyFn = serializeBodyByMap(serializeMap)
   private retryTime = 0
@@ -242,6 +242,8 @@ export class Keq<T> {
 
     if (ctx.options.resolveWithFullResponse) {
       ctx.output = ctx.response
+    } else if (ctx.options.resolveWithOriginalResponse) {
+      ctx.output = ctx.res
     } else {
       const contentType = res.headers.get('content-type') || ''
       if (contentType.includes('application/json')) ctx.output = ctx.response && await ctx.response.json()

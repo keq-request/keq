@@ -21,8 +21,15 @@ export interface BuildInOptions {
    * https://www.npmjs.com/package/cross-fetch
    */
   fetchAPI?: typeof fetch
-  /** get original response object, defaulted `false` */
+  /** get response object, defaulted `false` */
   resolveWithFullResponse?: boolean
+
+  /**
+   * get original object, defaulted `false`
+   * resolveWithFullResponse has a higher priority than resolveWithOriginalResponse
+   */
+  resolveWithOriginalResponse?: boolean
+
   /**
    * the maximum number of bytes to store in the internal buffer
    * before ceasing to read from the underlying resource.

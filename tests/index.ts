@@ -214,6 +214,29 @@ test('resolveWithFullResponse', async t => {
   t.deepEqual(body, JSON.parse(content))
 })
 
+test('resolveWithOriginalResponse', async t => {
+  const content = '{}'
+  const responseHeaders = {
+    'content-type': 'application/json',
+  }
+  const originalResponse = new Response(content, { headers: responseHeaders })
+  const fakeFetchAPI = sinon.fake(async() => originalResponse)
+
+  const urlObj = url.parse('http://test.com', true)
+  const uri = url.format(urlObj)
+
+  const res = await request
+    .get(uri)
+    .options({ fetchAPI: fakeFetchAPI, resolveWithOriginalResponse: true })
+
+
+  const body = await res.json()
+  t.is(fakeFetchAPI.callCount, 1)
+  t.is(uri, fakeFetchAPI.getCall(0).args[0])
+  t.deepEqual(body, JSON.parse(content))
+  t.true(res === originalResponse)
+})
+
 test('retry request', async t => {
   const fakeFetchAPI = sinon.fake.throws(new Error())
   const fakeCallback = sinon.fake()
