@@ -292,11 +292,12 @@ await request
   })
 ```
 
-**Option**                | **Description**
-:-------------------------|:---------------------------
-`resolveWithFullResponse` | 获取 [`Response`][Response MDN]。
-`fetchAPI`                | 替换Keq内部包装的[`Fetch API`][FETCH API]。
-`highWaterMark`           | When using in NodeJS, if the size of the response body exceeds 16KB, `highWaterMark` needs to be set to a value larger than the volume of the response body (unit: `KB`)。[See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
+**Option**                    | **Description**
+:-----------------------------|:---------------------------
+`resolveWithFullResponse`     | 获取 [`Response`][Response MDN]。（获取的是原始[`Response`][Response MDN]的克隆）
+`resolveWithOriginalResponse` | 获取原始的 [`Response`][Response MDN]。在NodeJS中，`node-fetch`的`.clone()`有时候并不能如期望那样运行（根本原因是`highWaterMark`导致的）。在这种情况下可以使用`resolveWithOriginalResponse`获取原始[`Response`][Response MDN]进行处理。但是需要注意，避免重复调用`.json()`，`.text()`等[`Response`][Response MDN]对象的方法。
+`fetchAPI`                    | 替换Keq内部包装的[`Fetch API`][FETCH API]。
+`highWaterMark`               | When using in NodeJS, if the size of the response body exceeds 16KB, `highWaterMark` needs to be set to a value larger than the volume of the response body (unit: `KB`)。[See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
 
 
 ### 中间件
