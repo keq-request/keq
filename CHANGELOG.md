@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/Val-istar-Guo/keq/compare/v0.0.8...v0.0.9) (2020-12-29)
+
+
+### Features
+
+* add new option resolveWithOriginalResponse ([158d32d](https://github.com/Val-istar-Guo/keq/commit/158d32d66ed64fc213bb254c8214bd6d0b15b80f))
+
 ### [0.0.8](https://github.com/Val-istar-Guo/keq/compare/v0.0.7...v0.0.8) (2020-11-20)
 
 
