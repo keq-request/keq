@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/Val-istar-Guo/keq/compare/v0.0.9...v0.0.10) (2020-12-30)
+
+
+### Bug Fixes
+
+* cannot send big file by form-data ([d25218a](https://github.com/Val-istar-Guo/keq/commit/d25218a59d5fbaa3d857764b6539ed8056ff3e5a))
+
 ### [0.0.9](https://github.com/Val-istar-Guo/keq/compare/v0.0.8...v0.0.9) (2020-12-29)
 
 
