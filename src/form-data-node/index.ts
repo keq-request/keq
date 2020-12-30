@@ -228,9 +228,8 @@ class FormData {
     if (isBuffer(value) && filename) {
       filename = basename(filename)
     } else if (isBlob(value)) {
-      filename = basename(value.name
-          || filename
-          || value.constructor.name === 'Blob' ? 'blob' : String(value.name))
+      const name = value.name || filename || (value.constructor.name === 'Blob' ? 'blob' : String(value.name))
+      filename = basename(name)
     } else if (isStream(value) && (value.path || filename)) {
       // Readable stream which created from fs.createReadStream
       // have a "path" property. So, we can get a "filename"
