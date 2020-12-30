@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/Val-istar-Guo/keq/compare/v0.0.10...v0.0.11) (2020-12-30)
+
+
+### Bug Fixes
+
+* filename is missing ([347d427](https://github.com/Val-istar-Guo/keq/commit/347d4274b4ab9db1e3c2221af120e1c5a13b5b72))
+
 ### [0.0.10](https://github.com/Val-istar-Guo/keq/compare/v0.0.9...v0.0.10) (2020-12-30)
 
 
