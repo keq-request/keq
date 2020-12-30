@@ -3,7 +3,7 @@ import { Readable } from 'stream'
 import { inspect } from 'util'
 import { basename } from 'path'
 
-import mimes from 'mime-types'
+import * as mimes from 'mime-types'
 
 import getStreamIterator from './util/get-stream-iterator'
 import getLength from './util/get-length'
@@ -57,7 +57,13 @@ class FormData {
    *
    * @public
    */
-  readonly stream = new Readable({ read: () => this.__read() })
+  get stream(): Readable {
+    const value = Readable.from(this.__getField())
+    value['getBoundary'] = () => this.boundary
+
+    return value
+  }
+
 
   /**
    * @type string
@@ -93,13 +99,6 @@ class FormData {
    * @private
    */
   readonly __content = new Map()
-
-  /**
-   * @type AsyncIterableIterator<Buffer>
-   *
-   * @private
-   */
-  readonly __curr = this.__getField()
 
   /**
    * Returns a string representation of the FormData
@@ -173,24 +172,6 @@ class FormData {
     yield this.__footer
   }
 
-  /**
-   * Read values from internal storage and push it to the internal stream
-   */
-  private __read(): void {
-    const onFulfilled = ({ done, value }): any => {
-      if (done) {
-        return this.stream.push(null)
-      }
-
-      this.stream.push(isBuffer(value) ? value : Buffer.from(String(value)))
-    }
-
-    const onRejected = (err): void => {
-      this.stream.emit('error', err)
-    }
-
-    this.__curr.next().then(onFulfilled as any).catch(onRejected)
-  }
 
   /**
    * Append initial fields

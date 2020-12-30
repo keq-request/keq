@@ -25,7 +25,11 @@ export const serializeMap: SerializeMap = {
         form.append(key, value)
       }
     })
-    return form
+
+    /**
+     * Compatible with node-fetch@2.x
+     */
+    return form['stream'] || form
   },
   'application/x-www-form-urlencoded': body => {
     if (!body) return

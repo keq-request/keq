@@ -236,6 +236,15 @@ export class Keq<T> {
     if (ctx.options.highWaterMark) {
       fetchOptions['highWaterMark'] = ctx.options.highWaterMark
     }
+
+    /**
+     * Content-Type should be removed when it is 'multipart/form-data
+     * FetchAPI will auth set it and add boundary
+     */
+    if (fetchOptions.headers.get('content-type')?.toLocaleLowerCase() === 'multipart/form-data') {
+      fetchOptions.headers.delete('content-type')
+    }
+
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
     ctx.res = res
