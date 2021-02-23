@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/Val-istar-Guo/keq/compare/v0.0.11...v1.0.0) (2021-02-23)
+
+
+### Features
+
+* routing parameters ([4506df1](https://github.com/Val-istar-Guo/keq/commit/4506df1f1f3f8b102e0611b9e073402edd84d711))
+
 ### [0.0.11](https://github.com/Val-istar-Guo/keq/compare/v0.0.10...v0.0.11) (2020-12-30)
 
 
