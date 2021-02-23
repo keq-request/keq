@@ -288,3 +288,28 @@ test('consume response steam multiple times', async t => {
 
   await t.notThrowsAsync(res.json())
 })
+
+test('request with params', async t => {
+  const content = '{}'
+  const responseHeaders = {
+    'content-type': 'application/json',
+  }
+  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+
+  const key = 'keq'
+  const urlobj = url.parse('http://test.com/api/:key/value')
+  const uri = url.format(urlobj)
+  const expectUri = url.format({
+    ...urlobj,
+    pathname: `/api/${key}/value`,
+  })
+
+
+
+  await request
+    .get(uri)
+    .params('key', key)
+    .option('fetchAPI', fakeFetchAPI)
+
+  t.is(expectUri, fakeFetchAPI.getCall(0).args[0])
+})

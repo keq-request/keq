@@ -35,26 +35,40 @@ interface RequestCreator {
 const middlewares: Middleware[] = []
 
 export const request: RequestCreator = function<T>(params: Params, options: Options = defaultOptions): ReturnType<Keq<T>['options']> {
-  const urlObj = url.parse(params.url, true)
+  const urlObj = {
+    ...url.parse(params.url, true),
+    params: {},
+  }
+
   const request = new Keq<T>(urlObj, 'get', middlewares)
   return request.options(options)
 }
 
 
 request.get = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
+
   const request = new Keq<T>(urlObj, 'get', clone(middlewares))
   return request
 }
 
 request.put = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
   const request = new Keq<T>(urlObj, 'put', middlewares)
   return request
 }
 
 request.delete = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
   const request = new Keq<T>(urlObj, 'delete', middlewares)
   return request
 }
@@ -62,19 +76,28 @@ request.delete = function<T>(href: string): Keq<T> {
 request.del = request.delete
 
 request.post = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
   const request = new Keq<T>(urlObj, 'post', middlewares)
   return request
 }
 
 request.head = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
   const request = new Keq<T>(urlObj, 'head', middlewares)
   return request
 }
 
 request.patch = function<T>(href: string): Keq<T> {
-  const urlObj = url.parse(href, true)
+  const urlObj = {
+    ...url.parse(href, true),
+    params: {},
+  }
   const request = new Keq<T>(urlObj, 'patch', middlewares)
   return request
 }

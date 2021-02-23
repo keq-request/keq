@@ -143,6 +143,30 @@ await request
    .query({ query: 'Manny',  range: '1..5', order: 'desc' })
 ```
 
+### Request routing parameters
+
+The `.params()` method accepts key and value, which when used for the request with routing parameters.
+The follwing will produce the path `/search/keq`.
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('/search/:searchKey')
+  .params('searchKey', 'keq')
+```
+
+Or as a single object:
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('/search/:searchKey')
+  .params({ searchKey: 'keq' })
+```
+
+
 ### JSON Request
 
 A typical JSON POST request might look a little like the following,

@@ -3,9 +3,12 @@ import { KeqBody } from './serialize'
 
 
 export type RequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch'
+export interface KeqURL extends UrlWithParsedQuery {
+  params: Record<string, string | number>
+}
 
 export interface RequestContext {
-  url: UrlWithParsedQuery
+  url: KeqURL
   method: RequestMethod
   body: KeqBody
   headers: Headers

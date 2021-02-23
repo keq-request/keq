@@ -119,8 +119,7 @@ await request
 
 ### 设置 Query
 
-`.query()`方法接受`object`或者两个字符串作为参数
-The `.query()` method accepts objects,
+`.query()`方法接受`object`或者两个字符串作为参数。以下代码将会请求`/search?query=Manny&range=1..5&order=desc`。
 
 ```javascript
 import { request } from 'keq'
@@ -130,10 +129,9 @@ await request
    .query({ query: 'Manny' })
    .query({ range: '1..5' })
    .query('order', 'desc')
-// `/search?query=Manny&range=1..5&order=desc.`
 ```
 
-或者传入一个`object`
+或者传入一个`object`：
 
 ```javascript
 import { request } from 'keq'
@@ -142,6 +140,29 @@ await request
    .get('/search')
    .query({ query: 'Manny',  range: '1..5', order: 'desc' })
 ```
+
+### 设置路由参数
+
+`.params()` 方法接受`object`或者两个字符串作为参数。以下代码将会请求`/search/keq`。
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('/search/:searchKey')
+  .params('searchKey', 'keq')
+```
+
+或者传入一个`object`：
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('/search/:searchKey')
+  .params({ searchKey: 'keq' })
+```
+
 
 ### 发送 JSON 请求
 

@@ -2,7 +2,7 @@ import * as url from 'url'
 import fetch, { Headers } from 'cross-fetch'
 import * as clone from 'clone'
 import { Middleware, MiddlewareMatcher, matchHost, matchMiddleware, compose } from './middleware'
-import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse } from './context'
+import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse, KeqURL } from './context'
 import { SerializeBodyFn, serializeBodyByMap, serializeMap, KeqBody } from './serialize'
 import { encodeBase64 } from './base64'
 import { messages } from './const'
@@ -13,6 +13,7 @@ import { fixType, ShorthandContentType } from './fix-type'
 import { getTypeByBody } from './get-type-by-body'
 import { Stream } from 'stream'
 import { getBoundaryByContentType, parseFormData } from './parse-form-data'
+import { compile } from 'path-to-regexp'
 
 
 type RetryCallback = (error: Error) => void
@@ -20,7 +21,7 @@ type RetryCallback = (error: Error) => void
 export class Keq<T> {
   private requestPromise?: Promise<T>
 
-  private urlObj: url.UrlWithParsedQuery
+  private urlObj: KeqURL
   private method: RequestMethod
   private headers: Headers = new Headers()
   private middlewares: Middleware[] = []
@@ -30,7 +31,7 @@ export class Keq<T> {
   private retryTime = 0
   private retryCallback?: RetryCallback
 
-  public constructor(urlObj: url.UrlWithParsedQuery, method: RequestMethod, middlewares: Middleware[]) {
+  public constructor(urlObj: KeqURL, method: RequestMethod, middlewares: Middleware[]) {
     this.urlObj = urlObj
     this.method = method
     this.middlewares = middlewares
@@ -198,6 +199,24 @@ export class Keq<T> {
     return this
   }
 
+  public params(key: Record<string, string | number>): Keq<T>
+  public params(key: string, value: string | number): Keq<T>
+  public params(key: string | Record<string, string | number>, value?: string | number): Keq<T> {
+    if (typeof key === 'string' && value !== undefined) {
+      this.urlObj.params[key] = value
+    } else if (typeof key === 'string' && value === undefined) {
+      // ignore query
+    } else if (typeof key === 'object') {
+      for (const [k, v] of Object.entries(key)) {
+        this.urlObj.params[k] = v
+      }
+    } else {
+      throw new Error('please set params value')
+    }
+
+    return this
+  }
+
   public option(key: keyof BuildInOptions, value?: any): Keq<T>
   public option(key: string, value?: any): Keq<T>
   public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> {
@@ -220,7 +239,14 @@ export class Keq<T> {
   }
 
   private async fetch(ctx: Context): Promise<void> {
-    const uri = url.format(ctx.request.url)
+    const urlobj = url.parse(url.format(ctx.request.url))
+
+    if (urlobj.pathname) {
+      const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
+      urlobj.pathname = toPath(ctx.request.url.params)
+    }
+
+    const uri = url.format(urlobj)
 
     const fetchOptions = {
       method: ctx.request.method.toUpperCase(),
@@ -287,6 +313,13 @@ export class Keq<T> {
       },
       set url(value: RequestContext['url']) {
         this.request.url = value
+      },
+
+      get params() {
+        return this.url.params
+      },
+      set params(value: RequestContext['url']['params']) {
+        this.params = value
       },
 
       get query() {
