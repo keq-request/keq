@@ -65,5 +65,24 @@
     "path-to-regexp": "^6.2.0",
     "querystring": "^0.2.0",
     "url": "^0.11.0"
-  }
+  },
+  "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
+  "directories": {
+    "doc": "doc",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Val-istar-Guo/keq.git"
+  },
+  "keywords": [
+    "request",
+    "superagent"
+  ],
+  "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/Val-istar-Guo/keq/issues"
+  },
+  "homepage": "https://github.com/Val-istar-Guo/keq#readme"
 }
