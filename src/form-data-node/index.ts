@@ -7,10 +7,8 @@ import * as mimes from 'mime-types'
 
 import getStreamIterator from './util/get-stream-iterator'
 import getLength from './util/get-length'
-import isObject from './util/is-object'
-import isStream from './util/is-stream'
+import { isObject, isStream, isBlob } from './util/is'
 import boundary from './util/boundary'
-import isBlob from './util/is-blob'
 import toFile from './util/to-file'
 
 const { isBuffer } = Buffer

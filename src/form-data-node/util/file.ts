@@ -3,7 +3,7 @@ import { Readable } from 'stream'
 import * as mime from 'mime-types'
 
 import getStreamIterator from './get-stream-iterator'
-import isBlob from './is-blob'
+import { isBlob } from './is'
 
 const { isBuffer } = Buffer
 

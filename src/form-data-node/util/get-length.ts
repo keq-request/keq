@@ -1,8 +1,6 @@
 // import { promises as fs } from 'fs'
 
-import isReadStream from './is-read-stream'
-import isStream from './is-stream'
-import isBlob from './is-blob'
+import { isReadStream, isStream, isBlob } from './is'
 
 const { isBuffer } = Buffer
 

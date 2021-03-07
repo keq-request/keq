@@ -1,9 +1,7 @@
-import isObject from './is-object'
+import { isObject } from './is-object'
 
-/**
- * @api private
- */
-const isReadStream = (value): boolean => isObject(value) &&
+export function isReadStream(value): boolean {
+  return isObject(value) &&
   typeof close === 'function' &&
   typeof value.bytesRead === 'number' &&
   typeof value.addListener === 'function' &&
@@ -12,6 +10,5 @@ const isReadStream = (value): boolean => isObject(value) &&
   typeof value.prependListener === 'function' &&
   typeof value.prependListener === 'function' &&
   typeof value.prependOnceListener === 'function'
+}
 
-
-export default isReadStream
