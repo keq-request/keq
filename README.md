@@ -329,7 +329,7 @@ You can write/import middleware to extend `Keq`.
 A typical middleware might look a little like the following:
 
 ```javascript
-import { request } from 'keq'
+import { request, mount } from 'keq'
 
 const middleware = async (context, next) => {
   context.request.url.query.limit = 10
@@ -346,6 +346,19 @@ const middleware = async (context, next) => {
 request
   .use(middleware)
   .use('example.com', middleware)
+  /**
+   * Mount middleware to location host.
+   * It is usefully in browser.
+   */
+  .use(mount.location(), middleware)
+  /**
+   * Mount middleware to the pathname that match `/api/service_name/**`.
+   */
+  .use(mount.pathname('/api/service_name/**'), middleware)
+  /**
+   * mount.location() && mount.pathname('/api/service_name/**')
+   */
+  .use(mount.location().pathname('/api/service_name/**'), middleware)
 
 // Request Middleware
 await request
@@ -388,6 +401,17 @@ Keq's context object has many parameters. The following lists all the built-in c
 `context.res`                 | The origin [`Response`][Response MDN] Object. It will be undefined before run `await next()` or error throwed.
 `context.response`            | Cloned from `ctx.res`.
 `context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true.
+
+#### the mount
+
+This is the utils used to mount middleware.
+
+ **Function**                                 | **Description**
+ :--------------------------------------------|:---------------------------------------------
+ `mount.location()`                           | Mount to Location. Useful in the browser
+ `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/micromatch).
+ `mount.host(host: string)`                   | Mount to the Host.
+
 
 <!-- usage -->
 
