@@ -409,7 +409,7 @@ This is the utils used to mount middleware.
  **Function**                                 | **Description**
  :--------------------------------------------|:---------------------------------------------
  `mount.location()`                           | Mount to Location. Useful in the browser
- `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/micromatch).
+ `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/picomatch).
  `mount.host(host: string)`                   | Mount to the Host.
 
 

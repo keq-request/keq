@@ -1,6 +1,6 @@
-import { MiddlewareMatcher } from "./middleware";
-import * as micromatch from 'micromatch'
-import { Context } from "node:vm";
+import { MiddlewareMatcher } from './middleware'
+import * as picomatch from 'picomatch'
+import { Context } from './context'
 
 interface Mounter extends MiddlewareMatcher {
   pathname(matcher: string | RegExp): Mounter
@@ -21,15 +21,13 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
 
 
 export function location(): Mounter {
-  return createMounter((ctx: Context) => {
-    return !ctx.request.url.host
-  })
+  return createMounter((ctx: Context) => !ctx.request.url.host)
 }
 
 export function pathname(matcher: string | RegExp): Mounter {
   return createMounter(ctx => {
     const pathname = ctx.url.pathname || '/'
-    if (typeof matcher === 'string') return micromatch.isMatch(pathname, matcher)
+    if (typeof matcher === 'string') return picomatch.isMatch(pathname, matcher)
     return matcher.test(pathname)
   })
 }
