@@ -400,7 +400,7 @@ Keq's context object has many parameters. The following lists all the built-in c
 `context.options`             | It is an object includes request options.(example: `context.options.resolveWithFullResponse`). Middleware can get custom options from here.
 `context.res`                 | The origin [`Response`][Response MDN] Object. It will be undefined before run `await next()` or error throwed.
 `context.response`            | Cloned from `ctx.res`.
-`context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true.
+`context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true. **This property is writeonly.**
 
 #### the mount
 

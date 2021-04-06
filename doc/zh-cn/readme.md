@@ -384,7 +384,7 @@ Keq的上下文对象有许多可以修改和使用的参数，下面列出了�
 `context.options`             | Keq的选项值，middleware能够从这里获取自定义参数（example: `context.options.resolveWithFullResponse`）。
 `context.res`                 | 原始的[`Response`][Response MDN] 对象. 在调用`await next()`前或者请求出错都可能导致这个值为undefined。
 `context.response`            | 通过`ctx.res.clone()`获取的克隆`Response`对象。
-`context.output`              | `await request()`的返回值. 默认情况下，`context.output` 是被解析过的响应体， 如果将`options.resolveWithFullResponse`设置为`true`，那么`context.output`的值为`ctx.response`。
+`context.output`              | `await request()`的返回值. 默认情况下，`context.output` 是被解析过的响应体， 如果将`options.resolveWithFullResponse`设置为`true`，那么`context.output`的值为`ctx.response`。**此属性只可写入**。
 
 <!-- usage -->
 
