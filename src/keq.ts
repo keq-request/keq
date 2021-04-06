@@ -374,22 +374,24 @@ export class Keq<T> {
 
   public async end(): Promise<T> {
     let times = this.retryTime + 1
-    let result: T | undefined
+    let result: T
     let error: any
 
     while (times) {
       try {
         result = await this.run()
-        break
+        return result
+        // break
       } catch (e) {
         times -= 1
         error = e
         if (this.retryCallback) await this.retryCallback(e)
       }
     }
+    throw error
 
-    if (!result) throw error
-    return result
+    // if (times === 0) throw error
+    // return result
   }
 
   /**
