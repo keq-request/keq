@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/Val-istar-Guo/keq/compare/v1.1.1...v1.1.2) (2021-04-06)
+
+
+### Bug Fixes
+
+* cannot run in browser ([56c08b9](https://github.com/Val-istar-Guo/keq/commit/56c08b9e7b110ea86316d190f1eae11154b79248))
+* throw undefined when response body is empty ([1904392](https://github.com/Val-istar-Guo/keq/commit/19043922946dde6165fd45008766e8a2a8c9fd83))
+
 ### [1.1.1](https://github.com/Val-istar-Guo/keq/compare/v1.1.0...v1.1.1) (2021-04-06)
 
 
