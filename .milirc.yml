@@ -2,7 +2,7 @@ mili:
   version: 3.9.2
 template:
   repository: 'npm:@mtpl/component'
-  version: 2.14.2
+  version: 2.14.3
 answers:
   ci: true
   standardVersion: true

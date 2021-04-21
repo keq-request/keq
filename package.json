@@ -20,15 +20,17 @@
     "postpublish": "pinst --enable && git push",
     "clean": "rm -rf ./lib/*",
     "prebuild": "npm run clean",
-    "build:es": "ttsc -p build/tsconfig.es.json && npm run copyfile:es:js && npm run copyfile:es:dts",
-    "build:lib": "ttsc -p build/tsconfig.lib.json && npm run copyfile:lib:js && npm run copyfile:lib:dts",
+    "build:es": "ttsc -p build/tsconfig.es.json && npm run copyfile:es",
+    "build:lib": "ttsc -p build/tsconfig.lib.json && npm run copyfile:lib",
     "build": "npm run build:lib && npm run build:es",
     "watch": "NODE_ENV=development ttsc -p build/tsconfig.lib.json -w",
     "copyfile:es:js": "copyfiles -e \"@(build|es|lib)/**/*.js\" **/*.js es",
     "copyfile:es:dts": "copyfiles -e \"@(build|es|lib)/**/*.d.ts\" **/*.d.ts es",
     "copyfile:lib:js": "copyfiles -e \"@(build|es|lib)/**/*.js\" **/*.js lib",
     "copyfile:lib:dts": "copyfiles -e \"@(build|es|lib)/**/*.d.ts\" **/*.d.ts lib",
-    "postinstall": "is-ci || husky install"
+    "postinstall": "is-ci || husky install",
+    "copyfile:es": "copyfiles -e \"@(build|es|lib|node_modules|tests|doc)/**/*.!(ts)\" -e \"@(README.md|CHANGELOG.md|ava.config.js|backers.md)\" \"**/*.!(ts)\" es",
+    "copyfile:lib": "copyfiles -e \"@(build|es|lib|node_modules|tests|doc)/**/*.!(ts)\" -e \"@(README.md|CHANGELOG.md|ava.config.js|backers.md)\" \"**/*.!(ts)\" lib"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.0.0",
@@ -52,7 +54,6 @@
     "sinon": "^9.2.4",
     "standard-version": "^9.1.1",
     "ts-node": "^9.1.1",
-    "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.12",
     "typescript": "^4.2.2",
     "typescript-transform-paths": "^2.2.3"
