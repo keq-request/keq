@@ -1,4 +1,10 @@
-# keq
+<!-- title -->
+<p align="center" style="padding-top: 40px">
+  <img src="./images/logo.svg?sanitize=true" width="60" alt="logo" />
+</p>
+
+<h1 align="center" style="text-align: center">KEQ</h1>
+<!-- title -->
 
 [![version](https://img.shields.io/npm/v/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
 [![downloads](https://img.shields.io/npm/dm/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
