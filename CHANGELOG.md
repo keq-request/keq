@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.4](https://github.com/Val-istar-Guo/keq/compare/v1.1.3...v1.1.4) (2021-04-26)
+
+
+### Bug Fixes
+
+* type error when set option resolveWithFullResponse ([b32dc20](https://github.com/Val-istar-Guo/keq/commit/b32dc20802df7effd5ad619237378f30632ac539))
+
 ### [1.1.3](https://github.com/Val-istar-Guo/keq/compare/v1.1.2...v1.1.3) (2021-04-21)
 
 ### [1.1.2](https://github.com/Val-istar-Guo/keq/compare/v1.1.1...v1.1.2) (2021-04-06)
