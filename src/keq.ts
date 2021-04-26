@@ -217,9 +217,11 @@ export class Keq<T> {
     return this
   }
 
+  public option(key: 'resolveWithOriginalResponse', value?: true): Keq<Response>
+  public option(key: 'resolveWithFullResponse', value?: true): Keq<Response>
   public option(key: keyof BuildInOptions, value?: any): Keq<T>
   public option(key: string, value?: any): Keq<T>
-  public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> {
+  public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> | Keq<Response> {
     this.opts[key] = value
     return this
   }
