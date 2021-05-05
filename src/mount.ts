@@ -6,7 +6,7 @@ interface Mounter extends MiddlewareMatcher {
   pathname(matcher: string | RegExp): Mounter
   location(): Mounter
   host(host: string): Mounter
-  // (matcher: string | RegExp): MiddlewareMatcher
+  module(moduleName: string): Mounter
 }
 
 
@@ -15,6 +15,7 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
   mounter.pathname = arg => compose(mounter, pathname(arg))
   mounter.location = () => compose(mounter, location())
   mounter.host = arg => compose(mounter, host(arg))
+  mounter.module = arg => compose(mounter, mountModule(arg))
 
   return mounter
 }
@@ -34,6 +35,11 @@ export function pathname(matcher: string | RegExp): Mounter {
 
 export function host(host: string): Mounter {
   return createMounter(ctx => ctx.url.host === host)
+}
+
+export function mountModule(moduleName: string): Mounter {
+  if (moduleName === '') throw new Error('Module name should not be empty')
+  return createMounter(ctx => ctx.options.module && ctx.options.module === moduleName)
 }
 
 
