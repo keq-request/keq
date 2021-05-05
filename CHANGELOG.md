@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/Val-istar-Guo/keq/compare/v1.1.4...v1.2.0) (2021-05-05)
+
+
+### Features
+
+* add module mounter ([c9727b4](https://github.com/Val-istar-Guo/keq/commit/c9727b41332f01ed212d6119e7f2fe0b4d524d37))
+
 ### [1.1.4](https://github.com/Val-istar-Guo/keq/compare/v1.1.3...v1.1.4) (2021-04-26)
 
 
