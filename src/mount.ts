@@ -15,7 +15,7 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
   mounter.pathname = arg => compose(mounter, pathname(arg))
   mounter.location = () => compose(mounter, location())
   mounter.host = arg => compose(mounter, host(arg))
-  mounter.module = arg => compose(mounter, mountModule(arg))
+  mounter.module = arg => compose(mounter, module(arg))
 
   return mounter
 }
@@ -37,7 +37,7 @@ export function host(host: string): Mounter {
   return createMounter(ctx => ctx.url.host === host)
 }
 
-export function mountModule(moduleName: string): Mounter {
+export function module(moduleName: string): Mounter {
   if (moduleName === '') throw new Error('Module name should not be empty')
   return createMounter(ctx => ctx.options.module && ctx.options.module === moduleName)
 }
