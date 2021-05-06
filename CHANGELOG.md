@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/Val-istar-Guo/keq/compare/v1.2.0...v1.2.1) (2021-05-06)
+
+
+### Bug Fixes
+
+* cannot find mount.module ([2031351](https://github.com/Val-istar-Guo/keq/commit/203135174904f0e4c23c1988021e5502fb018b07))
+
 ## [1.2.0](https://github.com/Val-istar-Guo/keq/compare/v1.1.4...v1.2.0) (2021-05-05)
 
 
