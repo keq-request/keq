@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://www.github.com/keq-request/keq/compare/v1.2.1...v1.2.2) (2021-05-07)
+
+
+### Bug Fixes
+
+* test ([3526b78](https://www.github.com/keq-request/keq/commit/3526b78919255e5edb834aeda76da2899a173ecb))
+
 ### [1.2.1](https://github.com/Val-istar-Guo/keq/compare/v1.2.0...v1.2.1) (2021-05-06)
 
 
