@@ -239,7 +239,8 @@ test('resolveWithOriginalResponse', async t => {
   t.is(fakeFetchAPI.callCount, 1)
   t.is(uri, fakeFetchAPI.getCall(0).args[0])
   t.deepEqual(body, JSON.parse(content))
-  t.true(res === originalResponse)
+  // NOTE: This options had be descripted. It will be proxy.
+  // t.true(res === originalResponse)
 })
 
 test('retry request', async t => {
@@ -303,7 +304,6 @@ test('request with params', async t => {
     ...urlobj,
     pathname: `/api/${key}/value`,
   })
-
 
 
   await request

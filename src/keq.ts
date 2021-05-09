@@ -14,6 +14,7 @@ import { getTypeByBody } from './get-type-by-body'
 import { Stream } from 'stream'
 import { getBoundaryByContentType, parseFormData } from './parse-form-data'
 import { compile } from 'path-to-regexp'
+import * as R from 'ramda'
 
 
 type RetryCallback = (error: Error) => void
@@ -275,7 +276,29 @@ export class Keq<T> {
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
-    ctx.res = res
+    if (!isBrowser) {
+      // node-fetch does not implement Response.formData()
+      res.formData = async function() {
+        const str = await this.text()
+        const contentType = this.headers.get('content-type')
+        if (!contentType) throw new Error('Cannot parse form-data body without content-type')
+        const boundary = getBoundaryByContentType(contentType)
+        return parseFormData(str, boundary)
+      }
+    }
+
+    const cache: Record<string, Promise<any>> = {}
+    ctx.res = new Proxy(res, {
+      get(target, property) {
+        if (!(typeof property === 'string' && ['json', 'formData', 'text'].includes(property))) return target[property]
+
+        return () => {
+          if (!(property in cache)) cache[property] = target[property]()
+
+          return cache[property].then(data => R.clone(data))
+        }
+      },
+    })
 
     if (ctx.options.resolveWithFullResponse) {
       ctx.output = ctx.response
@@ -347,22 +370,7 @@ export class Keq<T> {
 
 
       get response() {
-        if (!this.res) return this.res
-
-        const res = this.res.clone()
-
-        if (!isBrowser) {
-          // node-fetch does not implement Response.formData()
-          res.formData = async function() {
-            const str = await this.text()
-            const contentType = this.headers.get('content-type')
-            if (!contentType) throw new Error('Cannot parse form-data body without content-type')
-            const boundary = getBoundaryByContentType(contentType)
-            return parseFormData(str, boundary)
-          }
-        }
-
-        return res
+        return this.res
       },
     }
 

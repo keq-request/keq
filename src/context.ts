@@ -30,12 +30,16 @@ export interface BuildInOptions {
   /**
    * get original object, defaulted `false`
    * resolveWithFullResponse has a higher priority than resolveWithOriginalResponse
+   *
+   * @descripted
    */
   resolveWithOriginalResponse?: boolean
 
   /**
    * the maximum number of bytes to store in the internal buffer
    * before ceasing to read from the underlying resource.
+   *
+   * @descripted
    */
   highWaterMark?: number
 }
