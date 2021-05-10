@@ -325,9 +325,11 @@ await request
 **Option**                    | **Description**
 :-----------------------------|:---------------------------
 `resolveWithFullResponse`     | Get the [`Response`][Response MDN] Object. This is the `.clone()` of original [`Response`][Response MDN]
-`resolveWithOriginalResponse` | Get the origin [`Response`][Response MDN]
 `fetchAPI`                    | Replace the defaulted `fetch` function used by `Keq`.
-`highWaterMark`               | the maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. [See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
+`resolveWithOriginalResponse` | **DEPRECATED** Get the origin [`Response`][Response MDN]
+`highWaterMark`               | **DEPRECATED** The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. [See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
+
+###### The options with **DEPRECATED** will be removed in next major version.
 
 ### Middleware
 
