@@ -11,6 +11,7 @@ jobs:
       - uses: GoogleCloudPlatform/release-please-action@v2
         id: release
         with:
+          token: ${{secrets.RELEASE_TOKEN}}
           release-type: node
           package-name: "keq"
       - uses: actions/checkout@v2
