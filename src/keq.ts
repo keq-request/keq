@@ -245,8 +245,12 @@ export class Keq<T> {
     const urlobj = url.parse(url.format(ctx.request.url))
 
     if (urlobj.pathname) {
-      const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
-      urlobj.pathname = toPath(ctx.request.url.params)
+      try {
+        const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
+        urlobj.pathname = toPath(ctx.request.url.params)
+      } catch (e) {
+        throw new Error(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message as string}.`)
+      }
     }
 
     const uri = url.format(urlobj)
@@ -395,7 +399,7 @@ export class Keq<T> {
       } catch (e) {
         times -= 1
         error = e
-        if (this.retryCallback) await this.retryCallback(e)
+        if (this.retryCallback) await this.retryCallback(e as Error)
       }
     }
     throw error
