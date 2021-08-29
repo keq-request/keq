@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://www.github.com/keq-request/keq/compare/v1.2.2...v1.3.0) (2021-08-29)
+
+
+### Features
+
+* add an error message that the routing parameters cannot be resolved ([ea267cb](https://www.github.com/keq-request/keq/commit/ea267cbfb6f15306adf730e9ab61fd1ed4cfc3e9))
+
 ### [1.2.2](https://www.github.com/keq-request/keq/compare/v1.2.1...v1.2.2) (2021-05-09)
 
 
