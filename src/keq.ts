@@ -220,6 +220,7 @@ export class Keq<T> {
 
   public option(key: 'resolveWithOriginalResponse', value?: true): Keq<Response>
   public option(key: 'resolveWithFullResponse', value?: true): Keq<Response>
+  public option(key: 'redirect', value?: BuildInOptions['redirect']): Keq<T>
   public option(key: keyof BuildInOptions, value?: any): Keq<T>
   public option(key: string, value?: any): Keq<T>
   public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> | Keq<Response> {
@@ -331,6 +332,8 @@ export class Keq<T> {
       options: {},
     }
 
+    if (this.opts.redirect) request.options.redirect = this.opts.redirect
+
     const ctx: Context = {
       request,
 
@@ -403,9 +406,6 @@ export class Keq<T> {
       }
     }
     throw error
-
-    // if (times === 0) throw error
-    // return result
   }
 
   /**
