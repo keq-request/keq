@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://www.github.com/keq-request/keq/compare/v1.3.0...v1.3.1) (2021-10-16)
+
+
+### Bug Fixes
+
+* cannot get middleware matcher interface ([e285b73](https://www.github.com/keq-request/keq/commit/e285b7391238194a652e2bdbf0f1a9d8174be83c))
+
 ## [1.3.0](https://www.github.com/keq-request/keq/compare/v1.2.2...v1.3.0) (2021-08-29)
 
 
