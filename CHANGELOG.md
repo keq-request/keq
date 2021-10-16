@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://www.github.com/keq-request/keq/compare/v1.3.1...v1.4.0) (2021-10-16)
+
+
+### Features
+
+* add redirect option ([55931ce](https://www.github.com/keq-request/keq/commit/55931ce10bd02cb07e49240e2d3940297547e850)), closes [#14](https://www.github.com/keq-request/keq/issues/14)
+
 ### [1.3.1](https://www.github.com/keq-request/keq/compare/v1.3.0...v1.3.1) (2021-10-16)
 
 
