@@ -1,5 +1,5 @@
 export * from './request'
-export { Middleware, compose } from './middleware'
+export { Middleware, MiddlewareMatcher, compose } from './middleware'
 export * from './keq'
 export * from './context'
 export * from './polyfill'
