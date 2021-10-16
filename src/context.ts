@@ -24,8 +24,17 @@ export interface BuildInOptions {
    * https://www.npmjs.com/package/cross-fetch
    */
   fetchAPI?: typeof fetch
+
   /** get response object, defaulted `false` */
   resolveWithFullResponse?: boolean
+
+  /**
+   * The mode for how redirects are handled.
+   * https://developer.mozilla.org/en-US/docs/Web/API/Request/redirect
+   *
+   * @defaulted 'follow'
+   */
+  redirect?: 'follow' | 'error' | 'manual'
 
   /**
    * get original object, defaulted `false`
