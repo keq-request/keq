@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://www.github.com/keq-request/keq/compare/v1.5.0...v1.6.0) (2021-11-26)
+
+
+### Features
+
+* can stop retry ([527678f](https://www.github.com/keq-request/keq/commit/527678f85202a84deb030c0337a92e5f1db7f19a))
+
 ## [1.5.0](https://www.github.com/keq-request/keq/compare/v1.4.0...v1.5.0) (2021-11-26)
 
 
