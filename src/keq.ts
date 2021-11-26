@@ -18,7 +18,7 @@ import * as R from 'ramda'
 import { sleep } from './sleep'
 
 
-type RetryCallback = (error: Error) => void | Promise<boolean>
+type RetryCallback = (error: Error) => void | boolean | Promise<void | boolean>
 
 export class Keq<T> {
   private requestPromise?: Promise<T>
