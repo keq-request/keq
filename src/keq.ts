@@ -15,6 +15,7 @@ import { Stream } from 'stream'
 import { getBoundaryByContentType, parseFormData } from './parse-form-data'
 import { compile } from 'path-to-regexp'
 import * as R from 'ramda'
+import { sleep } from './sleep'
 
 
 type RetryCallback = (error: Error) => void
@@ -29,7 +30,8 @@ export class Keq<T> {
   private opts: Options = { resolveWithFullResponse: false, resolveWithOriginalResponse: false }
   private body: KeqBody
   private serializeBodyFn: SerializeBodyFn = serializeBodyByMap(serializeMap)
-  private retryTime = 0
+  private retryTimes = 0
+  private initialRetryTime = 0
   private retryCallback?: RetryCallback
 
   public constructor(urlObj: KeqURL, method: RequestMethod, middlewares: Middleware[]) {
@@ -236,9 +238,28 @@ export class Keq<T> {
     return this
   }
 
-  public retry(retryTime: number, retryCallback?: RetryCallback): Keq<T> {
-    this.retryTime = retryTime
-    this.retryCallback = retryCallback
+  /**
+   *
+   * @param retryTimes Max number of retries per call
+   * @param initialRetryTime Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
+   * @param retryCallback Will be called after request failed
+   */
+  public retry(retryTime: number, retryCallback?: RetryCallback): Keq<T>
+  public retry(retryTime: number, initialRetryTime: number, retryCallback?: RetryCallback): Keq<T>
+  public retry(
+    retryTimes: number,
+    initialRetryTimeOrRetryCallback?: number | RetryCallback,
+    retryCallback?: RetryCallback,
+  ): Keq<T> {
+    this.retryTimes = retryTimes
+
+    if (typeof initialRetryTimeOrRetryCallback === 'number') {
+      this.initialRetryTime = initialRetryTimeOrRetryCallback
+      this.retryCallback = retryCallback
+    } else if (typeof initialRetryTimeOrRetryCallback === 'function') {
+      this.retryCallback = initialRetryTimeOrRetryCallback
+    }
+
     return this
   }
 
@@ -390,7 +411,7 @@ export class Keq<T> {
   }
 
   public async end(): Promise<T> {
-    let times = this.retryTime + 1
+    let times = this.retryTimes + 1
     let result: T
     let error: any
 
@@ -403,6 +424,7 @@ export class Keq<T> {
         times -= 1
         error = e
         if (this.retryCallback) await this.retryCallback(e as Error)
+        if (this.initialRetryTime) await sleep(this.initialRetryTime)
       }
     }
     throw error

@@ -294,6 +294,23 @@ The `callback(obj, ctx)` arguments：
  `obj`(first argument)                         | Un-serializing request body
  `ctx`(second argument)                        | Keq Context
 
+### Request Retry
+
+No retry by default, invoke `.retry(times[, initialTime[, callback]])`  to set retry parameters
+
+ Parameter   | Description
+:------------|:---------------
+ times       | Max number of retries per call.
+ initialTime | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor).
+ callback    | Will be called after request failed.
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('http://example.com')
+  .retry(2, 1000, () => {})
+```
 
 
 ### Keq Internal Options
