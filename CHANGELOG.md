@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://www.github.com/keq-request/keq/compare/v1.4.0...v1.5.0) (2021-11-26)
+
+
+### Features
+
+* add intial retry time option ([accb899](https://www.github.com/keq-request/keq/commit/accb899dbe3c96d7279e8ea4126554d5e940331f))
+
 ## [1.4.0](https://www.github.com/keq-request/keq/compare/v1.3.1...v1.4.0) (2021-10-16)
 
 
