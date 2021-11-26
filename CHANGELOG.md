@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://www.github.com/keq-request/keq/compare/v1.6.0...v1.6.1) (2021-11-26)
+
+
+### Bug Fixes
+
+* retryCallback interface ([aa25c99](https://www.github.com/keq-request/keq/commit/aa25c992c5fd1bb21882699b6ce9b3c8b038adcc))
+
 ## [1.6.0](https://www.github.com/keq-request/keq/compare/v1.5.0...v1.6.0) (2021-11-26)
 
 
