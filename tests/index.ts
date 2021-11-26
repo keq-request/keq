@@ -243,7 +243,7 @@ test('resolveWithOriginalResponse', async t => {
   // t.true(res === originalResponse)
 })
 
-test('retry request', async t => {
+test('retry twice request', async t => {
   const fakeFetchAPI = sinon.fake.throws(new Error())
   const fakeCallback = sinon.fake()
 
@@ -256,6 +256,21 @@ test('retry request', async t => {
 
   t.is(fakeCallback.callCount, 2)
   t.is(fakeFetchAPI.callCount, 2)
+})
+
+test('stop retry request', async t => {
+  const fakeFetchAPI = sinon.fake.throws(new Error())
+  const fakeCallback = sinon.fake(() => false)
+
+  try {
+    await request
+      .get('http://example.com/')
+      .retry(1, fakeCallback)
+      .options({ fetchAPI: fakeFetchAPI })
+  } catch (e) {}
+
+  t.is(fakeCallback.callCount, 1)
+  t.is(fakeFetchAPI.callCount, 1)
 })
 
 test('consume response steam multiple times', async t => {

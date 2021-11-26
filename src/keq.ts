@@ -18,7 +18,7 @@ import * as R from 'ramda'
 import { sleep } from './sleep'
 
 
-type RetryCallback = (error: Error) => void
+type RetryCallback = (error: Error) => void | Promise<boolean>
 
 export class Keq<T> {
   private requestPromise?: Promise<T>
@@ -423,7 +423,12 @@ export class Keq<T> {
       } catch (e) {
         times -= 1
         error = e
-        if (this.retryCallback) await this.retryCallback(e as Error)
+        if (this.retryCallback) {
+          const continueRetry = await this.retryCallback(e as Error)
+          if (continueRetry === false) {
+            break
+          }
+        }
         if (this.initialRetryTime) await sleep(this.initialRetryTime)
       }
     }

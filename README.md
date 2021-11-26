@@ -302,7 +302,7 @@ No retry by default, invoke `.retry(times[, initialTime[, callback]])`  to set r
 :------------|:---------------
  times       | Max number of retries per call.
  initialTime | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor).
- callback    | Will be called after request failed.
+ callback    | Will be called after request failed (Before retry). If it return `false`, stop retrying.
 
 ```javascript
 import { request } from 'keq'
