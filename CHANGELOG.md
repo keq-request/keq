@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.2](https://www.github.com/keq-request/keq/compare/v1.6.1...v1.6.2) (2021-11-30)
+
+
+### Bug Fixes
+
+* cannot parse response.body when response.status is 204 ([1b7e88d](https://www.github.com/keq-request/keq/commit/1b7e88d4112931298649086ca1aaa572a5665422)), closes [#21](https://www.github.com/keq-request/keq/issues/21)
+
 ### [1.6.1](https://www.github.com/keq-request/keq/compare/v1.6.0...v1.6.1) (2021-11-26)
 
 
