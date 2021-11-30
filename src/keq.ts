@@ -330,12 +330,15 @@ export class Keq<T> {
       ctx.output = ctx.response
     } else if (ctx.options.resolveWithOriginalResponse) {
       ctx.output = ctx.res
+    } else if (res.status === 204) {
+      // 204: NO CONTENT
+      ctx.output = ctx.response && ctx.response.body
     } else {
       const contentType = res.headers.get('content-type') || ''
       if (contentType.includes('application/json')) ctx.output = ctx.response && await ctx.response.json()
       else if (contentType.includes('multipart/form-data')) ctx.output = ctx.response && await ctx.response.formData()
       else if (contentType.includes('plain/text')) ctx.output = ctx.response && await ctx.response.text()
-      else ctx.output = ctx.response && await ctx.response.body
+      else ctx.output = ctx.response && ctx.response.body
     }
   }
 

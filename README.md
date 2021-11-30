@@ -86,6 +86,7 @@ await request.del('https://example.com/search')
 and return `body` of [`Response`][Response MDN] by defaulted.
 Add option `resolveWithFullResponse` to get the origin  [`Response`][Response MDN] Object.
 
+
 ```javascript
 import { request } from 'keq'
 
@@ -95,6 +96,8 @@ const response = await request
 
 const body = await response.json()
 ```
+
+###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated metainformation.
 
 
 ### Setting header fields
