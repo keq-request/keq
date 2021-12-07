@@ -316,12 +316,17 @@ export class Keq<T> {
     const cache: Record<string, Promise<any>> = {}
     ctx.res = new Proxy(res, {
       get(target, property) {
-        if (!(typeof property === 'string' && ['json', 'formData', 'text'].includes(property))) return target[property]
+        if (!(typeof property === 'string' && ['json', 'formData', 'text', 'blob'].includes(property))) return target[property]
 
         return () => {
           if (!(property in cache)) cache[property] = target[property]()
 
-          return cache[property].then(data => R.clone(data))
+          return cache[property].then(data => {
+            if (!isBrowser && data instanceof Buffer) return Buffer.from(data)
+            else if (isBrowser && data instanceof Blob) return data.slice()
+
+            return R.clone(data)
+          })
         }
       },
     })
