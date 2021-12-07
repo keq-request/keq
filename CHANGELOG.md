@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.3](https://www.github.com/keq-request/keq/compare/v1.6.2...v1.6.3) (2021-12-07)
+
+
+### Bug Fixes
+
+* cannot invoke .blob() on the proxy response ([4e21c90](https://www.github.com/keq-request/keq/commit/4e21c90e47c8e84dfb3637e9aab5c8dd63a6e43f))
+
 ### [1.6.2](https://www.github.com/keq-request/keq/compare/v1.6.1...v1.6.2) (2021-11-30)
 
 
