@@ -17,8 +17,10 @@
 //   )
 // }
 
+import { isBlob } from './form-data-node/util/is'
 
-export function isFormData(object): boolean {
+
+export function isFormData(object: any): boolean {
   return (
     typeof object === 'object' &&
     typeof object.append === 'function' &&
@@ -33,19 +35,10 @@ export function isFormData(object): boolean {
   )
 }
 
-// export function isBlob(object): boolean {
-//   return (
-//     typeof object === 'object' &&
-//     typeof object.slice === 'function' &&
-//     typeof object.stream === 'function' &&
-//     typeof object.text === 'function' &&
-//     typeof object.arrayBuffer === 'function'
-//   )
-// }
-
 export const isBrowser = typeof window !== 'undefined'
 
-export function isFile(object): boolean {
+export function isFile(object: any): boolean {
   if (isBrowser) return object instanceof Blob
-  else return object instanceof Buffer
+
+  return object instanceof Buffer || isBlob(object)
 }
