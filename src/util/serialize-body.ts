@@ -1,9 +1,6 @@
-import { Context } from './context'
-import { FormData } from './polyfill'
+import { KeqBody, SerializeBodyFn } from '@/types'
+import { FormData } from '@/polyfill'
 
-
-export type SerializeBodyFn = (value: KeqBody, ctx: Context) => any
-export type KeqBody = Record<string, any> | any[] | undefined
 
 export interface SerializeMap {
   [key: string]: (body: KeqBody) => any
@@ -11,6 +8,7 @@ export interface SerializeMap {
 
 export const serializeMap: SerializeMap = {
   'application/json': body => body ? JSON.stringify(body) : body,
+
   'multipart/form-data': body => {
     if (!body) return
     if (Array.isArray(body)) throw new Error('FormData cannot send array')
@@ -31,6 +29,7 @@ export const serializeMap: SerializeMap = {
      */
     return form['stream'] || form
   },
+
   'application/x-www-form-urlencoded': body => {
     if (!body) return
     if (Array.isArray(body)) return
@@ -49,13 +48,14 @@ export const serializeMap: SerializeMap = {
   },
 }
 
-export function serializeBodyByMap(map: SerializeMap): SerializeBodyFn {
-  return function innerSerializeBodyFn(value: KeqBody, ctx: Context): any {
-    const contentType = ctx.request.headers.get('content-type')
-    if (!contentType) return value
 
-    const type = Object.keys(map).find(item => contentType.includes(item))
-    if (!type) return value
-    else return serializeMap[type](value)
-  }
+export const serializeBody: SerializeBodyFn = (body, ctx) => {
+  const contentType = ctx.request.headers.get('content-type')
+
+  if (!contentType) return body
+
+  const type = Object.keys(serializeMap).find(item => contentType.includes(item))
+  if (!type) return body
+  else return serializeMap[type](body)
 }
+

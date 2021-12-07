@@ -1,8 +1,12 @@
-import { Context } from './context'
+import {
+  Context,
+  InnerMiddleware,
+  Middleware,
+  MiddlewareMatcher,
+} from '@/types'
+import { Exception } from '@/exception'
 
-export type InnerMiddleware = () => Promise<void>
-export type Middleware = (ctx: Context, next: InnerMiddleware) => Promise<void>
-export type MiddlewareMatcher = (ctx: Context) => boolean
+
 export const matchHost = (host: string): MiddlewareMatcher => ctx => ctx.request.url.host === host
 export function matchMiddleware(matcher: MiddlewareMatcher, middleware: Middleware): Middleware {
   return async(ctx, next) => {
@@ -17,7 +21,7 @@ export function wrapMiddleware(middleware: Middleware, ctx: Context, next: Inner
 }
 
 export function compose(middlewares: Middleware[]): Middleware {
-  if (!middlewares.length) throw new Error('At least one middleware')
+  if (!middlewares.length) throw new Exception('At least one middleware')
 
   let result: Middleware = middlewares[0]
   const len = middlewares.length

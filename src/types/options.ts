@@ -1,20 +1,13 @@
-import { UrlWithParsedQuery } from 'url'
-import { KeqBody } from './serialize'
-
-
-export type RequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch'
-export interface KeqURL extends UrlWithParsedQuery {
-  params: Record<string, string | number>
+export interface FormDataFieldOptions {
+  size?: number
+  type?: string
+  lastModified?: number
+  filename?: string
 }
 
-export interface RequestContext {
-  url: KeqURL
-  method: RequestMethod
-  body: KeqBody
-  headers: Headers
-
-  // Additional Fetch API options
-  options: Record<string, any>
+interface BaseOptions extends BuildInOptions {
+  /** options extends by middleware */
+  [key: string]: any
 }
 
 export interface BuildInOptions {
@@ -53,11 +46,6 @@ export interface BuildInOptions {
   highWaterMark?: number
 }
 
-interface BaseOptions extends BuildInOptions {
-  /** options extends by middleware */
-  [key: string]: any
-}
-
 export interface OptionsWithFullResponse extends BaseOptions {
   resolveWithFullResponse: true
 }
@@ -67,25 +55,3 @@ export interface OptionsWithoutFullResponse extends BaseOptions {
 }
 
 export type Options = OptionsWithFullResponse | OptionsWithoutFullResponse
-
-export interface Context {
-  request: RequestContext
-  res?: Response
-
-  /** the result get by user */
-  output: any
-
-  options: Required<Options>
-
-  /** delegate res */
-  response?: Response
-
-  /** delegate request */
-  url: RequestContext['url']
-  query: RequestContext['url']['query']
-  headers: RequestContext['headers']
-  body: RequestContext['body']
-
-  /** extends by middleware */
-  [key: string]: any
-}

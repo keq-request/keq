@@ -1,24 +1,47 @@
 import * as url from 'url'
 import fetch, { Headers } from 'cross-fetch'
 import * as clone from 'clone'
-import { Middleware, MiddlewareMatcher, matchHost, matchMiddleware, compose } from './middleware'
-import { Context, RequestContext, Options, RequestMethod, BuildInOptions, OptionsWithFullResponse, OptionsWithoutFullResponse, KeqURL } from './context'
-import { SerializeBodyFn, serializeBodyByMap, serializeMap, KeqBody } from './serialize'
-import { encodeBase64 } from './base64'
-import { messages } from './const'
-import { FormData } from './polyfill'
-import { isFormData, isFile, isBrowser } from './utils'
-import { FormDataFieldOptions } from './form-data-fields'
-import { fixType, ShorthandContentType } from './fix-type'
-import { getTypeByBody } from './get-type-by-body'
-import { Stream } from 'stream'
-import { getBoundaryByContentType, parseFormData } from './parse-form-data'
-import { compile } from 'path-to-regexp'
 import * as R from 'ramda'
-import { sleep } from './sleep'
+import {
+  KeqURL,
+  KeqBody,
+  Context,
+  RequestContext,
+  SerializeBodyFn,
+  RequestMethod,
+  Options,
+  BuildInOptions,
+  OptionsWithFullResponse,
+  OptionsWithoutFullResponse,
+  Middleware,
+  MiddlewareMatcher,
+  ShorthandContentType,
+  FormDataFieldOptions,
+  RetryCallback,
+} from '@/types'
+import {
+  Exception,
+  FileExpectedException,
+  OverwriteArrayBodyException,
+  UnknowContentTypeException,
+} from '@/exception'
+import {
+  isFormData,
+  isFile,
+  isBrowser,
+  encodeBase64,
+  sleep,
+  inferContentTypeByBody,
+  fixContentType,
+  getBoundaryByContentType,
+  parseFormData,
+  serializeBody,
+} from '@/util'
+import { matchHost, matchMiddleware, compose } from './middleware'
+import { FormData } from './polyfill'
+import { Stream } from 'stream'
+import { compile } from 'path-to-regexp'
 
-
-type RetryCallback = (error: Error) => void | boolean | Promise<void | boolean>
 
 export class Keq<T> {
   private requestPromise?: Promise<T>
@@ -29,7 +52,7 @@ export class Keq<T> {
   private middlewares: Middleware[] = []
   private opts: Options = { resolveWithFullResponse: false, resolveWithOriginalResponse: false }
   private body: KeqBody
-  private serializeBodyFn: SerializeBodyFn = serializeBodyByMap(serializeMap)
+  private serializeBodyFn: SerializeBodyFn = serializeBody
   private retryTimes = 0
   private initialRetryTime = 0
   private retryCallback?: RetryCallback
@@ -65,8 +88,8 @@ export class Keq<T> {
    * Setting the Content-Type
    */
   public type(contentType: ShorthandContentType | string): Keq<T> {
-    const type = fixType(contentType)
-    if (!type) throw new Error(messages.unknowContentType)
+    const type = fixContentType(contentType)
+    if (!type) throw new UnknowContentTypeException()
     this.headers.set('Content-Type', type)
 
     return this
@@ -106,11 +129,11 @@ export class Keq<T> {
    */
   public send(value: FormData | Record<string, any> | any[] | string): Keq<T> {
     if (Array.isArray(this.body)) {
-      throw new Error('Cannot merge or overwrite body. Because it has been set as an array. ')
+      throw new Exception('Cannot merge or overwrite body. Because it has been set as an array. ')
     }
 
     if (isFormData(value)) {
-      if (Array.isArray(this.body)) throw new Error(messages.overwriteArrayBodyError)
+      if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
       this.appendFormDate(value as FormData)
       this.setType('form-data')
     } else if (typeof value === 'object') {
@@ -119,7 +142,7 @@ export class Keq<T> {
       this.setType('json')
     } else if (typeof value === 'string') {
       const arr = value.split('=')
-      if (arr.length !== 2) throw new Error('string is not expect')
+      if (arr.length !== 2) throw new Exception('string is not expect')
       if (!this.body) this.body = {}
       this.body[arr[0]] = arr[1]
       this.setType('form')
@@ -132,7 +155,7 @@ export class Keq<T> {
   public field(arg1: Record<string, string>): Keq<T>
   public field(arg1: string | Record<string, string>, arg2?: any): Keq<T> {
     if (Array.isArray(this.body)) {
-      throw new Error('Cannot merge or overwrite body. Because it has been set as an array. ')
+      throw new Exception('Cannot merge or overwrite body. Because it has been set as an array. ')
     }
 
     const formData = new FormData()
@@ -143,7 +166,7 @@ export class Keq<T> {
     } else if (arg2) {
       formData.append(arg1, arg2)
     } else {
-      throw new Error('Need value')
+      throw new Exception('Need value')
     }
 
     this.appendFormDate(formData as FormData)
@@ -155,13 +178,13 @@ export class Keq<T> {
   public attach(key: string, file: Blob | File | Buffer | Stream, filename: string): Keq<T>
   public attach(key: string, file: Blob | File | Buffer | Stream, options: FormDataFieldOptions): Keq<T>
   public attach(key: string, file: Blob | File | Buffer | Stream, arg3: string | FormDataFieldOptions = 'blob'): Keq<T> {
-    if (Array.isArray(this.body)) throw new Error(messages.overwriteArrayBodyError)
+    if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
 
     if (!this.body) this.body = {}
-    if (!isFile(file)) throw new Error(messages.fileExpected)
+    if (!isFile(file)) throw new FileExpectedException()
 
     const formData = new FormData()
-    if (isBrowser && typeof arg3 === 'object') formData.set(key, file as any, arg3.filename)
+    if (isBrowser() && typeof arg3 === 'object') formData.set(key, file as any, arg3.filename)
     else formData.set(key, file as any, arg3 as any)
 
     this.appendFormDate(formData as FormData)
@@ -197,7 +220,7 @@ export class Keq<T> {
         this.urlObj.query[k] = String(v)
       }
     } else {
-      throw new Error('please set query value')
+      throw new Exception('please set query value')
     }
     return this
   }
@@ -214,7 +237,7 @@ export class Keq<T> {
         this.urlObj.params[k] = v
       }
     } else {
-      throw new Error('please set params value')
+      throw new Exception('please set params value')
     }
 
     return this
@@ -271,7 +294,7 @@ export class Keq<T> {
         const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
         urlobj.pathname = toPath(ctx.request.url.params)
       } catch (e) {
-        throw new Error(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message as string}.`)
+        throw new Exception(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message as string}.`)
       }
     }
 
@@ -285,7 +308,7 @@ export class Keq<T> {
     }
 
     if (!fetchOptions.headers.has('Content-Type') && fetchOptions.body) {
-      fetchOptions.headers.set('Content-Type', getTypeByBody(fetchOptions.body))
+      fetchOptions.headers.set('Content-Type', inferContentTypeByBody(fetchOptions.body))
     }
 
     if (ctx.options.highWaterMark) {
@@ -302,12 +325,12 @@ export class Keq<T> {
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
-    if (!isBrowser) {
+    if (!isBrowser()) {
       // node-fetch does not implement Response.formData()
       res.formData = async function() {
         const str = await this.text()
         const contentType = this.headers.get('content-type')
-        if (!contentType) throw new Error('Cannot parse form-data body without content-type')
+        if (!contentType) throw new Exception('Cannot parse form-data body without content-type')
         const boundary = getBoundaryByContentType(contentType)
         return parseFormData(str, boundary)
       }
@@ -322,8 +345,8 @@ export class Keq<T> {
           if (!(property in cache)) cache[property] = target[property]()
 
           return cache[property].then(data => {
-            if (!isBrowser && data instanceof Buffer) return Buffer.from(data)
-            else if (isBrowser && data instanceof Blob) return data.slice()
+            if (!isBrowser() && data instanceof Buffer) return Buffer.from(data)
+            else if (isBrowser() && data instanceof Blob) return data.slice()
 
             return R.clone(data)
           })

@@ -1,13 +1,10 @@
-import { MiddlewareMatcher } from './middleware'
+import {
+  MiddlewareMatcher,
+  Context,
+  Mounter,
+} from '@/types'
+import { Exception } from '@/exception'
 import * as picomatch from 'picomatch'
-import { Context } from './context'
-
-interface Mounter extends MiddlewareMatcher {
-  pathname(matcher: string | RegExp): Mounter
-  location(): Mounter
-  host(host: string): Mounter
-  module(moduleName: string): Mounter
-}
 
 
 function createMounter(matcher: MiddlewareMatcher): Mounter {
@@ -25,6 +22,9 @@ export function location(): Mounter {
   return createMounter((ctx: Context) => !ctx.request.url.host)
 }
 
+/**
+ * @param matcher glob or regexp
+ */
 export function pathname(matcher: string | RegExp): Mounter {
   return createMounter(ctx => {
     const pathname = ctx.url.pathname || '/'
@@ -38,7 +38,7 @@ export function host(host: string): Mounter {
 }
 
 export function module(moduleName: string): Mounter {
-  if (moduleName === '') throw new Error('Module name should not be empty')
+  if (moduleName === '') throw new Exception('Module name should not be empty')
   return createMounter(ctx => ctx.options.module && ctx.options.module === moduleName)
 }
 
