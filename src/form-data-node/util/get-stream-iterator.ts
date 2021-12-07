@@ -1,5 +1,5 @@
 import readableStreamIterator from './readable-stream-iterator'
-import { isWHATWGReadable } from './is'
+import { isWHATWGReadable } from '@/util'
 
 /**
  * Returns stream iterator for given stream-like object

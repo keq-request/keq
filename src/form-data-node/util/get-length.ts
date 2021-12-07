@@ -1,6 +1,8 @@
 // import { promises as fs } from 'fs'
 
-import { isReadStream, isStream, isBlob } from './is'
+import { isReadStream, isStream, isBlob } from '@/util'
+import { Exception } from '@/exception'
+
 
 const { isBuffer } = Buffer
 
@@ -22,7 +24,7 @@ async function getLength(value): Promise<any> {
     /**
      * In order to compatible browser
      */
-    throw new Error('Read Stream is not supported by Keq FormData')
+    throw new Exception('Read Stream is not supported by Keq FormData')
   }
 
   if (isBuffer(value)) {

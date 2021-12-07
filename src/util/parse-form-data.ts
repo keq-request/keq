@@ -1,17 +1,17 @@
-import { FormData } from './polyfill'
+import { FormData } from '@/polyfill'
+import { Exception } from '@/exception'
 import * as MultipartParser from 'formidable/src/parsers/Multipart'
 
 
-export function getBoundaryByContentType(contentType: string): string {
-  const multipart = /multipart/i.test(contentType)
-
-  if (!multipart) throw new Error(`Cannot parse form-data body with content-type: ${contentType}`)
-
-  const m = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i,)
-  if (!m) throw new Error('bad content-type header, no multipart boundary')
-  return m[1] || m[2]
+interface Part {
+  name: string | null
+  headers: Record<string, string>
+  body: Buffer
+  filename: string | null
+  mime: string | null
+  readable: boolean
+  transferEncoding: string
 }
-
 
 function getFileName(headerValue): string | null {
   // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
@@ -23,16 +23,6 @@ function getFileName(headerValue): string | null {
   filename = filename.replace(/%22/g, '"')
   filename = filename.replace(/&#([\d]{4});/g, (_, code) => String.fromCharCode(code),)
   return filename
-}
-
-interface Part {
-  name: string | null
-  headers: Record<string, string>
-  body: Buffer
-  filename: string | null
-  mime: string | null
-  readable: boolean
-  transferEncoding: string
 }
 
 export function parseFormData(str: string, boundary: string, encoding = 'utf8'): Promise<FormData> {
@@ -137,7 +127,7 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
             break
           }
           default:
-            return reject(new Error('unknown transfer-encoding'))
+            return reject(new Exception('unknown transfer-encoding'))
         }
       } else if (name === 'end') {
         resolve(formData as FormData)
