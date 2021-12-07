@@ -1,4 +1,3 @@
-# Dist
 /lib
 /es
-*.js
+/dist

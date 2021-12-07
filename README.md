@@ -9,8 +9,8 @@
 [![version](https://img.shields.io/npm/v/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
 [![downloads](https://img.shields.io/npm/dm/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
 [![license](https://img.shields.io/npm/l/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![dependencies](https://img.shields.io/david/Val-istar-Guo/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![coveralls](https://img.shields.io/coveralls/github/Val-istar-Guo/keq.svg?style=flat-square)](https://coveralls.io/github/Val-istar-Guo/keq)
+[![dependencies](https://img.shields.io/david/keq-request/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
+[![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=flat-square)](https://coveralls.io/github/keq-request/keq)
 
 
 
@@ -482,13 +482,14 @@ Keq is inspired by SuperAgent and Koa.
 
 - [Superagent](https://visionmedia.github.io/superagent/#test-documentation)
 - [Koa](https://koajs.com/)
-<!-- addition -->
 
 ## Sponsor
 
 Support code development on patron.
 
 [![patron](https://c5.patreon.com/external/logo/become_a_patron_button@2x.png)](https://www.patreon.com/bePatron?u=22478507)
+<!-- addition -->
+
 
 ## Contributing & Development
 
