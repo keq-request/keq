@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.6](https://www.github.com/keq-request/keq/compare/v1.6.5...v1.6.6) (2021-12-13)
+
+
+### Bug Fixes
+
+* response cannot call .text, .json, .formData and .blob together ([fa1605a](https://www.github.com/keq-request/keq/commit/fa1605a911b05ac7ce3ecdb9f6d7805b4ced36f2))
+
 ### [1.6.5](https://www.github.com/keq-request/keq/compare/v1.6.4...v1.6.5) (2021-12-13)
 
 
