@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.5](https://www.github.com/keq-request/keq/compare/v1.6.4...v1.6.5) (2021-12-13)
+
+
+### Bug Fixes
+
+* iterator cannot be looped ([022ca72](https://www.github.com/keq-request/keq/commit/022ca72f88788980207bcb36114138ef292230cd))
+
 ### [1.6.4](https://www.github.com/keq-request/keq/compare/v1.6.3...v1.6.4) (2021-12-13)
 
 
