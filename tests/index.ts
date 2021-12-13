@@ -2,6 +2,7 @@ import test from 'ava'
 import * as sinon from 'sinon'
 import { request, Response, Middleware, FormData } from '../src'
 import * as url from 'url'
+import * as R from 'ramda'
 
 
 test('JSON Response', async t => {
@@ -9,7 +10,7 @@ test('JSON Response', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const urlObj = url.parse('http://test.com', true)
   const uri = url.format(urlObj)
@@ -37,7 +38,7 @@ test('Form-Data Response', async t => {
     'content-type': `multipart/form-data; boundary=${boundary.slice(2)}`,
     'content-length': String(content.length),
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const urlObj = url.parse('http://test.com', true)
   const uri = url.format(urlObj)
@@ -59,7 +60,7 @@ test('Form-Data Request', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const uri = url.format(url.parse('http://test.com'))
   const formData = new FormData()
@@ -101,7 +102,7 @@ test('x-www-form-urlencoded Request', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const uri = url.format(url.parse('http://test.com'))
   const body = await request
@@ -129,7 +130,7 @@ test('request with basic auth', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const uri = url.format(url.parse('http://test.com'))
 
@@ -151,7 +152,7 @@ test('request with middleware', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const uri = url.format(url.parse('http://test.com'))
 
@@ -203,7 +204,7 @@ test('resolveWithFullResponse', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const urlObj = url.parse('http://test.com', true)
   const uri = url.format(urlObj)
@@ -226,7 +227,7 @@ test('resolveWithOriginalResponse', async t => {
     'content-type': 'application/json',
   }
   const originalResponse = new Response(content, { headers: responseHeaders })
-  const fakeFetchAPI = sinon.fake(async() => originalResponse)
+  const fakeFetchAPI = sinon.fake(() => originalResponse)
 
   const urlObj = url.parse('http://test.com', true)
   const uri = url.format(urlObj)
@@ -274,11 +275,14 @@ test('stop retry request', async t => {
 })
 
 test('consume response steam multiple times', async t => {
-  const content = '{}'
+  // response body large than 1MB
+  const content = JSON.stringify({
+    key: R.repeat('x', 1024 * 1024).join(''),
+  })
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const uri = url.format(url.parse('http://test.com'))
 
@@ -290,7 +294,7 @@ test('consume response steam multiple times', async t => {
   const consume2: Middleware = async(ctx, next) => {
     await next()
     t.truthy(ctx.response)
-    t.notThrows(() => ctx.response && ctx.response.json())
+    t.notThrows(() => ctx.response && ctx.response.text())
   }
 
 
@@ -310,7 +314,7 @@ test('request with params', async t => {
   const responseHeaders = {
     'content-type': 'application/json',
   }
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   const key = 'keq'
   const urlobj = url.parse('http://test.com/api/:key/value')

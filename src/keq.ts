@@ -1,7 +1,6 @@
 import * as url from 'url'
 import fetch, { Headers } from 'cross-fetch'
 import * as clone from 'clone'
-import * as R from 'ramda'
 import {
   KeqURL,
   KeqBody,
@@ -38,7 +37,7 @@ import {
   serializeBody,
 } from '@/util'
 import { matchHost, matchMiddleware, compose } from './middleware'
-import { FormData } from './polyfill'
+import { FormData, Response } from './polyfill'
 import { Stream } from 'stream'
 import { compile } from 'path-to-regexp'
 
@@ -325,33 +324,33 @@ export class Keq<T> {
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
-    if (!isBrowser()) {
-      // node-fetch does not implement Response.formData()
-      res.formData = async function() {
-        const str = await this.text()
-        const contentType = this.headers.get('content-type')
-        if (!contentType) throw new Exception('Cannot parse form-data body without content-type')
-        const boundary = getBoundaryByContentType(contentType)
-        return parseFormData(str, boundary)
-      }
+    async function resFromData(this: Response): Promise<FormData> {
+      const str = await this.text()
+      const contentType = this.headers.get('content-type')
+      if (!contentType) throw new Exception('Cannot parse form-data body without content-type')
+      const boundary = getBoundaryByContentType(contentType)
+      return parseFormData(str, boundary)
     }
 
-    const cache: Record<string, Promise<any>> = {}
+    if (!isBrowser()) {
+      // node-fetch does not implement Response.formData()
+      res.formData = resFromData.bind(res)
+    }
+
+    let cache: ArrayBuffer | undefined
+
     ctx.res = new Proxy(res, {
       get(target, property) {
         if (!(typeof property === 'string' && ['json', 'formData', 'text', 'blob'].includes(property))) {
           return target[property] as unknown
         }
 
-        return () => {
-          if (!(property in cache)) cache[property] = target[property]()
+        return async() => {
+          if (!cache) cache = await target.arrayBuffer()
 
-          return cache[property].then(data => {
-            if (!isBrowser() && data instanceof Buffer) return Buffer.from(data)
-            else if (isBrowser() && data instanceof Blob) return data.slice()
-
-            return R.clone(data) as unknown
-          })
+          const res = new Response(cache, { headers: target.headers })
+          res.formData = resFromData.bind(res)
+          return await res[property]() as unknown
         }
       },
     })
