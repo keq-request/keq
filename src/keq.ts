@@ -120,7 +120,7 @@ export class Keq<T> {
   }
 
   private setType(contentType: ShorthandContentType | string): void {
-    if (!this.headers.has('Content-Type')) this.type(contentType)
+    if (!this.headers.has('Content-Type')) void this.type(contentType)
   }
 
   /**
@@ -212,12 +212,12 @@ export class Keq<T> {
   public query(key: string, value: string | number | string[] | number[]): Keq<T>
   public query(key: string | Record<string, string | number | string[] | number[]>, value?: string | number | string[] | number[]): Keq<T> {
     if (typeof key === 'string' && value !== undefined) {
-      this.urlObj.query[key] = String(value)
+      this.urlObj.query[key] = Array.isArray(value) ? value.map(item => String(item)) : String(value)
     } else if (typeof key === 'string' && value === undefined) {
       // ignore query
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
-        this.urlObj.query[k] = String(v)
+        this.urlObj.query[k] = Array.isArray(v) ? v.map(item => String(item)) : String(v)
       }
     } else {
       throw new Exception('please set query value')
@@ -257,7 +257,7 @@ export class Keq<T> {
   public options(opts: OptionsWithFullResponse): Keq<Response>
   public options(opts: Options): Keq<T> | Keq<Response>
   public options(opts: Options): Keq<T> | Keq<Response> {
-    this.opts = { ...this.options, ...opts }
+    this.opts = { ...this.opts, ...opts }
     return this
   }
 
@@ -294,7 +294,7 @@ export class Keq<T> {
         const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
         urlobj.pathname = toPath(ctx.request.url.params)
       } catch (e) {
-        throw new Exception(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message as string}.`)
+        throw new Exception(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message}.`)
       }
     }
 
@@ -339,7 +339,9 @@ export class Keq<T> {
     const cache: Record<string, Promise<any>> = {}
     ctx.res = new Proxy(res, {
       get(target, property) {
-        if (!(typeof property === 'string' && ['json', 'formData', 'text', 'blob'].includes(property))) return target[property]
+        if (!(typeof property === 'string' && ['json', 'formData', 'text', 'blob'].includes(property))) {
+          return target[property] as unknown
+        }
 
         return () => {
           if (!(property in cache)) cache[property] = target[property]()
@@ -348,7 +350,7 @@ export class Keq<T> {
             if (!isBrowser() && data instanceof Buffer) return Buffer.from(data)
             else if (isBrowser() && data instanceof Blob) return data.slice()
 
-            return R.clone(data)
+            return R.clone(data) as unknown
           })
         }
       },
@@ -438,7 +440,7 @@ export class Keq<T> {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     await middleware(ctx, async() => {})
 
-    return ctx.output
+    return ctx.output as T
   }
 
   public async end(): Promise<T> {

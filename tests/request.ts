@@ -9,7 +9,7 @@ test('Simple Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
   const uri = 'http://test.com/'
 
   await request({
@@ -28,7 +28,7 @@ test('GET Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .get('http://example.com')
@@ -46,7 +46,7 @@ test('POST Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .post('http://example.com')
@@ -65,7 +65,7 @@ test('PUT Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .put('http://example.com')
@@ -84,7 +84,7 @@ test('PATCH Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .patch('http://example.com')
@@ -102,7 +102,7 @@ test('HEAD Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .head('http://example.com')
@@ -120,7 +120,7 @@ test('DELETE Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .delete('http://example.com')
@@ -138,7 +138,7 @@ test('DEL Request', async t => {
     'content-type': 'application/json',
   }
 
-  const fakeFetchAPI = sinon.fake(async() => new Response(content, { headers: responseHeaders }))
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
 
   await request
     .del('http://example.com')
@@ -148,4 +148,26 @@ test('DEL Request', async t => {
   t.is(fakeFetchAPI.callCount, 1)
   t.is('DELETE', arg.method)
   t.is('http://example.com/', fakeFetchAPI.getCall(0).args[0])
+})
+
+test('Request with query', async t => {
+  const content = '{}'
+  const responseHeaders = {
+    'content-type': 'application/json',
+  }
+
+  const fakeFetchAPI = sinon.fake(() => new Response(content, { headers: responseHeaders }))
+
+  await request
+    .get('http://example.com')
+    .query('key1', 'value1')
+    .query('key2', ['arr_value_1', 'arr_value_2'])
+    .query({
+      key3: 'value3',
+      key4: ['arr_value_3', 'arr_value_4'],
+    })
+    .option('fetchAPI', fakeFetchAPI)
+
+  t.is(fakeFetchAPI.callCount, 1)
+  t.is(fakeFetchAPI.getCall(0).args[0], 'http://example.com/?key1=value1&key2=arr_value_1&key2=arr_value_2&key3=value3&key4=arr_value_3&key4=arr_value_4')
 })
