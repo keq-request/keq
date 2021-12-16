@@ -1,5 +1,4 @@
 export * from './keq-body'
-export * from './keq-url'
 
 export * from './request-method'
 export * from './request-creator'

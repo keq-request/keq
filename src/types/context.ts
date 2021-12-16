@@ -1,4 +1,4 @@
-import { KeqURL } from './keq-url'
+import { KeqURL } from '../keq-url'
 import { KeqBody } from './keq-body'
 import { RequestMethod } from './request-method'
 import { Options } from './options'

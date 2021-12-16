@@ -6,9 +6,9 @@ import {
   MiddlewareMatcher,
   Options,
 } from '@/types'
-import * as url from 'url'
 import * as clone from 'clone'
 import { matchMiddleware, matchHost } from './middleware'
+import { KeqURL } from './keq-url'
 
 
 const defaultOptions: Options = {}
@@ -17,70 +17,40 @@ const defaultOptions: Options = {}
 const middlewares: Middleware[] = []
 
 export const request: RequestCreator = function<T>(params: RequestParams, options: Options = defaultOptions): ReturnType<Keq<T>['options']> {
-  const urlObj = {
-    ...url.parse(params.url, true),
-    params: {},
-  }
-
-  const request = new Keq<T>(urlObj, 'get', middlewares)
+  const request = new Keq<T>(new KeqURL(params.url), 'get', middlewares)
   return request.options(options)
 }
 
 
 request.get = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-
-  const request = new Keq<T>(urlObj, 'get', clone(middlewares))
+  const request = new Keq<T>(new KeqURL(href), 'get', clone(middlewares))
   return request
 }
 
 request.put = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-  const request = new Keq<T>(urlObj, 'put', middlewares)
+  const request = new Keq<T>(new KeqURL(href), 'put', middlewares)
   return request
 }
 
 request.delete = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-  const request = new Keq<T>(urlObj, 'delete', middlewares)
+  const request = new Keq<T>(new KeqURL(href), 'delete', middlewares)
   return request
 }
 
 request.del = request.delete
 
 request.post = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-  const request = new Keq<T>(urlObj, 'post', middlewares)
+  const request = new Keq<T>(new KeqURL(href), 'post', middlewares)
   return request
 }
 
 request.head = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-  const request = new Keq<T>(urlObj, 'head', middlewares)
+  const request = new Keq<T>(new KeqURL(href), 'head', middlewares)
   return request
 }
 
 request.patch = function<T>(href: string): Keq<T> {
-  const urlObj = {
-    ...url.parse(href, true),
-    params: {},
-  }
-  const request = new Keq<T>(urlObj, 'patch', middlewares)
+  const request = new Keq<T>(new KeqURL(href), 'patch', middlewares)
   return request
 }
 

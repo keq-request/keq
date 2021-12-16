@@ -1,8 +1,6 @@
-import * as url from 'url'
 import fetch, { Headers } from 'cross-fetch'
 import * as clone from 'clone'
 import {
-  KeqURL,
   KeqBody,
   Context,
   RequestContext,
@@ -38,8 +36,8 @@ import {
 } from '@/util'
 import { matchHost, matchMiddleware, compose } from './middleware'
 import { FormData, Response } from './polyfill'
+import { KeqURL } from './keq-url'
 import { Stream } from 'stream'
-import { compile } from 'path-to-regexp'
 
 
 export class Keq<T> {
@@ -286,18 +284,7 @@ export class Keq<T> {
   }
 
   private async fetch(ctx: Context): Promise<void> {
-    const urlobj = url.parse(url.format(ctx.request.url))
-
-    if (urlobj.pathname) {
-      try {
-        const toPath = compile(urlobj.pathname, { encode: encodeURIComponent })
-        urlobj.pathname = toPath(ctx.request.url.params)
-      } catch (e) {
-        throw new Exception(`Cannot compile the params in ${urlobj.pathname}, Because ${(e as Error)?.message}.`)
-      }
-    }
-
-    const uri = url.format(urlobj)
+    const uri = ctx.request.url.toPath()
 
     const fetchOptions = {
       method: ctx.request.method.toUpperCase(),
@@ -377,9 +364,20 @@ export class Keq<T> {
       headers.set(key, value)
     })
 
+    const urlObj = this.urlObj.clone()
+
     const request: RequestContext = {
       method: this.method,
-      url: clone(this.urlObj),
+
+      get url(): KeqURL {
+        return urlObj
+      },
+
+      // will be removed at next major version
+      set url(value: { href: string; params: Record<string, any>; [key: string]: any}) {
+        urlObj.href = value.href
+        urlObj.params = value.params
+      },
       headers,
       body: clone(this.body),
       options: {},
