@@ -28,7 +28,7 @@ export function location(): Mounter {
 export function pathname(matcher: string | RegExp): Mounter {
   return createMounter(ctx => {
     const pathname = ctx.url.pathname || '/'
-    if (typeof matcher === 'string') return picomatch.isMatch(pathname, matcher)
+    if (typeof matcher === 'string') return picomatch.isMatch(pathname, matcher) as boolean
     return matcher.test(pathname)
   })
 }
@@ -39,7 +39,7 @@ export function host(host: string): Mounter {
 
 export function module(moduleName: string): Mounter {
   if (moduleName === '') throw new Exception('Module name should not be empty')
-  return createMounter(ctx => ctx.options.module && ctx.options.module === moduleName)
+  return createMounter(ctx => !!ctx.options.module && (ctx.options.module === moduleName || ctx.options.module.name === moduleName))
 }
 
 
