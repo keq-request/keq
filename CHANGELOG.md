@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://www.github.com/keq-request/keq/compare/v1.6.6...v1.7.0) (2022-01-17)
+
+
+### Features
+
+* support keq-cli@2.x ([6a3db36](https://www.github.com/keq-request/keq/commit/6a3db3633c75dd8d801748867666261d603f2dfb))
+
+
+### Performance Improvements
+
+* ctx.request.url extends from whatwg url api ([96dd049](https://www.github.com/keq-request/keq/commit/96dd049ae79d657dd4d03f1472d434aebd27aca3))
+
 ### [1.6.6](https://www.github.com/keq-request/keq/compare/v1.6.5...v1.6.6) (2021-12-13)
 
 
