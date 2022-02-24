@@ -1,4 +1,4 @@
-import { URL } from 'url'
+import { URL } from 'whatwg-url'
 import { compile } from 'path-to-regexp'
 import { Exception } from './exception'
 import * as R from 'ramda'
