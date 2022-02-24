@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://www.github.com/keq-request/keq/compare/v1.7.0...v1.7.1) (2022-02-24)
+
+
+### Bug Fixes
+
+* cannot import URL from url package ([b89721e](https://www.github.com/keq-request/keq/commit/b89721ed4c865ff570e32653b76a884cbc6a8db6))
+* esm parse failed ([b95a97c](https://www.github.com/keq-request/keq/commit/b95a97c35ebf06a4c938e09312ec88fc1c9b9050))
+
 ## [1.7.0](https://www.github.com/keq-request/keq/compare/v1.6.6...v1.7.0) (2022-01-17)
 
 
