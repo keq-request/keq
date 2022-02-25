@@ -335,7 +335,11 @@ export class Keq<T> {
         return async() => {
           if (!cache) cache = await target.arrayBuffer()
 
-          const res = new Response(cache, { headers: target.headers })
+          const res = new Response(
+            new TextDecoder().decode(cache),
+            { headers: target.headers },
+          )
+
           res.formData = resFromData.bind(res)
           return await res[property]() as unknown
         }
