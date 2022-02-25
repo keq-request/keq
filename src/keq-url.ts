@@ -2,9 +2,14 @@ import { URL } from 'whatwg-url'
 import { compile } from 'path-to-regexp'
 import { Exception } from './exception'
 import * as R from 'ramda'
+import { isBrowser } from './util'
 
 
 export class KeqURL extends URL {
+  constructor(url: string, base: string | URL = isBrowser() ? window.location.origin : 'http://localhost') {
+    super(url, base)
+  }
+
   params = {}
 
   get query(): Record<string, any> {
