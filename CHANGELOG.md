@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.2](https://www.github.com/keq-request/keq/compare/v1.7.1...v1.7.2) (2022-02-25)
+
+
+### Bug Fixes
+
+* calling response.json() in middleware will cause garbled chinese characters ([40ffe02](https://www.github.com/keq-request/keq/commit/40ffe0238628c106a06eafe349e6d33b856fbf8f))
+* throw error when not set url origin ([9040396](https://www.github.com/keq-request/keq/commit/9040396ba23edc1642abf27a203b39efe53fb130))
+
 ### [1.7.1](https://www.github.com/keq-request/keq/compare/v1.7.0...v1.7.1) (2022-02-24)
 
 
