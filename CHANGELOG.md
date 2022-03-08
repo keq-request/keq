@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.3](https://www.github.com/keq-request/keq/compare/v1.7.2...v1.7.3) (2022-03-08)
+
+
+### Bug Fixes
+
+* unable to send formdate request with file ([a4ed415](https://www.github.com/keq-request/keq/commit/a4ed41560aacb67a49d8159b453ddf69bce56799))
+
 ### [1.7.2](https://www.github.com/keq-request/keq/compare/v1.7.1...v1.7.2) (2022-02-25)
 
 
