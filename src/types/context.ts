@@ -21,7 +21,7 @@ export interface Context {
   /** the result get by user */
   output: any
 
-  options: Required<Options>
+  options: Required<Pick<Options, 'fetchAPI'>> & Options
 
   /** delegate res */
   response?: Response

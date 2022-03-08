@@ -1,5 +1,5 @@
 import fetch, { Headers } from 'cross-fetch'
-import * as clone from 'clone'
+import { clone } from '@/util/clone'
 import {
   KeqBody,
   Context,

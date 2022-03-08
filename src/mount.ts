@@ -5,6 +5,7 @@ import {
 } from '@/types'
 import { Exception } from '@/exception'
 import * as picomatch from 'picomatch'
+import { isBrowser } from './util'
 
 
 function createMounter(matcher: MiddlewareMatcher): Mounter {
@@ -18,8 +19,18 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
 }
 
 
+/**
+ * NOTE: Not work in NodeJS
+ *       Unable to get the host and port of the service
+ */
 export function location(): Mounter {
-  return createMounter((ctx: Context) => !ctx.request.url.host)
+  return createMounter((ctx: Context) => {
+    if (!ctx.request.url.host) return true
+    if (isBrowser()) {
+      if (ctx.request.url.host === window.location.host) return true
+    }
+    return false
+  })
 }
 
 /**
