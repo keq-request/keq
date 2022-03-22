@@ -440,6 +440,24 @@ This is the utils used to mount middleware.
  `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/picomatch).
  `mount.host(host: string)`                   | Mount to the Host.
 
+### Create Request
+
+ If you want to create a request instance, you can invoke `request.create()`:
+
+
+```typescript
+import { request } from 'keq'
+
+const customRequest = request.create()
+
+// Middleware only takes effect on customRequests
+customRequest.use(/** some middleware */)
+
+const body = await customRequest
+  .get('http://example.com')
+```
+
+ > The gloabl request instance is created by `request.create()` too.
 
 <!-- usage -->
 

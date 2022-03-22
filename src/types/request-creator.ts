@@ -23,6 +23,8 @@ export interface RequestCreator {
   patch: CreateReqeustPromiseF
   head: CreateReqeustPromiseF
 
+  create(): RequestCreator
+
   use(middleware: Middleware): RequestCreator
   use(matcher: string, middleware: Middleware): RequestCreator
   use(matcher: MiddlewareMatcher, middleware: Middleware): RequestCreator

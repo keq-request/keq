@@ -425,6 +425,26 @@ keq.end()
 
 更重要的是，在`NodeJS`里面，`node-fetch`库没有实现`Response`的`.formData()`方法，在`NodeJS`环境中，`Keq`在克隆`ctx.res`后会自动添加`.formData()`实现。
 
+### 创建可自定义的请求实例
+
+如果你打算自己创建一个请求实例，而不使用全局的`request`实例，可以调用`request.create()`方法：
+
+```typescript
+import { request } from 'keq'
+
+const customRequest = request.create()
+
+// Middleware only takes effect on customRequests
+customRequest.use(/** some middleware */)
+
+const body = await customRequest
+  .get('http://example.com')
+```
+
+ > 全局的`request`实例也是调用`request.create()`方法创建的。
+ > 因此，自定义的`request`实例也具备全局`request`的所有特性。
+
+
 
 ## 更多信息
 
