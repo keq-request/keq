@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://www.github.com/keq-request/keq/compare/v1.7.3...v1.8.0) (2022-03-22)
+
+
+### Features
+
+* support custom request instance ([2c05dec](https://www.github.com/keq-request/keq/commit/2c05dec6d779861112507b7365822ecff175dbc3))
+
 ### [1.7.3](https://www.github.com/keq-request/keq/compare/v1.7.2...v1.7.3) (2022-03-08)
 
 
