@@ -1,4 +1,3 @@
-import fetch, { Headers } from 'cross-fetch'
 import { clone } from '@/util/clone'
 import {
   KeqBody,
@@ -13,20 +12,15 @@ import {
   Middleware,
   MiddlewareMatcher,
   ShorthandContentType,
-  FormDataFieldOptions,
   RetryCallback,
 } from '@/types'
 import {
   Exception,
   FileExpectedException,
   OverwriteArrayBodyException,
-  UnknowContentTypeException,
+  UnknownContentTypeException,
 } from '@/exception'
 import {
-  isFormData,
-  isFile,
-  isBrowser,
-  encodeBase64,
   sleep,
   inferContentTypeByBody,
   fixContentType,
@@ -34,10 +28,13 @@ import {
   parseFormData,
   serializeBody,
 } from '@/util'
+import { isBlob, isBrowser, isFormData } from './util/is'
+import {
+  FormData, Response, Headers, Blob, File,
+  fetch, btoa,
+} from '@/polyfill'
 import { matchHost, matchMiddleware, compose } from './middleware'
-import { FormData, Response } from './polyfill'
 import { KeqURL } from './keq-url'
-import { Stream } from 'stream'
 
 
 export class Keq<T> {
@@ -86,7 +83,7 @@ export class Keq<T> {
    */
   public type(contentType: ShorthandContentType | string): Keq<T> {
     const type = fixContentType(contentType)
-    if (!type) throw new UnknowContentTypeException()
+    if (!type) throw new UnknownContentTypeException()
     this.headers.set('Content-Type', type)
 
     return this
@@ -96,7 +93,7 @@ export class Keq<T> {
    * Http Basic Authentication
    */
   public auth(username: string, password: string): Keq<T> {
-    this.headers.set('Authorization', `Basic ${encodeBase64(`${username}:${password}`)}`)
+    this.headers.set('Authorization', `Basic ${btoa(`${username}:${password}`)}`)
     return this
   }
 
@@ -166,25 +163,28 @@ export class Keq<T> {
       throw new Exception('Need value')
     }
 
-    this.appendFormDate(formData as FormData)
+    this.appendFormDate(formData)
     this.setType('form-data')
     return this
   }
 
-  public attach(key: string, file: Blob | File | Buffer | Stream): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer | Stream, filename: string): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer | Stream, options: FormDataFieldOptions): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer | Stream, arg3: string | FormDataFieldOptions = 'blob'): Keq<T> {
+  public attach(key: string, file: Blob | File | Buffer): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer, filename: string): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer): Keq<T>
+  public attach(key: string, file: Blob | File | Buffer, arg3 = 'blob'): Keq<T> {
     if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
 
     if (!this.body) this.body = {}
-    if (!isFile(file)) throw new FileExpectedException()
+    if (!(isBlob(file) || file instanceof Buffer)) throw new FileExpectedException()
 
     const formData = new FormData()
-    if (isBrowser() && typeof arg3 === 'object') formData.set(key, file as any, arg3.filename)
-    else formData.set(key, file as any, arg3 as any)
+    if (isBlob(file)) {
+      formData.set(key, file, arg3)
+    } else {
+      formData.set(key, new Blob([file]) , arg3)
+    }
 
-    this.appendFormDate(formData as FormData)
+    this.appendFormDate(formData)
     this.setType('form-data')
     return this
   }
@@ -301,14 +301,6 @@ export class Keq<T> {
       fetchOptions['highWaterMark'] = ctx.options.highWaterMark
     }
 
-    /**
-     * Content-Type should be removed when it is 'multipart/form-data
-     * FetchAPI will auth set it and add boundary
-     */
-    if (fetchOptions.headers.get('content-type')?.toLocaleLowerCase() === 'multipart/form-data') {
-      fetchOptions.headers.delete('content-type')
-    }
-
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 
     async function resFromData(this: Response): Promise<FormData> {
@@ -319,7 +311,7 @@ export class Keq<T> {
       return parseFormData(str, boundary)
     }
 
-    if (!isBrowser()) {
+    if (!isBrowser) {
       // node-fetch does not implement Response.formData()
       res.formData = resFromData.bind(res)
     }

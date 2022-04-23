@@ -1,9 +1,10 @@
-import { isBlob } from '.'
+import { isBlob } from './is-blob'
 import { isBrowser } from './is-browser'
+import { Blob } from '@/polyfill'
 
 
-export function isFile(object: any): boolean {
-  if (isBrowser()) return object instanceof Blob
+export function isFile(object: any): object is File {
+  if (isBrowser) return object instanceof Blob
 
-  return object instanceof Buffer || isBlob(object)
+  return isBlob(object)
 }

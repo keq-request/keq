@@ -1,12 +1,12 @@
 import { URL } from 'whatwg-url'
 import { compile } from 'path-to-regexp'
 import { Exception } from './exception'
-import * as R from 'ramda'
 import { isBrowser } from './util'
+import { clone } from './util/clone'
 
 
 export class KeqURL extends URL {
-  constructor(url: string, base: string | URL = isBrowser() ? window.location.origin : 'http://localhost') {
+  constructor(url: string, base: string | URL = isBrowser ? window.location.origin : 'http://localhost') {
     super(url, base)
   }
 
@@ -76,7 +76,7 @@ export class KeqURL extends URL {
 
   public clone(): KeqURL {
     const uri = new KeqURL(this.href)
-    uri.params = R.clone(this.params)
+    uri.params = clone(this.params)
 
     return uri
   }

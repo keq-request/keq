@@ -1,6 +1,6 @@
-import { FormData } from '@/polyfill'
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { FormData, Blob, File } from '@/polyfill'
 import { Exception } from '@/exception'
-import * as MultipartParser from 'formidable/src/parsers/Multipart'
 
 
 interface Part {
@@ -19,15 +19,16 @@ function getFileName(headerValue): string | null {
   if (!m) return null
 
   const match = m[2] || m[3] || ''
-  let filename = match.substr(match.lastIndexOf('\\') + 1)
+  let filename: string = match.substr(Number(match.lastIndexOf('\\')) + 1)
   filename = filename.replace(/%22/g, '"')
-  filename = filename.replace(/&#([\d]{4});/g, (_, code) => String.fromCharCode(code),)
+  filename = filename.replace(/&#([\d]{4});/g, (_, code) => String.fromCharCode(code))
   return filename
 }
 
 export function parseFormData(str: string, boundary: string, encoding = 'utf8'): Promise<FormData> {
   return new Promise((resolve, reject) => {
     const formData = new FormData()
+    const MultipartParser = require('formidable/src/parsers/Multipart')
 
     const parser = new MultipartParser()
 
@@ -46,7 +47,11 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
 
     const appendPartToFormData = (): void => {
       if (part.name && part.filename) {
-        formData.append(part.name, part.body as any, part.filename)
+        if (part.body instanceof Blob || part.body instanceof File) {
+          formData.append(part.name, part.body, part.filename)
+        } else {
+          formData.append(part.name, new Blob([part.body]), part.filename)
+        }
       } else if (part.name) {
         formData.append(part.name, part.body.toString())
       }
@@ -83,7 +88,7 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
         // matches either a quoted-string or a token (RFC 2616 section 19.5.1)
         // eslint-disable-next-line no-useless-escape
         const regExp = /\bname=("([^"]*)"|([^\(\)<>@,;:\\"\/\[\]\?=\{\}\s\t/]+))/i
-        const m = headerValue.match(regExp)
+        const m = regExp.exec(headerValue)
 
         if (headerField === 'content-disposition') {
           if (m) part.name = m[2] || m[3] || ''
@@ -130,7 +135,7 @@ export function parseFormData(str: string, boundary: string, encoding = 'utf8'):
             return reject(new Exception('unknown transfer-encoding'))
         }
       } else if (name === 'end') {
-        resolve(formData as FormData)
+        resolve(formData)
       }
     })
 

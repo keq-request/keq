@@ -90,7 +90,7 @@ await request.del('https://example.com/search')
 import { request } from 'keq'
 
 const response = await request
-  .get('http://example.com')
+  .get('http://test.com')
   .option('resolveWithFullResponse')
 
 const body = await response.json()
@@ -301,7 +301,7 @@ await request
 import { request } from 'keq'
 
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .option('resolveWithFullResponse')
   .option('middlewareOption', 'value')
 ```
@@ -312,7 +312,7 @@ await request
 import { request } from 'keq'
 
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .options({
     resolveWithFullResponse: true,
     middlewareOption: 'value',
@@ -353,7 +353,7 @@ request
 
 // Request Middleware
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .use(middleware)
 ```
 
@@ -379,7 +379,7 @@ Keq的上下文对象有许多可以修改和使用的参数，下面列出了�
 **Property**                  | **Type**
 :-----------------------------|:------------------------------------
 `context.request`             | 发送fetch请求的参数。
-`context.request.url`         | 请求地址，是一个`URL`对象，通过`url.parse('http://example.com', true)`创建。
+`context.request.url`         | 请求地址，是一个`URL`对象，通过`url.parse('http://test.com', true)`创建。
 `context.request.method`      | Request method。
 `context.request.body`        | 请求体，根据发送请求的不同，其结构可能是：`Object`（json/form-data/x-www-form-urlencoded), Array（json）, Stream（NodeJS发送二进制文件）, Blob（浏览器中发送二进制文件）, undefined（未携带请求体）中的任意一种。
 `context.request.headers`     | 请求头[`Headers`][Headers MDN]对象。
@@ -409,7 +409,7 @@ Keq的上下文对象有许多可以修改和使用的参数，下面列出了�
 ```javascript
 import { request } from 'keq'
 
-const keq = request.get('http://example.com')
+const keq = request.get('http://test.com')
 
 keq.then(onfulfilled, onrejected)
 // Won't send request, and will use the last request result.
@@ -438,7 +438,7 @@ const customRequest = request.create()
 customRequest.use(/** some middleware */)
 
 const body = await customRequest
-  .get('http://example.com')
+  .get('http://test.com')
 ```
 
  > 全局的`request`实例也是调用`request.create()`方法创建的。

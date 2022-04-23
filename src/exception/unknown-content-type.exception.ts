@@ -1,7 +1,7 @@
 import { Exception } from './exception'
 
 
-export class UnknowContentTypeException extends Exception {
+export class UnknownContentTypeException extends Exception {
   constructor() {
     super('Unknow Content-Type')
   }
