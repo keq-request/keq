@@ -3,5 +3,14 @@
   "eslint.validate": [
     "typescript",
     "typescriptreact"
+  ],
+  "cSpell.words": [
+    "formdata",
+    "fromentries",
+    "lcov",
+    "middlewares",
+    "prebuild",
+    "ttsc",
+    "ttypescript"
   ]
 }

@@ -6,7 +6,7 @@ export function getBoundaryByContentType(contentType: string): string {
 
   if (!multipart) throw new Exception(`Cannot parse form-data body with content-type: ${contentType}`)
 
-  const m = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i,)
+  const m = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType)
   if (!m) throw new Exception('bad content-type header, no multipart boundary')
   return m[1] || m[2]
 }

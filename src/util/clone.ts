@@ -1,5 +1,5 @@
-import * as deepClone from 'clone'
 import { isBlob } from './is'
+import * as deepClone from 'clone'
 import * as fromEntries from 'object.fromentries'
 
 

@@ -4,7 +4,7 @@ import {
   Mounter,
 } from '@/types'
 import { Exception } from '@/exception'
-import * as picomatch from 'picomatch'
+import * as minimatch from 'minimatch'
 import { isBrowser } from './util'
 
 
@@ -26,7 +26,7 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
 export function location(): Mounter {
   return createMounter((ctx: Context) => {
     if (!ctx.request.url.host) return true
-    if (isBrowser()) {
+    if (isBrowser) {
       if (ctx.request.url.host === window.location.host) return true
     }
     return false
@@ -39,7 +39,7 @@ export function location(): Mounter {
 export function pathname(matcher: string | RegExp): Mounter {
   return createMounter(ctx => {
     const pathname = ctx.url.pathname || '/'
-    if (typeof matcher === 'string') return picomatch.isMatch(pathname, matcher) as boolean
+    if (typeof matcher === 'string') return minimatch(pathname, matcher)
     return matcher.test(pathname)
   })
 }

@@ -1,9 +1,5 @@
-export interface FormDataFieldOptions {
-  size?: number
-  type?: string
-  lastModified?: number
-  filename?: string
-}
+import { fetch } from '@/polyfill'
+
 
 interface BaseOptions extends BuildInOptions {
   /** options extends by middleware */

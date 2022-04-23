@@ -91,7 +91,7 @@ Add option `resolveWithFullResponse` to get the origin  [`Response`][Response MD
 import { request } from 'keq'
 
 const response = await request
-  .get('http://example.com')
+  .get('http://test.com')
   .option('resolveWithFullResponse')
 
 const body = await response.json()
@@ -311,7 +311,7 @@ No retry by default, invoke `.retry(times[, initialTime[, callback]])`  to set r
 import { request } from 'keq'
 
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .retry(2, 1000, () => {})
 ```
 
@@ -324,7 +324,7 @@ Invoke `.option()` add options.
 import { request } from 'keq'
 
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .option('resolveWithFullResponse')
   .option('middlewareOption', 'value')
 ```
@@ -335,7 +335,7 @@ Or as a single object:
 import { request } from 'keq'
 
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .options({
     resolveWithFullResponse: true,
     middlewareOption: 'value',
@@ -390,7 +390,7 @@ request
 
 // Request Middleware
 await request
-  .get('http://example.com')
+  .get('http://test.com')
   .use(middleware)
 ```
 
@@ -416,7 +416,7 @@ Keq's context object has many parameters. The following lists all the built-in c
 **Property**                  | **Type**
 :-----------------------------|:------------------------------------
 `context.request`             | Includes request options for Fetch API.
-`context.request.url`         | The return type of `url.parse('http://example.com', true)`.
+`context.request.url`         | The return type of `url.parse('http://test.com', true)`.
 `context.request.method`      | One of 'get', 'post', 'put', 'patch', 'head', 'delete'.
 `context.request.body`        | Object, Array, Stream, Blob or undefined.
 `context.request.headers`     | The [`Headers`][Headers MDN] Object.
@@ -454,7 +454,7 @@ const customRequest = request.create()
 customRequest.use(/** some middleware */)
 
 const body = await customRequest
-  .get('http://example.com')
+  .get('http://test.com')
 ```
 
  > The gloabl request instance is created by `request.create()` too.
@@ -477,7 +477,7 @@ The difference between the two is that when called multiple times.
 ```javascript
 import { request } from 'keq'
 
-const keq = request.get('http://example.com')
+const keq = request.get('http://test.com')
 
 keq.then(onfulfilled, onrejected)
 // Won't send request, and will use the last request result.
