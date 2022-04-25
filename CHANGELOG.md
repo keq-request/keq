@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.1](https://www.github.com/keq-request/keq/compare/v1.8.0...v1.8.1) (2022-04-25)
+
+
+### Bug Fixes
+
+* cannot compile by vite ([2727867](https://www.github.com/keq-request/keq/commit/27278676f924428e2598b634577ed8b63a1e935b))
+* wrong return of response.blob() ([ca5a5b5](https://www.github.com/keq-request/keq/commit/ca5a5b5bd64bdde6a476d7ce5e86b9833cd2a43b))
+
 ## [1.8.0](https://www.github.com/keq-request/keq/compare/v1.7.3...v1.8.0) (2022-03-22)
 
 
