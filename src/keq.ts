@@ -30,7 +30,7 @@ import {
 } from '@/util'
 import { isBlob, isBrowser, isFormData } from './util/is'
 import {
-  FormData, Response, Headers, Blob, File,
+  FormData, Response, Headers, Blob,
   fetch, btoa,
 } from '@/polyfill'
 import { matchHost, matchMiddleware, compose } from './middleware'
@@ -320,15 +320,26 @@ export class Keq<T> {
 
     ctx.res = new Proxy(res, {
       get(target, property) {
-        if (!(typeof property === 'string' && ['json', 'formData', 'text', 'blob'].includes(property))) {
+        if (
+          typeof property !== 'string' ||
+          (
+            property !== 'json' &&
+            property !== 'text' &&
+            property !== 'formData' &&
+            property !== 'blob'
+          )
+        ) {
           return target[property] as unknown
         }
 
         return async() => {
+          if (isBrowser) return target.clone()[property]()
+
           if (!cache) cache = await target.arrayBuffer()
 
+          const buf = Buffer.from(cache)
           const res = new Response(
-            new TextDecoder().decode(cache),
+            buf,
             { headers: target.headers },
           )
 
