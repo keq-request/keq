@@ -9,8 +9,7 @@ interface BaseOptions extends BuildInOptions {
 export interface BuildInOptions {
   /**
    * replace the default fetch api
-   * default use cross-fetch
-   * https://www.npmjs.com/package/cross-fetch
+   * default use node-fetch@2 in node and window.fetch in browser
    */
   fetchAPI?: typeof fetch
 
