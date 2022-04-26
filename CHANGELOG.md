@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.3](https://www.github.com/keq-request/keq/compare/v1.8.2...v1.8.3) (2022-04-26)
+
+
+### Bug Fixes
+
+* cannot find node:stream ([3137cad](https://www.github.com/keq-request/keq/commit/3137cadf6cf2481adb4bd17d45739501354498ff))
+
 ### [1.8.2](https://www.github.com/keq-request/keq/compare/v1.8.1...v1.8.2) (2022-04-26)
 
 
