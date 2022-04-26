@@ -36,7 +36,7 @@ export const serializeMap: SerializeMap = {
       ctx.headers.set('content-type', encoder.headers['Content-Type'])
       ctx.headers.set('content-length', encoder.headers['Content-Length'])
 
-      return require('node:stream').Readable.from(encoder)
+      return require('stream').Readable.from(encoder)
     }
 
     /**
