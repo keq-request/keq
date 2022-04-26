@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.2](https://www.github.com/keq-request/keq/compare/v1.8.1...v1.8.2) (2022-04-26)
+
+
+### Bug Fixes
+
+* cannot find keq main file ([41908fa](https://www.github.com/keq-request/keq/commit/41908fa47eeb8f54fc018d445c5ef85ffc5ca383))
+
 ### [1.8.1](https://www.github.com/keq-request/keq/compare/v1.8.0...v1.8.1) (2022-04-25)
 
 
