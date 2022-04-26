@@ -16,6 +16,7 @@
     "release": "standard-version",
     "release:alpha": "standard-version --prerelease alpha",
     "release:first": "standard-version --first-release",
+    "prepublishOnly": "npm run build",
     "clean": "rm -rf ./lib/*",
     "prebuild": "npm run clean",
     "build:es": "ttsc -p build/tsconfig.es.json",
