@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.5](https://www.github.com/keq-request/keq/compare/v1.8.4...v1.8.5) (2022-05-01)
+
+
+### Bug Fixes
+
+* esm not work ([6d1cd16](https://www.github.com/keq-request/keq/commit/6d1cd16b99e177b419dc5f1083662c6fa956caf1))
+
 ### [1.8.4](https://www.github.com/keq-request/keq/compare/v1.8.3...v1.8.4) (2022-05-01)
 
 
