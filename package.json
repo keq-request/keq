@@ -52,6 +52,7 @@
     "typescript-transform-paths": "^3.3.1"
   },
   "dependencies": {
+    "@types/clone": "^2.1.1",
     "@types/minimatch": "^3.0.5",
     "@types/node": "^14.18.13",
     "@types/whatwg-url": "^8.2.1",
