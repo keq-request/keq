@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.4](https://www.github.com/keq-request/keq/compare/v1.8.3...v1.8.4) (2022-05-01)
+
+
+### Bug Fixes
+
+* global middleware is polluted ([1c00f0e](https://www.github.com/keq-request/keq/commit/1c00f0e3bc7ab5d661d9aa64c033cfb644d3b054))
+
 ### [1.8.3](https://www.github.com/keq-request/keq/compare/v1.8.2...v1.8.3) (2022-04-26)
 
 
