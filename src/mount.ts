@@ -4,7 +4,7 @@ import {
   Mounter,
 } from '@/types'
 import { Exception } from '@/exception'
-import * as minimatch from 'minimatch'
+import minimatch from 'minimatch'
 import { isBrowser } from './util'
 
 

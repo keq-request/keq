@@ -1,6 +1,6 @@
 import { isBlob } from './is'
-import * as deepClone from 'clone'
-import * as fromEntries from 'object.fromentries'
+import deepClone from 'clone'
+import fromEntries from 'object.fromentries'
 
 
 export function clone<T>(obj: T): T {
@@ -14,5 +14,5 @@ export function clone<T>(obj: T): T {
     return fromEntries(entries) as T
   }
 
-  return deepClone(obj) as T
+  return deepClone(obj)
 }
