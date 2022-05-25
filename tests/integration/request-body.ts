@@ -39,7 +39,6 @@ test.only('Form-Data Request', async t => {
   const headers = args[1]?.headers as Headers
   const stream = args[1]?.body as unknown as Stream
   const text = await streamToString(stream)
-  // console.log()
   const contentType = headers.get('content-type')
   if (!contentType) throw new Error('content-type is required')
   const boundary = getBoundaryByContentType(contentType)
