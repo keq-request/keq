@@ -30,7 +30,7 @@ import {
 } from '@/util'
 import { isBlob, isBrowser, isFormData } from './util/is'
 import {
-  FormData, Response, Headers, Blob,
+  Response, Headers, File,
   fetch, btoa,
 } from '@/polyfill'
 import { matchHost, matchMiddleware, compose } from './middleware'
@@ -97,20 +97,17 @@ export class Keq<T> {
     return this
   }
 
-  private appendFormDate(formData: FormData): void {
+  private mergeToBody(key, value): void {
     if (!this.body) this.body = {}
     const body = this.body
 
-    formData.forEach((value, key) => {
-      if (key in body && Array.isArray(body[key])) {
-        body[key].push(value)
-      } else if (key in body && !Array.isArray(body[key])) {
-        body[key] = [body[key]]
-        body[key].push(value)
-      } else {
-        body[key] = value
-      }
-    })
+    if (key in body && Array.isArray(body[key])) {
+      body[key].push(value)
+    } else if (key in body && !Array.isArray(body[key])) {
+      body[key] = [body[key], value]
+    } else {
+      body[key] = value
+    }
   }
 
   private setType(contentType: ShorthandContentType | string): void {
@@ -128,7 +125,11 @@ export class Keq<T> {
 
     if (isFormData(value)) {
       if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
-      this.appendFormDate(value as FormData)
+
+      const entries = value.entries()
+      for (const [key, value] of entries) {
+        this.mergeToBody(key, value)
+      }
       this.setType('form-data')
     } else if (typeof value === 'object') {
       if (Array.isArray(value)) this.body = value
@@ -152,18 +153,16 @@ export class Keq<T> {
       throw new Exception('Cannot merge or overwrite body. Because it has been set as an array. ')
     }
 
-    const formData = new FormData()
     if (typeof arg1 === 'object') {
       for (const key in arg1) {
-        formData.append(key, arg1[key])
+        this.mergeToBody(key, arg1[key])
       }
     } else if (arg2) {
-      formData.append(arg1, arg2)
+      this.mergeToBody(arg1, arg2)
     } else {
       throw new Exception('Need value')
     }
 
-    this.appendFormDate(formData)
     this.setType('form-data')
     return this
   }
@@ -177,14 +176,12 @@ export class Keq<T> {
     if (!this.body) this.body = {}
     if (!(isBlob(file) || file instanceof Buffer)) throw new FileExpectedException()
 
-    const formData = new FormData()
     if (isBlob(file)) {
-      formData.set(key, file, arg3)
+      this.mergeToBody(key, new File([file], arg3))
     } else {
-      formData.set(key, new Blob([file]) , arg3)
+      this.mergeToBody(key, new File([file], arg3))
     }
 
-    this.appendFormDate(formData)
     this.setType('form-data')
     return this
   }

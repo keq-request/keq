@@ -1,4 +1,4 @@
-export function isFormData(object: any): boolean {
+export function isFormData(object: any): object is FormData {
   return (
     typeof object === 'object' &&
     typeof object.append === 'function' &&
