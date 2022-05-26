@@ -31,6 +31,7 @@ test.only('Form-Data Request', async t => {
     .field('key2', 'value2')
     .send(formData)
     .attach('file1', file)
+    .attach('file1', file, 'file1.txt')
     .attach('file2', file, 'file2.txt')
     .option('fetchAPI', fetchAPI)
 
@@ -50,9 +51,9 @@ test.only('Form-Data Request', async t => {
   t.is(result.get('key2'), 'value2')
   t.is(result.get('key3'), 'value3')
 
-  const file1 = result.get('file1') as File
-  t.is(file1.name, 'blob')
-  t.is(await file1.text(), 'file')
+  const file1 = result.getAll('file1') as File[]
+  t.is(file1[0].name, 'blob')
+  t.is(await file1[0].text(), 'file')
 
   const file2 = result.get('file2') as File
   t.is(file2.name, 'file2.txt')
