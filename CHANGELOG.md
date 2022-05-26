@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.6](https://www.github.com/keq-request/keq/compare/v1.8.5...v1.8.6) (2022-05-26)
+
+
+### Bug Fixes
+
+* cannot send multiple files ([ec70e66](https://www.github.com/keq-request/keq/commit/ec70e6641b93888257cc69e0c6c426dced801117))
+
 ### [1.8.5](https://www.github.com/keq-request/keq/compare/v1.8.4...v1.8.5) (2022-05-01)
 
 
