@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.7](https://www.github.com/keq-request/keq/compare/v1.8.6...v1.8.7) (2022-06-22)
+
+
+### Bug Fixes
+
+* wrong content-type when send request in browser ([a100a5d](https://www.github.com/keq-request/keq/commit/a100a5db42e0dc6a032badb75a715fad8d1c600a))
+
 ### [1.8.6](https://www.github.com/keq-request/keq/compare/v1.8.5...v1.8.6) (2022-05-26)
 
 
