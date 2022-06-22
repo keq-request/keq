@@ -282,16 +282,15 @@ export class Keq<T> {
 
   private async fetch(ctx: Context): Promise<void> {
     const uri = ctx.request.url.toPath()
+    if (!ctx.headers.has('Content-Type') && ctx.request.body) {
+      ctx.headers.set('Content-Type', inferContentTypeByBody(ctx.request.body))
+    }
 
     const fetchOptions = {
       method: ctx.request.method.toUpperCase(),
-      headers: ctx.request.headers,
+      headers: ctx.headers,
       body: this.serializeBodyFn(ctx.request.body, ctx),
       ...ctx.request.options,
-    }
-
-    if (!fetchOptions.headers.has('Content-Type') && fetchOptions.body) {
-      fetchOptions.headers.set('Content-Type', inferContentTypeByBody(fetchOptions.body))
     }
 
     if (ctx.options.highWaterMark) {
