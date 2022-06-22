@@ -19,7 +19,7 @@ test('request with basic auth', async t => {
   t.is('Basic dXNlcm5hbWU6cGFzc3dvcmQ=', headers.get('Authorization') as string)
 })
 
-test('request with middleware', async t => {
+test.only('request with middleware', async t => {
   const fetchAPI = t.context.fakeFetchAPI()
 
   const middleware1: Middleware = async(ctx, next) => {
@@ -56,7 +56,7 @@ test('request with middleware', async t => {
 
 
   const arg = fetchAPI.getCall(0).args[1]
-  const argBody = arg?.body as Record<string, any>
+  const argBody = JSON.parse(arg?.body as string)
 
   t.is(fetchAPI.callCount, 1)
   t.is('value1', argBody.key1)
