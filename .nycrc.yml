@@ -1,10 +1,12 @@
-extends: '@istanbuljs/nyc-config-typescript'
 all: true
 check-coverage: false
 include:
-  - src/**/*.ts
+  - lib/src
+  - src
 exclude:
   - node_modules
+  - "**/*.d.ts"
+sourceMap: true
 extension:
   - .ts
   - .js
