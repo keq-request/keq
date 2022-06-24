@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.8](https://www.github.com/keq-request/keq/compare/v1.8.7...v1.8.8) (2022-06-24)
+
+
+### Bug Fixes
+
+* not working when response include null ([e98ea2b](https://www.github.com/keq-request/keq/commit/e98ea2bb831b8e94f531342bb53e0bb1e313c44b))
+
 ### [1.8.7](https://www.github.com/keq-request/keq/compare/v1.8.6...v1.8.7) (2022-06-22)
 
 
