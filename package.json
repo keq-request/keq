@@ -3,7 +3,7 @@
   "main": "lib/src/index.js",
   "module": "es/src/index.js",
   "types": "lib/src/index.d.ts",
-  "version": "1.8.7",
+  "version": "1.8.8",
   "license": "MIT",
   "scripts": {
     "test": "npm run clean && npm run build:test && nyc ava",
