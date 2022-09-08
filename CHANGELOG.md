@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.9](https://www.github.com/keq-request/keq/compare/v1.8.8...v1.8.9) (2022-09-08)
+
+
+### Bug Fixes
+
+* unexpected querystring when invoke .query() with an object param that some value is undfined ([372e2e8](https://www.github.com/keq-request/keq/commit/372e2e867768a3512b5b562951ed5de4129a4d45))
+
 ### [1.8.8](https://www.github.com/keq-request/keq/compare/v1.8.7...v1.8.8) (2022-06-24)
 
 
