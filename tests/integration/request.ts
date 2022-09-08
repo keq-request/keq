@@ -21,12 +21,16 @@ test('Request with query', async t => {
     .get('http://test.com')
     .query('key1', 'value1')
     .query('key2', ['arr_value_1', 'arr_value_2'])
+    // key3 will be ignore
+    .query('key3', undefined)
     .query({
-      key3: 'value3',
-      key4: ['arr_value_3', 'arr_value_4'],
+      key4: 'value4',
+      key5: ['arr_value_3', 'arr_value_4'],
+      // key6 will be ignore
+      key6: undefined,
     })
     .option('fetchAPI', fetchAPI)
 
   t.is(fetchAPI.callCount, 1)
-  t.is(fetchAPI.getCall(0).args[0], 'http://test.com/?key1=value1&key2=arr_value_1&key2=arr_value_2&key3=value3&key4=arr_value_3&key4=arr_value_4')
+  t.is(fetchAPI.getCall(0).args[0], 'http://test.com/?key1=value1&key2=arr_value_1&key2=arr_value_2&key4=value4&key5=arr_value_3&key5=arr_value_4')
 })

@@ -202,15 +202,17 @@ export class Keq<T> {
     return this
   }
 
-  public query(key: Record<string, string | number | string[] | number[]>): Keq<T>
-  public query(key: string, value: string | number | string[] | number[]): Keq<T>
-  public query(key: string | Record<string, string | number | string[] | number[]>, value?: string | number | string[] | number[]): Keq<T> {
+  public query(key: Record<string, string | number | string[] | number[] | undefined>): Keq<T>
+  public query(key: string, value: string | number | string[] | number[] | undefined): Keq<T>
+  public query(key: string | Record<string, string | number | string[] | number[] | undefined>, value?: string | number | string[] | number[]): Keq<T> {
     if (typeof key === 'string' && value !== undefined) {
       this.urlObj.query[key] = Array.isArray(value) ? value.map(item => String(item)) : String(value)
     } else if (typeof key === 'string' && value === undefined) {
       // ignore query
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
+        if (v === undefined) continue
+
         this.urlObj.query[k] = Array.isArray(v) ? v.map(item => String(item)) : String(v)
       }
     } else {
