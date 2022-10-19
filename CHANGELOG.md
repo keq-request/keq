@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://www.github.com/keq-request/keq/compare/v1.8.9...v1.9.0) (2022-10-19)
+
+
+### Features
+
+* add mount.method ([df215a9](https://www.github.com/keq-request/keq/commit/df215a914d40fc03b3b4cbf359fb1da014b16f4a)), closes [#35](https://www.github.com/keq-request/keq/issues/35)
+
 ### [1.8.9](https://www.github.com/keq-request/keq/compare/v1.8.8...v1.8.9) (2022-09-08)
 
 
