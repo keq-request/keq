@@ -2,6 +2,7 @@ import {
   MiddlewareMatcher,
   Context,
   Mounter,
+  RequestMethod,
 } from '@/types'
 import { Exception } from '@/exception'
 import minimatch from 'minimatch'
@@ -14,6 +15,7 @@ function createMounter(matcher: MiddlewareMatcher): Mounter {
   mounter.location = () => compose(mounter, location())
   mounter.host = arg => compose(mounter, host(arg))
   mounter.module = arg => compose(mounter, module(arg))
+  mounter.method = arg => compose(mounter, method(arg))
 
   return mounter
 }
@@ -42,6 +44,10 @@ export function pathname(matcher: string | RegExp): Mounter {
     if (typeof matcher === 'string') return minimatch(pathname, matcher)
     return matcher.test(pathname)
   })
+}
+
+export function method(expectMethod: RequestMethod): Mounter {
+  return createMounter(ctx => ctx.request.method === expectMethod)
 }
 
 export function host(host: string): Mounter {
