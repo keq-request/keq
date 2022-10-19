@@ -12,8 +12,6 @@
 [![dependencies](https://img.shields.io/david/keq-request/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
 [![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=flat-square)](https://coveralls.io/github/keq-request/keq)
 
-
-
 <!-- description -->
 [Headers MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Headers
 [Response MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Response
@@ -86,7 +84,6 @@ await request.del('https://example.com/search')
 and return `body` of [`Response`][Response MDN] by defaulted.
 Add option `resolveWithFullResponse` to get the origin  [`Response`][Response MDN] Object.
 
-
 ```javascript
 import { request } from 'keq'
 
@@ -97,8 +94,7 @@ const response = await request
 const body = await response.json()
 ```
 
-###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated metainformation.
-
+###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated metainformation
 
 ### Setting header fields
 
@@ -175,7 +171,6 @@ await request
   .params({ searchKey: 'keq' })
 ```
 
-
 ### JSON Request
 
 A typical JSON POST request might look a little like the following,
@@ -203,6 +198,7 @@ await request.post('/user')
   .send({ name:"tj", pet:"tobi" })
   .send('pet=tobi')
 ```
+
 To send the data as `application/x-www-form-urlencoded` simply invoke `.type()` with "form".
 When passed an `string` to `.send()`, it will auto set `Content-Type` to `application/x-www-form-urlencoded`.
 
@@ -239,7 +235,6 @@ await request.post('/user')
   .attach('image', imageBlobOrBuffer)
 ```
 
-
 ### Setting the Content-Type
 
 The obvious solution is to use the .set() method:
@@ -270,7 +265,6 @@ html, css                                     | text/html, text/css
 form-data                                     | multipart/form-data
 jpeg, bmp, apng, gif, x-icon, png, webp, tiff | image/jpeg, image/bmp, image/apng, image/gif, image/x-icon, image/png, image/webp, image/tiff
 svg                                           | image/svg+xml
-
 
 ### Serializing request body
 
@@ -315,7 +309,6 @@ await request
   .retry(2, 1000, () => {})
 ```
 
-
 ### Keq Internal Options
 
 Invoke `.option()` add options.
@@ -349,7 +342,7 @@ await request
 `resolveWithOriginalResponse` | **DEPRECATED** Get the origin [`Response`][Response MDN]
 `highWaterMark`               | **DEPRECATED** The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. [See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
 
-###### The options with **DEPRECATED** will be removed in next major version.
+###### The options with **DEPRECATED** will be removed in next major version
 
 ### Middleware
 
@@ -437,13 +430,13 @@ This is the utils used to mount middleware.
  **Function**                                 | **Description**
  :--------------------------------------------|:---------------------------------------------
  `mount.location()`                           | Mount to Location. Useful in the browser
+ `mount.method(method: string)                | Mount to the method.
  `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/picomatch).
  `mount.host(host: string)`                   | Mount to the Host.
 
 ### Create Request
 
  If you want to create a request instance, you can invoke `request.create()`:
-
 
 ```typescript
 import { request } from 'keq'
@@ -493,7 +486,6 @@ keq.end()
 
 What's more, The `.formData()` function isn't existed in `Response` returned by `node-fetch`. keq will append it to `Response` after clone, if in `NodeJS`.
 
-
 ## See More
 
 Keq is inspired by SuperAgent and Koa.
@@ -507,7 +499,6 @@ Support code development on patron.
 
 [![patron](https://c5.patreon.com/external/logo/become_a_patron_button@2x.png)](https://www.patreon.com/bePatron?u=22478507)
 <!-- addition -->
-
 
 ## Contributing & Development
 
