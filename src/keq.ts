@@ -287,6 +287,16 @@ export class Keq<T> {
     return this
   }
 
+  public mode(mode: RequestMode): Keq<T> {
+    this.opts = { ...this.opts, mode }
+    return this
+  }
+
+  public credentials(mode: RequestCredentials): Keq<T> {
+    this.opts = { ...this.opts, credentials: mode }
+    return this
+  }
+
   private async fetch(ctx: Context): Promise<void> {
     const uri = ctx.request.url.toPath()
     if (!ctx.headers.has('Content-Type') && ctx.request.body) {
@@ -395,6 +405,8 @@ export class Keq<T> {
     }
 
     if (this.opts.redirect) request.options.redirect = this.opts.redirect
+    if (this.opts.mode) request.options.mode = this.opts.mode
+    if (this.opts.credentials) request.options.credentials = this.opts.credentials
 
     const ctx: Context = {
       request,

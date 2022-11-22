@@ -321,6 +321,19 @@ await request
   .redirect('manual')
 ```
 
+### Set Request Credentials And Mode
+
+These two parameters are used to control cross-domain requests.
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('http://test.com')
+  .mode('cors')
+  .credentials('include')
+```
+
 ### Keq Internal Options
 
 Invoke `.option()` add options.

@@ -25,6 +25,20 @@ export interface BuildInOptions {
   redirect?: RequestRedirect
 
   /**
+   * Indicates whether the user agent should send
+   * or receive cookies from the other domain in the case of cross-origin requests.
+   * https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
+   */
+  credentials?: RequestCredentials
+
+  /**
+   * Determine if cross-origin requests lead to valid responses,
+   * and which properties of the response are readable.
+   * https://developer.mozilla.org/en-US/docs/Web/API/Request/mode
+   */
+  mode?: RequestMode
+
+  /**
    * get original object, defaulted `false`
    * resolveWithFullResponse has a higher priority than resolveWithOriginalResponse
    *
