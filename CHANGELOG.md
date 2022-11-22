@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://www.github.com/keq-request/keq/compare/v1.9.0...v1.10.0) (2022-11-22)
+
+
+### Features
+
+* add .mode() and .credentials() ([73f1cc2](https://www.github.com/keq-request/keq/commit/73f1cc202b34658474f325a3bbbdd4f876d1b4f2))
+* add .redirect(mode) ([094549b](https://www.github.com/keq-request/keq/commit/094549b4ff6b8a64f9506a0f2b99ca8b51656b57))
+
 ## [1.9.0](https://www.github.com/keq-request/keq/compare/v1.8.9...v1.9.0) (2022-10-19)
 
 
