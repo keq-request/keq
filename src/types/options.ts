@@ -22,7 +22,7 @@ export interface BuildInOptions {
    *
    * @defaulted 'follow'
    */
-  redirect?: 'follow' | 'error' | 'manual'
+  redirect?: RequestRedirect
 
   /**
    * get original object, defaulted `false`

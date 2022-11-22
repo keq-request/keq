@@ -282,6 +282,11 @@ export class Keq<T> {
     return this
   }
 
+  public redirect(mode: RequestRedirect): Keq<T> {
+    this.opts = { ...this.opts, redirect: mode }
+    return this
+  }
+
   private async fetch(ctx: Context): Promise<void> {
     const uri = ctx.request.url.toPath()
     if (!ctx.headers.has('Content-Type') && ctx.request.body) {
@@ -298,6 +303,7 @@ export class Keq<T> {
     if (ctx.options.highWaterMark) {
       fetchOptions['highWaterMark'] = ctx.options.highWaterMark
     }
+    // if (ctx.options.)
 
     const res = await ctx.options.fetchAPI(uri, fetchOptions)
 

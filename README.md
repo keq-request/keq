@@ -309,6 +309,18 @@ await request
   .retry(2, 1000, () => {})
 ```
 
+### Set Request Redirect mode
+
+Follow redirect by default, invoke `.redirect(mode)` to set the redirect mode. Allow values are `"error"`, `"manual"` and `"follow"`.
+
+```javascript
+import { request } from 'keq'
+
+await request
+  .get('http://test.com')
+  .redirect('manual')
+```
+
 ### Keq Internal Options
 
 Invoke `.option()` add options.
