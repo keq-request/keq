@@ -1,19 +1,3 @@
-import { clone } from '@/util/clone'
-import {
-  KeqBody,
-  Context,
-  RequestContext,
-  SerializeBodyFn,
-  RequestMethod,
-  Options,
-  BuildInOptions,
-  OptionsWithFullResponse,
-  OptionsWithoutFullResponse,
-  Middleware,
-  MiddlewareMatcher,
-  ShorthandContentType,
-  RetryCallback,
-} from '@/types'
 import {
   Exception,
   FileExpectedException,
@@ -21,20 +5,40 @@ import {
   UnknownContentTypeException,
 } from '@/exception'
 import {
-  sleep,
-  inferContentTypeByBody,
+  File,
+  Headers,
+  Response,
+  btoa,
+  fetch,
+} from '@/polyfill'
+import {
+  BuildInOptions,
+  Context,
+  KeqBody,
+  Middleware,
+  MiddlewareMatcher,
+  Options,
+  OptionsWithFullResponse,
+  OptionsWithoutFullResponse,
+  RequestContext,
+  RequestMethod,
+  RetryCallback,
+  SerializeBodyFn,
+  ShorthandContentType,
+} from '@/types'
+import {
   fixContentType,
   getBoundaryByContentType,
+  inferContentTypeByBody,
   parseFormData,
   serializeBody,
+  sleep,
 } from '@/util'
-import { isBlob, isBrowser, isFormData } from './util/is'
-import {
-  Response, Headers, File,
-  fetch, btoa,
-} from '@/polyfill'
-import { matchHost, matchMiddleware, compose } from './middleware'
+import { clone } from '@/util/clone'
+import { OUTPUT_PROPERTY } from './constant'
 import { KeqURL } from './keq-url'
+import { compose, matchHost, matchMiddleware } from './middleware'
+import { isBlob, isBrowser, isFormData } from './util/is'
 
 
 export class Keq<T> {
@@ -362,21 +366,6 @@ export class Keq<T> {
         }
       },
     })
-
-    if (ctx.options.resolveWithFullResponse) {
-      ctx.output = ctx.response
-    } else if (ctx.options.resolveWithOriginalResponse) {
-      ctx.output = ctx.res
-    } else if (res.status === 204) {
-      // 204: NO CONTENT
-      ctx.output = ctx.response && ctx.response.body
-    } else {
-      const contentType = res.headers.get('content-type') || ''
-      if (contentType.includes('application/json')) ctx.output = ctx.response && await ctx.response.json()
-      else if (contentType.includes('multipart/form-data')) ctx.output = ctx.response && await ctx.response.formData()
-      else if (contentType.includes('plain/text')) ctx.output = ctx.response && await ctx.response.text()
-      else ctx.output = ctx.response && ctx.response.body
-    }
   }
 
   private async run(): Promise<T> {
@@ -412,7 +401,14 @@ export class Keq<T> {
       request,
 
       options: clone({ ...this.opts, fetchAPI: this.opts.fetchAPI || fetch }),
-      output: undefined,
+
+      get output() {
+        throw new Exception('output property is write-only')
+      },
+
+      set output(value) {
+        this[OUTPUT_PROPERTY] = value
+      },
 
       get url() {
         return this.request.url
@@ -460,7 +456,37 @@ export class Keq<T> {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     await middleware(ctx, async() => {})
 
-    return ctx.output as T
+
+    let output: any = ctx[OUTPUT_PROPERTY]
+
+    if (!(OUTPUT_PROPERTY in ctx)) {
+      if (ctx.options.resolveWithFullResponse) {
+        output = ctx.response
+      } else if (ctx.options.resolveWithOriginalResponse) {
+        output = ctx.res
+      } else if (ctx.response?.status === 204) {
+      // 204: NO CONTENT
+        output = ctx.response && ctx.response.body
+      } else {
+        const contentType = ctx.response?.headers.get('content-type') || ''
+        try {
+          if (contentType.includes('application/json')) {
+            output = ctx.response && await ctx.response.json()
+          } else if (contentType.includes('multipart/form-data')) {
+            output = ctx.response && await ctx.response.formData()
+          } else if (contentType.includes('plain/text')) {
+            output = ctx.response && await ctx.response.text()
+          } else {
+            output = ctx.response && ctx.response.body
+          }
+        } catch (e) {
+          console.warn('Failed to auto parse response body', e)
+        }
+      }
+    }
+
+
+    return output as T
   }
 
   public async end(): Promise<T> {

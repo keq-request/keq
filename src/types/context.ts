@@ -1,7 +1,8 @@
+import { OUTPUT_PROPERTY } from '@/constant'
 import { KeqURL } from '../keq-url'
 import { KeqBody } from './keq-body'
-import { RequestMethod } from './request-method'
 import { Options } from './options'
+import { RequestMethod } from './request-method'
 
 
 export interface RequestContext {
@@ -20,6 +21,7 @@ export interface Context {
 
   /** the result get by user */
   output: any
+  [OUTPUT_PROPERTY]?: any
 
   options: Required<Pick<Options, 'fetchAPI'>> & Options
 
