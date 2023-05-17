@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.1](https://www.github.com/keq-request/keq/compare/v1.10.0...v1.10.1) (2023-05-17)
+
+
+### Bug Fixes
+
+* keq crashes when the response body does not match content-type ([f0bc15e](https://www.github.com/keq-request/keq/commit/f0bc15e3f02b76dfa975791f78d566eeccb32adc))
+
 ## [1.10.0](https://www.github.com/keq-request/keq/compare/v1.9.0...v1.10.0) (2022-11-22)
 
 
