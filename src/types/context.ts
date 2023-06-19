@@ -1,4 +1,4 @@
-import { OUTPUT_PROPERTY } from '@/constant'
+import { OUTPUT_PROPERTY } from '~/constant'
 import { KeqURL } from '../keq-url'
 import { KeqBody } from './keq-body'
 import { Options } from './options'

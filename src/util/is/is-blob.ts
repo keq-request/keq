@@ -1,7 +1,6 @@
 import { isFunction } from './is-function'
-import { isString } from './is-string'
 import { isObject } from './is-object'
-import { Blob } from '@/polyfill'
+import { isString } from './is-string'
 
 
 const names = ['Blob', 'File']

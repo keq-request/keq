@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { FormData, Blob, File } from '@/polyfill'
-import { Exception } from '@/exception'
+import { Exception } from '~/exception'
+import { Blob, File, FormData } from '~/polyfill'
 
 
 interface Part {

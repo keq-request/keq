@@ -1,4 +1,4 @@
-import { fetch } from '@/polyfill'
+import { fetch } from '~/polyfill'
 
 
 interface BaseOptions extends BuildInOptions {

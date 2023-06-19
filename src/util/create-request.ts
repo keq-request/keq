@@ -1,13 +1,13 @@
-import { Keq } from '../keq'
 import {
-  RequestParams,
-  RequestCreator,
   Middleware,
   MiddlewareMatcher,
   Options,
-} from '@/types'
-import { matchMiddleware, matchHost } from '../middleware'
+  RequestCreator,
+  RequestParams,
+} from '~/types'
+import { Keq } from '../keq'
 import { KeqURL } from '../keq-url'
+import { matchHost, matchMiddleware } from '../middleware'
 
 
 const defaultOptions: Options = {}

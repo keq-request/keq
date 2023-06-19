@@ -1,10 +1,10 @@
+import { Exception } from '~/exception'
 import {
   Context,
   InnerMiddleware,
   Middleware,
   MiddlewareMatcher,
-} from '@/types'
-import { Exception } from '@/exception'
+} from '~/types'
 
 
 export const matchHost = (host: string): MiddlewareMatcher => ctx => ctx.request.url.host === host

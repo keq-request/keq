@@ -3,14 +3,14 @@ import {
   FileExpectedException,
   OverwriteArrayBodyException,
   UnknownContentTypeException,
-} from '@/exception'
+} from '~/exception'
 import {
   File,
   Headers,
   Response,
   btoa,
   fetch,
-} from '@/polyfill'
+} from '~/polyfill'
 import {
   BuildInOptions,
   Context,
@@ -25,7 +25,7 @@ import {
   RetryCallback,
   SerializeBodyFn,
   ShorthandContentType,
-} from '@/types'
+} from '~/types'
 import {
   fixContentType,
   getBoundaryByContentType,
@@ -33,8 +33,8 @@ import {
   parseFormData,
   serializeBody,
   sleep,
-} from '@/util'
-import { clone } from '@/util/clone'
+} from '~/util'
+import { clone } from '~/util/clone'
 import { OUTPUT_PROPERTY } from './constant'
 import { KeqURL } from './keq-url'
 import { compose, matchHost, matchMiddleware } from './middleware'

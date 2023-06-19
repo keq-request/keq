@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-var-requires */
-import { isBrowser } from '@/util'
+import { isBrowser } from '~/util'
 
 
 export const FormData: typeof global.FormData = isBrowser ? window.FormData : require('formdata-node').FormData
