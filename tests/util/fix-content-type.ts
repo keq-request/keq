@@ -1,5 +1,5 @@
 import test from 'ava'
-import { fixContentType } from '@/util/fix-content-type'
+import { fixContentType } from '~/util/fix-content-type'
 
 
 test('fix type', t => {

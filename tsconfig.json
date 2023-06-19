@@ -13,10 +13,10 @@
     "rootDir": "./",
     "noEmitOnError": true,
     "paths": {
-      "@/*": [
+      "~/*": [
         "src/*"
       ],
-      "@root/*": [
+      "~root/*": [
         "./*"
       ]
     },

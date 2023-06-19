@@ -1,4 +1,4 @@
-import { Keq } from '@/keq'
+import { Keq } from '~/keq'
 import { Middleware, MiddlewareMatcher } from './middleware'
 import { OptionsWithFullResponse, OptionsWithoutFullResponse } from './options'
 import { RequestMethod } from './request-method'

@@ -1,7 +1,7 @@
-import { test } from '../test.before-each'
-import { request, FormData } from '../../src'
 import { Stream } from 'node:stream'
-import { getBoundaryByContentType, parseFormData } from '@/util'
+import { getBoundaryByContentType, parseFormData } from '~/util'
+import { FormData, request } from '../../src'
+import { test } from '../test.before-each'
 
 
 function streamToString(stream): Promise<string> {

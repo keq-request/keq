@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { KeqBody, SerializeBodyFn, Context } from '@/types'
-import { FormData } from '@/polyfill'
+import { FormData } from '~/polyfill'
+import { Context, KeqBody, SerializeBodyFn } from '~/types'
 import { isBrowser } from './is'
 
 

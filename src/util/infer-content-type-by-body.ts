@@ -1,4 +1,4 @@
-import { KeqBody } from '@/types'
+import { KeqBody } from '~/types'
 
 
 export function inferContentTypeByBody(body: KeqBody): string {

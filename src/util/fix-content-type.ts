@@ -1,4 +1,4 @@
-import { ShorthandContentType } from '@/types'
+import { ShorthandContentType } from '~/types'
 
 
 export function fixContentType(contentType: ShorthandContentType | string): string {

@@ -1,4 +1,4 @@
-import { Exception } from '@/exception'
+import { Exception } from '~/exception'
 
 
 export function getBoundaryByContentType(contentType: string): string {
