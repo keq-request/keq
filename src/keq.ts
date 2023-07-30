@@ -1,240 +1,109 @@
-import {
-  Exception,
-  FileExpectedException,
-  OverwriteArrayBodyException,
-  UnknownContentTypeException,
-} from '~/exception'
-import {
-  File,
-  Headers,
-  Response,
-  btoa,
-  fetch,
-} from '~/polyfill'
-import {
-  BuildInOptions,
-  Context,
-  KeqBody,
-  Middleware,
-  MiddlewareMatcher,
-  Options,
-  OptionsWithFullResponse,
-  OptionsWithoutFullResponse,
-  RequestContext,
-  RequestMethod,
-  RetryCallback,
-  SerializeBodyFn,
-  ShorthandContentType,
-} from '~/types'
-import {
-  fixContentType,
-  getBoundaryByContentType,
-  inferContentTypeByBody,
-  parseFormData,
-  serializeBody,
-  sleep,
-} from '~/util'
-import { clone } from '~/util/clone'
-import { OUTPUT_PROPERTY } from './constant'
-import { KeqURL } from './keq-url'
-import { compose, matchHost, matchMiddleware } from './middleware'
-import { isBlob, isBrowser, isFormData } from './util/is'
+import { Core } from './core'
+import { Exception } from './exception/exception'
+import { InvalidArgumentsExceptions } from './exception/invalid-arguments.exception'
+import { isBlob } from './is/is-blob'
+import { isFile } from './is/is-file'
+import { isFormData } from './is/is-form-data'
+import { isHeaders } from './is/is-headers'
+import { isUrlSearchParams } from './is/is-url-search-params'
+import { KeqMiddleware } from './types/keq-middleware'
+import { KeqBuildInOptions, KeqOptions, KeqOptionsWithFullResponse, KeqOptionsWithoutFullResponse } from './types/keq-options'
+import { KeqRequestBody } from './types/keq-request-body'
+import { KeqRetryDelay } from './types/keq-retry-delay'
+import { KeqRetryOn } from './types/keq-retry-on'
+import { ShorthandContentType } from './types/shorthand-content-type'
+import { assignKeqRequestBody } from './util/assign-keq-request-body'
+import { base64Encode } from './util/base64'
+import { fixContentType } from './util/fix-content-type'
 
 
-export class Keq<T> {
-  private requestPromise?: Promise<T>
-
-  private urlObj: KeqURL
-  private method: RequestMethod
-  private headers: Headers = new Headers()
-  private middlewares: Middleware[] = []
-  private opts: Options = { resolveWithFullResponse: false, resolveWithOriginalResponse: false }
-  private body: KeqBody
-  private serializeBodyFn: SerializeBodyFn = serializeBody
-  private retryTimes = 0
-  private initialRetryTime = 0
-  private retryCallback?: RetryCallback
-
-  public constructor(urlObj: KeqURL, method: RequestMethod, middlewares: Middleware[]) {
-    this.urlObj = urlObj
-    this.method = method
-    this.middlewares = middlewares
+/**
+ * @description Keq 扩展 API，人性化的常用的API
+ */
+export class Keq<T> extends Core<T> {
+  use(...middlewares: KeqMiddleware[]): this {
+    return this.prependMiddlewares(...middlewares)
   }
+
+
+  option(key: 'resolveWithFullResponse', value?: true): Core<Response>
+  option<K extends keyof KeqBuildInOptions>(key: K, value?: KeqBuildInOptions[K]): this
+  option(key: string, value?: any): this
+  option(key: string, value: any = true): this | Core<Response> {
+    this.__options__[key] = value
+    return this
+  }
+
+  options(opts: KeqOptionsWithoutFullResponse): this
+  options(opts: KeqOptionsWithFullResponse): Core<Response>
+  options(opts: KeqOptions): this
+  options(opts: KeqOptions): this | Core<Response> {
+    for (const [key, value] of Object.entries(opts)) {
+      this.__options__[key] = value
+    }
+    return this
+  }
+
 
   /**
    * Set request header
+   *
+   * @description 设置请求头
    */
-  public set(headers: Headers): Keq<T>
-  public set(headers: Record<string, string>): Keq<T>
-  public set(name: string, value: string): Keq<T>
-  public set(headersOrName: string | Record<string, string> | Headers, value?: string): Keq<T> {
-    if (headersOrName instanceof Headers) {
+  set(headers: Headers): this
+  set(headers: Record<string, string>): this
+  set(name: string, value: string): this
+  set(headersOrName: string | Record<string, string> | Headers, value?: string): this {
+    if (isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
-        this.headers.set(key, value)
+        this.requestContext.headers.set(key, value)
       })
     } else if (typeof headersOrName === 'string' && value) {
-      this.headers.set(headersOrName, value)
+      this.requestContext.headers.set(headersOrName, value)
     } else if (typeof headersOrName === 'object') {
       for (const [key, value] of Object.entries(headersOrName)) {
-        this.headers.set(key, value)
+        this.requestContext.headers.set(key, value)
       }
     }
     return this
   }
 
-  /**
-   * Setting the Content-Type
-   */
-  public type(contentType: ShorthandContentType | string): Keq<T> {
-    const type = fixContentType(contentType)
-    if (!type) throw new UnknownContentTypeException()
-    this.headers.set('Content-Type', type)
-
-    return this
-  }
 
   /**
-   * Http Basic Authentication
+   * Set request query/searchParams
    */
-  public auth(username: string, password: string): Keq<T> {
-    this.headers.set('Authorization', `Basic ${btoa(`${username}:${password}`)}`)
-    return this
-  }
-
-  private mergeToBody(key, value): void {
-    if (!this.body) this.body = {}
-    const body = this.body
-
-    if (key in body && Array.isArray(body[key])) {
-      body[key].push(value)
-    } else if (key in body && !Array.isArray(body[key])) {
-      body[key] = [body[key], value]
-    } else {
-      body[key] = value
-    }
-  }
-
-  private setType(contentType: ShorthandContentType | string): void {
-    if (!this.headers.has('Content-Type')) void this.type(contentType)
-  }
-
-  /**
-   * set request body
-   * @param value POST/PUT request body
-   */
-  public send(value: FormData | Record<string, any> | any[] | string): Keq<T> {
-    if (Array.isArray(this.body)) {
-      throw new Exception('Cannot merge or overwrite body. Because it has been set as an array. ')
-    }
-
-    if (isFormData(value)) {
-      if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
-
-      const entries = value.entries()
-      for (const [key, value] of entries) {
-        this.mergeToBody(key, value)
+  query(key: Record<string, string | number | string[] | number[] | undefined>): this
+  query(key: string, value: string | number | string[] | number[] | undefined): this
+  query(key: string | Record<string, string | number | string[] | number[] | undefined>, value?: string | number | string[] | number[]): this {
+    if (typeof key === 'string' && Array.isArray(value)) {
+      for (const item of value) {
+        this.requestContext.url.searchParams.append(key, String(item))
       }
-      this.setType('form-data')
-    } else if (typeof value === 'object') {
-      if (Array.isArray(value)) this.body = value
-      else this.body = { ...this.body, ...value }
-      this.setType('json')
-    } else if (typeof value === 'string') {
-      const arr = value.split('=')
-      if (arr.length !== 2) throw new Exception('string is not expect')
-      if (!this.body) this.body = {}
-      this.body[arr[0]] = arr[1]
-      this.setType('form')
-    }
-
-    return this
-  }
-
-  public field(arg1: string, value: string): Keq<T>
-  public field(arg1: Record<string, string>): Keq<T>
-  public field(arg1: string | Record<string, string>, arg2?: any): Keq<T> {
-    if (Array.isArray(this.body)) {
-      throw new Exception('Cannot merge or overwrite body. Because it has been set as an array. ')
-    }
-
-    if (typeof arg1 === 'object') {
-      for (const key in arg1) {
-        this.mergeToBody(key, arg1[key])
-      }
-    } else if (arg2) {
-      this.mergeToBody(arg1, arg2)
-    } else {
-      throw new Exception('Need value')
-    }
-
-    this.setType('form-data')
-    return this
-  }
-
-  public attach(key: string, file: Blob | File | Buffer): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer, filename: string): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer): Keq<T>
-  public attach(key: string, file: Blob | File | Buffer, arg3 = 'blob'): Keq<T> {
-    if (Array.isArray(this.body)) throw new OverwriteArrayBodyException()
-
-    if (!this.body) this.body = {}
-    if (!(isBlob(file) || file instanceof Buffer)) throw new FileExpectedException()
-
-    if (isBlob(file)) {
-      this.mergeToBody(key, new File([file], arg3))
-    } else {
-      this.mergeToBody(key, new File([file], arg3))
-    }
-
-    this.setType('form-data')
-    return this
-  }
-
-  public serialize(fn: SerializeBodyFn): Keq<T> {
-    this.serializeBodyFn = fn
-    return this
-  }
-
-  public use(middleware: Middleware): Keq<T>
-  public use(host: string, middleware: Middleware): Keq<T>
-  public use(matcher: MiddlewareMatcher, middleware: Middleware): Keq<T>
-  public use(m: MiddlewareMatcher | string | Middleware, middleware?: Middleware): Keq<T> {
-    if (!middleware) this.middlewares.push(m as Middleware)
-    else if (typeof m === 'string') this.middlewares.push(matchMiddleware(matchHost(m), middleware))
-    else this.middlewares.push(matchMiddleware(m as MiddlewareMatcher, middleware))
-
-    return this
-  }
-
-  public query(key: Record<string, string | number | string[] | number[] | undefined>): Keq<T>
-  public query(key: string, value: string | number | string[] | number[] | undefined): Keq<T>
-  public query(key: string | Record<string, string | number | string[] | number[] | undefined>, value?: string | number | string[] | number[]): Keq<T> {
-    if (typeof key === 'string' && value !== undefined) {
-      this.urlObj.query[key] = Array.isArray(value) ? value.map(item => String(item)) : String(value)
-    } else if (typeof key === 'string' && value === undefined) {
-      // ignore query
+    } else if (typeof key === 'string' && typeof value === 'string') {
+      this.requestContext.url.searchParams.append(key, value)
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
         if (v === undefined) continue
-
-        this.urlObj.query[k] = Array.isArray(v) ? v.map(item => String(item)) : String(v)
+        this.query(k, v)
       }
     } else {
       throw new Exception('please set query value')
     }
+
     return this
   }
 
-  public params(key: Record<string, string | number>): Keq<T>
-  public params(key: string, value: string | number): Keq<T>
-  public params(key: string | Record<string, string | number>, value?: string | number): Keq<T> {
-    if (typeof key === 'string' && value !== undefined) {
-      this.urlObj.params[key] = value
-    } else if (typeof key === 'string' && value === undefined) {
-      // ignore query
+  /**
+   * Set request route params
+   */
+  params(key: Record<string, string | number>): this
+  params(key: string, value: string | number): this
+  params(key: string | Record<string, string | number>, value?: string | number): this {
+    if (typeof key === 'string') {
+      this.requestContext.routeParams[key] = String(value)
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
-        this.urlObj.params[k] = v
+        this.requestContext.routeParams[k] = String(v)
       }
     } else {
       throw new Exception('please set params value')
@@ -243,289 +112,119 @@ export class Keq<T> {
     return this
   }
 
-  public option(key: 'resolveWithOriginalResponse', value?: true): Keq<Response>
-  public option(key: 'resolveWithFullResponse', value?: true): Keq<Response>
-  public option(key: 'redirect', value?: BuildInOptions['redirect']): Keq<T>
-  public option(key: keyof BuildInOptions, value?: any): Keq<T>
-  public option(key: string, value?: any): Keq<T>
-  public option(key: keyof BuildInOptions | string, value: any = true): Keq<T> | Keq<Response> {
-    this.opts[key] = value
+  /**
+   * Set request body
+   */
+  body(value: KeqRequestBody): this {
+    this.requestContext.body = value
     return this
   }
 
-  public options(opts: OptionsWithoutFullResponse): Keq<T>
-  public options(opts: OptionsWithFullResponse): Keq<Response>
-  public options(opts: Options): Keq<T> | Keq<Response>
-  public options(opts: Options): Keq<T> | Keq<Response> {
-    this.opts = { ...this.opts, ...opts }
+
+  /**
+   * Setting the Content-Type
+   */
+  type(contentType: ShorthandContentType | string): this {
+    const type = fixContentType(contentType)
+    this.set('Content-Type', type)
+    return this
+  }
+
+
+  /**
+   * Http Basic Authentication
+   */
+  auth(username: string, password: string): this {
+    this.set('Authorization', `Basic ${base64Encode(`${username}:${password}`)}`)
+    return this
+  }
+
+  private setTypeIfEmpty(contentType: ShorthandContentType | string): void {
+    if (!this.requestContext.headers.has('Content-Type')) void this.type(contentType)
+  }
+
+  /**
+   * set request body
+   */
+  send(value: FormData | URLSearchParams | object | Array<any> | string): this {
+    this.requestContext.body = assignKeqRequestBody(this.requestContext.body, value)
+
+    if (isUrlSearchParams(value)) {
+      this.setTypeIfEmpty('form')
+    } else if (isFormData(value)) {
+      this.setTypeIfEmpty('form-data')
+    } else if (typeof value === 'object') {
+      this.setTypeIfEmpty('json')
+    }
+
+    return this
+  }
+
+  field(arg1: string, value: string | string[]): this
+  field(arg1: Record<string, string>): this
+  field(arg1: string | Record<string, string>, arg2?: any): this {
+    if (typeof arg1 === 'object') {
+      this.requestContext.body = assignKeqRequestBody(this.requestContext.body, arg1)
+    } else if (arg2) {
+      this.requestContext.body = assignKeqRequestBody(this.requestContext.body, { [arg1]: arg2 })
+    } else {
+      throw new InvalidArgumentsExceptions()
+    }
+
+    this.setTypeIfEmpty('form-data')
+    return this
+  }
+
+  attach(key: string, value: Blob | File | Buffer): this
+  attach(key: string, value: Blob | File | Buffer, filename: string): this
+  attach(key: string, value: Blob | File | Buffer): this
+  attach(key: string, value: Blob | File | Buffer, arg3 = 'file'): this {
+    let file: File
+
+    if (isBlob(value)) {
+      const formData = new FormData()
+      formData.set(key, value, arg3)
+      file = formData.get(key) as File
+    } else if (isFile(value)) {
+      file = value
+    } else if (value instanceof Buffer) {
+      file = new File([value], arg3)
+    } else {
+      throw new InvalidArgumentsExceptions()
+    }
+
+    this.requestContext.body = assignKeqRequestBody(this.requestContext.body, { [key]: file })
+    this.setTypeIfEmpty('form-dat')
     return this
   }
 
   /**
    *
    * @param retryTimes Max number of retries per call
-   * @param initialRetryTime Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
+   * @param retryDelay Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
    * @param retryCallback Will be called after request failed
    */
-  public retry(retryTime: number, retryCallback?: RetryCallback): Keq<T>
-  public retry(retryTime: number, initialRetryTime: number, retryCallback?: RetryCallback): Keq<T>
-  public retry(
-    retryTimes: number,
-    initialRetryTimeOrRetryCallback?: number | RetryCallback,
-    retryCallback?: RetryCallback,
-  ): Keq<T> {
-    this.retryTimes = retryTimes
-
-    if (typeof initialRetryTimeOrRetryCallback === 'number') {
-      this.initialRetryTime = initialRetryTimeOrRetryCallback
-      this.retryCallback = retryCallback
-    } else if (typeof initialRetryTimeOrRetryCallback === 'function') {
-      this.retryCallback = initialRetryTimeOrRetryCallback
-    }
+  retry(retryTimes: number, retryDelay?: KeqRetryDelay, retryOn?: KeqRetryOn): Keq<T> {
+    this.option('retryTimes', retryTimes)
+    this.option('retryDelay', retryDelay)
+    this.option('retryOn', retryOn)
 
     return this
   }
 
-  public redirect(mode: RequestRedirect): Keq<T> {
-    this.opts = { ...this.opts, redirect: mode }
+
+  redirect(mod: RequestRedirect): this {
+    this.requestContext.redirect = mod
     return this
   }
 
-  public mode(mode: RequestMode): Keq<T> {
-    this.opts = { ...this.opts, mode }
+  credentials(mod: RequestCredentials): this {
+    this.requestContext.credentials = mod
     return this
   }
 
-  public credentials(mode: RequestCredentials): Keq<T> {
-    this.opts = { ...this.opts, credentials: mode }
+  mode(mod: RequestMode): this {
+    this.requestContext.mode = mod
     return this
-  }
-
-  private async fetch(ctx: Context): Promise<void> {
-    const uri = ctx.request.url.toPath()
-    if (!ctx.headers.has('Content-Type') && ctx.request.body) {
-      ctx.headers.set('Content-Type', inferContentTypeByBody(ctx.request.body))
-    }
-
-    const fetchOptions = {
-      method: ctx.request.method.toUpperCase(),
-      headers: ctx.headers,
-      body: this.serializeBodyFn(ctx.request.body, ctx),
-      ...ctx.request.options,
-    }
-
-    if (ctx.options.highWaterMark) {
-      fetchOptions['highWaterMark'] = ctx.options.highWaterMark
-    }
-    // if (ctx.options.)
-
-    const res = await ctx.options.fetchAPI(uri, fetchOptions)
-
-    async function resFromData(this: Response): Promise<FormData> {
-      const str = await this.text()
-      const contentType = this.headers.get('content-type')
-      if (!contentType) throw new Exception('Cannot parse form-data body without content-type')
-      const boundary = getBoundaryByContentType(contentType)
-      return parseFormData(str, boundary)
-    }
-
-    if (!isBrowser) {
-      // node-fetch does not implement Response.formData()
-      res.formData = resFromData.bind(res)
-    }
-
-    let cache: ArrayBuffer | undefined
-
-    ctx.res = new Proxy(res, {
-      get(target, property) {
-        if (
-          typeof property !== 'string' ||
-          (
-            property !== 'json' &&
-            property !== 'text' &&
-            property !== 'formData' &&
-            property !== 'blob'
-          )
-        ) {
-          return target[property] as unknown
-        }
-
-        return async() => {
-          if (isBrowser) return target.clone()[property]()
-
-          if (!cache) cache = await target.arrayBuffer()
-
-          const buf = Buffer.from(cache)
-          const res = new Response(
-            buf,
-            { headers: target.headers },
-          )
-
-          res.formData = resFromData.bind(res)
-          return await res[property]() as unknown
-        }
-      },
-    })
-  }
-
-  private async run(): Promise<T> {
-    const headers = new Headers()
-    this.headers.forEach((value, key) => {
-      headers.set(key, value)
-    })
-
-    const urlObj = this.urlObj.clone()
-
-    const request: RequestContext = {
-      method: this.method,
-
-      get url(): KeqURL {
-        return urlObj
-      },
-
-      // will be removed at next major version
-      set url(value: { href: string; params: Record<string, any>; [key: string]: any}) {
-        urlObj.href = value.href
-        urlObj.params = value.params
-      },
-      headers,
-      body: clone(this.body),
-      options: {},
-    }
-
-    if (this.opts.redirect) request.options.redirect = this.opts.redirect
-    if (this.opts.mode) request.options.mode = this.opts.mode
-    if (this.opts.credentials) request.options.credentials = this.opts.credentials
-
-    const ctx: Context = {
-      request,
-
-      options: clone({ ...this.opts, fetchAPI: this.opts.fetchAPI || fetch }),
-
-      get output() {
-        throw new Exception('output property is write-only')
-      },
-
-      set output(value) {
-        this[OUTPUT_PROPERTY] = value
-      },
-
-      get url() {
-        return this.request.url
-      },
-      set url(value: RequestContext['url']) {
-        this.request.url = value
-      },
-
-      get params() {
-        return this.url.params
-      },
-      set params(value: RequestContext['url']['params']) {
-        this.params = value
-      },
-
-      get query() {
-        return this.url.query
-      },
-      set query(value: RequestContext['url']['query']) {
-        this.url.query = value
-      },
-
-      get headers() {
-        return this.request.headers
-      },
-      set headers(value: RequestContext['headers']) {
-        this.request.headers = value
-      },
-
-      get body() {
-        return this.request.body
-      },
-      set body(value: RequestContext['body']) {
-        this.request.body = value
-      },
-
-
-      get response() {
-        return this.res
-      },
-    }
-
-
-    const middleware = compose([...this.middlewares, this.fetch.bind(this)])
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await middleware(ctx, async() => {})
-
-
-    let output: any = ctx[OUTPUT_PROPERTY]
-
-    if (!(OUTPUT_PROPERTY in ctx)) {
-      if (ctx.options.resolveWithFullResponse) {
-        output = ctx.response
-      } else if (ctx.options.resolveWithOriginalResponse) {
-        output = ctx.res
-      } else if (ctx.response?.status === 204) {
-      // 204: NO CONTENT
-        output = ctx.response && ctx.response.body
-      } else {
-        const contentType = ctx.response?.headers.get('content-type') || ''
-        try {
-          if (contentType.includes('application/json')) {
-            output = ctx.response && await ctx.response.json()
-          } else if (contentType.includes('multipart/form-data')) {
-            output = ctx.response && await ctx.response.formData()
-          } else if (contentType.includes('plain/text')) {
-            output = ctx.response && await ctx.response.text()
-          } else {
-            output = ctx.response && ctx.response.body
-          }
-        } catch (e) {
-          console.warn('Failed to auto parse response body', e)
-        }
-      }
-    }
-
-
-    return output as T
-  }
-
-  public async end(): Promise<T> {
-    let times = this.retryTimes + 1
-    let result: T
-    let error: any
-
-    while (times) {
-      try {
-        result = await this.run()
-        return result
-        // break
-      } catch (e) {
-        times -= 1
-        error = e
-        if (this.retryCallback) {
-          const continueRetry = await this.retryCallback(e as Error)
-          if (continueRetry === false) {
-            break
-          }
-        }
-        if (this.initialRetryTime) await sleep(this.initialRetryTime)
-      }
-    }
-    throw error
-  }
-
-  /**
-   * Attaches callbacks for the resolution and/or rejection of the Promise.
-   * @param onfulfilled The callback to execute when the Promise is resolved.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of which ever callback is executed.
-   */
-  public then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2> {
-    if (!this.requestPromise) this.requestPromise = this.end()
-    return this.requestPromise.then(onfulfilled, onrejected)
-  }
-
-  public catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<T | TResult> {
-    return this.end().catch(onrejected)
   }
 }
