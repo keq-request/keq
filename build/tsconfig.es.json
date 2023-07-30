@@ -1,8 +1,11 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../es",
+    "outDir": "../dist/esm",
     "module": "esnext",
-    "target": "es6"
-  }
+    "target": "esnext",
+    "preserveWatchOutput": true,
+  },
+  "include": ["../src/**/*.ts"],
+  "exclude": ["../src/**/*.spec.ts"],
 }

@@ -1,3 +1,3 @@
-import { createRequest } from './util/create-request'
+import { createRequest } from './create-request'
 
 export const request = createRequest()

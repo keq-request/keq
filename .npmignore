@@ -1,21 +1,12 @@
-/demo
-/docs
-/templates
-/tests
+/.github
+/.husky
+/build
+/coverage
+/doc
 /src
-node_modules
-.github
-.nyc_output
-.vscode
+/test
 
-# Dev Config File
 .commitlintrc.yml
-.czrc
-.eslintrc.yml
+.eslintrc.cjs
 .gitignore
-.huskyrc.yml
-.lintstagedrc.yml
-.travis.yml
-ava.config.js
-rollup.config.js
-tsconfig.json
+jest.config.ts

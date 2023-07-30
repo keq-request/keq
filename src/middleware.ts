@@ -1,38 +1,18 @@
-import { Exception } from '~/exception'
-import {
-  Context,
-  InnerMiddleware,
-  Middleware,
-  MiddlewareMatcher,
-} from '~/types'
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { Exception } from '~/exception/exception'
+import { KeqMiddleware } from './types/keq-middleware'
 
 
-export const matchHost = (host: string): MiddlewareMatcher => ctx => ctx.request.url.host === host
-export function matchMiddleware(matcher: MiddlewareMatcher, middleware: Middleware): Middleware {
-  return async(ctx, next) => {
-    if (matcher(ctx)) await middleware(ctx, next)
-    else await next()
-  }
-}
-export function wrapMiddleware(middleware: Middleware, ctx: Context, next: InnerMiddleware): InnerMiddleware {
-  return async() => {
-    await middleware(ctx, next)
-  }
-}
-
-export function compose(middlewares: Middleware[]): Middleware {
-  if (!middlewares.length) throw new Exception('At least one middleware')
-
-  let result: Middleware = middlewares[0]
-  const len = middlewares.length
-
-  for (let i = 1; i < len; i++) {
-    const last = result
-    result = async function(ctx, next) {
-      const inner = wrapMiddleware(middlewares[i], ctx, next)
-      await last(ctx, inner)
-    }
+export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
+  if (!middlewares.length) {
+    throw new Exception('At least one middleware')
   }
 
-  return result
+  const middleware = middlewares
+    .reverse()
+    .reduce(function (prev, curr): KeqMiddleware {
+      return (ctx, next) => curr(ctx, () => prev(ctx, next))
+    })
+
+  return middleware
 }

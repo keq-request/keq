@@ -1,98 +1,76 @@
 {
   "name": "keq",
-  "main": "lib/src/index.js",
-  "module": "es/src/index.js",
-  "types": "lib/src/index.d.ts",
   "version": "1.10.1",
-  "license": "MIT",
-  "scripts": {
-    "test": "npm run clean && npm run build:test && nyc ava",
-    "test:debug": "ava --verbose",
-    "test:update": "ava -u",
-    "report": "npm run build:test && nyc --reporter=html --reporter=text-summary --skip-full ava",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "ci": "git-cz",
-    "ca": "git add -A && git-cz -av",
-    "release": "standard-version",
-    "release:alpha": "standard-version --prerelease alpha",
-    "release:first": "standard-version --first-release",
-    "prepublishOnly": "npm run build",
-    "clean": "rm -rf ./lib/* && rm -rf ./es/*",
-    "prebuild": "npm run clean",
-    "build:es": "ttsc -p build/tsconfig.es.json && npm run copyfile:es",
-    "build:lib": "ttsc -p build/tsconfig.lib.json && npm run copyfile:lib",
-    "build:test": "ttsc -p build/tsconfig.test.json && npm run copyfile:lib",
-    "build": "npm run build:lib && npm run build:es",
-    "prewatch": "npm run copyfile:lib",
-    "watch": "NODE_ENV=development ttsc -p build/tsconfig.lib.json -w",
-    "copyfile:es": "copyfiles -u 1 \"src/**/*.!(ts)\" es/src",
-    "copyfile:lib": "copyfiles -u 1 \"src/**/*.!(ts)\" lib/src",
-    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"  --fix",
-    "prepare": "is-ci || husky install"
-  },
-  "devDependencies": {
-    "@ava/typescript": "^3.0.1",
-    "@buka/eslint-config": "^1.2.1",
-    "@commitlint/cli": "^17.0.2",
-    "@commitlint/config-conventional": "^17.0.2",
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
-    "@rushstack/eslint-patch": "^1.3.2",
-    "@types/sinon": "^10.0.11",
-    "ajv": "^8",
-    "ava": "^4.2.0",
-    "commitizen": "^4.2.4",
-    "copyfiles": "^2.4.1",
-    "coveralls": "^3.1.0",
-    "cz-conventional-changelog": "^3.3.0",
-    "eslint": "7",
-    "husky": "^7.0.4",
-    "is-ci": "^3.0.0",
-    "lint-staged": "^11.2.6",
-    "nyc": "^15.1.0",
-    "ramda": "^0.28.0",
-    "sinon": "^13.0.2",
-    "standard-version": "^9.3.0",
-    "ts-node": "^10.7.0",
-    "ttypescript": "^1.5.13",
-    "typescript": "~4.6.3",
-    "typescript-transform-paths": "^3.3.1"
-  },
-  "dependencies": {
-    "@types/clone": "^2.1.1",
-    "@types/minimatch": "^3.0.5",
-    "@types/node": "^14.18.13",
-    "@types/whatwg-url": "^8.2.1",
-    "blob": "^0.1.0",
-    "clone": "^2.1.2",
-    "form-data-encoder": "^1.7.2",
-    "formdata-node": "^4.3.2",
-    "formdata-polyfill": "^4.0.10",
-    "formidable": "^2.0.1",
-    "mime-types": "^2.1.27",
-    "minimatch": "^5.0.1",
-    "node-fetch": "2",
-    "object.fromentries": "^2.0.5",
-    "path-to-regexp": "^6.2.0",
-    "ts-custom-error": "^3.2.0",
-    "whatwg-url": "^11.0.0"
-  },
+  "main": "dist/umd/src/index.js",
+  "types": "dist/esm/src/index.d.ts",
+  "module": "dist/esm/src/index.js",
   "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
-  "directories": {
-    "doc": "doc",
-    "lib": "lib",
-    "test": "tests"
+  "keywords": [
+    "request",
+    "superagent",
+    "fetch",
+    "node",
+    "nodejs",
+    "browser",
+    "middleware",
+    "middlewares"
+  ],
+  "homepage": "https://github.com/Val-istar-Guo/keq#readme",
+  "bugs": {
+    "url": "https://github.com/Val-istar-Guo/keq/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Val-istar-Guo/keq.git"
   },
-  "keywords": [
-    "request",
-    "superagent"
-  ],
+  "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
-  "bugs": {
-    "url": "https://github.com/Val-istar-Guo/keq/issues"
+  "directories": {
+    "doc": "doc",
+    "test": "test"
   },
-  "homepage": "https://github.com/Val-istar-Guo/keq#readme"
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "prepare": "ts-patch install -s && is-ci || husky install",
+    "release": "standard-version",
+    "release:alpha": "standard-version --prerelease alpha",
+    "test": "jest",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf ./dist/*",
+    "build": "npm run clean && ./build/build.sh",
+    "dev": "npm run clean && ./build/watch.sh"
+  },
+  "devDependencies": {
+    "@buka/eslint-config": "^1.4.1",
+    "@commitlint/cli": "^17.7.1",
+    "@commitlint/config-conventional": "^17.7.0",
+    "@jest/globals": "^29.7.0",
+    "@rushstack/eslint-patch": "^1.4.0",
+    "@types/clone": "^2.1.2",
+    "@types/minimatch": "^5.1.2",
+    "@types/node": "^20.6.5",
+    "@types/whatwg-url": "^11.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
+    "eslint": "^8.50.0",
+    "husky": "^8.0.3",
+    "is-ci": "^3.0.1",
+    "jest": "^29.7.0",
+    "jest-mock": "^29.7.0",
+    "standard-version": "^9.5.0",
+    "ts-jest": "^29.1.1",
+    "ts-patch": "^3.0.2",
+    "typescript": "^5.2.2",
+    "typescript-transform-paths": "^3.4.6"
+  },
+  "dependencies": {
+    "clone": "^2.1.2",
+    "minimatch": "^9.0.3",
+    "object.fromentries": "^2.0.7",
+    "path-to-regexp": "^6.2.1",
+    "ts-custom-error": "^3.3.1",
+    "whatwg-url": "^13.0.0"
+  }
 }

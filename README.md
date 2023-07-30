@@ -6,23 +6,27 @@
 <h1 align="center" style="text-align: center">KEQ</h1>
 <!-- title -->
 
-[![version](https://img.shields.io/npm/v/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![downloads](https://img.shields.io/npm/dm/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![license](https://img.shields.io/npm/l/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![dependencies](https://img.shields.io/david/keq-request/keq.svg?style=flat-square)](https://www.npmjs.com/package/keq)
-[![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=flat-square)](https://coveralls.io/github/keq-request/keq)
+[![version](https://img.shields.io/npm/v/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![downloads](https://img.shields.io/npm/dm/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![license](https://img.shields.io/npm/l/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![dependencies](https://img.shields.io/librariesio/release/npm/keq-cli?style=for-the-badge)](https://www.npmjs.com/package/keq)
+
+<!-- [![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=for-the-badge)](https://coveralls.io/github/keq-request/keq) -->
 
 <!-- description -->
+
+[Fetch MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Fetch
 [Headers MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Headers
 [Response MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Response
 [FormData MDN]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
+[URL MDN]: https://developer.mozilla.org/en-US/docs/Web/API/URL
 
-[简体中文](./doc/zh-cn/readme.md)
 
 Keq is a request API write by Typescript for flexibility, readability, and a low learning curve. It also works with Node.js!
 
 Keq wraps the [cross-fetch](https://www.npmjs.com/package/cross-fetch) and use Fetch APIs whenever possible.
 Like [`Headers`][Headers MDN], [`Response`][Response MDN], [`FormData`][FormData MDN] objects.
+
 <!-- description -->
 
 ## Usage
@@ -36,22 +40,22 @@ then calling `.then()` (or `.end()` or `await`) to send the request.
 For example a simple GET request:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 const body = await request
-  .get('/search')
-  .set('X-Origin-Host', 'https://example.com')
-  .query('key1', 'value1')
+  .get("/search")
+  .set("X-Origin-Host", "https://example.com")
+  .query("key1", "value1")
 ```
 
 Request can be initiated by:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 const body = await request({
-  url: '/search',
-  method: 'get',
+  url: "/search",
+  method: "get",
 })
 ```
 
@@ -59,37 +63,36 @@ Absolute URLs can be used.
 In web browsers absolute URLs work only if the server implements CORS.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-const body = await request
-  .get('https://example.com/search')
+const body = await request.get("https://example.com/search")
 ```
 
 **DELETE**, **HEAD**, **PATCH**, **POST**, and **PUT** requests can also be used, simply change the method name:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request.head('https://example.com/search')
-await request.patch('https://example.com/search')
-await request.post('https://example.com/search')
-await request.put('https://example.com/search')
-await request.delete('https://example.com/search')
-await request.del('https://example.com/search')
+await request.head("https://example.com/search")
+await request.patch("https://example.com/search")
+await request.post("https://example.com/search")
+await request.put("https://example.com/search")
+await request.delete("https://example.com/search")
+await request.del("https://example.com/search")
 ```
 
 > `.del()` is the alias of `.delete()`.
 
-`Keq` will parse `body` according to the `Content-Type` of  [`Response`][Response MDN]
+`Keq` will parse `body` according to the `Content-Type` of [`Response`][Response MDN]
 and return `body` of [`Response`][Response MDN] by defaulted.
-Add option `resolveWithFullResponse` to get the origin  [`Response`][Response MDN] Object.
+Add option `resolveWithFullResponse` to get the origin [`Response`][Response MDN] Object.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 const response = await request
-  .get('http://test.com')
-  .option('resolveWithFullResponse')
+  .get("http://test.com")
+  .option("resolveWithFullResponse")
 
 const body = await response.json()
 ```
@@ -101,25 +104,23 @@ const body = await response.json()
 Setting header fields is simple, invoke `.set()` with a field name and value:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('/search')
-  .set('X-Origin-Host', 'https://example.com')
-  .set('Accept', 'application/json')
+  .get("/search")
+  .set("X-Origin-Host", "https://example.com")
+  .set("Accept", "application/json")
 ```
 
 You may also pass an object or `Headers` to set several fields in a single call:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request
-  .get('/search')
-  .set({
-    'X-Origin-Host': 'https://example.com',
-    'Accept': 'application/json',
-  })
+await request.get("/search").set({
+  "X-Origin-Host": "https://example.com",
+  Accept: "application/json",
+})
 ```
 
 ### Request query
@@ -129,23 +130,23 @@ which when used with the GET method will form a query-string.
 The following will produce the path `/search?query=Manny&range=1..5&order=desc.`
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-   .get('/search')
-   .query({ query: 'Manny' })
-   .query({ range: '1..5' })
-   .query('order', 'desc')
+  .get("/search")
+  .query({ query: "Manny" })
+  .query({ range: "1..5" })
+  .query("order", "desc")
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-   .get('/search')
-   .query({ query: 'Manny',  range: '1..5', order: 'desc' })
+  .get("/search")
+  .query({ query: "Manny", range: "1..5", order: "desc" })
 ```
 
 ### Request routing parameters
@@ -154,21 +155,21 @@ The `.params()` method accepts key and value, which when used for the request wi
 The follwing will produce the path `/search/keq`.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('/search/:searchKey')
-  .params('searchKey', 'keq')
+  .get("/search/:searchKey")
+  .params("searchKey", "keq")
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('/search/:searchKey')
-  .params({ searchKey: 'keq' })
+  .get("/search/:searchKey")
+  .params({ searchKey: "keq" })
 ```
 
 ### JSON Request
@@ -177,11 +178,12 @@ A typical JSON POST request might look a little like the following,
 where we set the `Content-Type` header field appropriately:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request.post('/user')
-  .set('Content-Type', 'application/json')
-  .send({ name:"tj", pet:"tobi" })
+await request
+  .post("/user")
+  .set("Content-Type", "application/json")
+  .send({ name: "tj", pet: "tobi" })
 ```
 
 When passed an `object` to `.send()`, it will auto set `Content-Type` to `application/json`
@@ -191,12 +193,13 @@ When passed an `object` to `.send()`, it will auto set `Content-Type` to `applic
 A typical Form POST request might look a little like the following:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request.post('/user')
-  .type('form')
-  .send({ name:"tj", pet:"tobi" })
-  .send('pet=tobi')
+await request
+  .post("/user")
+  .type("form")
+  .send({ name: "tj", pet: "tobi" })
+  .send("pet=tobi")
 ```
 
 To send the data as `application/x-www-form-urlencoded` simply invoke `.type()` with "form".
@@ -209,30 +212,31 @@ When passed an `string` to `.send()`, it will auto set `Content-Type` to `applic
 A typical Form POST request might look a little like the following:
 
 ```javascript
-import { request, FormData } from 'keq'
+import { request } from "keq"
 
 const form = new FormData()
-form.append('name', 'tj')
-form.append('pet', 'tobi')
+form.append("name", "tj")
+form.append("pet", "tobi")
 
-await request.post('/user')
-  .type('form-data')
+// prettier-ignore
+await request
+  .post("/user")
+  .type("form-data")
   .send(form)
 ```
 
 When passed an `FormData` object to `.send()`, it will auto set `Content-Type` to `multipart/form-data`.
 
-`FormData` exported from 'keq' will use [formdata-node](https://www.npmjs.com/package/formdata-node) in NodeJS and the default `FormData` in the browser
-
 You can append field by invoke `.field()` and `.attach()`
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request.post('/user')
-  .field('name', 'tj')
-  .field('pet', 'tobi')
-  .attach('image', imageBlobOrBuffer)
+await request
+  .post("/user")
+  .field("name", "tj")
+  .field("pet", "tobi")
+  .attach("file", new Blob(["I am tj"]))
 ```
 
 ### Setting the Content-Type
@@ -240,10 +244,12 @@ await request.post('/user')
 The obvious solution is to use the .set() method:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request.post('/user')
-  .set('Content-Type', 'application/json')
+// prettier-ignore
+await request
+  .post("/user")
+  .set("Content-Type", "application/json")
 ```
 
 As a short-hand the .type() method is also available,
@@ -251,62 +257,45 @@ accepting the canonicalized MIME type name complete with type/subtype,
 or simply the extension name such as "xml", "json", "png", etc:
 
 ```javascript
-import { request } from 'keq'
-
-await request.post('/user')
-  .type('json')
-```
-
-**Shorthand**                                 | **Mime Type**
-:---------------------------------------------|:----------------------------------
-json, xml                                     | application/json, application/xml
-form                                          | application/x-www-form-urlencoded
-html, css                                     | text/html, text/css
-form-data                                     | multipart/form-data
-jpeg, bmp, apng, gif, x-icon, png, webp, tiff | image/jpeg, image/bmp, image/apng, image/gif, image/x-icon, image/png, image/webp, image/tiff
-svg                                           | image/svg+xml
-
-### Serializing request body
-
-Keq will automatically serialize JSON and forms.
-You can setup automatic serialization for other types as well:
-
-```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .post('/user')
-  .send({foo: 'bar'})
-  .serialize((obj, ctx) => {
-      return 'string generated from obj';
-  });
+  .post("/user")
+  .type("json")
 ```
 
-The return value of `callback` in the `.serialize(callback)` method will be directly used as the `body` parameter of [`Fetch API`][FETCH API].
-
-The `callback(obj, ctx)` arguments：
-
- **Arguments**                                 | **Description**
-:----------------------------------------------|:------------------------------------
- `obj`(first argument)                         | Un-serializing request body
- `ctx`(second argument)                        | Keq Context
+| **Shorthand**                                 | **Mime Type**                                                                                 |
+| :-------------------------------------------- | :-------------------------------------------------------------------------------------------- |
+| json, xml                                     | application/json, application/xml                                                             |
+| form                                          | application/x-www-form-urlencoded                                                             |
+| html, css                                     | text/html, text/css                                                                           |
+| form-data                                     | multipart/form-data                                                                           |
+| jpeg, bmp, apng, gif, x-icon, png, webp, tiff | image/jpeg, image/bmp, image/apng, image/gif, image/x-icon, image/png, image/webp, image/tiff |
+| svg                                           | image/svg+xml                                                                                 |
 
 ### Request Retry
 
-No retry by default, invoke `.retry(times[, initialTime[, callback]])`  to set retry parameters
+No retry by default, invoke `.retry(retryTimes[, retryDelay[, retryOn]])` to set retry parameters
 
- Parameter   | Description
-:------------|:---------------
- times       | Max number of retries per call.
- initialTime | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor).
- callback    | Will be called after request failed (Before retry). If it return `false`, stop retrying.
+| Parameter  | Description                                                                                                              |
+| :--------- | :----------------------------------------------------------------------------------------------------------------------- |
+| retryTimes | Max number of retries per call.                                                                                          |
+| retryDelay | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor). |
+| retryOn    | Will be called after request used to control whether the next retry runs. If it return `false`, stop retrying.           |
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('http://test.com')
-  .retry(2, 1000, () => {})
+  .get("http://test.com")
+  .retry(2, 1000, (attempt, err, ctx) => {
+    if (err) {
+      console.log('an error throw')
+      return true
+    }
+
+    return false
+  })
 ```
 
 ### Set Request Redirect mode
@@ -314,11 +303,11 @@ await request
 Follow redirect by default, invoke `.redirect(mode)` to set the redirect mode. Allow values are `"error"`, `"manual"` and `"follow"`.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('http://test.com')
-  .redirect('manual')
+  .get("http://test.com")
+  .redirect("manual")
 ```
 
 ### Set Request Credentials And Mode
@@ -326,12 +315,12 @@ await request
 These two parameters are used to control cross-domain requests.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('http://test.com')
-  .mode('cors')
-  .credentials('include')
+  .get("http://test.com")
+  .mode("cors")
+  .credentials("include")
 ```
 
 ### Keq Internal Options
@@ -339,76 +328,92 @@ await request
 Invoke `.option()` add options.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-await request
-  .get('http://test.com')
-  .option('resolveWithFullResponse')
-  .option('middlewareOption', 'value')
+const response = await request
+  .get("http://test.com")
+  /**
+   * keq will return Response rather than parsed body
+   * when set resolveWithFullResponse
+   */
+  .option("resolveWithFullResponse")
+  .option("middlewareOption", "value")
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
 await request
-  .get('http://test.com')
+  .get("http://test.com")
   .options({
     resolveWithFullResponse: true,
-    middlewareOption: 'value',
+    middlewareOption: "value",
   })
 ```
 
-**Option**                    | **Description**
-:-----------------------------|:---------------------------
-`resolveWithFullResponse`     | Get the [`Response`][Response MDN] Object. This is the `.clone()` of original [`Response`][Response MDN]
-`fetchAPI`                    | Replace the defaulted `fetch` function used by `Keq`.
-`resolveWithOriginalResponse` | **DEPRECATED** Get the origin [`Response`][Response MDN]
-`highWaterMark`               | **DEPRECATED** The maximum number of bytes to store in the internal buffer before ceasing to read from the underlying resource. [See more in node-fetch](https://github.com/node-fetch/node-fetch#custom-highwatermark)
+| **Option**                | **Description**                                                                                         |
+| :------------------------ | :------------------------------------------------------------------------------------------------------ |
+| `resolveWithFullResponse` | Get the [`Response`][Response MDN] Class. This is the `.clone()` of original [`Response`][Response MDN] |
+| `fetchAPI`                | Replace the defaulted `fetch` function used by `Keq`.                                                   |
 
-###### The options with **DEPRECATED** will be removed in next major version
+<!-- ###### The options with **DEPRECATED** will be removed in next major version -->
 
 ### Middleware
 
-You can write/import middleware to extend `Keq`.
+You can extend `Keq` by write/import middleware.
 A typical middleware might look a little like the following:
 
 ```javascript
-import { request, mount } from 'keq'
+import { request } from "keq"
 
 const middleware = async (context, next) => {
-  context.request.url.query.limit = 10
-  context.request.url.query.offset = 0
+  // equal to .retry(2)
+  context.options.retryTimes = 2
 
   await next()
   const response = context.response
   if (!response) return
   const body = await response.json()
+
+  // custom keq return type
   response.output = JSON.stringify(body)
 }
 
 // Global Middleware
 request
   .use(middleware)
-  .use('example.com', middleware)
+
+request
+  .useRouter()
   /**
-   * Mount middleware to location host.
+   * the middleware run when request url host is "example.com"
+   */
+  .host("example.com", middleware)
+  /**
+   * the middleware run when request url is location
    * It is usefully in browser.
    */
-  .use(mount.location(), middleware)
+  .location(middleware)
   /**
-   * Mount middleware to the pathname that match `/api/service_name/**`.
+   * the middleware run when pathname match `/api/service_name/**`.
    */
-  .use(mount.pathname('/api/service_name/**'), middleware)
+  .pathname("/api/service_name/**" middleware)
   /**
-   * mount.location() && mount.pathname('/api/service_name/**')
+   * the middleware run when method is GET
    */
-  .use(mount.location().pathname('/api/service_name/**'), middleware)
+  .method('get', middleware)
+  /**
+   * used with keq-cli
+   */
+  .module('yourServiceName',middleware)
 
-// Request Middleware
 await request
-  .get('http://test.com')
+  .get("http://test.com")
+  /**
+   * the middleware run once
+   */
   .use(middleware)
 ```
 
@@ -416,66 +421,73 @@ await request
 
 Add an global middleware, The running order of middleware is related to the order of `.use()`
 
-#### request.use(host, middleware)
+#### request.useRouter()
 
-Add an global middleware that only enabled at the `host`.
+Middleware Router
 
 #### write an middleware
 
 Middleware should be an asnyc-function that accept two argument:
 
- **Arguments**                                 | **Description**
-:----------------------------------------------|:------------------------------------
- `ctx`(first argument)                         | Keq Context
- `next`(second argument)                       | Used to execute the next middleware. The last `next()` function will send request and bind the [`Response`][Response MDN] object to `context.res`. Don't forget to call `next()` unless you don't want to send the request.
+| **Arguments**           | **Description**                                                                                                                                                                                                             |
+| :---------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ctx`(first argument)   | Keq Context                                                                                                                                                                                                                 |
+| `next`(second argument) | Used to execute the next middleware. The last `next()` function will send request and bind the [`Response`][Response MDN] object to `context.res`. Don't forget to call `next()` unless you don't want to send the request. |
 
 Keq's context object has many parameters. The following lists all the built-in context attributes of `Keq`:
 
-**Property**                  | **Type**
-:-----------------------------|:------------------------------------
-`context.request`             | Includes request options for Fetch API.
-`context.request.url`         | The return type of `url.parse('http://test.com', true)`.
-`context.request.method`      | One of 'get', 'post', 'put', 'patch', 'head', 'delete'.
-`context.request.body`        | Object, Array, Stream, Blob or undefined.
-`context.request.headers`     | The [`Headers`][Headers MDN] Object.
-`context.request.options`     | Other options that can be passed into the Fetch API.
-`context.url`                 | Access to `context.request.url`.
-`context.query`               | Access to `context.request.url.query`.
-`context.headers`             | Access to `context.request.headers`.
-`context.body`                | Access to `context.request.body`.
-`context.options`             | It is an object includes request options.(example: `context.options.resolveWithFullResponse`). Middleware can get custom options from here.
-`context.res`                 | The origin [`Response`][Response MDN] Object. It will be undefined before run `await next()` or error throwed.
-`context.response`            | Cloned from `ctx.res`.
-`context.output`              | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true. **This property is writeonly.**
+| **Property**                     | **Type**                                                                                                                                                                                                                          |
+| :------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `context.request`                | Includes request options for [Fetch API][Fetch MDN].                                                                                                                                                                              |
+| `context.request.url`            | [URL][URL MDN] Class                                                                                                                                                                                                              |
+| `context.request.method`         | One of 'get', 'post', 'put', 'patch', 'head', 'delete'.                                                                                                                                                                           |
+| `context.request.body`           | Object, Array, string or undefined.                                                                                                                                                                                               |
+| `context.request.headers`        | The [`Headers`][Headers MDN] Object.                                                                                                                                                                                              |
+| `context.request.routeParams`    | The URL route params set by `.params(key, value)`                                                                                                                                                                                 |
+| `context.request.catch`          | `catch` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                       |
+| `context.request.credentials`    | `credentials` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                 |
+| `context.request.integrity`      | `integrity` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                   |
+| `context.request.keepalive`      | `keepalive` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                   |
+| `context.request.mode`           | `mode` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                        |
+| `context.request.redirect`       | `redirect` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                    |
+| `context.request.referrer`       | `referrer` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                    |
+| `context.request.referrerPolicy` | `referrerPolicy` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                              |
+| `context.request.signal`         | `signal` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                      |
+| `context.options`                | It is an object includes request options.(example: `context.options.resolveWithFullResponse`). Middleware can get custom options from here.                                                                                       |
+| `context.res`                    | The origin [`Response`][Response MDN] Class. It will be undefined before run `await next()` or error throwed.                                                                                                                     |
+| `context.response`               | Cloned from `ctx.res`.                                                                                                                                                                                                            |
+| `context.output`                 | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true. **This property is writeonly.** |
 
-#### the mount
+#### .useRouter()
 
-This is the utils used to mount middleware.
+This is the utils used to route middleware.
 
- **Function**                                 | **Description**
- :--------------------------------------------|:---------------------------------------------
- `mount.location()`                           | Mount to Location. Useful in the browser
- `mount.method(method: string)                | Mount to the method.
- `mount.pathname(matcher: string \| Regexp)`  | Mount to the pathname that match the `matcher`. `string` can be [`glob`](https://www.npmjs.com/package/picomatch).
- `mount.host(host: string)`                   | Mount to the Host.
+| **Method**                             |
+| :------------------------------------- |
+| `.location(...middlewares)`                          |
+| `.method(method: string[, ...middlewares])`              |
+| `.pathname(matcher: string \| Regexp[, ...middlewares])` |
+| `.host(host: string[, ...middlewares])`                  |
+| `.module(moduleName: string[, ...middlewares])`          |
 
 ### Create Request
 
- If you want to create a request instance, you can invoke `request.create()`:
+If you want to create a request instance, you can invoke `request.create()`:
 
 ```typescript
-import { request } from 'keq'
+import { createRequest } from "keq"
 
-const customRequest = request.create()
+const customRequest = createRequest()
 
 // Middleware only takes effect on customRequests
-customRequest.use(/** some middleware */)
+customRequest
+  .use(/** some middleware */)
 
 const body = await customRequest
-  .get('http://test.com')
+  .get("http://test.com")
 ```
 
- > The gloabl request instance is created by `request.create()` too.
+> The gloabl request instance is created by `request.create()` too.
 
 <!-- usage -->
 
@@ -493,9 +505,9 @@ The difference between the two is that when called multiple times.
 `.end ()` will send a request for each call.
 
 ```javascript
-import { request } from 'keq'
+import { request } from "keq"
 
-const keq = request.get('http://test.com')
+const keq = request.get("http://test.com")
 
 keq.then(onfulfilled, onrejected)
 // Won't send request, and will use the last request result.
@@ -518,11 +530,6 @@ Keq is inspired by SuperAgent and Koa.
 - [Superagent](https://visionmedia.github.io/superagent/#test-documentation)
 - [Koa](https://koajs.com/)
 
-## Sponsor
-
-Support code development on patron.
-
-[![patron](https://c5.patreon.com/external/logo/become_a_patron_button@2x.png)](https://www.patreon.com/bePatron?u=22478507)
 <!-- addition -->
 
 ## Contributing & Development

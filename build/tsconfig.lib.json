@@ -1,9 +1,12 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../lib",
+    "outDir": "../dist/umd",
     "module": "umd",
-    "target": "es6"
-  }
+    "target": "esnext",
+    "preserveWatchOutput": true,
+  },
+  "include": ["../src/**/*.ts"],
+  "exclude": ["../src/**/*.spec.ts"],
 }
 

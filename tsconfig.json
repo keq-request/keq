@@ -1,42 +1,34 @@
 {
   "compilerOptions": {
+    "strict": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "outDir": "./lib",
-    "moduleResolution": "node",
-    "module": "commonjs",
-    "target": "esnext",
-    "strict": true,
     "noImplicitAny": false,
     "declaration": true,
+    "resolveJsonModule": true,
+    "noEmitOnError": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ESNext",
     "baseUrl": "./",
     "rootDir": "./",
-    "noEmitOnError": true,
+    "lib": ["DOM", "Es2015.Proxy", "ESNext", "DOM.Iterable"],
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
-      "~root/*": [
-        "./*"
-      ]
+      "~/*": ["src/*"],
+      "~~/*": ["./*"]
     },
     "plugins": [
-      {
-        "transform": "typescript-transform-paths"
-      },
-      {
-        "transform": "typescript-transform-paths",
-        "afterDeclarations": true
-      }
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
     ]
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ],
+  "exclude": ["node_modules", "dist"],
+
+  "include": ["**/*.ts", ".eslintrc.cjs", "jest.config.ts"],
   "ts-node": {
-    "compiler": "ttypescript"
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

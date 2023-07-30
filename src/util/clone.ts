@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { isBlob } from './is'
 import deepClone from 'clone'
 import fromEntries from 'object.fromentries'
+import { isBlob } from '~/is/is-blob'
 
 
 export function clone<T>(obj: T): T {
   if (Array.isArray(obj)) {
-    return obj.map(item => isBlob(item) ? item : clone(item)) as unknown as T
+    return obj.map((item) => (isBlob(item) ? item : clone(item))) as unknown as T
   } else if (obj === null) {
     return null as unknown as T
   } else if (typeof obj === 'object') {
