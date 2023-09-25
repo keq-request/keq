@@ -7,7 +7,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* Change the API of Keq
+* Drop support for Node16. 
+* Remove node-fetch and internal FormData support in nodejs.
+* `content.url`, `content.query`, `content.headers`, `content.body` has be removed,  use
+`content.request.*` instead.
+* `resolveWithOriginResponse` has be removed. `context.request.options` has
+be removed, use `context.request` instead.
+* `mount` has be removed, use `request.useRouter` instead.
+* `.serialize` has be removed.
 
 ### Code Refactoring
 
