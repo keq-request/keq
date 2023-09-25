@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://www.github.com/keq-request/keq/compare/v1.10.1...v2.0.0) (2023-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Drop support for Node16. 
+* Remove node-fetch and internal FormData support in nodejs.
+* `content.url`, `content.query`, `content.headers`, `content.body` has be removed,  use
+`content.request.*` instead.
+* `resolveWithOriginResponse` has be removed. `context.request.options` has
+be removed, use `context.request` instead.
+* `mount` has be removed, use `request.useRouter` instead.
+* `.serialize` has be removed.
+
+### Code Refactoring
+
+* rebuild code ([267b899](https://www.github.com/keq-request/keq/commit/267b899244f532b409ef8b7514d9bbe60394ecd1))
+
 ### [1.10.1](https://www.github.com/keq-request/keq/compare/v1.10.0...v1.10.1) (2023-05-17)
 
 
