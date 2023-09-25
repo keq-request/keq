@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://www.github.com/keq-request/keq/compare/v1.10.1...v2.0.0) (2023-09-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Change the API of Keq
+
+### Code Refactoring
+
+* rebuild code ([267b899](https://www.github.com/keq-request/keq/commit/267b899244f532b409ef8b7514d9bbe60394ecd1))
+
 ### [1.10.1](https://www.github.com/keq-request/keq/compare/v1.10.0...v1.10.1) (2023-05-17)
 
 
