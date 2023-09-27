@@ -5,7 +5,8 @@
     "module": "esnext",
     "target": "esnext",
     "preserveWatchOutput": true,
+    "resolveJsonModule": false
   },
   "include": ["../src/**/*.ts"],
-  "exclude": ["../src/**/*.spec.ts"],
+  "exclude": ["../src/**/*.spec.ts"]
 }

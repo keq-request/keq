@@ -5,7 +5,6 @@
     "esModuleInterop": true,
     "noImplicitAny": false,
     "declaration": true,
-    "resolveJsonModule": true,
     "noEmitOnError": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
