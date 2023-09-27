@@ -1,3 +1,4 @@
+export { createRequest } from './create-request'
 export { Keq } from './keq'
 export { composeMiddleware } from './middleware'
 export { request } from './request'
