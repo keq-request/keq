@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://www.github.com/keq-request/keq/compare/v2.0.0...v2.0.1) (2023-09-27)
+
+
+### Bug Fixes
+
+* cannot import createRequest ([2acdc47](https://www.github.com/keq-request/keq/commit/2acdc47200c36c83d7539f7d3b68d8df7bb49803))
+
 ## [2.0.0](https://www.github.com/keq-request/keq/compare/v1.10.1...v2.0.0) (2023-09-25)
 
 
