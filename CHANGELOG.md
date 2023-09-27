@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://www.github.com/keq-request/keq/compare/v2.0.2...v2.0.3) (2023-09-27)
+
+
+### Bug Fixes
+
+* cannot find dist/umd/src/index.js ([9264923](https://www.github.com/keq-request/keq/commit/9264923e606fc5bc28675c751910e1eb3a30b864))
+
 ### [2.0.2](https://www.github.com/keq-request/keq/compare/v2.0.1...v2.0.2) (2023-09-27)
 
 
