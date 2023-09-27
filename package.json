@@ -4,6 +4,7 @@
   "main": "dist/umd/src/index.js",
   "types": "dist/esm/src/index.d.ts",
   "module": "dist/esm/src/index.js",
+  "packageManager": "pnpm@8.7.6",
   "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
   "keywords": [
     "request",
