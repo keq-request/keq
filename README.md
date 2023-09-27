@@ -9,7 +9,7 @@
 [![version](https://img.shields.io/npm/v/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
 [![downloads](https://img.shields.io/npm/dm/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
 [![license](https://img.shields.io/npm/l/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![dependencies](https://img.shields.io/librariesio/release/npm/keq-cli?style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![dependencies](https://img.shields.io/librariesio/release/npm/keq?style=for-the-badge)](https://www.npmjs.com/package/keq)
 
 <!-- [![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=for-the-badge)](https://coveralls.io/github/keq-request/keq) -->
 
