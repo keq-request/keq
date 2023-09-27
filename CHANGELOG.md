@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://www.github.com/keq-request/keq/compare/v2.0.1...v2.0.2) (2023-09-27)
+
+
+### Bug Fixes
+
+* cannot import umd package ([4eb05b3](https://www.github.com/keq-request/keq/commit/4eb05b35a41fd7b00e21ae5978eb3dc3900a3bdc))
+
 ### [2.0.1](https://www.github.com/keq-request/keq/compare/v2.0.0...v2.0.1) (2023-09-27)
 
 
