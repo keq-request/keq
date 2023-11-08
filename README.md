@@ -6,12 +6,10 @@
 <h1 align="center" style="text-align: center">KEQ</h1>
 <!-- title -->
 
-[![version](https://img.shields.io/npm/v/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![downloads](https://img.shields.io/npm/dm/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![license](https://img.shields.io/npm/l/keq.svg?style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![dependencies](https://img.shields.io/librariesio/release/npm/keq?style=for-the-badge)](https://www.npmjs.com/package/keq)
-
-<!-- [![coveralls](https://img.shields.io/coveralls/github/keq-request/keq.svg?style=for-the-badge)](https://coveralls.io/github/keq-request/keq) -->
+[![version](https://img.shields.io/npm/v/keq.svg?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![downloads](https://img.shields.io/npm/dm/keq.svg?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![dependencies](https://img.shields.io/librariesio/release/npm/keq?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![license](https://img.shields.io/npm/l/keq.svg?logo=github&style=for-the-badge)](https://www.npmjs.com/package/keq)
 
 <!-- description -->
 
@@ -20,7 +18,6 @@
 [Response MDN]: https://developer.mozilla.org/en-US/docs/Web/API/Response
 [FormData MDN]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [URL MDN]: https://developer.mozilla.org/en-US/docs/Web/API/URL
-
 
 Keq is a request API write by Typescript for flexibility, readability, and a low learning curve. It also works with Node.js!
 
@@ -40,45 +37,45 @@ then calling `.then()` (or `.end()` or `await`) to send the request.
 For example a simple GET request:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 const body = await request
   .get("/search")
   .set("X-Origin-Host", "https://example.com")
-  .query("key1", "value1")
+  .query("key1", "value1");
 ```
 
 Request can be initiated by:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 const body = await request({
   url: "/search",
   method: "get",
-})
+});
 ```
 
 Absolute URLs can be used.
 In web browsers absolute URLs work only if the server implements CORS.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-const body = await request.get("https://example.com/search")
+const body = await request.get("https://example.com/search");
 ```
 
 **DELETE**, **HEAD**, **PATCH**, **POST**, and **PUT** requests can also be used, simply change the method name:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request.head("https://example.com/search")
-await request.patch("https://example.com/search")
-await request.post("https://example.com/search")
-await request.put("https://example.com/search")
-await request.delete("https://example.com/search")
-await request.del("https://example.com/search")
+await request.head("https://example.com/search");
+await request.patch("https://example.com/search");
+await request.post("https://example.com/search");
+await request.put("https://example.com/search");
+await request.delete("https://example.com/search");
+await request.del("https://example.com/search");
 ```
 
 > `.del()` is the alias of `.delete()`.
@@ -88,13 +85,13 @@ and return `body` of [`Response`][Response MDN] by defaulted.
 Add option `resolveWithFullResponse` to get the origin [`Response`][Response MDN] Object.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 const response = await request
   .get("http://test.com")
-  .option("resolveWithFullResponse")
+  .option("resolveWithFullResponse");
 
-const body = await response.json()
+const body = await response.json();
 ```
 
 ###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated metainformation
@@ -104,23 +101,23 @@ const body = await response.json()
 Setting header fields is simple, invoke `.set()` with a field name and value:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .get("/search")
   .set("X-Origin-Host", "https://example.com")
-  .set("Accept", "application/json")
+  .set("Accept", "application/json");
 ```
 
 You may also pass an object or `Headers` to set several fields in a single call:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request.get("/search").set({
   "X-Origin-Host": "https://example.com",
   Accept: "application/json",
-})
+});
 ```
 
 ### Request query
@@ -130,23 +127,23 @@ which when used with the GET method will form a query-string.
 The following will produce the path `/search?query=Manny&range=1..5&order=desc.`
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .get("/search")
   .query({ query: "Manny" })
   .query({ range: "1..5" })
-  .query("order", "desc")
+  .query("order", "desc");
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .get("/search")
-  .query({ query: "Manny", range: "1..5", order: "desc" })
+  .query({ query: "Manny", range: "1..5", order: "desc" });
 ```
 
 ### Request routing parameters
@@ -155,21 +152,17 @@ The `.params()` method accepts key and value, which when used for the request wi
 The follwing will produce the path `/search/keq`.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("/search/:searchKey")
-  .params("searchKey", "keq")
+await request.get("/search/:searchKey").params("searchKey", "keq");
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("/search/:searchKey")
-  .params({ searchKey: "keq" })
+await request.get("/search/:searchKey").params({ searchKey: "keq" });
 ```
 
 ### JSON Request
@@ -178,12 +171,12 @@ A typical JSON POST request might look a little like the following,
 where we set the `Content-Type` header field appropriately:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .post("/user")
   .set("Content-Type", "application/json")
-  .send({ name: "tj", pet: "tobi" })
+  .send({ name: "tj", pet: "tobi" });
 ```
 
 When passed an `object` to `.send()`, it will auto set `Content-Type` to `application/json`
@@ -193,13 +186,13 @@ When passed an `object` to `.send()`, it will auto set `Content-Type` to `applic
 A typical Form POST request might look a little like the following:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .post("/user")
   .type("form")
   .send({ name: "tj", pet: "tobi" })
-  .send("pet=tobi")
+  .send("pet=tobi");
 ```
 
 To send the data as `application/x-www-form-urlencoded` simply invoke `.type()` with "form".
@@ -212,11 +205,11 @@ When passed an `string` to `.send()`, it will auto set `Content-Type` to `applic
 A typical Form POST request might look a little like the following:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-const form = new FormData()
-form.append("name", "tj")
-form.append("pet", "tobi")
+const form = new FormData();
+form.append("name", "tj");
+form.append("pet", "tobi");
 
 // prettier-ignore
 await request
@@ -230,13 +223,13 @@ When passed an `FormData` object to `.send()`, it will auto set `Content-Type` t
 You can append field by invoke `.field()` and `.attach()`
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 await request
   .post("/user")
   .field("name", "tj")
   .field("pet", "tobi")
-  .attach("file", new Blob(["I am tj"]))
+  .attach("file", new Blob(["I am tj"]));
 ```
 
 ### Setting the Content-Type
@@ -244,7 +237,7 @@ await request
 The obvious solution is to use the .set() method:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 // prettier-ignore
 await request
@@ -257,11 +250,9 @@ accepting the canonicalized MIME type name complete with type/subtype,
 or simply the extension name such as "xml", "json", "png", etc:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .post("/user")
-  .type("json")
+await request.post("/user").type("json");
 ```
 
 | **Shorthand**                                 | **Mime Type**                                                                                 |
@@ -284,18 +275,16 @@ No retry by default, invoke `.retry(retryTimes[, retryDelay[, retryOn]])` to set
 | retryOn    | Will be called after request used to control whether the next retry runs. If it return `false`, stop retrying.           |
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("http://test.com")
-  .retry(2, 1000, (attempt, err, ctx) => {
-    if (err) {
-      console.log('an error throw')
-      return true
-    }
+await request.get("http://test.com").retry(2, 1000, (attempt, err, ctx) => {
+  if (err) {
+    console.log("an error throw");
+    return true;
+  }
 
-    return false
-  })
+  return false;
+});
 ```
 
 ### Set Request Redirect mode
@@ -303,11 +292,9 @@ await request
 Follow redirect by default, invoke `.redirect(mode)` to set the redirect mode. Allow values are `"error"`, `"manual"` and `"follow"`.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("http://test.com")
-  .redirect("manual")
+await request.get("http://test.com").redirect("manual");
 ```
 
 ### Set Request Credentials And Mode
@@ -315,12 +302,9 @@ await request
 These two parameters are used to control cross-domain requests.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("http://test.com")
-  .mode("cors")
-  .credentials("include")
+await request.get("http://test.com").mode("cors").credentials("include");
 ```
 
 ### Keq Internal Options
@@ -328,7 +312,7 @@ await request
 Invoke `.option()` add options.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
 const response = await request
   .get("http://test.com")
@@ -337,20 +321,18 @@ const response = await request
    * when set resolveWithFullResponse
    */
   .option("resolveWithFullResponse")
-  .option("middlewareOption", "value")
+  .option("middlewareOption", "value");
 ```
 
 Or as a single object:
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-await request
-  .get("http://test.com")
-  .options({
-    resolveWithFullResponse: true,
-    middlewareOption: "value",
-  })
+await request.get("http://test.com").options({
+  resolveWithFullResponse: true,
+  middlewareOption: "value",
+});
 ```
 
 | **Option**                | **Description**                                                                                         |
@@ -462,9 +444,9 @@ Keq's context object has many parameters. The following lists all the built-in c
 
 This is the utils used to route middleware.
 
-| **Method**                             |
-| :------------------------------------- |
-| `.location(...middlewares)`                          |
+| **Method**                                               |
+| :------------------------------------------------------- |
+| `.location(...middlewares)`                              |
 | `.method(method: string[, ...middlewares])`              |
 | `.pathname(matcher: string \| Regexp[, ...middlewares])` |
 | `.host(host: string[, ...middlewares])`                  |
@@ -475,16 +457,14 @@ This is the utils used to route middleware.
 If you want to create a request instance, you can invoke `request.create()`:
 
 ```typescript
-import { createRequest } from "keq"
+import { createRequest } from "keq";
 
-const customRequest = createRequest()
+const customRequest = createRequest();
 
 // Middleware only takes effect on customRequests
-customRequest
-  .use(/** some middleware */)
+customRequest.use(/** some middleware */);
 
-const body = await customRequest
-  .get("http://test.com")
+const body = await customRequest.get("http://test.com");
 ```
 
 > The gloabl request instance is created by `request.create()` too.
@@ -505,16 +485,16 @@ The difference between the two is that when called multiple times.
 `.end ()` will send a request for each call.
 
 ```javascript
-import { request } from "keq"
+import { request } from "keq";
 
-const keq = request.get("http://test.com")
+const keq = request.get("http://test.com");
 
-keq.then(onfulfilled, onrejected)
+keq.then(onfulfilled, onrejected);
 // Won't send request, and will use the last request result.
-keq.then(onfulfilled, onrejected)
+keq.then(onfulfilled, onrejected);
 
-keq.end()
-keq.end()
+keq.end();
+keq.end();
 ```
 
 ### The diffirent between `ctx.res` and `ctx.response`
@@ -535,4 +515,3 @@ Keq is inspired by SuperAgent and Koa.
 ## Contributing & Development
 
 If there is any doubt, it is very welcome to discuss the issue together.
-Please read [Contributor Covenant Code of Conduct](.github/CODE_OF_CONDUCT.md) and [CONTRIBUTING](.github/CONTRIBUTING.md).
