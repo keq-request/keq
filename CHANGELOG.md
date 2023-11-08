@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.4](https://github.com/keq-request/keq/compare/v2.0.3...v2.0.4) (2023-11-08)
+
+
+### Performance Improvements
+
+* add package provenance ([ab5c99e](https://github.com/keq-request/keq/commit/ab5c99ed89809f244172263623732ea0d963ab36))
+
 ### [2.0.3](https://www.github.com/keq-request/keq/compare/v2.0.2...v2.0.3) (2023-09-27)
 
 
