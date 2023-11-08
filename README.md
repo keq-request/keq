@@ -21,9 +21,7 @@
 [URL MDN]: https://developer.mozilla.org/en-US/docs/Web/API/URL
 
 Keq is a request API write by Typescript for flexibility, readability, and a low learning curve. It also works with Node.js!
-
-Keq wraps the [cross-fetch](https://www.npmjs.com/package/cross-fetch) and use Fetch APIs whenever possible.
-Like [`Headers`][Headers MDN], [`Response`][Response MDN], [`FormData`][FormData MDN] objects.
+Keq wraps the Fetch APIs, adding chain calls and middleware functions.
 
 <!-- description -->
 
