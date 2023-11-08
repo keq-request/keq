@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.5](https://github.com/keq-request/keq/compare/v2.0.4...v2.0.5) (2023-11-08)
+
+
+### Bug Fixes
+
+* unable build ([5731cab](https://github.com/keq-request/keq/commit/5731cab1e62bc23d2ddb9522e607e3bdfa12db4d))
+
 ## [2.0.4](https://github.com/keq-request/keq/compare/v2.0.3...v2.0.4) (2023-11-08)
 
 
