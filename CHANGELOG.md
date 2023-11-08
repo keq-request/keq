@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.6](https://github.com/keq-request/keq/compare/v2.0.5...v2.0.6) (2023-11-08)
+
+
+### Bug Fixes
+
+* npm publish error ([14a3b93](https://github.com/keq-request/keq/commit/14a3b931d72c105f9c4bdf56d90516f2052b217b))
+
 ## [2.0.5](https://github.com/keq-request/keq/compare/v2.0.4...v2.0.5) (2023-11-08)
 
 
