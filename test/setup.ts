@@ -13,7 +13,7 @@ const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => Pr
 const unMockedFetch = global.fetch
 
 beforeAll(() => {
-  global.fetch = mockedFetch
+  global.fetch = mockedFetch as unknown as typeof fetch
 })
 
 afterAll(() => {

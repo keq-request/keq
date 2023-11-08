@@ -18,6 +18,7 @@ module.exports = {
   },
   globals: {
     globalThis: true,
+    NodeJS: true,
   },
   ignorePatterns: ['./dist/**'],
   rules: {
