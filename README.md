@@ -10,6 +10,7 @@
 [![downloads](https://img.shields.io/npm/dm/keq.svg?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
 [![dependencies](https://img.shields.io/librariesio/release/npm/keq?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
 [![license](https://img.shields.io/npm/l/keq.svg?logo=github&style=for-the-badge)](https://www.npmjs.com/package/keq)
+[![Codecov](https://img.shields.io/codecov/c/gh/keq-request/keq?logo=codecov&token=PLF0DT6869&style=for-the-badge)](https://codecov.io/gh/keq-request/keq)
 
 <!-- description -->
 
