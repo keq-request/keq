@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.7](https://github.com/keq-request/keq/compare/v2.0.6...v2.0.7) (2023-11-09)
+
+
+### Bug Fixes
+
+* wrong repo address in package.json ([1101a79](https://github.com/keq-request/keq/commit/1101a79d12c3c96aba45167ab60f1ef1a8b6b4a7))
+
 ## [2.0.6](https://github.com/keq-request/keq/compare/v2.0.5...v2.0.6) (2023-11-08)
 
 
