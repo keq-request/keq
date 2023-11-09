@@ -1,10 +1,6 @@
 {
   "name": "keq",
   "version": "2.0.6",
-  "main": "dist/umd/src/index.js",
-  "types": "dist/esm/src/index.d.ts",
-  "module": "dist/esm/src/index.js",
-  "packageManager": "pnpm@8.7.6",
   "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
   "keywords": [
     "request",
@@ -16,32 +12,40 @@
     "middleware",
     "middlewares"
   ],
-  "homepage": "https://github.com/Val-istar-Guo/keq#readme",
+  "homepage": "https://github.com/keq-request/keq#readme",
   "bugs": {
-    "url": "https://github.com/Val-istar-Guo/keq/issues"
+    "url": "https://github.com/keq-request/keq/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Val-istar-Guo/keq.git"
+    "url": "git+https://github.com/keq-request/keq.git"
   },
   "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
+  "main": "dist/umd/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/esm/src/index.d.ts",
   "directories": {
     "doc": "doc",
     "test": "test"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
+    "build": "npm run clean && ./build/build.sh",
+    "clean": "rm -rf ./dist/*",
+    "dev": "npm run clean && ./build/watch.sh",
     "prepare": "ts-patch install -s && is-ci || husky install",
+    "prepublishOnly": "npm run build",
     "release": "standard-version",
     "release:alpha": "standard-version --prerelease alpha",
-    "test": "jest",
-    "prepublishOnly": "npm run build",
-    "clean": "rm -rf ./dist/*",
-    "build": "npm run clean && ./build/build.sh",
-    "dev": "npm run clean && ./build/watch.sh"
+    "test": "jest"
+  },
+  "dependencies": {
+    "clone": "^2.1.2",
+    "minimatch": "^9.0.3",
+    "object.fromentries": "^2.0.7",
+    "path-to-regexp": "^6.2.1",
+    "ts-custom-error": "^3.3.1",
+    "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
     "@buka/eslint-config": "^1.5.0",
@@ -67,12 +71,8 @@
     "typescript": "^5.2.2",
     "typescript-transform-paths": "^3.4.6"
   },
-  "dependencies": {
-    "clone": "^2.1.2",
-    "minimatch": "^9.0.3",
-    "object.fromentries": "^2.0.7",
-    "path-to-regexp": "^6.2.1",
-    "ts-custom-error": "^3.3.1",
-    "whatwg-url": "^14.0.0"
+  "packageManager": "pnpm@8.7.6",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
