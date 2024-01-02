@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.8](https://github.com/keq-request/keq/compare/v2.0.7...v2.0.8) (2024-01-02)
+
+
+### Bug Fixes
+
+* fetch error not thrown correctly ([cbc7778](https://github.com/keq-request/keq/commit/cbc7778dbf5e1c453b0a68246f0e6c4113604854))
+
 ## [2.0.7](https://github.com/keq-request/keq/compare/v2.0.6...v2.0.7) (2023-11-09)
 
 
