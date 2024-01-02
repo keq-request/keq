@@ -29,9 +29,13 @@ export function retryMiddleware(): KeqMiddleware {
         err = e
       }
 
-      if (i === retryTimes - 1) break
+      if (i === retryTimes - 1) {
+        if (err) throw err
+        break
+      }
 
       if (retryOn && retryOn(i, err, ctx) === false) {
+        if (err) throw err
         break
       } else if (!retryOn && !err) {
         break
