@@ -63,6 +63,16 @@ export class Core<T> {
       headers,
       routeParams: shadowClone(this.requestContext.routeParams),
       body: clone(this.requestContext.body),
+
+      cache: this.requestContext.cache,
+      credentials: this.requestContext.credentials,
+      integrity: this.requestContext.integrity,
+      keepalive: this.requestContext.keepalive,
+      mode: this.requestContext.mode,
+      redirect: this.requestContext.redirect,
+      referrer: this.requestContext.referrer,
+      referrerPolicy: this.requestContext.referrerPolicy,
+      signal: this.requestContext.signal,
     }
 
     const options = shadowClone(this.__options__)

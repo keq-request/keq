@@ -8,6 +8,12 @@ export function abortFlowControlMiddleware(): KeqMiddleware {
       return
     }
 
+    if (ctx.request.signal) {
+      console.warn('[keq] request signal had be set manual, abort follow control will not take effect')
+      await next()
+      return
+    }
+
     const { signal } = ctx.options.flowControl
 
     const key = typeof signal === 'string' ? signal : signal(ctx)

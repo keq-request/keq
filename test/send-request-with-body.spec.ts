@@ -41,7 +41,8 @@ describe('send multipart/form-data request', () => {
       .post('http://test.com')
       .field('name', 'John')
       .field('friends', ['Tom', 'Bob'])
-      .attach('resume', new Blob(['test'], { type: 'text/plain' }), 'test.txt')
+      .field({ age: '12' })
+      .attach('file1', new Blob(['test'], { type: 'text/plain' }), 'file1.txt')
 
     const init = mockedFetch.mock.calls[0][1]
     expect(init).toBeDefined()
@@ -55,7 +56,8 @@ describe('send multipart/form-data request', () => {
 
     expect(body.getAll('name')).toEqual(['John'])
     expect(body.getAll('friends')).toEqual(['Tom', 'Bob'])
-    expect((body.get('resume') as File).name).toBe('test.txt')
+    expect(body.getAll('age')).toEqual(['12'])
+    expect((body.get('file1') as File).name).toBe('file1.txt')
   })
 })
 

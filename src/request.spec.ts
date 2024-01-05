@@ -82,3 +82,40 @@ test('throw error when fetch failed', async () => {
 
   await expect(() => keq.end()).rejects.toThrow('fetch failed')
 })
+
+test('send complex request with headers', async () => {
+  const mockedFetch = global.fetch as Mock<typeof global.fetch>
+
+  await request
+    .get('http://test.com/:animal/:favorite')
+    .params('animal', 'cat')
+    .params({ favorite: 'can' })
+    .query('color', 'black')
+    .query({ breed: 'british_shorthair_cat' })
+    .set('x-region', 'cn')
+    .set({
+      'x-username': 'john',
+    })
+    .set(new Headers({
+      'x-age': '14',
+    }))
+    .mode('cors')
+    .credentials('include')
+    .redirect('follow')
+
+  const url = mockedFetch.mock.calls[0][0]
+  expect(url).toBe('http://test.com/cat/can?color=black&breed=british_shorthair_cat')
+
+  const init = mockedFetch.mock.calls[0][1]
+
+  expect(init).not.toBeUndefined()
+  expect(init?.headers).toBeInstanceOf(Headers)
+  expect(init?.mode).toBe('cors')
+  expect(init?.credentials).toBe('include')
+  expect(init?.redirect).toBe('follow')
+
+  const headers = init?.headers as Headers
+  expect(headers.get('x-region')).toBe('cn')
+  expect(headers.get('x-username')).toBe('john')
+  expect(headers.get('x-age')).toBe('14')
+})

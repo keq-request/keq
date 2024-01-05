@@ -7,7 +7,7 @@ const jestConfig: JestConfigWithTsJest = {
   testEnvironment: 'node',
   collectCoverage: true,
   collectCoverageFrom: ['./src/**'],
-  coverageReporters: ['text', 'cobertura'],
+  coverageReporters: ['text', 'cobertura', 'html'],
   coveragePathIgnorePatterns: [
     '.*__snapshots__/.*',
   ],
