@@ -1,0 +1,10 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  keq:
+    specifier: link:/Users/10009313/code/github/@keq/keq
+    version: link:../../../..

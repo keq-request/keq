@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { Exception } from '~/exception/exception'
-import { KeqMiddleware } from './types/keq-middleware'
+import { KeqMiddleware } from '../types/keq-middleware'
 
 
 export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {

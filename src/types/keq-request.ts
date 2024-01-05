@@ -1,8 +1,8 @@
 import { URL } from 'whatwg-url'
 import { Keq } from '~/keq'
+import { KeqRouter } from '~/router/keq-router.js'
 import { KeqMiddleware } from './keq-middleware'
 import { KeqRequestInit } from './keq-request-init'
-import { RouterMap } from './router-map'
 
 type KeqRequestFn = <T = any>(url: string | URL | globalThis.URL) => Keq<T>
 
@@ -22,5 +22,5 @@ export interface KeqRequest {
   head: KeqRequestFn
 
   use(firstMiddleware: KeqMiddleware, ...middleware: KeqMiddleware[]): this
-  useRouter(): RouterMap
+  useRouter(): KeqRouter
 }

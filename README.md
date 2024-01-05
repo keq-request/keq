@@ -389,6 +389,10 @@ request
    * used with keq-cli
    */
   .module('yourServiceName',middleware)
+  /**
+   * this middleware run when pathname start with '/api'
+   */
+  .route((ctx) => ctx.pathname.startsWith('/api'), middleware)
 
 await request
   .get("http://test.com")
@@ -450,6 +454,7 @@ This is the utils used to route middleware.
 | `.pathname(matcher: string \| Regexp[, ...middlewares])` |
 | `.host(host: string[, ...middlewares])`                  |
 | `.module(moduleName: string[, ...middlewares])`          |
+| `.route(...middlewares)`                                 |
 
 ### Create Request
 

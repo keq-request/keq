@@ -31,6 +31,7 @@ export interface KeqBuildInOptions {
 
   module?: {
     name: string
+    pathname: string
   }
 }
 

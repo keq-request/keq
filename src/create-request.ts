@@ -1,19 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { URL } from 'whatwg-url'
-import { KeqHostRouter } from '~/router/keq-host-router'
-import { KeqLocationRouter } from '~/router/keq-location-router'
-import { KeqMethodRouter } from '~/router/keq-method-router'
-import { KeqModuleRouter } from '~/router/keq-module-router'
-import { KeqPathnameRouter } from '~/router/keq-pathname-router'
 import { isBrowser } from './is/is-browser'
 import { Keq } from './keq'
 import { fetchArgumentsMiddleware } from './middlewares/fetch-arguments-middleware'
 import { fetchMiddleware } from './middlewares/fetch-middleware'
 import { proxyResponseMiddleware } from './middlewares/proxy-response-middleware'
 import { retryMiddleware } from './middlewares/retry-middleware'
+import { KeqRouter } from './router/keq-router.js'
 import { KeqMiddleware } from './types/keq-middleware'
 import { KeqRequest } from './types/keq-request'
-import { RouterMap } from './types/router-map'
 
 
 interface CreateRequestOptions {
@@ -42,37 +37,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
     return new URL(url.href)
   }
 
-  const routerMap: RouterMap = {
-    host: (host, ...middlewares) => {
-      const route = new KeqHostRouter(host, middlewares)
-      prependMiddlewares.push(route.routes())
-      return routerMap
-    },
-
-    method: (method, ...middlewares) => {
-      const route = new KeqMethodRouter(method, middlewares)
-      prependMiddlewares.push(route.routes())
-      return routerMap
-    },
-
-    pathname: (pathname, ...middlewares) => {
-      const route = new KeqPathnameRouter(pathname, middlewares)
-      prependMiddlewares.push(route.routes())
-      return routerMap
-    },
-
-    location: (...middlewares) => {
-      const route = new KeqLocationRouter(middlewares)
-      prependMiddlewares.push(route.routes())
-      return routerMap
-    },
-
-    module: (moduleName, ...middlewares) => {
-      const route = new KeqModuleRouter(moduleName, middlewares)
-      prependMiddlewares.push(route.routes())
-      return routerMap
-    },
-  }
+  const router = new KeqRouter(prependMiddlewares)
 
   const request: KeqRequest = function (url, init) {
     const keq = new Keq(formatUrl(url), init)
@@ -86,7 +51,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
   }
 
   request.useRouter = function useRouter() {
-    return routerMap
+    return router
   }
 
   request.get = function (url) {

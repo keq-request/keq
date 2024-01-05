@@ -2,13 +2,13 @@ import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception'
 import { clone } from '~/util/clone'
 import { OUTPUT_PROPERTY } from './constant'
-import { composeMiddleware } from './middleware'
 import { KeqContext, KeqRequestContext } from './types/keq-context'
 import { KeqMiddleware } from './types/keq-middleware'
 import {
   KeqOptions,
 } from './types/keq-options'
 import { KeqRequestInit } from './types/keq-request-init'
+import { composeMiddleware } from './util/compose-middleware'
 import { shadowClone } from './util/shadow-clone'
 
 
