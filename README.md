@@ -113,10 +113,12 @@ You may also pass an object or `Headers` to set several fields in a single call:
 ```javascript
 import { request } from "keq";
 
-await request.get("/search").set({
-  "X-Origin-Host": "https://example.com",
-  Accept: "application/json",
-});
+await request
+  .get("/search")
+  .set({
+    "X-Origin-Host": "https://example.com",
+    Accept: "application/json",
+  });
 ```
 
 ### Request query
@@ -153,7 +155,9 @@ The follwing will produce the path `/search/keq`.
 ```javascript
 import { request } from "keq";
 
-await request.get("/search/:searchKey").params("searchKey", "keq");
+await request
+  .get("/search/:searchKey")
+  .params("searchKey", "keq");
 ```
 
 Or as a single object:
@@ -161,7 +165,9 @@ Or as a single object:
 ```javascript
 import { request } from "keq";
 
-await request.get("/search/:searchKey").params({ searchKey: "keq" });
+await request
+  .get("/search/:searchKey")
+  .params({ searchKey: "keq" });
 ```
 
 ### JSON Request
@@ -251,7 +257,9 @@ or simply the extension name such as "xml", "json", "png", etc:
 ```javascript
 import { request } from "keq";
 
-await request.post("/user").type("json");
+await request
+  .post("/user")
+  .type("json");
 ```
 
 | **Shorthand**                                 | **Mime Type**                                                                                 |
@@ -276,14 +284,16 @@ No retry by default, invoke `.retry(retryTimes[, retryDelay[, retryOn]])` to set
 ```javascript
 import { request } from "keq";
 
-await request.get("http://test.com").retry(2, 1000, (attempt, err, ctx) => {
-  if (err) {
-    console.log("an error throw");
-    return true;
-  }
+await request
+  .get("http://test.com")
+  .retry(2, 1000, (attempt, err, ctx) => {
+    if (err) {
+      console.log("an error throw");
+      return true;
+    }
 
-  return false;
-});
+    return false;
+  });
 ```
 
 ### Set Request Redirect mode
@@ -293,7 +303,9 @@ Follow redirect by default, invoke `.redirect(mode)` to set the redirect mode. A
 ```javascript
 import { request } from "keq";
 
-await request.get("http://test.com").redirect("manual");
+await request
+  .get("http://test.com")
+  .redirect("manual");
 ```
 
 ### Set Request Credentials And Mode
@@ -303,7 +315,10 @@ These two parameters are used to control cross-domain requests.
 ```javascript
 import { request } from "keq";
 
-await request.get("http://test.com").mode("cors").credentials("include");
+await request
+  .get("http://test.com")
+  .mode("cors")
+  .credentials("include");
 ```
 
 ### Keq Internal Options
@@ -328,10 +343,12 @@ Or as a single object:
 ```javascript
 import { request } from "keq";
 
-await request.get("http://test.com").options({
-  resolveWithFullResponse: true,
-  middlewareOption: "value",
-});
+await request
+  .get("http://test.com")
+  .options({
+    resolveWithFullResponse: true,
+    middlewareOption: "value",
+  });
 ```
 
 | **Option**                | **Description**                                                                                         |
@@ -340,6 +357,53 @@ await request.get("http://test.com").options({
 | `fetchAPI`                | Replace the defaulted `fetch` function used by `Keq`.                                                   |
 
 <!-- ###### The options with **DEPRECATED** will be removed in next major version -->
+
+### Flow Control
+
+Controlling the behavior of sending requests multiple times.
+
+#### Abort
+
+If the previous request was not completed, abort the last request.
+
+```javascript
+import { request } from "keq";
+
+request
+  .get("http://test.com/cat")
+  // second args is the abort signal
+  // this will abort the request with same signal
+  // a unique signal will be generated, if not signal set.
+  .followControl("abort", 'animal');
+  .end()
+
+request
+  .get("http://test.com/dog")
+  // abort http://test.com/cat
+  .followControl("abort", 'animal')
+  .end()
+```
+
+#### Serial
+
+The next request will not start until the previous request is completed.
+
+```javascript
+import { request } from "keq";
+
+request
+  .get("http://test.com/cat")
+  // a unique signal will be generated, if signal is not set.
+  .followControl("serial", 'animal');
+  .end()
+
+// This request will be send after https://test.com/cat is complete
+request
+  .get("http://test.com/dog")
+  .followControl("serial", 'animal')
+  .end()
+```
+​
 
 ### Middleware
 

@@ -45,7 +45,9 @@ test('send request with custom fetch API', async () => {
 
   const responseBody = await request
     .get('http://test.com')
-    .option('fetchAPI', mockedFetch)
+    .options({
+      fetchAPI: mockedFetch as typeof fetch,
+    })
 
   expect(mockedFetch.mock.calls).toHaveLength(1)
 

@@ -6,6 +6,7 @@ import { isFile } from './is/is-file'
 import { isFormData } from './is/is-form-data'
 import { isHeaders } from './is/is-headers'
 import { isUrlSearchParams } from './is/is-url-search-params'
+import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './types/keq-flow-control.js'
 import { KeqMiddleware } from './types/keq-middleware'
 import { KeqBuildInOptions, KeqOptions, KeqOptionsWithFullResponse, KeqOptionsWithoutFullResponse } from './types/keq-options'
 import { KeqRequestBody } from './types/keq-request-body'
@@ -15,6 +16,7 @@ import { ShorthandContentType } from './types/shorthand-content-type'
 import { assignKeqRequestBody } from './util/assign-keq-request-body'
 import { base64Encode } from './util/base64'
 import { fixContentType } from './util/fix-content-type'
+import { getUniqueCodeIdentifier } from './util/get-unique-code-identifier.js'
 
 
 /**
@@ -26,18 +28,18 @@ export class Keq<T> extends Core<T> {
   }
 
 
-  option(key: 'resolveWithFullResponse', value?: true): Core<Response>
+  option(key: 'resolveWithFullResponse', value?: true): Keq<Response>
   option<K extends keyof KeqBuildInOptions>(key: K, value?: KeqBuildInOptions[K]): this
   option(key: string, value?: any): this
-  option(key: string, value: any = true): this | Core<Response> {
+  option(key: string, value: any = true): this | Keq<Response> {
     this.__options__[key] = value
     return this
   }
 
   options(opts: KeqOptionsWithoutFullResponse): this
-  options(opts: KeqOptionsWithFullResponse): Core<Response>
+  options(opts: KeqOptionsWithFullResponse): Keq<Response>
   options(opts: KeqOptions): this
-  options(opts: KeqOptions): this | Core<Response> {
+  options(opts: KeqOptions): this | Keq<Response> {
     for (const [key, value] of Object.entries(opts)) {
       this.__options__[key] = value
     }
@@ -225,6 +227,22 @@ export class Keq<T> extends Core<T> {
 
   mode(mod: RequestMode): this {
     this.requestContext.mode = mod
+    return this
+  }
+
+  flowControl(mode: KeqFlowControlMode, signal?: KeqFlowControlSignal): this {
+    const sig = signal ? signal : getUniqueCodeIdentifier(1)
+
+    if (!sig) {
+      throw new Exception('please set signal to .flowControl()')
+    }
+
+    const flowControl: KeqFlowControl = {
+      mode,
+      signal: sig,
+    }
+
+    this.option('flowControl', flowControl)
     return this
   }
 }

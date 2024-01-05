@@ -20,12 +20,15 @@ export class Core<T> {
 
   protected requestContext: KeqRequestContext
 
+  protected __global__: Record<string, any>
   protected __prepend_middlewares__: KeqMiddleware[] = []
   protected __append_middlewares__: KeqMiddleware[] = []
 
   protected __options__: KeqOptions = { resolveWithFullResponse: false }
 
-  public constructor(url: (URL | globalThis.URL), init: KeqRequestInit) {
+  public constructor(url: (URL | globalThis.URL), init: KeqRequestInit, global: Record<string, any> = {}) {
+    this.__global__ = global
+
     this.requestContext = {
       method: 'get',
       headers: new Headers(),
@@ -67,6 +70,7 @@ export class Core<T> {
     const ctx: KeqContext = {
       request: requestContext,
       options,
+      global: this.__global__,
 
       get output() {
         throw new Exception('output property is write-only')

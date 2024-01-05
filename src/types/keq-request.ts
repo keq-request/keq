@@ -1,5 +1,5 @@
 import { URL } from 'whatwg-url'
-import { Keq } from '~/keq'
+import { Keq } from '~/keq.js'
 import { KeqRouter } from '~/router/keq-router.js'
 import { KeqMiddleware } from './keq-middleware'
 import { KeqRequestInit } from './keq-request-init'
@@ -9,7 +9,7 @@ type KeqRequestFn = <T = any>(url: string | URL | globalThis.URL) => Keq<T>
 type GlobalURL = globalThis.URL
 
 export interface KeqRequest {
-  <T = any>(url: string | URL | GlobalURL, init: KeqRequestInit): Keq<T>
+  <T = any>(url: string | URL | GlobalURL, init: Omit<KeqRequestInit, 'global'>): Keq<T>
 
   baseOrigin: (baseOrigin: string) => void
 

@@ -45,6 +45,9 @@ export interface KeqContext {
   output: any
   [OUTPUT_PROPERTY]?: any
 
+  /** share data between requests */
+  global: Record<string, any>
+
   /** extends by middleware */
   [key: string]: any
 }
