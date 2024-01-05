@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/keq-request/keq/compare/v2.0.8...v2.1.0) (2024-01-05)
+
+
+### Features
+
+* add .route to Router ([dc27057](https://github.com/keq-request/keq/commit/dc27057b3c85ab8a52fe51892f4aa5792f53898d))
+* flow control function for sending multiple requests ([5d24adf](https://github.com/keq-request/keq/commit/5d24adffaf26181ebd296b97ea3062514354f7e0))
+
 ## [2.0.8](https://github.com/keq-request/keq/compare/v2.0.7...v2.0.8) (2024-01-02)
 
 
