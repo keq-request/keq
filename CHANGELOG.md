@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.1](https://github.com/keq-request/keq/compare/v2.1.0...v2.1.1) (2024-01-09)
+
+
+### Bug Fixes
+
+* should not throw error when query is undefined ([515fa20](https://github.com/keq-request/keq/commit/515fa2090a03eb60ed8e7d0e575ce44dd8bce12b))
+
 ## [2.1.0](https://github.com/keq-request/keq/compare/v2.0.8...v2.1.0) (2024-01-05)
 
 
