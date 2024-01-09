@@ -91,7 +91,9 @@ test('send complex request with headers', async () => {
     .params('animal', 'cat')
     .params({ favorite: 'can' })
     .query('color', 'black')
-    .query({ breed: 'british_shorthair_cat' })
+    .query({ breeds: ['british_shorthair_cat', 'doll_cat'] })
+    .query('unknown', undefined)
+    .query('bigint', 123n)
     .set('x-region', 'cn')
     .set({
       'x-username': 'john',
@@ -104,7 +106,7 @@ test('send complex request with headers', async () => {
     .redirect('follow')
 
   const url = mockedFetch.mock.calls[0][0]
-  expect(url).toBe('http://test.com/cat/can?color=black&breed=british_shorthair_cat')
+  expect(url).toBe('http://test.com/cat/can?color=black&breeds=british_shorthair_cat&breeds=doll_cat&bigint=123')
 
   const init = mockedFetch.mock.calls[0][1]
 

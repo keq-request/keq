@@ -9,6 +9,7 @@ import { isUrlSearchParams } from './is/is-url-search-params'
 import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './types/keq-flow-control.js'
 import { KeqMiddleware } from './types/keq-middleware'
 import { KeqBuildInOptions, KeqOptions, KeqOptionsWithFullResponse, KeqOptionsWithoutFullResponse } from './types/keq-options'
+import { KeqQueryValue } from './types/keq-query-value.js'
 import { KeqRequestBody } from './types/keq-request-body'
 import { KeqRetryDelay } from './types/keq-retry-delay'
 import { KeqRetryOn } from './types/keq-retry-on'
@@ -74,25 +75,34 @@ export class Keq<T> extends Core<T> {
   /**
    * Set request query/searchParams
    */
-  query(key: Record<string, string | number | string[] | number[] | undefined>): this
-  query(key: string, value: string | number | string[] | number[] | undefined): this
-  query(key: string | Record<string, string | number | string[] | number[] | undefined>, value?: string | number | string[] | number[]): this {
-    if (typeof key === 'string' && Array.isArray(value)) {
-      for (const item of value) {
-        this.requestContext.url.searchParams.append(key, String(item))
-      }
-    } else if (typeof key === 'string' && typeof value === 'string') {
-      this.requestContext.url.searchParams.append(key, value)
-    } else if (typeof key === 'object') {
+  query(key: Record<string, KeqQueryValue | KeqQueryValue[]>): this
+  query(key: string, value: KeqQueryValue | KeqQueryValue[]): this
+  query(key: string | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
+    if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
         if (v === undefined) continue
         this.query(k, v)
       }
-    } else {
-      throw new Exception('please set query value')
+      return this
     }
 
-    return this
+    if (typeof key === 'string') {
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          this.query(key, item)
+        }
+      } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'bigint') {
+        this.requestContext.url.searchParams.append(key, String(value))
+      } else if (value === 'undefined' || value === null) {
+        // skip
+      } else {
+        console.warn(`query value type is invalid, key: ${key}`)
+      }
+
+      return this
+    }
+
+    throw new TypeError('typeof key is invalid')
   }
 
   /**
