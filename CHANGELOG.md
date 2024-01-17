@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.2](https://github.com/keq-request/keq/compare/v2.1.1...v2.1.2) (2024-01-17)
+
+
+### Bug Fixes
+
+* unable send request when parentheses exit in pathname ([24c81ff](https://github.com/keq-request/keq/commit/24c81ffdde71919163a09778aa15ae6106427d45))
+
 ## [2.1.1](https://github.com/keq-request/keq/compare/v2.1.0...v2.1.1) (2024-01-09)
 
 
