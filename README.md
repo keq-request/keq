@@ -150,24 +150,20 @@ await request
 ### Request routing parameters
 
 The `.params()` method accepts key and value, which when used for the request with routing parameters.
-The follwing will produce the path `/search/keq`.
 
 ```javascript
 import { request } from "keq";
 
 await request
-  .get("/search/:searchKey")
-  .params("searchKey", "keq");
-```
-
-Or as a single object:
-
-```javascript
-import { request } from "keq";
-
-await request
-  .get("/search/:searchKey")
-  .params({ searchKey: "keq" });
+  // request to /users/jack/books/kafka
+  .get("/users/:userName/books/{bookName}")
+  .params("userName", 'jack');
+  .params("bookName", "kafka");
+  // or invoke with an object
+  .params({
+    "userName": "jack",
+    "bookName": "kafka"
+  })
 ```
 
 ### JSON Request

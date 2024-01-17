@@ -1,8 +1,8 @@
-import { compile } from 'path-to-regexp'
 import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception'
 import { KeqContext } from '~/types/keq-context'
 import { KeqRequestBody } from '~/types/keq-request-body'
+import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
 import { KeqMiddleware } from '../types/keq-middleware'
 
 
@@ -10,8 +10,7 @@ function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<stri
   const url = new URL(typeof obj === 'string' ? obj : obj.href)
 
   try {
-    const toPath = compile(url.pathname, { encode: encodeURIComponent })
-    url.pathname = toPath(routeParams)
+    url.pathname = compilePathnameTemplate(url.pathname, routeParams)
   } catch (e) {
     throw new Exception(`Cannot compile the params in ${url.pathname}, Because ${(e as Error)?.message}.`)
   }

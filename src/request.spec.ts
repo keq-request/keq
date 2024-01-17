@@ -87,7 +87,7 @@ test('send complex request with headers', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
 
   await request
-    .get('http://test.com/:animal/:favorite')
+    .get('http://test.com/:animal/{favorite}')
     .params('animal', 'cat')
     .params({ favorite: 'can' })
     .query('color', 'black')
