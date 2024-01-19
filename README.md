@@ -6,10 +6,12 @@
 <h1 align="center" style="text-align: center">KEQ</h1>
 <!-- title -->
 
-[![version](https://img.shields.io/npm/v/keq.svg?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![downloads](https://img.shields.io/npm/dm/keq.svg?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![dependencies](https://img.shields.io/librariesio/release/npm/keq?logo=npm&style=for-the-badge)](https://www.npmjs.com/package/keq)
-[![license](https://img.shields.io/npm/l/keq.svg?logo=github&style=for-the-badge)](https://www.npmjs.com/package/keq)
+[npm]: https://www.npmjs.com/package/keq
+
+[![version](https://img.shields.io/npm/v/keq.svg?logo=npm&style=for-the-badge)][npm]
+[![downloads](https://img.shields.io/npm/dm/keq.svg?logo=npm&style=for-the-badge)][npm]
+[![dependencies](https://img.shields.io/librariesio/release/npm/keq?logo=npm&style=for-the-badge)][npm]
+[![license](https://img.shields.io/npm/l/keq.svg?logo=github&style=for-the-badge)][npm]
 [![Codecov](https://img.shields.io/codecov/c/gh/keq-request/keq?logo=codecov&token=PLF0DT6869&style=for-the-badge)](https://codecov.io/gh/keq-request/keq)
 
 <!-- description -->
