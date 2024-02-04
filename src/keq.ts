@@ -255,4 +255,9 @@ export class Keq<T> extends Core<T> {
     this.option('flowControl', flowControl)
     return this
   }
+
+  timeout(milliseconds: number): this {
+    this.option('timeout', { millisecond: milliseconds })
+    return this
+  }
 }

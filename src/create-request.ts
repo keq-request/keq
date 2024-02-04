@@ -11,6 +11,7 @@ import { serialFlowControlMiddleware } from './middlewares/serial-flow-control-m
 import { KeqRouter } from './router/keq-router.js'
 import { KeqMiddleware } from './types/keq-middleware'
 import { KeqRequest } from './types/keq-request'
+import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
 
 
 interface CreateRequestOptions {
@@ -25,6 +26,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
   const appendMiddlewares: KeqMiddleware[] = options?.initMiddlewares ? [...options.initMiddlewares] : [
     serialFlowControlMiddleware(),
     abortFlowControlMiddleware(),
+    timeoutMiddleware(),
     proxyResponseMiddleware(),
     fetchArgumentsMiddleware(),
     retryMiddleware(),

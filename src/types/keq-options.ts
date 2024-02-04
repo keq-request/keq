@@ -1,6 +1,7 @@
 import { KeqFlowControl } from './keq-flow-control.js'
 import { KeqRetryDelay } from './keq-retry-delay'
 import { KeqRetryOn } from './keq-retry-on'
+import { KeqTimeout } from './keq-timeout.js'
 
 export interface KeqBuildInOptions {
   /**
@@ -36,6 +37,8 @@ export interface KeqBuildInOptions {
   }
 
   flowControl?: KeqFlowControl
+
+  timeout?: KeqTimeout
 }
 
 export interface KeqOptionsWithFullResponse extends KeqBuildInOptions {
