@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/keq-request/keq/compare/v2.1.2...v2.2.0) (2024-02-04)
+
+
+### Features
+
+* add .timeout(millisecond) ([b99009b](https://github.com/keq-request/keq/commit/b99009b6eb4a017d648a29a8b34b478dc22320ee))
+
 ## [2.1.2](https://github.com/keq-request/keq/compare/v2.1.1...v2.1.2) (2024-01-17)
 
 
