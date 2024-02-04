@@ -355,6 +355,17 @@ await request
 | `fetchAPI`                | Replace the defaulted `fetch` function used by `Keq`.                                                   |
 
 <!-- ###### The options with **DEPRECATED** will be removed in next major version -->
+​
+### Timeout
+
+Keq has built-in timeout function.
+
+```typescript
+await request
+  .get("http://test.com")
+  // 5000 milliseconds
+  .timeout(5000)
+```
 
 ### Flow Control
 
@@ -401,7 +412,6 @@ request
   .followControl("serial", 'animal')
   .end()
 ```
-​
 
 ### Middleware
 
