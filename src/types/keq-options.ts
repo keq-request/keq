@@ -1,4 +1,5 @@
 import { KeqFlowControl } from './keq-flow-control.js'
+import { KeqResolveMethod } from './keq-resolve-with-mode.js'
 import { KeqRetryDelay } from './keq-retry-delay'
 import { KeqRetryOn } from './keq-retry-on'
 import { KeqTimeout } from './keq-timeout.js'
@@ -10,8 +11,18 @@ export interface KeqBuildInOptions {
    */
   fetchAPI?: typeof fetch
 
-  /** get response object, defaulted `false` */
+  /**
+   * get response object, defaulted `false`
+   * @deprecated use `resolveWith` instead
+   * */
   resolveWithFullResponse?: boolean
+
+  /**
+   * how to resolve the response body
+   * @description 如何解析响应体
+   * @default 'intelligent'
+   */
+  resolveWith?: KeqResolveMethod
 
   /**
    * The request retry times

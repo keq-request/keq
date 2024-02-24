@@ -24,7 +24,10 @@ export class Core<T> {
   protected __prepend_middlewares__: KeqMiddleware[] = []
   protected __append_middlewares__: KeqMiddleware[] = []
 
-  protected __options__: KeqOptions = { resolveWithFullResponse: false }
+  protected __options__: KeqOptions = {
+    resolveWithFullResponse: false,
+    resolveWith: 'intelligent',
+  }
 
   public constructor(url: (URL | globalThis.URL), init: KeqRequestInit, global: Record<string, any> = {}) {
     this.__global__ = global
@@ -97,37 +100,58 @@ export class Core<T> {
     await middleware(ctx, async () => {})
 
 
-    let output: any = ctx[OUTPUT_PROPERTY]
+    const output: any = ctx[OUTPUT_PROPERTY]
 
-    if (ctx.options.resolveWithFullResponse) {
+    if (ctx.options.resolveWithFullResponse || ctx.options.resolveWith === 'response') {
       return ctx.response as T
     }
 
-    if (!(OUTPUT_PROPERTY in ctx)) {
-      const response = ctx.response
-      if (response?.status === 204) {
-        // 204: NO CONTENT
-        output = response && response.body
-      } else {
-        const headers = response?.headers
-        const contentType = headers?.get('content-type') || ''
-        try {
-          if (contentType.includes('application/json')) {
-            output = ctx.response && await ctx.response.json()
-          } else if (contentType.includes('multipart/form-data')) {
-            output = ctx.response && await ctx.response.formData()
-          } else if (contentType.includes('plain/text')) {
-            output = ctx.response && await ctx.response.text()
-          } else {
-            output = ctx.response && ctx.response.body
-          }
-        } catch (e) {
-          console.warn('Failed to auto parse response body', e)
-        }
-      }
+    const response = ctx.response
+    if (!response) {
+      return (OUTPUT_PROPERTY in ctx) ? output as T : undefined as unknown as T
     }
 
-    return output as T
+    if (ctx.options.resolveWith === 'text') {
+      return await response.text() as T
+    } else if (ctx.options.resolveWith === 'json') {
+      return await response.json() as T
+    } else if (ctx.options.resolveWith === 'form-data') {
+      return await response.formData() as T
+    } else if (ctx.options.resolveWith === 'blob') {
+      return await response.blob() as T
+    } else if (ctx.options.resolveWith === 'array-buffer') {
+      return await response.arrayBuffer() as T
+    }
+
+    if (OUTPUT_PROPERTY in ctx) {
+      return output as T
+    }
+
+    if (response.status === 204) {
+      // 204: NO CONTENT
+      return undefined as unknown as T
+    }
+
+    const contentType = response.headers.get('content-type') || ''
+    try {
+      if (contentType.includes('application/json')) {
+        return await response.json() as T
+      } else if (contentType.includes('multipart/form-data')) {
+        return await response.formData() as T
+      } else if (contentType.includes('plain/text')) {
+        return await response.text() as T
+      }
+    } catch (e) {
+      console.warn('Failed to auto parse response body', e)
+    }
+
+    /**
+     * Unable to parse response body
+     * Return undefined
+     * Enable users to discover the problem
+     * And modify the method of parsing response
+     */
+    return undefined as unknown as T
   }
 
   async end(): Promise<T> {

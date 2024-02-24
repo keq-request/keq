@@ -82,20 +82,22 @@ await request.del("https://example.com/search");
 > `.del()` is the alias of `.delete()`.
 
 `Keq` will parse `body` according to the `Content-Type` of [`Response`][Response MDN]
-and return `body` of [`Response`][Response MDN] by defaulted.
-Add option `resolveWithFullResponse` to get the origin [`Response`][Response MDN] Object.
+and return `undefined` if `Content-Type` not found.
+Add invoke `.resolveWith('response')` to get the origin [`Response`][Response MDN] Object.
 
 ```javascript
 import { request } from "keq";
 
 const response = await request
   .get("http://test.com")
-  .option("resolveWithFullResponse");
+  .resolve('response')
 
 const body = await response.json();
 ```
 
-###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated metainformation
+We will introduce `resolveWith` in more detail later.
+
+###### `Keq` won't auto parse body, if response.status is 204. The HTTP 204 No Content success status response code indicates that server has fulfilled the request but does not need to return an entity-body, and might want to return updated meta information
 
 ### Setting header fields
 
@@ -269,6 +271,22 @@ await request
 | jpeg, bmp, apng, gif, x-icon, png, webp, tiff | image/jpeg, image/bmp, image/apng, image/gif, image/x-icon, image/png, image/webp, image/tiff |
 | svg                                           | image/svg+xml                                                                                 |
 
+### resolve responseBody
+
+It was mentioned before that `Keq` will automatically parses the response body.
+And we can control the parsing behavior by calling `.resolveWith(method)`.
+There are multiple parsing methods for us to choose from
+
+| method                       | description                                                                                                                                                                                          |
+| :--------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.resolveWith('intelligent')`  | It is the default method of `Keq`. This will returned `context.output` first if it exists. Otherwise return undefined when the response status is 204. Or return parsed response body according to the `Content-Type` of [`Response`][Response MDN]. |
+| `.resolveWith('response')`     | Return [`Response`][Response MDN].                                                                                                                                                                   |
+| `.resolveWith('text')`         | Return `response.text()`.                                                                                                                                                                            |
+| `.resolveWith('json')`         | Return `response.json()`.                                                                                                                                                                            |
+| `.resolveWith('form-data')`    | Return `response.formData()`.                                                                                                                                                                        |
+| `.resolveWith('blob')`         | Return `response.blob()`.                                                                                                                                                                            |
+| `.resolveWith('array-buffer')` | Return `response.arrayBuffer()`                                                                                                                                                                      |
+
 ### Request Retry
 
 No retry by default, invoke `.retry(retryTimes[, retryDelay[, retryOn]])` to set retry parameters
@@ -328,11 +346,6 @@ import { request } from "keq";
 
 const response = await request
   .get("http://test.com")
-  /**
-   * keq will return Response rather than parsed body
-   * when set resolveWithFullResponse
-   */
-  .option("resolveWithFullResponse")
   .option("middlewareOption", "value");
 ```
 
@@ -344,14 +357,12 @@ import { request } from "keq";
 await request
   .get("http://test.com")
   .options({
-    resolveWithFullResponse: true,
     middlewareOption: "value",
   });
 ```
 
 | **Option**                | **Description**                                                                                         |
 | :------------------------ | :------------------------------------------------------------------------------------------------------ |
-| `resolveWithFullResponse` | Get the [`Response`][Response MDN] Class. This is the `.clone()` of original [`Response`][Response MDN] |
 | `fetchAPI`                | Replace the defaulted `fetch` function used by `Keq`.                                                   |
 
 <!-- ###### The options with **DEPRECATED** will be removed in next major version -->
@@ -431,7 +442,7 @@ const middleware = async (context, next) => {
   const body = await response.json()
 
   // custom keq return type
-  response.output = JSON.stringify(body)
+  context.output = JSON.stringify(body)
 }
 
 // Global Middleware
@@ -510,10 +521,10 @@ Keq's context object has many parameters. The following lists all the built-in c
 | `context.request.referrer`       | `referrer` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                    |
 | `context.request.referrerPolicy` | `referrerPolicy` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                              |
 | `context.request.signal`         | `signal` arguments in [Fetch API][Fetch MDN]                                                                                                                                                                                      |
-| `context.options`                | It is an object includes request options.(example: `context.options.resolveWithFullResponse`). Middleware can get custom options from here.                                                                                       |
+| `context.options`                | It is an object includes request options.(example: `context.options.fetchAPI`). Middleware can get custom options from here.                                                                                       |
 | `context.res`                    | The origin [`Response`][Response MDN] Class. It will be undefined before run `await next()` or error throwed.                                                                                                                     |
 | `context.response`               | Cloned from `ctx.res`.                                                                                                                                                                                                            |
-| `context.output`                 | The return value of `await request()`. By defaulted, `context.output` is the parsed body of response. `context.output` will be the `ctx.response` When `options.resolveWithFullResponse` is true. **This property is writeonly.** |
+| `context.output`                 | Custom return value of `await request()`。 It only take effect when `resolveWith` is not set or set to 'intelligent'. **This property is writeonly.** |
 
 #### .useRouter()
 

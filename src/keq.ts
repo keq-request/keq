@@ -11,6 +11,7 @@ import { KeqMiddleware } from './types/keq-middleware'
 import { KeqBuildInOptions, KeqOptions, KeqOptionsWithFullResponse, KeqOptionsWithoutFullResponse } from './types/keq-options'
 import { KeqQueryValue } from './types/keq-query-value.js'
 import { KeqRequestBody } from './types/keq-request-body'
+import { KeqResolveMethod } from './types/keq-resolve-with-mode.js'
 import { KeqRetryDelay } from './types/keq-retry-delay'
 import { KeqRetryOn } from './types/keq-retry-on'
 import { ShorthandContentType } from './types/shorthand-content-type'
@@ -259,5 +260,16 @@ export class Keq<T> extends Core<T> {
   timeout(milliseconds: number): this {
     this.option('timeout', { millisecond: milliseconds })
     return this
+  }
+
+  resolveWith(m: 'response'): Keq<Response>
+  resolveWith(m: 'array-buffer'): Keq<ArrayBuffer>
+  resolveWith(m: 'blob'): Keq<Blob>
+  resolveWith(m: 'text'): Keq<string>
+  resolveWith<U = any>(m: 'json' | 'form-data'): Keq<U>
+  resolveWith<U = any>(m: KeqResolveMethod): Keq<U> | Keq<string> | Keq<Blob> | Keq<ArrayBuffer> | Keq<Response> {
+    this.option('resolveWith', m)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return this as any
   }
 }
