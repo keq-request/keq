@@ -201,7 +201,9 @@ export class Keq<T> extends Core<T> {
     } else if (isFile(value)) {
       file = value
     } else if (value instanceof Buffer) {
-      file = new File([value], arg3)
+      const formData = new FormData()
+      formData.set(key, new Blob([value]), arg3)
+      file = formData.get(key) as File
     } else {
       throw new InvalidArgumentsExceptions()
     }
