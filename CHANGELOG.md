@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.1](https://github.com/keq-request/keq/compare/v2.3.0...v2.3.1) (2024-03-22)
+
+
+### Bug Fixes
+
+* unabled send formDate request with buffer file ([9db1508](https://github.com/keq-request/keq/commit/9db1508c3366a5dd264e3de87bd8afef777f761f))
+
 ## [2.3.0](https://github.com/keq-request/keq/compare/v2.2.0...v2.3.0) (2024-02-24)
 
 
