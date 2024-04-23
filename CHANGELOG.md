@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.2](https://github.com/keq-request/keq/compare/v2.3.1...v2.3.2) (2024-04-23)
+
+
+### Bug Fixes
+
+* cannot send form-data when invoke .attach() first ([0195ee2](https://github.com/keq-request/keq/commit/0195ee2dcb4e43a58185f4c032d29fb6c00ac70d))
+
 ## [2.3.1](https://github.com/keq-request/keq/compare/v2.3.0...v2.3.1) (2024-03-22)
 
 
