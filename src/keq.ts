@@ -209,7 +209,7 @@ export class Keq<T> extends Core<T> {
     }
 
     this.requestContext.body = assignKeqRequestBody(this.requestContext.body, { [key]: file })
-    this.setTypeIfEmpty('form-dat')
+    this.setTypeIfEmpty('form-data')
     return this
   }
 
