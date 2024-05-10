@@ -22,7 +22,9 @@ export function abortFlowControlMiddleware(): KeqMiddleware {
 
     if (ctx.global.abortFlowControl[key]) {
       const abortController: AbortController = ctx.global.abortFlowControl[key]
-      abortController.abort('abort flow control')
+      abortController.abort(
+        new DOMException('The previous request was not completed, so keq flowControl abort this request.', 'AbortError')
+      )
     }
 
     const abortController = new AbortController()

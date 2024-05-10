@@ -4,34 +4,37 @@ import { request } from '~/request'
 
 test('send get request', async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => {
-    const startTime = Date.now()
+  const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
+    let finished = false
 
-    return new Promise((resolve, reject) => {
-      const intervalHandle = setInterval(() => {
-        const endTime = Date.now()
-        if (init?.signal?.aborted) {
-          reject('fetch failed')
-          clearInterval(intervalHandle)
-          return
-        }
+    if (init?.signal) {
+      const signal = init.signal
+      signal.onabort = () => {
+        if (finished) return
+        finished = true
+        if (signal.reason) reject(signal.reason)
+        reject(new DOMException('AbortError', 'AbortError'))
+      }
+    }
 
-        if (endTime - startTime > 500) {
-          resolve(new Response(
-            JSON.stringify({ code: '200' }),
-            {
-              headers: {
-                'content-type': 'application/json',
-              },
-            }
-          ))
+    // sleet 500ms
+    setTimeout(
+      () => {
+        if (finished) return
+        finished = true
 
-          clearInterval(intervalHandle)
-          return
-        }
-      }, 10)
-    })
-  })
+        resolve(new Response(
+          JSON.stringify({ code: '200' }),
+          {
+            headers: {
+              'content-type': 'application/json',
+            },
+          }
+        ))
+      },
+      500,
+    )
+  }))
 
   try {
     await request
@@ -39,6 +42,7 @@ test('send get request', async () => {
       .option('fetchAPI', mockedFetch)
       .timeout(100)
   } catch (e) {
-    expect(e).toMatch('fetch failed')
+    expect(e).toBeInstanceOf(DOMException)
+    expect((e as DOMException).name).toBe('AbortError')
   }
 })

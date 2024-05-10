@@ -17,11 +17,13 @@ export function timeoutMiddleware(): KeqMiddleware {
     const timeoutSignal = new AbortController()
     ctx.request.signal = timeoutSignal.signal
 
+    const millisecond = ctx.options.timeout.millisecond
     setTimeout(
       () => {
-        timeoutSignal.abort('timeout')
+        const err = new DOMException(`keq request timeout(${millisecond}ms)`, 'AbortError')
+        timeoutSignal.abort(err)
       },
-      ctx.options.timeout.millisecond
+      millisecond
     )
 
     await next()
