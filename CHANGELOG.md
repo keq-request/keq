@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.3](https://github.com/keq-request/keq/compare/v2.3.2...v2.3.3) (2024-05-10)
+
+
+### Bug Fixes
+
+* the error thrown when the request timeout is not DOMException ([7c84d8f](https://github.com/keq-request/keq/commit/7c84d8fe40e26713d478d443fbdb9a9d71d99ba9))
+
+
+### Performance Improvements
+
+* upgrade dependencies ([090e244](https://github.com/keq-request/keq/commit/090e24449f055e185dde1d3972c8f5e9c637fb20))
+
 ## [2.3.2](https://github.com/keq-request/keq/compare/v2.3.1...v2.3.2) (2024-04-23)
 
 
