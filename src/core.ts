@@ -97,7 +97,7 @@ export class Core<T> {
     const middleware = composeMiddleware([...this.__prepend_middlewares__, ...this.__append_middlewares__])
 
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    await middleware(ctx, async () => {})
+    await middleware(ctx, async function emptyNext() {})
 
 
     const output: any = ctx[OUTPUT_PROPERTY]

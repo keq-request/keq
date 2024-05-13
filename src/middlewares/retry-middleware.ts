@@ -5,7 +5,7 @@ function sleep(ms: number): Promise<void> {
 }
 
 export function retryMiddleware(): KeqMiddleware {
-  return async (ctx, next) => {
+  return async function retryMiddleware(ctx, next) {
     const retryTimes = (Number(ctx.options.retryTimes) || 0) + 1
 
     const retryDelay = ctx.options.retryDelay || 10

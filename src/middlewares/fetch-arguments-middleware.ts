@@ -73,7 +73,7 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
 
 
 export function fetchArgumentsMiddleware(): KeqMiddleware {
-  return async (ctx, next) => {
+  return async function fetchArgumentsMiddleware(ctx, next) {
     const request = ctx.request
     const url = compileUrl(request.url, request.routeParams)
 

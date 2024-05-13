@@ -2,7 +2,7 @@ import { KeqMiddleware } from '~/types/keq-middleware.js'
 
 
 export function timeoutMiddleware(): KeqMiddleware {
-  return async (ctx, next) => {
+  return async function timeoutMiddleware(ctx, next) {
     if (!ctx.options.timeout || ctx.options.timeout.millisecond <= 0) {
       await next()
       return

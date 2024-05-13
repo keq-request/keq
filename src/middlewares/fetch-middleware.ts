@@ -6,7 +6,7 @@ import { KeqMiddleware } from '~/types/keq-middleware'
  * Send Request
  */
 export function fetchMiddleware(): KeqMiddleware {
-  return async (ctx: KeqContext) => {
+  return async function fetchMiddleware(ctx: KeqContext) {
     const fetchArguments = ctx.fetchArguments
     if (!fetchArguments) {
       throw new Exception('fetchArguments is required')

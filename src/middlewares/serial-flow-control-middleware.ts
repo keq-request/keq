@@ -5,7 +5,7 @@ import { KeqNext } from '~/types/keq-next.js'
 
 
 export function serialFlowControlMiddleware(): KeqMiddleware {
-  return async (ctx, next) => {
+  return async function serialFlowControlMiddleware(ctx, next) {
     if (!ctx.options.flowControl || ctx.options.flowControl.mode !== 'serial') {
       await next()
       return

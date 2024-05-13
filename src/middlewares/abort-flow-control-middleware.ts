@@ -2,7 +2,7 @@ import { KeqMiddleware } from '~/types/keq-middleware.js'
 
 
 export function abortFlowControlMiddleware(): KeqMiddleware {
-  return async (ctx, next) => {
+  return async function abortFlowControlMiddleware(ctx, next) {
     if (!ctx.options.flowControl || ctx.options.flowControl.mode !== 'abort') {
       await next()
       return
