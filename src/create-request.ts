@@ -60,6 +60,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
 
   request.baseOrigin = (origin) => {
     baseOrigin = origin
+    return request
   }
 
   request.useRouter = function useRouter() {
