@@ -556,6 +556,11 @@ const body = await customRequest.get("http://test.com");
 
 > The gloabl request instance is created by `request.create()` too.
 
+ option          | description
+:----------------|:---------------
+ initMiddlewares | `fetch`, `retry`, `flowController` are all implemented by middleware. you can customize the init middlewares to change behavior.
+ baseOrigin      | When sending a request without an `origin`, `origin` will set to `window.location.origin` in the browser and `"http://127.0.0.1"` in NodeJS.
+
 <!-- usage -->
 
 <!-- addition -->
