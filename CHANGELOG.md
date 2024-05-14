@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.4](https://github.com/keq-request/keq/compare/v2.3.3...v2.3.4) (2024-05-14)
+
+
+### Bug Fixes
+
+* avoid repeatedly defining response causing errors to be throw ([fc4d0ab](https://github.com/keq-request/keq/commit/fc4d0abf47a35e894fb31f9284e4fa3947c99383))
+* missing typescript definition ([fff9046](https://github.com/keq-request/keq/commit/fff9046a5d10d264d4aeef918aaeb986056abd67))
+
+
+### Performance Improvements
+
+* baseOrigin(origin) return this ([d50773c](https://github.com/keq-request/keq/commit/d50773c00eeaf87850c1ee621dc75d920d6897ba))
+* use http://127.0.0.1 as baseOrigin in nodejs ([22f0202](https://github.com/keq-request/keq/commit/22f0202c21c83d128f86f9c0270b124018ce515d))
+
 ## [2.3.3](https://github.com/keq-request/keq/compare/v2.3.2...v2.3.3) (2024-05-10)
 
 
