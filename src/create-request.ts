@@ -21,7 +21,13 @@ interface CreateRequestOptions {
 
 export function createRequest(options?: CreateRequestOptions): KeqRequest {
   let baseOrigin = options?.baseOrigin
-  if (isBrowser() && !baseOrigin) baseOrigin = location.origin
+  if (!baseOrigin) {
+    if (isBrowser()) {
+      baseOrigin = location.origin
+    } else {
+      baseOrigin = 'http://127.0.0.1'
+    }
+  }
 
   const appendMiddlewares: KeqMiddleware[] = options?.initMiddlewares ? [...options.initMiddlewares] : [
     serialFlowControlMiddleware(),
