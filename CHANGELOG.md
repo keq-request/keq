@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.1](https://github.com/keq-request/keq/compare/v2.4.0...v2.4.1) (2024-05-17)
+
+
+### Bug Fixes
+
+* response.body is not a function ([8332fa2](https://github.com/keq-request/keq/commit/8332fa25fa613c0663719d581379f04a7545799c))
+
 ## [2.4.0](https://github.com/keq-request/keq/compare/v2.3.4...v2.4.0) (2024-05-17)
 
 
