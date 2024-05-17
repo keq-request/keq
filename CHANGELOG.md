@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/keq-request/keq/compare/v2.3.4...v2.4.0) (2024-05-17)
+
+
+### Features
+
+* avoid time-consuming cloning ([5f6b773](https://github.com/keq-request/keq/commit/5f6b773a8d2a0bf9ffa529200ff4fc524b3c4090))
+
 ## [2.3.4](https://github.com/keq-request/keq/compare/v2.3.3...v2.3.4) (2024-05-14)
 
 
