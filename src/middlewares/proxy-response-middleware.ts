@@ -11,7 +11,7 @@ export function proxyResponseMiddleware(): KeqMiddleware {
       ctx.response = new Proxy(res, {
         get(res, prop) {
           if (typeof prop === 'string') {
-            if (['body', 'json', 'text', 'arrayBuffer', 'blob', 'buffer', 'formData'].includes(prop)) {
+            if (['json', 'text', 'arrayBuffer', 'blob', 'buffer', 'formData'].includes(prop)) {
               /**
                * clone when invoking body, json, text, arrayBuffer, blob, buffer, formData
                * to avoid time-consuming cloning
