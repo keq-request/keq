@@ -1,5 +1,5 @@
-import { isFunction } from './is-function'
-import { isObject } from './is-object'
+import { isFunction } from './is-function.js'
+import { isObject } from './is-object.js'
 
 export function isFormData(object: any): object is FormData {
   if (object instanceof FormData) return true

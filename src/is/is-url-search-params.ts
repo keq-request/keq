@@ -1,5 +1,5 @@
-import { isFunction } from './is-function'
-import { isObject } from './is-object'
+import { isFunction } from './is-function.js'
+import { isObject } from './is-object.js'
 
 export function isUrlSearchParams(obj: any): obj is URLSearchParams {
   if (obj instanceof URLSearchParams) return true

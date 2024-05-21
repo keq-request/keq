@@ -1,4 +1,4 @@
-import { isObject } from '~/is/is-object'
+import { isObject } from '~/is/is-object.js'
 
 /**
  * @description 浅拷贝

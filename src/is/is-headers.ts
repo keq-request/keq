@@ -1,5 +1,5 @@
-import { isFunction } from './is-function'
-import { isObject } from './is-object'
+import { isFunction } from './is-function.js'
+import { isObject } from './is-object.js'
 
 export function isHeaders(obj: any): obj is Headers {
   if (obj instanceof Headers) return true

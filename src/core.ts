@@ -1,15 +1,13 @@
 import { URL } from 'whatwg-url'
-import { Exception } from '~/exception/exception'
-import { clone } from '~/util/clone'
-import { OUTPUT_PROPERTY } from './constant'
-import { KeqContext, KeqRequestContext } from './types/keq-context'
-import { KeqMiddleware } from './types/keq-middleware'
-import {
-  KeqOptions,
-} from './types/keq-options'
-import { KeqRequestInit } from './types/keq-request-init'
-import { composeMiddleware } from './util/compose-middleware'
-import { shadowClone } from './util/shadow-clone'
+import { Exception } from '~/exception/exception.js'
+import { clone } from '~/util/clone.js'
+import { OUTPUT_PROPERTY } from './constant.js'
+import { composeMiddleware } from './util/compose-middleware.js'
+import { shadowClone } from './util/shadow-clone.js'
+
+import type { KeqContext, KeqContextOptions, KeqRequestContext } from './types/keq-context.js'
+import type { KeqMiddleware } from './types/keq-middleware.js'
+import type { KeqRequestInit } from './types/keq-request-init.js'
 
 
 /**
@@ -24,7 +22,7 @@ export class Core<T> {
   protected __prepend_middlewares__: KeqMiddleware[] = []
   protected __append_middlewares__: KeqMiddleware[] = []
 
-  protected __options__: KeqOptions = {
+  protected __options__: KeqContextOptions = {
     resolveWithFullResponse: false,
     resolveWith: 'intelligent',
   }

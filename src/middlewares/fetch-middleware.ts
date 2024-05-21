@@ -1,6 +1,7 @@
-import { Exception } from '~/exception/exception'
-import { KeqContext } from '~/types/keq-context'
-import { KeqMiddleware } from '~/types/keq-middleware'
+import { Exception } from '~/exception/exception.js'
+
+import type { KeqContext } from '~/types/keq-context.js'
+import type { KeqMiddleware } from '~/types/keq-middleware.js'
 
 /**
  * Send Request

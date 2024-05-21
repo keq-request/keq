@@ -1,24 +1,26 @@
-import { Core } from './core'
-import { Exception } from './exception/exception'
-import { InvalidArgumentsExceptions } from './exception/invalid-arguments.exception'
-import { isBlob } from './is/is-blob'
-import { isFile } from './is/is-file'
-import { isFormData } from './is/is-form-data'
-import { isHeaders } from './is/is-headers'
-import { isUrlSearchParams } from './is/is-url-search-params'
+import { Core } from './core.js'
+import { Exception } from './exception/exception.js'
+import { InvalidArgumentsExceptions } from './exception/invalid-arguments.exception.js'
+import { isBlob } from './is/is-blob.js'
+import { isFile } from './is/is-file.js'
+import { isFormData } from './is/is-form-data.js'
+import { isHeaders } from './is/is-headers.js'
+import { isUrlSearchParams } from './is/is-url-search-params.js'
 import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './types/keq-flow-control.js'
-import { KeqMiddleware } from './types/keq-middleware'
-import { KeqBuildInOptions, KeqOptions, KeqOptionsWithFullResponse, KeqOptionsWithoutFullResponse } from './types/keq-options'
-import { KeqQueryValue } from './types/keq-query-value.js'
-import { KeqRequestBody } from './types/keq-request-body'
-import { KeqResolveMethod } from './types/keq-resolve-with-mode.js'
-import { KeqRetryDelay } from './types/keq-retry-delay'
-import { KeqRetryOn } from './types/keq-retry-on'
-import { ShorthandContentType } from './types/shorthand-content-type'
-import { assignKeqRequestBody } from './util/assign-keq-request-body'
-import { base64Encode } from './util/base64'
-import { fixContentType } from './util/fix-content-type'
+import { assignKeqRequestBody } from './util/assign-keq-request-body.js'
+import { base64Encode } from './util/base64.js'
+import { fixContentType } from './util/fix-content-type.js'
 import { getUniqueCodeIdentifier } from './util/get-unique-code-identifier.js'
+
+import type { KeqRetryOn } from './types/keq-retry-on.js'
+import type { KeqMiddleware } from './types/keq-middleware.js'
+import type { KeqOptionsParameter, KeqOptionsReturnType } from './types/keq-options.js'
+import type { KeqQueryValue } from './types/keq-query-value.js'
+import type { KeqRequestBody } from './types/keq-request-body.js'
+import type { KeqResolveMethod } from './types/keq-resolve-with-mode.js'
+import type { KeqRetryDelay } from './types/keq-retry-delay.js'
+import type { ShorthandContentType } from './types/shorthand-content-type.js'
+import { KeqContextOptions } from './types/keq-context.js'
 
 
 /**
@@ -30,24 +32,19 @@ export class Keq<T> extends Core<T> {
   }
 
 
-  option(key: 'resolveWithFullResponse', value?: true): Keq<Response>
-  option<K extends keyof KeqBuildInOptions>(key: K, value?: KeqBuildInOptions[K]): this
+  option<K extends keyof KeqOptionsReturnType<T>>(key: K, value?: KeqOptionsParameter[K]): KeqOptionsReturnType<T>[K]
   option(key: string, value?: any): this
-  option(key: string, value: any = true): this | Keq<Response> {
+  option(key: string, value: any = true): Keq<any> {
     this.__options__[key] = value
     return this
   }
 
-  options(opts: KeqOptionsWithoutFullResponse): this
-  options(opts: KeqOptionsWithFullResponse): Keq<Response>
-  options(opts: KeqOptions): this
-  options(opts: KeqOptions): this | Keq<Response> {
+  options(opts: KeqContextOptions): this {
     for (const [key, value] of Object.entries(opts)) {
       this.__options__[key] = value
     }
     return this
   }
-
 
   /**
    * Set request header

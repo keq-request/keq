@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { URL } from 'whatwg-url'
-import { isBrowser } from './is/is-browser'
-import { Keq } from './keq'
+import { isBrowser } from './is/is-browser.js'
+import { Keq } from './keq.js'
 import { abortFlowControlMiddleware } from './middlewares/abort-flow-control-middleware.js'
-import { fetchArgumentsMiddleware } from './middlewares/fetch-arguments-middleware'
-import { fetchMiddleware } from './middlewares/fetch-middleware'
-import { proxyResponseMiddleware } from './middlewares/proxy-response-middleware'
-import { retryMiddleware } from './middlewares/retry-middleware'
+import { fetchArgumentsMiddleware } from './middlewares/fetch-arguments-middleware.js'
+import { fetchMiddleware } from './middlewares/fetch-middleware.js'
+import { proxyResponseMiddleware } from './middlewares/proxy-response-middleware.js'
+import { retryMiddleware } from './middlewares/retry-middleware.js'
 import { serialFlowControlMiddleware } from './middlewares/serial-flow-control-middleware.js'
 import { KeqRouter } from './router/keq-router.js'
-import { KeqMiddleware } from './types/keq-middleware'
-import { KeqRequest } from './types/keq-request'
 import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
+
+import type { KeqMiddleware } from './types/keq-middleware.js'
+import type { KeqRequest } from './types/keq-request.js'
 
 
 interface CreateRequestOptions {

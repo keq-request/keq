@@ -1,4 +1,4 @@
-import { Exception } from './exception'
+import { Exception } from './exception.js'
 
 
 export class FileExpectedException extends Exception {

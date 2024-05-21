@@ -1,5 +1,5 @@
-import { isBlob } from './is-blob'
-import { isBrowser } from './is-browser'
+import { isBlob } from './is-blob.js'
+import { isBrowser } from './is-browser.js'
 
 
 export function isFile(object: any): object is File {

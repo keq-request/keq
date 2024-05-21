@@ -1,9 +1,10 @@
 import { URL } from 'whatwg-url'
-import { Exception } from '~/exception/exception'
-import { KeqContext } from '~/types/keq-context'
-import { KeqRequestBody } from '~/types/keq-request-body'
+import { Exception } from '~/exception/exception.js'
 import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
-import { KeqMiddleware } from '../types/keq-middleware'
+
+import type { KeqContext } from '~/types/keq-context'
+import type { KeqRequestBody } from '~/types/keq-request-body'
+import type { KeqMiddleware } from '../types/keq-middleware'
 
 
 function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<string, string>): string {

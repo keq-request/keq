@@ -1,6 +1,6 @@
-import { isFunction } from './is-function'
-import { isObject } from './is-object'
-import { isString } from './is-string'
+import { isFunction } from './is-function.js'
+import { isObject } from './is-object.js'
+import { isString } from './is-string.js'
 
 
 const names = ['Blob', 'File']

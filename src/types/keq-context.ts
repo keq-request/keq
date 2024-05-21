@@ -1,9 +1,13 @@
 import { URL } from 'whatwg-url'
 import { OUTPUT_PROPERTY } from '~/constant'
-import { KeqOptions } from './keq-options'
 import { KeqRequestBody } from './keq-request-body'
 import { KeqRequestMethod } from './keq-request-method'
+import { KeqOptionsParameter } from './keq-options.js'
 
+
+export interface KeqContextOptions extends KeqOptionsParameter {
+  [key: string]: any
+}
 
 export interface KeqRequestContext {
   url: URL | globalThis.URL
@@ -23,7 +27,7 @@ export interface KeqRequestContext {
 }
 
 export interface KeqContext {
-  options: KeqOptions
+  options: KeqContextOptions
 
   /**
    * Fetch API Arguments

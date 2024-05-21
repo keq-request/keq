@@ -1,4 +1,4 @@
-import { ShorthandContentType } from '~/types/shorthand-content-type'
+import type { ShorthandContentType } from '~/types/shorthand-content-type.js'
 
 
 export function fixContentType(contentType: ShorthandContentType | string): string {

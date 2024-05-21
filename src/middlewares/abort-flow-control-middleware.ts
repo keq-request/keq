@@ -1,4 +1,4 @@
-import { KeqMiddleware } from '~/types/keq-middleware.js'
+import type { KeqMiddleware } from '~/types/keq-middleware.js'
 
 
 export function abortFlowControlMiddleware(): KeqMiddleware {

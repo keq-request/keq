@@ -4,7 +4,7 @@ export { request } from './request.js'
 export { composeMiddleware } from './util/compose-middleware.js'
 export { composeRoute } from './util/compose-route.js'
 
-export { KeqContext } from './types/keq-context.js'
+export { KeqContext, KeqContextOptions } from './types/keq-context.js'
 export { KeqMiddleware } from './types/keq-middleware.js'
 export { KeqNext } from './types/keq-next.js'
 export { KeqOptions } from './types/keq-options.js'

@@ -1,5 +1,6 @@
-import { Exception } from '~/exception/exception'
-import { KeqMiddleware } from '../types/keq-middleware'
+import { Exception } from '~/exception/exception.js'
+
+import type { KeqMiddleware } from '../types/keq-middleware.js'
 
 
 export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
