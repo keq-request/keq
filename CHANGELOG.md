@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.1](https://github.com/keq-request/keq/compare/v2.5.0...v2.5.1) (2024-05-21)
+
+
+### Bug Fixes
+
+* throw error when retryOn is not set ([cbf4594](https://github.com/keq-request/keq/commit/cbf45942e113a4f57c4351abd03a82cbab5a0a6a))
+
 ## [2.5.0](https://github.com/keq-request/keq/compare/v2.4.1...v2.5.0) (2024-05-21)
 
 
