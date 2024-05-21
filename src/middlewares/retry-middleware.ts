@@ -1,4 +1,5 @@
 import { KeqMiddleware } from '~/types/keq-middleware'
+import { KeqRetryDelay } from '~/types/keq-retry-delay.js'
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -8,8 +9,17 @@ export function retryMiddleware(): KeqMiddleware {
   return async function retryMiddleware(ctx, next) {
     const retryTimes = (Number(ctx.options.retryTimes) || 0) + 1
 
-    const retryDelay = ctx.options.retryDelay || 10
-    const retryOn = ctx.options.retryOn
+    const retryDelay: KeqRetryDelay = (attempt, error, ctx): number => {
+      if (typeof ctx.options.retryDelay === 'function') {
+        return ctx.options.retryDelay(attempt, error, ctx)
+      } else if (typeof ctx.options.retryDelay === 'number') {
+        return ctx.options.retryDelay
+      }
+
+      return 10
+    }
+
+    const retryOn = typeof ctx.options.retryOn === 'function' ? ctx.options.retryOn : undefined
 
     // Avoid multiple middleware from being added repeatedly
     ctx.options = {
@@ -41,7 +51,7 @@ export function retryMiddleware(): KeqMiddleware {
         break
       }
 
-      const delay = typeof retryDelay === 'function' ? retryDelay(i, err, ctx) : retryDelay
+      const delay = retryDelay(i, err, ctx)
       if (delay > 0) await sleep(delay)
     }
   }

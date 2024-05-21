@@ -219,7 +219,10 @@ export class Keq<T> extends Core<T> {
   retry(retryTimes: number, retryDelay?: KeqRetryDelay, retryOn?: KeqRetryOn): Keq<T> {
     this.option('retryTimes', retryTimes)
     this.option('retryDelay', retryDelay)
-    this.option('retryOn', retryOn)
+
+    if (retryOn !== undefined) {
+      this.option('retryOn', retryOn)
+    }
 
     return this
   }
