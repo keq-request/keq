@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/keq-request/keq/compare/v2.4.1...v2.5.0) (2024-05-21)
+
+
+### Features
+
+* third-party middleware can extend option typescript declaration ([a9e559a](https://github.com/keq-request/keq/commit/a9e559a39dd16a552ac5ab024727a76d2a2c05a1))
+
 ## [2.4.1](https://github.com/keq-request/keq/compare/v2.4.0...v2.4.1) (2024-05-17)
 
 
