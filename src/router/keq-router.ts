@@ -14,15 +14,14 @@ export class KeqRouter {
   ) { }
 
   route(route: KeqRoute, ...middlewares: KeqMiddleware[]): this {
-    const middleware: KeqMiddleware = async (ctx, next) => {
-      if (route(ctx)) {
-        await composeMiddleware(middlewares)(ctx, next)
-      } else {
-        await next()
-      }
-    }
+    if (middlewares.length === 0) return this
+    const m = middlewares.length > 1 ? composeMiddleware(middlewares) : middlewares[0]
 
-    this.prependMiddlewares.push(middleware)
+    this.prependMiddlewares.push(async (ctx, next) => {
+      if (route(ctx)) await m(ctx, next)
+      else await next()
+    })
+
     return this
   }
 
