@@ -1,7 +1,7 @@
 import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception.js'
 import { clone } from '~/util/clone.js'
-import { OUTPUT_PROPERTY } from './constant.js'
+import { NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
 import { shadowClone } from './util/shadow-clone.js'
 
@@ -79,6 +79,12 @@ export class Core<T> {
     const options = shadowClone(this.__options__)
 
     const ctx: KeqContext = {
+      [NEXT_INVOKED_PROPERTY]: {
+        finished: false,
+        entryNextTimes: 0,
+        outNextTimes: 0,
+      },
+
       request: requestContext,
       options,
       global: this.__global__,

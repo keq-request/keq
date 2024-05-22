@@ -1,5 +1,5 @@
 import { URL } from 'whatwg-url'
-import { OUTPUT_PROPERTY } from '~/constant'
+import { NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant'
 import { KeqRequestBody } from './keq-request-body'
 import { KeqRequestMethod } from './keq-request-method'
 import { KeqOptionsParameter } from './keq-options.js'
@@ -27,6 +27,18 @@ export interface KeqRequestContext {
 }
 
 export interface KeqContext {
+  /**
+   * Middleware invoker counter
+   *
+   * to prevent someone from calling next
+   * multiple times or forgetting to write await
+   */
+  [NEXT_INVOKED_PROPERTY]: {
+    finished: boolean
+    entryNextTimes: number
+    outNextTimes: number
+  }
+
   options: KeqContextOptions
 
   /**
