@@ -9,7 +9,7 @@ export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
     throw new Exception('At least one middleware')
   }
 
-  const middleware = middlewares
+  const middleware = [...middlewares]
     .reverse()
     .reduce(function (prev, curr): KeqMiddleware {
       return async (ctx, next) => {
