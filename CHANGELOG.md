@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.2](https://github.com/keq-request/keq/compare/v2.5.1...v2.5.2) (2024-05-22)
+
+
+### Bug Fixes
+
+* composeMiddleware should not change parameters ([131c1d4](https://github.com/keq-request/keq/commit/131c1d42227eeda2d42436c5285426bf3f787df0))
+
+
+### Performance Improvements
+
+* avoid duplication of compose middleware ([c4e5cc1](https://github.com/keq-request/keq/commit/c4e5cc161d94b2440768c778489ee5ac1bb07484))
+* warn for incorrect invoke next() ([f4b418f](https://github.com/keq-request/keq/commit/f4b418f28e3df07bad0c03e2aca811ed6254e57c)), closes [#74](https://github.com/keq-request/keq/issues/74)
+
 ## [2.5.1](https://github.com/keq-request/keq/compare/v2.5.0...v2.5.1) (2024-05-21)
 
 
