@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.4](https://github.com/keq-request/keq/compare/v2.5.3...v2.5.4) (2024-05-23)
+
+
+### Performance Improvements
+
+* retryOn and retryDelay support return Promise ([398c262](https://github.com/keq-request/keq/commit/398c26294aa303feb5b14ab17d3ff96036bfdde2))
+
 ## [2.5.3](https://github.com/keq-request/keq/compare/v2.5.2...v2.5.3) (2024-05-23)
 
 
