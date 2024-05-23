@@ -39,6 +39,9 @@ export function retryMiddleware(): KeqMiddleware {
       let err: unknown | null = null
 
       try {
+        ctx.fetchArguments = undefined
+        ctx.response = undefined
+        ctx.req = undefined
         ctx[NEXT_INVOKED_PROPERTY].entryNextTimes = 0
         ctx[NEXT_INVOKED_PROPERTY].outNextTimes = 0
         await next()

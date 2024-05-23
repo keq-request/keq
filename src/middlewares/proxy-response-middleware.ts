@@ -7,7 +7,7 @@ export function proxyResponseMiddleware(): KeqMiddleware {
 
     const res = ctx.res
 
-    if (res && !('response' in ctx)) {
+    if (res) {
       ctx.response = new Proxy(res, {
         get(res, prop) {
           if (typeof prop === 'string') {

@@ -31,12 +31,12 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
   }
 
   const appendMiddlewares: KeqMiddleware[] = options?.initMiddlewares ? [...options.initMiddlewares] : [
+    retryMiddleware(),
     serialFlowControlMiddleware(),
     abortFlowControlMiddleware(),
     timeoutMiddleware(),
     proxyResponseMiddleware(),
     fetchArgumentsMiddleware(),
-    retryMiddleware(),
     fetchMiddleware(),
   ]
 

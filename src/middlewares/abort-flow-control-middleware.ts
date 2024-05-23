@@ -32,8 +32,10 @@ export function abortFlowControlMiddleware(): KeqMiddleware {
 
     ctx.request.signal = abortController.signal
 
-    await next()
-
-    ctx.global.abortFlowControl[key] = undefined
+    try {
+      await next()
+    } finally {
+      ctx.global.abortFlowControl[key] = undefined
+    }
   }
 }

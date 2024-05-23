@@ -216,13 +216,10 @@ export class Keq<T> extends Core<T> {
    * @param retryDelay Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
    * @param retryCallback Will be called after request failed
    */
-  retry(retryTimes: number, retryDelay?: KeqRetryDelay, retryOn?: KeqRetryOn): Keq<T> {
+  retry(retryTimes: number, retryDelay: KeqRetryDelay = 0, retryOn: KeqRetryOn = (attempt, error) => !!error): Keq<T> {
     this.option('retryTimes', retryTimes)
     this.option('retryDelay', retryDelay)
-
-    if (retryOn !== undefined) {
-      this.option('retryOn', retryOn)
-    }
+    this.option('retryOn', retryOn)
 
     return this
   }
