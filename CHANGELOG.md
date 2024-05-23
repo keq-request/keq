@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.3](https://github.com/keq-request/keq/compare/v2.5.2...v2.5.3) (2024-05-23)
+
+
+### Bug Fixes
+
+* retryTimes avoids throw errors caused by NaN ([a5ece3f](https://github.com/keq-request/keq/commit/a5ece3f8afec3c58d2daa3c5e1a2f85fae044665))
+
 ## [2.5.2](https://github.com/keq-request/keq/compare/v2.5.1...v2.5.2) (2024-05-22)
 
 
