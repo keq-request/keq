@@ -8,7 +8,9 @@ function sleep(ms: number): Promise<void> {
 
 export function retryMiddleware(): KeqMiddleware {
   return async function retryMiddleware(ctx, next) {
-    const retryTimes = (Number(ctx.options.retryTimes) || 0) + 1
+    const retryTimes = Number.isInteger(ctx.options.retryTimes)
+      ? ctx.options.retryTimes! + 1
+      : 1
 
     const retryDelay: KeqRetryDelay = (attempt, error, ctx): number => {
       if (typeof ctx.options.retryDelay === 'function') {
@@ -17,10 +19,12 @@ export function retryMiddleware(): KeqMiddleware {
         return ctx.options.retryDelay
       }
 
-      return 10
+      return 0
     }
 
-    const retryOn = typeof ctx.options.retryOn === 'function' ? ctx.options.retryOn : undefined
+    const retryOn = typeof ctx.options.retryOn === 'function'
+      ? ctx.options.retryOn
+      : (attempt, error) => !!error
 
     // Avoid multiple middleware from being added repeatedly
     ctx.options = {
@@ -47,10 +51,8 @@ export function retryMiddleware(): KeqMiddleware {
         break
       }
 
-      if (retryOn && retryOn(i, err, ctx) === false) {
+      if (retryOn(i, err, ctx) === false) {
         if (err) throw err
-        break
-      } else if (!retryOn && !err) {
         break
       }
 

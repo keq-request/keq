@@ -291,11 +291,11 @@ There are multiple parsing methods for us to choose from
 
 No retry by default, invoke `.retry(retryTimes[, retryDelay[, retryOn]])` to set retry parameters
 
-| Parameter  | Description                                                                                                              |
-| :--------- | :----------------------------------------------------------------------------------------------------------------------- |
-| retryTimes | Max number of retries per call.                                                                                          |
-| retryDelay | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor). |
-| retryOn    | Will be called after request used to control whether the next retry runs. If it return `false`, stop retrying.           |
+| Parameter | Default | Description                                                                                                              |
+| :--------- |:------- | :----------------------------------------------------------------------------------------------------------------------- |
+| retryTimes  | `0` | Max number of retries per call.                                                                                          |
+| retryDelay |`0` | Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor). |
+| retryOn    | `(attempt, error) => !!error` | Will be called after request used to control whether the next retry runs. If it return `false`, stop retrying.           |
 
 ```javascript
 import { request } from "keq";

@@ -71,6 +71,17 @@ test('send request retry twice', async () => {
   expect(retryOn.mock.calls[1][0]).toBe(1)
 })
 
+test('send request retry once', async () => {
+  const mockedFetch = jest.fn()
+
+  await request
+    .get('http://test.com')
+    .retry(2, 0)
+    .option('fetchAPI', mockedFetch)
+
+  expect(mockedFetch.mock.calls).toHaveLength(1)
+})
+
 test('throw error when fetch failed', async () => {
   const mockedFetch = jest.fn(() => {
     throw new Error('fetch failed')
