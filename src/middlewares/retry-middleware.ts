@@ -12,7 +12,7 @@ export function retryMiddleware(): KeqMiddleware {
       ? ctx.options.retryTimes! + 1
       : 1
 
-    const retryDelay: KeqRetryDelay = (attempt, error, ctx): number => {
+    const retryDelay: KeqRetryDelay = async (attempt, error, ctx): Promise<number> => {
       if (typeof ctx.options.retryDelay === 'function') {
         return ctx.options.retryDelay(attempt, error, ctx)
       } else if (typeof ctx.options.retryDelay === 'number') {
@@ -51,12 +51,12 @@ export function retryMiddleware(): KeqMiddleware {
         break
       }
 
-      if (retryOn(i, err, ctx) === false) {
+      if (await retryOn(i, err, ctx) === false) {
         if (err) throw err
         break
       }
 
-      const delay = retryDelay(i, err, ctx)
+      const delay = await retryDelay(i, err, ctx)
       if (delay > 0) await sleep(delay)
     }
   }
