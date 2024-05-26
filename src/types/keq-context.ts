@@ -1,8 +1,11 @@
 import { URL } from 'whatwg-url'
-import { NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant'
+import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant'
 import { KeqRequestBody } from './keq-request-body'
 import { KeqRequestMethod } from './keq-request-method'
 import { KeqOptionsParameter } from './keq-options.js'
+import { Emitter } from 'mitt'
+import { KeqEvents } from './keq-events.js'
+import { KeqGlobal } from './keq-global.js'
 
 
 export interface KeqContextOptions extends KeqOptionsParameter {
@@ -23,7 +26,6 @@ export interface KeqRequestContext {
   redirect?: RequestRedirect
   referrer?: string
   referrerPolicy?: ReferrerPolicy
-  signal?: AbortSignal | null
 }
 
 export interface KeqContext {
@@ -38,6 +40,11 @@ export interface KeqContext {
     entryNextTimes: number
     outNextTimes: number
   }
+
+  [ABORT_PROPERTY]?: AbortController
+  abort: (reason: any) => void
+
+  emitter: Emitter<Omit<KeqEvents, never>>
 
   options: KeqContextOptions
 
@@ -62,7 +69,7 @@ export interface KeqContext {
   [OUTPUT_PROPERTY]?: any
 
   /** share data between requests */
-  global: Record<string, any>
+  global: KeqGlobal
 
   /** extends by middleware */
   [key: string]: any

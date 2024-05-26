@@ -1,13 +1,15 @@
 import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception.js'
 import { clone } from '~/util/clone.js'
-import { NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
+import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
 import { shadowClone } from './util/shadow-clone.js'
 
 import type { KeqContext, KeqContextOptions, KeqRequestContext } from './types/keq-context.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequestInit } from './types/keq-request-init.js'
+import mitt from 'mitt'
+import { KeqEvents } from './types/keq-events.js'
 
 
 /**
@@ -16,7 +18,7 @@ import type { KeqRequestInit } from './types/keq-request-init.js'
 export class Core<T> {
   private requestPromise?: Promise<T>
 
-  protected requestContext: KeqRequestContext
+  protected requestContext: Omit<KeqRequestContext, 'abort'>
 
   protected __global__: Record<string, any>
   protected __prepend_middlewares__: KeqMiddleware[] = []
@@ -29,6 +31,7 @@ export class Core<T> {
 
   public constructor(url: (URL | globalThis.URL), init: KeqRequestInit, global: Record<string, any> = {}) {
     this.__global__ = global
+
 
     this.requestContext = {
       method: 'get',
@@ -73,10 +76,11 @@ export class Core<T> {
       redirect: this.requestContext.redirect,
       referrer: this.requestContext.referrer,
       referrerPolicy: this.requestContext.referrerPolicy,
-      signal: this.requestContext.signal,
     }
 
     const options = shadowClone(this.__options__)
+
+    const emitter = mitt<Omit<KeqEvents, never>>()
 
     const ctx: KeqContext = {
       [NEXT_INVOKED_PROPERTY]: {
@@ -84,6 +88,8 @@ export class Core<T> {
         entryNextTimes: 0,
         outNextTimes: 0,
       },
+
+      emitter,
 
       request: requestContext,
       options,
@@ -95,6 +101,15 @@ export class Core<T> {
 
       set output(value) {
         this[OUTPUT_PROPERTY] = value
+      },
+
+      [ABORT_PROPERTY]: undefined,
+      abort(reason) {
+        const abortController = this[ABORT_PROPERTY]
+
+        if (abortController) {
+          abortController.abort(reason)
+        }
       },
     }
 

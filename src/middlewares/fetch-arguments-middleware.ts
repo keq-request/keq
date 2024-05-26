@@ -5,6 +5,7 @@ import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
 import type { KeqContext } from '~/types/keq-context'
 import type { KeqRequestBody } from '~/types/keq-request-body'
 import type { KeqMiddleware } from '../types/keq-middleware'
+import { ABORT_PROPERTY } from '~/constant.js'
 
 
 function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<string, string>): string {
@@ -83,6 +84,9 @@ export function fetchArgumentsMiddleware(): KeqMiddleware {
       request.headers.set('Content-Type', inferContentTypeByBody(ctx.request.body))
     }
 
+    const abortController = new AbortController()
+    ctx[ABORT_PROPERTY] = abortController
+
     const requestInit: RequestInit = {
       method: request.method.toUpperCase(),
       headers: request.headers,
@@ -95,7 +99,7 @@ export function fetchArgumentsMiddleware(): KeqMiddleware {
       redirect: request.redirect,
       referrer: request.referrer,
       referrerPolicy: request.referrerPolicy,
-      signal: request.signal,
+      signal: abortController.signal,
     }
 
     ctx.fetchArguments = [url, requestInit]

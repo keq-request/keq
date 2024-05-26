@@ -13,6 +13,7 @@ export function fetchMiddleware(): KeqMiddleware {
       throw new Exception('fetchArguments is required')
     }
 
+    ctx.emitter.emit('fetch', ctx)
     const fetch = ctx.options.fetchAPI || globalThis.fetch
 
     const response = await fetch(...fetchArguments)

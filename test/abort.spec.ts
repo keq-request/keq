@@ -2,7 +2,7 @@ import { expect, jest, test } from '@jest/globals'
 import { request } from '~/request'
 
 
-test('timeout request', async () => {
+test('abort request', async () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
     let finished = false
@@ -32,17 +32,28 @@ test('timeout request', async () => {
           }
         ))
       },
-      500,
+      100,
     )
   }))
 
-  try {
-    await request
-      .get('http://test.com')
-      .option('fetchAPI', mockedFetch)
-      .timeout(100)
-  } catch (e) {
-    expect(e).toBeInstanceOf(DOMException)
-    expect((e as DOMException).name).toBe('AbortError')
+  async function abortRequest(): Promise<void> {
+    try {
+      await request
+        .get('http://test.com')
+        .option('fetchAPI', mockedFetch)
+        .flowControl('abort', 'test')
+    } catch (e) {
+      expect(e).toBeInstanceOf(DOMException)
+      expect((e as DOMException).name).toBe('AbortError')
+    }
   }
+
+  void abortRequest()
+
+  await request
+    .get('http://test.com')
+    .option('fetchAPI', mockedFetch)
+    .flowControl('abort', 'test')
+
+  expect(mockedFetch).toBeCalledTimes(2)
 })

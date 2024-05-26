@@ -8,23 +8,16 @@ export function timeoutMiddleware(): KeqMiddleware {
       return
     }
 
-    if (ctx.request.signal) {
-      console.warn('[keq] request signal had be set manual, abort follow control will not take effect')
-      await next()
-      return
-    }
-
-    const timeoutSignal = new AbortController()
-    ctx.request.signal = timeoutSignal.signal
-
     const millisecond = ctx.options.timeout.millisecond
-    setTimeout(
-      () => {
-        const err = new DOMException(`keq request timeout(${millisecond}ms)`, 'AbortError')
-        timeoutSignal.abort(err)
-      },
-      millisecond
-    )
+    ctx.emitter.on('fetch', (ctx) => {
+      setTimeout(
+        () => {
+          const err = new DOMException(`keq request timeout(${millisecond}ms)`, 'AbortError')
+          ctx.abort(err)
+        },
+        millisecond,
+      )
+    })
 
     await next()
   }

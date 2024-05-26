@@ -13,6 +13,7 @@ import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
 
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequest } from './types/keq-request.js'
+import { KeqGlobal } from './types/keq-global.js'
 
 
 interface CreateRequestOptions {
@@ -46,7 +47,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
    * share data between requests, used to implement flowControl
    * @description 跨请求共享数据，用于实现 flowControl的功能
    */
-  const global = {}
+  const global: KeqGlobal = {}
 
   const formatUrl = (url: string | URL | globalThis.URL): URL => {
     if (typeof url === 'string') {
