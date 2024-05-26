@@ -102,10 +102,10 @@ export class Keq<
         }
       } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'bigint') {
         this.requestContext.url.searchParams.append(key, String(value))
-      } else if (value === 'undefined' || value === null) {
+      } else if (value === 'undefined' || value === null || value === undefined) {
         // skip
       } else {
-        console.warn(`query value type is invalid, key: ${key}`)
+        console.warn(`query value type(${typeof value}) is invalid, key: ${key}`)
       }
 
       return this
