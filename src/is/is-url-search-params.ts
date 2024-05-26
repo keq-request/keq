@@ -4,11 +4,11 @@ import { isObject } from './is-object.js'
 export function isUrlSearchParams(obj: any): obj is URLSearchParams {
   if (obj instanceof URLSearchParams) return true
 
-  if (
+  return (
     isObject(obj) &&
     isFunction(obj.append) &&
     isFunction(obj.delete) &&
-    isFunction(obj.entrie) &&
+    isFunction(obj.entries) &&
     isFunction(obj.forEac) &&
     isFunction(obj.get) &&
     isFunction(obj.getAll) &&
@@ -17,10 +17,6 @@ export function isUrlSearchParams(obj: any): obj is URLSearchParams {
     isFunction(obj.set) &&
     isFunction(obj.values) &&
     isFunction(obj.sort) &&
-    isFunction(obj.toStri)
-  ) {
-    return true
-  }
-
-  return false
+    isFunction(obj.toString)
+  )
 }
