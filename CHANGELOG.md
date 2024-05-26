@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.5](https://github.com/keq-request/keq/compare/v2.5.4...v2.5.5) (2024-05-26)
+
+
+### Bug Fixes
+
+* avoid conflicts between flowController and timeout middleware ([a075602](https://github.com/keq-request/keq/commit/a075602ed868812955001df7ed15f2351f899f33))
+* retry timeout and flowControll not triggered ([846c884](https://github.com/keq-request/keq/commit/846c8845334f61fdca7a6cd3b718e135d23bfb18))
+
 ## [2.5.4](https://github.com/keq-request/keq/compare/v2.5.3...v2.5.4) (2024-05-23)
 
 
