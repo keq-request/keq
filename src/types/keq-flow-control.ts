@@ -1,4 +1,4 @@
-import { KeqContext } from './keq-context.js'
+import type { KeqContext } from './keq-context.js'
 
 
 export interface KeqFlowControl {

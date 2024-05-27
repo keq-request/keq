@@ -1,5 +1,5 @@
-import { queueAsPromised } from 'fastq'
-import { KeqNext } from './keq-next.js'
+import type { queueAsPromised } from 'fastq'
+import type { KeqNext } from './keq-next.js'
 
 
 export interface KeqGlobal {

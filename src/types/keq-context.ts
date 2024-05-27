@@ -1,11 +1,11 @@
-import { URL } from 'whatwg-url'
-import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant'
-import { KeqRequestBody } from './keq-request-body'
-import { KeqRequestMethod } from './keq-request-method'
-import { KeqOptionsParameter } from './keq-options.js'
 import { Emitter } from 'mitt'
-import { KeqEvents } from './keq-events.js'
-import { KeqGlobal } from './keq-global.js'
+import { URL } from 'whatwg-url'
+import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant.js'
+import type { KeqRequestBody } from './keq-request-body.js'
+import type { KeqRequestMethod } from './keq-request-method.js'
+import type { KeqOptionsParameter } from './keq-options.js'
+import type { KeqEvents } from './keq-events.js'
+import type { KeqGlobal } from './keq-global.js'
 
 
 export interface KeqContextOptions extends KeqOptionsParameter {

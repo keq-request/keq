@@ -1,8 +1,8 @@
-import { URL } from 'whatwg-url'
-import { Keq } from '~/keq.js'
-import { KeqRouter } from '~/router/keq-router.js'
-import { KeqMiddleware } from './keq-middleware'
-import { KeqRequestInit } from './keq-request-init'
+import type { URL } from 'whatwg-url'
+import type { KeqRouter } from '~/router/keq-router.js'
+import type { Keq } from '~/keq.js'
+import type { KeqMiddleware } from './keq-middleware.js'
+import type { KeqRequestInit } from './keq-request-init.js'
 
 type KeqRequestFn = <T = any>(url: string | URL | globalThis.URL) => Keq<T>
 

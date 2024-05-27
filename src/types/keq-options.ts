@@ -1,9 +1,9 @@
-import { Keq } from '~/keq.js'
-import { KeqFlowControl } from './keq-flow-control.js'
-import { KeqResolveMethod } from './keq-resolve-with-mode.js'
-import { KeqRetryDelay } from './keq-retry-delay'
-import { KeqRetryOn } from './keq-retry-on'
-import { KeqTimeout } from './keq-timeout.js'
+import type { Keq } from '~/keq.js'
+import type { KeqFlowControl } from './keq-flow-control.js'
+import type { KeqResolveMethod } from './keq-resolve-with-mode.js'
+import type { KeqRetryDelay } from './keq-retry-delay.js'
+import type { KeqRetryOn } from './keq-retry-on.js'
+import type { KeqTimeout } from './keq-timeout.js'
 
 
 export interface KeqOptions<T> {
