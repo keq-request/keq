@@ -71,6 +71,9 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
     request.headers.delete('content-type')
     return form
   }
+
+  if (body instanceof Buffer) return body
+  return String(body)
 }
 
 

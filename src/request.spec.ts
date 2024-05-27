@@ -53,7 +53,6 @@ test('send request with custom fetch API', async () => {
   expect(responseBody).toEqual({ code: '201' })
 })
 
-
 test('throw error when fetch failed', async () => {
   const mockedFetch = jest.fn(() => {
     throw new Error('fetch failed')
@@ -103,4 +102,29 @@ test('send complex request with headers', async () => {
   expect(headers.get('x-region')).toBe('cn')
   expect(headers.get('x-username')).toBe('john')
   expect(headers.get('x-age')).toBe('14')
+})
+
+test('send request with empty body', async () => {
+  const mockedFetch = global.fetch as Mock<typeof global.fetch>
+
+  await request
+    .post('http://test.com')
+    .send({})
+
+  const args = mockedFetch.mock.calls[0]
+
+  expect(args[1]?.body).toBe('{}')
+})
+
+test('send request with string body', async () => {
+  const mockedFetch = global.fetch as Mock<typeof global.fetch>
+
+  await request
+    .post('http://test.com')
+    .type('plain/text')
+    .send('abc')
+
+  const args = mockedFetch.mock.calls[0]
+
+  expect(args[1]?.body).toBe('abc')
 })
