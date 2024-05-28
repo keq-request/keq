@@ -9,7 +9,7 @@ import type { KeqContext, KeqContextOptions, KeqRequestContext } from './types/k
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequestInit } from './types/keq-request-init.js'
 import mitt from 'mitt'
-import { KeqEvents } from './types/keq-events.js'
+import { KeqEvents, KeqListeners } from './types/keq-events.js'
 
 
 /**
@@ -19,6 +19,8 @@ export class Core<T> {
   private requestPromise?: Promise<T>
 
   protected requestContext: Omit<KeqRequestContext, 'abort'>
+
+  protected __listeners__: KeqListeners = {}
 
   protected __global__: Record<string, any>
   protected __prepend_middlewares__: KeqMiddleware[] = []
@@ -53,6 +55,11 @@ export class Core<T> {
     return this
   }
 
+  on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {
+    this.__listeners__[event] = this.__listeners__[event] || []
+    this.__listeners__[event]!.push(listener)
+    return this
+  }
 
   private async run(): Promise<T> {
     const headers = new Headers()
@@ -81,6 +88,12 @@ export class Core<T> {
     const options = shadowClone(this.__options__)
 
     const emitter = mitt<Omit<KeqEvents, never>>()
+    for (const eventName in this.__listeners__) {
+      const listeners = this.__listeners__[eventName]
+      for (const listener of listeners) {
+        emitter.on(eventName as keyof KeqEvents, listener)
+      }
+    }
 
     const ctx: KeqContext = {
       [NEXT_INVOKED_PROPERTY]: {

@@ -71,6 +71,13 @@ export interface KeqContext {
   /** share data between requests */
   global: KeqGlobal
 
+  /** retry information, undefined is no retry */
+  retry?: {
+    attempt: number
+    error: unknown | null
+    delay: number
+  }
+
   /** extends by middleware */
   [key: string]: any
 }

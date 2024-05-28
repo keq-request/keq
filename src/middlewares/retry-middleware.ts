@@ -60,6 +60,10 @@ export function retryMiddleware(): KeqMiddleware {
       }
 
       const delay = await retryDelay(i, err, ctx)
+
+      ctx.retry = { attempt: i, error: err, delay }
+      ctx.emitter.emit('retry', ctx)
+
       if (delay > 0) await sleep(delay)
     }
   }
