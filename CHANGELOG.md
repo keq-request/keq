@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/keq-request/keq/compare/v2.5.5...v2.6.0) (2024-05-28)
+
+
+### Features
+
+* use .on(eventName, listener) add event listener ([500ef14](https://github.com/keq-request/keq/commit/500ef140b513d614c3454d0e9023dd501e5d1ef6))
+
+
+### Bug Fixes
+
+* esm import syntax ([c312146](https://github.com/keq-request/keq/commit/c312146ffeb456bcfb1e0e6e2f2a3c8c773e6003))
+* the body is undeifned when send plain/text request ([ed24ba6](https://github.com/keq-request/keq/commit/ed24ba6f5ef3a565fb3eb6be496be09ed0fa40f9))
+
 ## [2.5.5](https://github.com/keq-request/keq/compare/v2.5.4...v2.5.5) (2024-05-26)
 
 
