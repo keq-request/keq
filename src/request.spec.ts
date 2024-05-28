@@ -97,6 +97,7 @@ test('send complex request with headers', async () => {
   expect(init?.mode).toBe('cors')
   expect(init?.credentials).toBe('include')
   expect(init?.redirect).toBe('follow')
+  expect(init?.body).toBeUndefined()
 
   const headers = init?.headers as Headers
   expect(headers.get('x-region')).toBe('cn')

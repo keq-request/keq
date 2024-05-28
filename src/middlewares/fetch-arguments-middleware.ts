@@ -73,7 +73,10 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
   }
 
   if (body instanceof Buffer) return body
-  return String(body)
+  if (body === undefined) return body
+  if (body === null) return 'null'
+  if (typeof body === 'string') return body
+  if (typeof body === 'number') return String(body)
 }
 
 
