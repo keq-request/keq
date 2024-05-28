@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.1](https://github.com/keq-request/keq/compare/v2.6.0...v2.6.1) (2024-05-28)
+
+
+### Bug Fixes
+
+* body should not be set when undefined ([0674870](https://github.com/keq-request/keq/commit/0674870e3adade4f7c5e7e8209322d52b501b8ce))
+
 ## [2.6.0](https://github.com/keq-request/keq/compare/v2.5.5...v2.6.0) (2024-05-28)
 
 
