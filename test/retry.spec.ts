@@ -9,7 +9,7 @@ test('send request retry twice', async () => {
 
   await request
     .get('http://test.com')
-    .retry(2, 0, retryOn)
+    .retry(2, 10, retryOn)
     .option('fetchAPI', mockedFetch)
     .on('retry', mockedListener)
 
@@ -19,6 +19,7 @@ test('send request retry twice', async () => {
   expect(retryOn.mock.calls.length).toBe(2)
   expect(retryOn.mock.calls[0][0]).toBe(0)
   expect(retryOn.mock.calls[1][0]).toBe(1)
+  expect(retryOn.mock.calls[1][2].retry?.delay).toBe(10)
 })
 
 test('send request retry once', async () => {

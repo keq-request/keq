@@ -12,11 +12,12 @@ export function retryMiddleware(): KeqMiddleware {
       ? ctx.options.retryTimes! + 1
       : 1
 
+    const delayOptions = ctx.options.retryDelay
     const retryDelay: KeqRetryDelay = async (attempt, error, ctx): Promise<number> => {
-      if (typeof ctx.options.retryDelay === 'function') {
-        return ctx.options.retryDelay(attempt, error, ctx)
-      } else if (typeof ctx.options.retryDelay === 'number') {
-        return ctx.options.retryDelay
+      if (typeof delayOptions === 'function') {
+        return delayOptions(attempt, error, ctx)
+      } else if (typeof delayOptions === 'number') {
+        return delayOptions
       }
 
       return 0
