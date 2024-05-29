@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.2](https://github.com/keq-request/keq/compare/v2.6.1...v2.6.2) (2024-05-29)
+
+
+### Bug Fixes
+
+* retryDelay option setting is invaild ([9bc07f8](https://github.com/keq-request/keq/commit/9bc07f8c1d870c51f1c1013dd12e038e278884e3))
+
 ## [2.6.1](https://github.com/keq-request/keq/compare/v2.6.0...v2.6.1) (2024-05-28)
 
 
