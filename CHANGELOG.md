@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.3](https://github.com/keq-request/keq/compare/v2.6.2...v2.6.3) (2024-05-30)
+
+
+### Performance Improvements
+
+* human warn when set undefined query ([e9695ab](https://github.com/keq-request/keq/commit/e9695ab1df78920980acc9ce18facc251925c65d))
+* interface type could be extends through generics ([62797e3](https://github.com/keq-request/keq/commit/62797e398df25e1caed1ae726c03a89246834928))
+
 ## [2.6.2](https://github.com/keq-request/keq/compare/v2.6.1...v2.6.2) (2024-05-29)
 
 
