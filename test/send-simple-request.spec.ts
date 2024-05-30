@@ -1,7 +1,6 @@
 import { expect, test } from '@jest/globals'
 import { Mock } from 'jest-mock'
-// import {} from 'jest-mock'
-import { request } from '~/request'
+import { request } from './request.js'
 
 
 test('send get request', async () => {

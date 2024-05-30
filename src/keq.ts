@@ -12,27 +12,30 @@ import { base64Encode } from './util/base64.js'
 import { fixContentType } from './util/fix-content-type.js'
 import { getUniqueCodeIdentifier } from './util/get-unique-code-identifier.js'
 
-import type { KeqRetryOn } from './types/keq-retry-on.js'
+import type { KeqRetryOn, KeqRetryDelay } from './types/keq-retry.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqOptionsParameter, KeqOptionsReturnType } from './types/keq-options.js'
 import type { KeqQueryValue } from './types/keq-query-value.js'
-import type { KeqRequestBody } from './types/keq-request-body.js'
 import type { KeqResolveMethod } from './types/keq-resolve-with-mode.js'
-import type { KeqRetryDelay } from './types/keq-retry-delay.js'
-import type { ShorthandContentType } from './types/shorthand-content-type.js'
-import { KeqContextOptions } from './types/keq-context.js'
+import type { CommonContentType, ShorthandContentType } from './types/content-type.js'
+import type { KeqContextOptions } from './types/keq-context.js'
+import type { ExtractFields, ExtractFiles, ExtractHeaders, ExtractParams, ExtractQuery, KeqBaseOperation, KeqOperation } from './types/keq-operation.js'
+import type { KeqContextRequestBody } from './types/keq-context-request.js'
 
 
 /**
  * @description Keq 扩展 API，人性化的常用的API
  */
-export class Keq<T> extends Core<T> {
+export class Keq<
+  OUTPUT,
+  OPERATION extends Omit<KeqOperation, 'responseBody'> = KeqBaseOperation
+> extends Core<OUTPUT> {
   use(...middlewares: KeqMiddleware[]): this {
     return this.prependMiddlewares(...middlewares)
   }
 
 
-  option<K extends keyof KeqOptionsReturnType<T>>(key: K, value?: KeqOptionsParameter[K]): KeqOptionsReturnType<T>[K]
+  option<K extends keyof KeqOptionsReturnType<OUTPUT>>(key: K, value?: KeqOptionsParameter[K]): KeqOptionsReturnType<OUTPUT>[K]
   option(key: string, value?: any): this
   option(key: string, value: any = true): Keq<any> {
     this.__options__[key] = value
@@ -51,10 +54,16 @@ export class Keq<T> extends Core<T> {
    *
    * @description 设置请求头
    */
+  set(headers: ExtractHeaders<OPERATION>): this
+  set<T extends keyof ExtractHeaders<OPERATION>>(name: T, value: ExtractHeaders<OPERATION>[T]): this
+  set<T extends keyof KeqBaseOperation['requestHeaders']>(name: T, value: KeqBaseOperation['requestHeaders'][T]): this
   set(headers: Headers): this
   set(headers: Record<string, string>): this
   set(name: string, value: string): this
-  set(headersOrName: string | Record<string, string> | Headers, value?: string): this {
+  set(
+    headersOrName: ExtractHeaders<OPERATION> | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
+    value?: string
+  ): this {
     if (isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
         this.requestContext.headers.set(key, value)
@@ -73,9 +82,11 @@ export class Keq<T> extends Core<T> {
   /**
    * Set request query/searchParams
    */
+  query(key: ExtractQuery<OPERATION>): this
+  query<T extends keyof ExtractQuery<OPERATION>>(key: T, value: ExtractQuery<OPERATION>[T]): this
   query(key: Record<string, KeqQueryValue | KeqQueryValue[]>): this
   query(key: string, value: KeqQueryValue | KeqQueryValue[]): this
-  query(key: string | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
+  query(key: string | ExtractQuery<OPERATION> | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
     if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
         if (v === undefined) continue
@@ -106,9 +117,11 @@ export class Keq<T> extends Core<T> {
   /**
    * Set request route params
    */
+  params(key: ExtractParams<OPERATION>): this
+  params<T extends keyof ExtractParams<OPERATION>>(key: T, value: ExtractParams<OPERATION>[T]): this
   params(key: Record<string, string | number>): this
   params(key: string, value: string | number): this
-  params(key: string | Record<string, string | number>, value?: string | number): this {
+  params(key: string | ExtractParams<OPERATION> | Record<string, string | number>, value?: string | number): this {
     if (typeof key === 'string') {
       this.requestContext.routeParams[key] = String(value)
     } else if (typeof key === 'object') {
@@ -125,7 +138,7 @@ export class Keq<T> extends Core<T> {
   /**
    * Set request body
    */
-  body(value: KeqRequestBody): this {
+  body(value: KeqContextRequestBody): this {
     this.requestContext.body = value
     return this
   }
@@ -134,7 +147,10 @@ export class Keq<T> extends Core<T> {
   /**
    * Setting the Content-Type
    */
-  type(contentType: ShorthandContentType | string): this {
+  type(contentType: ShorthandContentType): this
+  type(contentType: CommonContentType): this
+  type(contentType: string): this
+  type(contentType: string): this {
     const type = fixContentType(contentType)
     this.set('Content-Type', type)
     return this
@@ -149,13 +165,21 @@ export class Keq<T> extends Core<T> {
     return this
   }
 
-  private setTypeIfEmpty(contentType: ShorthandContentType | string): void {
+  private setTypeIfEmpty(contentType: ShorthandContentType): void
+  private setTypeIfEmpty(contentType: CommonContentType): void
+  private setTypeIfEmpty(contentType: string): void
+  private setTypeIfEmpty(contentType: string): void {
     if (!this.requestContext.headers.has('Content-Type')) void this.type(contentType)
   }
 
   /**
    * set request body
    */
+  send(value: OPERATION['requestBody'] | object): this
+  send(value: FormData): this
+  send(value: URLSearchParams): this
+  send(value: Array<any>): this
+  send(value: string): this
   send(value: FormData | URLSearchParams | object | Array<any> | string): this {
     this.requestContext.body = assignKeqRequestBody(this.requestContext.body, value)
 
@@ -170,9 +194,12 @@ export class Keq<T> extends Core<T> {
     return this
   }
 
+
+  field<T extends keyof ExtractFields<OPERATION>>(arg1: T, value: ExtractFields<OPERATION>[T]): this
+  field(arg1: ExtractFields<OPERATION>): this
   field(arg1: string, value: string | string[]): this
   field(arg1: Record<string, string>): this
-  field(arg1: string | Record<string, string>, arg2?: any): this {
+  field(arg1: ExtractFields<OPERATION> | string | Record<string, string>, arg2?: any): this {
     if (typeof arg1 === 'object') {
       this.requestContext.body = assignKeqRequestBody(this.requestContext.body, arg1)
     } else if (arg2) {
@@ -185,7 +212,9 @@ export class Keq<T> extends Core<T> {
     return this
   }
 
-  attach(key: string, value: Blob | File | Buffer): this
+
+  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: Blob | File | Buffer, filename: string): this
+  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: Blob | File | Buffer): this
   attach(key: string, value: Blob | File | Buffer, filename: string): this
   attach(key: string, value: Blob | File | Buffer): this
   attach(key: string, value: Blob | File | Buffer, arg3 = 'file'): this {
@@ -216,7 +245,7 @@ export class Keq<T> extends Core<T> {
    * @param retryDelay Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
    * @param retryCallback Will be called after request failed
    */
-  retry(retryTimes: number, retryDelay: KeqRetryDelay = 0, retryOn: KeqRetryOn = (attempt, error) => !!error): Keq<T> {
+  retry(retryTimes: number, retryDelay: KeqRetryDelay = 0, retryOn: KeqRetryOn = (attempt, error) => !!error): Keq<OUTPUT> {
     this.option('retryTimes', retryTimes)
     this.option('retryDelay', retryDelay)
     this.option('retryOn', retryOn)

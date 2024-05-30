@@ -1,7 +1,9 @@
-import type { ShorthandContentType } from '~/types/shorthand-content-type.js'
+import { ShorthandContentType } from '~/types/content-type.js'
 
 
-export function fixContentType(contentType: ShorthandContentType | string): string {
+export function fixContentType(contentType: ShorthandContentType): string
+export function fixContentType(contentType: string): string
+export function fixContentType(contentType: string): string {
   if (['json', 'xml'].includes(contentType)) {
     return `application/${contentType}`
   } else if (['html', 'css'].includes(contentType)) {

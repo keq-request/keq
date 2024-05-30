@@ -1,6 +1,6 @@
 import { describe, expect, test } from '@jest/globals'
 import { Mock } from 'jest-mock'
-import { request } from '~/index'
+import { request } from './request.js'
 
 
 describe('send multipart/form-data request', () => {

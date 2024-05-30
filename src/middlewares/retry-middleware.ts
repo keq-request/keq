@@ -1,6 +1,6 @@
 import { NEXT_INVOKED_PROPERTY } from '~/constant.js'
 import { KeqMiddleware } from '~/types/keq-middleware'
-import { KeqRetryDelay } from '~/types/keq-retry-delay.js'
+import { KeqRetryDelay } from '~/types/keq-retry.js'
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))

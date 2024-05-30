@@ -14,6 +14,7 @@ import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequest } from './types/keq-request.js'
 import { KeqGlobal } from './types/keq-global.js'
+import { KeqOperations } from './types/keq-operation.js'
 
 
 interface CreateRequestOptions {
@@ -21,7 +22,7 @@ interface CreateRequestOptions {
   baseOrigin?: string
 }
 
-export function createRequest(options?: CreateRequestOptions): KeqRequest {
+export function createRequest<OPERATIONS extends KeqOperations>(options?: CreateRequestOptions): KeqRequest<OPERATIONS> {
   let baseOrigin = options?.baseOrigin
   if (!baseOrigin) {
     if (isBrowser()) {
@@ -59,7 +60,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
 
   const router = new KeqRouter(prependMiddlewares)
 
-  const request: KeqRequest = function (url, init) {
+  const request: KeqRequest<OPERATIONS> = function (url, init) {
     const keq = new Keq(formatUrl(url), { ...init }, global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
@@ -119,7 +120,7 @@ export function createRequest(options?: CreateRequestOptions): KeqRequest {
     return keq as any
   }
 
-  request.use = function use(middleware: KeqMiddleware, ...middlewares: KeqMiddleware[]): KeqRequest {
+  request.use = function use(middleware: KeqMiddleware, ...middlewares: KeqMiddleware[]): KeqRequest<OPERATIONS> {
     prependMiddlewares.push(middleware, ...middlewares)
     return request
   }

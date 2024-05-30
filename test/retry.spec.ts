@@ -1,5 +1,6 @@
 import { expect, jest, test } from '@jest/globals'
-import { request, KeqRetryOn } from '../src/index'
+import { request } from './request.js'
+import { KeqRetryOn } from '~/index.js'
 
 
 test('send request retry twice', async () => {

@@ -1,9 +1,9 @@
 import type { Keq } from '~/keq.js'
 import type { KeqFlowControl } from './keq-flow-control.js'
 import type { KeqResolveMethod } from './keq-resolve-with-mode.js'
-import type { KeqRetryDelay } from './keq-retry-delay.js'
-import type { KeqRetryOn } from './keq-retry-on.js'
+import type { KeqRetryOn, KeqRetryDelay } from './keq-retry.js'
 import type { KeqTimeout } from './keq-timeout.js'
+import { ExcludeProperty } from './exclude-property.js'
 
 
 export interface KeqOptions<T> {
@@ -53,12 +53,12 @@ export interface KeqOptions<T> {
 
 type ReturnType<T> = T extends (...args: any[]) => infer R ? R : never
 type FirstArgType<T> = T extends (arg1: infer P, ...args: any[]) => any ? P : never
-type ExcludeNever<T> = Pick<T, { [K in keyof T]: T[K] extends never ? never : K }[keyof T]>
+type ExcludeNeverProperty<T> = ExcludeProperty<T, never>
 
-export type KeqOptionsParameter = ExcludeNever<{
+export type KeqOptionsParameter = ExcludeNeverProperty<{
   [key in keyof KeqOptions<any>]?: FirstArgType<KeqOptions<any>[key]>
 }>
 
-export type KeqOptionsReturnType<T> = ExcludeNever<{
+export type KeqOptionsReturnType<T> = ExcludeNeverProperty<{
   [key in keyof KeqOptions<T>]: ReturnType<KeqOptions<T>[key]>
 }>

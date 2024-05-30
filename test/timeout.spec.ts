@@ -1,5 +1,5 @@
 import { expect, jest, test } from '@jest/globals'
-import { request } from '~/request'
+import { request } from './request.js'
 
 
 test('timeout request', async () => {

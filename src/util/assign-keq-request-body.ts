@@ -3,10 +3,10 @@ import { Exception } from '~/exception/exception.js'
 import { OverwriteArrayBodyException } from '~/exception/overwrite-array-body.exception.js'
 import { isFormData } from '~/is/is-form-data.js'
 import { isUrlSearchParams } from '~/is/is-url-search-params.js'
+import { KeqContextRequestBody } from '~/types/keq-context-request.js'
 
-import type { KeqRequestBody } from '~/types/keq-request-body.js'
 
-export function assignKeqRequestBody(left: KeqRequestBody, right: object | Array<any> | FormData | URLSearchParams | string): KeqRequestBody {
+export function assignKeqRequestBody(left: KeqContextRequestBody, right: object | Array<any> | FormData | URLSearchParams | string): KeqContextRequestBody {
   if (Array.isArray(left)) {
     throw new OverwriteArrayBodyException()
   }

@@ -10,6 +10,7 @@ const jestConfig: JestConfigWithTsJest = {
   coverageReporters: ['text', 'cobertura', 'html'],
   coveragePathIgnorePatterns: [
     '.*__snapshots__/.*',
+    '/src/types/',
   ],
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   moduleNameMapper: {

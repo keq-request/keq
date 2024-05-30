@@ -1,31 +1,13 @@
 import { Emitter } from 'mitt'
-import { URL } from 'whatwg-url'
 import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant.js'
-import type { KeqRequestBody } from './keq-request-body.js'
-import type { KeqRequestMethod } from './keq-request-method.js'
 import type { KeqOptionsParameter } from './keq-options.js'
 import type { KeqEvents } from './keq-events.js'
 import type { KeqGlobal } from './keq-global.js'
+import type { KeqContextRequest } from './keq-context-request.js'
 
 
 export interface KeqContextOptions extends KeqOptionsParameter {
   [key: string]: any
-}
-
-export interface KeqRequestContext {
-  url: URL | globalThis.URL
-  method: KeqRequestMethod
-  headers: Headers
-  routeParams: Record<string, string>
-  body: KeqRequestBody
-  cache?: RequestCache
-  credentials?: RequestCredentials
-  integrity?: string
-  keepalive?: boolean
-  mode?: RequestMode
-  redirect?: RequestRedirect
-  referrer?: string
-  referrerPolicy?: ReferrerPolicy
 }
 
 export interface KeqContext {
@@ -56,7 +38,7 @@ export interface KeqContext {
   /**
    * keq request context
    */
-  request: KeqRequestContext
+  request: KeqContextRequest
 
   /** original response */
   res?: Response

@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { request } from '~/index.js'
+import { request } from './request.js'
 
 
 test('resolve response body by text', async () => {

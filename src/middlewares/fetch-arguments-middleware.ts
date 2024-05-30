@@ -1,11 +1,11 @@
 import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception.js'
 import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
+import { ABORT_PROPERTY } from '~/constant.js'
 
 import type { KeqContext } from '~/types/keq-context'
-import type { KeqRequestBody } from '~/types/keq-request-body'
 import type { KeqMiddleware } from '../types/keq-middleware'
-import { ABORT_PROPERTY } from '~/constant.js'
+import type { KeqContextRequestBody } from '~/types/keq-context-request.js'
 
 
 function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<string, string>): string {
@@ -20,7 +20,7 @@ function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<stri
   return url.href
 }
 
-function inferContentTypeByBody(body: KeqRequestBody): string {
+function inferContentTypeByBody(body: KeqContextRequestBody): string {
   if (!body) return 'text/plain'
   if (typeof body === 'object') return 'application/json'
   return 'application/x-www-form-urlencoded'
