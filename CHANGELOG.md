@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.4](https://github.com/keq-request/keq/compare/v2.6.3...v2.6.4) (2024-06-02)
+
+
+### Bug Fixes
+
+* cannot find Buffer at browser ([c165673](https://github.com/keq-request/keq/commit/c16567394000a0659dfb76fdac314a1b54ef0bfd))
+
 ## [2.6.3](https://github.com/keq-request/keq/compare/v2.6.2...v2.6.3) (2024-05-30)
 
 
