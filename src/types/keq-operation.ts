@@ -5,11 +5,11 @@ import { KeqContextRequestMethod } from './keq-context-request.js'
 export interface KeqOperation {
 
   requestParams: {
-    [key: string]: string
+    [key: string]: string | number
   }
 
   requestQuery: {
-    [key: string]: string | string[]
+    [key: string]: string | string[] | number
   }
 
   requestHeaders: {

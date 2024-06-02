@@ -17,7 +17,7 @@ export class KeqRouter {
     if (middlewares.length === 0) return this
     const m = middlewares.length > 1 ? composeMiddleware(middlewares) : middlewares[0]
 
-    this.prependMiddlewares.push(async (ctx, next) => {
+    this.prependMiddlewares.push(async function router(ctx, next) {
       if (route(ctx)) await m(ctx, next)
       else await next()
     })

@@ -2,6 +2,7 @@ import { URL } from 'whatwg-url'
 import { Exception } from '~/exception/exception.js'
 import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
 import { ABORT_PROPERTY } from '~/constant.js'
+import { isBrowser } from '~/is/is-browser.js'
 
 import type { KeqContext } from '~/types/keq-context'
 import type { KeqMiddleware } from '../types/keq-middleware'
@@ -72,7 +73,7 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
     return form
   }
 
-  if (body instanceof Buffer) return body
+  if (!isBrowser() && body instanceof Buffer) return body
   if (body === undefined) return body
   if (body === null) return 'null'
   if (typeof body === 'string') return body

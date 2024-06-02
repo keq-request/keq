@@ -14,7 +14,7 @@ export type { KeqRoute } from './types/keq-route.js'
 export type { KeqGlobal } from './types/keq-global.js'
 export type { KeqEvents } from './types/keq-events.js'
 export type { KeqRetryOn, KeqRetryDelay } from './types/keq-retry.js'
-export type { KeqOperations, KeqBaseOperation } from './types/keq-operation.js'
+export type { KeqOperations, KeqOperation, KeqBaseOperation } from './types/keq-operation.js'
 
 export { keqHostRoute } from './router/keq-host-route.js'
 export { keqLocationRoute } from './router/keq-location-route.js'
