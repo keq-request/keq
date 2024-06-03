@@ -1,7 +1,7 @@
 import mitt from 'mitt'
 import { URL } from 'whatwg-url'
 import { Exception } from './exception/exception.js'
-import { clone } from './util/clone.js'
+import { cloneBody } from './util/clone-body.js'
 import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
 import { shadowClone } from './util/shadow-clone.js'
@@ -74,7 +74,7 @@ export class Core<OUTPUT> {
       url: new URL(this.requestContext.url.href),
       headers,
       routeParams: shadowClone(this.requestContext.routeParams),
-      body: clone(this.requestContext.body),
+      body: cloneBody(this.requestContext.body),
 
       cache: this.requestContext.cache,
       credentials: this.requestContext.credentials,

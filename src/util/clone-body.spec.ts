@@ -1,25 +1,25 @@
 import { expect, test } from '@jest/globals'
-import { clone } from './clone'
+import { cloneBody } from './clone-body'
 
 test('clone number', () => {
-  expect(clone(1)).toBe(1)
+  expect(cloneBody(1)).toBe(1)
 })
 
 test('clone string', () => {
-  expect(clone('a')).toBe('a')
+  expect(cloneBody('a')).toBe('a')
 })
 
 test('clone null', () => {
-  expect(clone(null)).toBe(null)
+  expect(cloneBody(null)).toBe(null)
 })
 
 test('clone undefined', () => {
-  expect(clone(undefined)).toBe(undefined)
+  expect(cloneBody(undefined)).toBe(undefined)
 })
 
 test('clone array', () => {
   const array = [1, 2, 3]
-  const cloned = clone(array)
+  const cloned = cloneBody(array)
   expect(cloned).toEqual(array)
   expect(cloned).not.toBe(array)
 })
@@ -33,7 +33,7 @@ test('clone object', () => {
     e: new Blob(['hello world']),
   }
 
-  const cloned = clone(object)
+  const cloned = cloneBody(object)
 
   expect(cloned).toEqual(object)
   expect(cloned).not.toBe(object)
