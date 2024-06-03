@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.5](https://github.com/keq-request/keq/compare/v2.6.4...v2.6.5) (2024-06-03)
+
+
+### Bug Fixes
+
+* wrong typescript defination ([b1bf5c2](https://github.com/keq-request/keq/commit/b1bf5c2f8b797f8beeb5531e8d075f2c1b395a27))
+
 ## [2.6.4](https://github.com/keq-request/keq/compare/v2.6.3...v2.6.4) (2024-06-02)
 
 
