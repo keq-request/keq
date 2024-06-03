@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-import deepClone from 'clone'
+import * as deepClone from 'clone'
 import fromEntries from 'object.fromentries'
 import { isBlob } from '../is/is-blob'
 
