@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.7](https://github.com/keq-request/keq/compare/v2.6.6...v2.6.7) (2024-06-03)
+
+
+### Performance Improvements
+
+* rename clone to cloneBody ([c008b50](https://github.com/keq-request/keq/commit/c008b50d2e627853a3451cdfa9ad5f49a4bc8f17))
+
 ## [2.6.6](https://github.com/keq-request/keq/compare/v2.6.5...v2.6.6) (2024-06-03)
 
 
