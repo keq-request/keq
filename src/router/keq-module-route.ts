@@ -1,5 +1,6 @@
-import { Exception } from '~/exception/exception.js'
-import { KeqRoute } from '~/types/keq-route.js'
+import { Exception } from '../exception/exception.js'
+
+import type { KeqRoute } from '../types/keq-route.js'
 
 
 export function keqModuleRoute(moduleName: string): KeqRoute {

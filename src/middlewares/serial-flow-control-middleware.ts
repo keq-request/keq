@@ -1,7 +1,8 @@
 import type { queueAsPromised } from 'fastq'
 import * as fastq from 'fastq'
-import { KeqMiddleware } from '~/types/keq-middleware.js'
-import { KeqNext } from '~/types/keq-next.js'
+
+import type { KeqMiddleware } from '~/types/keq-middleware.js'
+import type { KeqNext } from '~/types/keq-next.js'
 
 
 export function serialFlowControlMiddleware(): KeqMiddleware {

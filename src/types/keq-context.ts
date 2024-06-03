@@ -1,5 +1,6 @@
-import { Emitter } from 'mitt'
-import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '~/constant.js'
+import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '../constant.js'
+
+import type { Emitter } from 'mitt'
 import type { KeqOptionsParameter } from './keq-options.js'
 import type { KeqEvents } from './keq-events.js'
 import type { KeqGlobal } from './keq-global.js'

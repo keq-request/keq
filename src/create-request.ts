@@ -13,8 +13,8 @@ import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
 
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequest } from './types/keq-request.js'
-import { KeqGlobal } from './types/keq-global.js'
-import { KeqOperations } from './types/keq-operation.js'
+import type { KeqGlobal } from './types/keq-global.js'
+import type { KeqOperations } from './types/keq-operation.js'
 
 
 interface CreateRequestOptions {

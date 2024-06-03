@@ -1,4 +1,4 @@
-import { Exception } from '~/exception/exception.js'
+import { Exception } from '../exception/exception.js'
 
 import type { KeqContext } from '~/types/keq-context.js'
 import type { KeqMiddleware } from '~/types/keq-middleware.js'

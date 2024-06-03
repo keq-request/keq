@@ -1,9 +1,10 @@
+import { FlattenOperations, KeqOperation, KeqOperations } from './keq-operation.js'
+
 import type { URL } from 'whatwg-url'
 import type { KeqRouter } from '~/router/keq-router.js'
 import type { Keq } from '~/keq.js'
 import type { KeqMiddleware } from './keq-middleware.js'
 import type { KeqInit } from './keq-init.js'
-import { FlattenOperations, KeqOperation, KeqOperations } from './keq-operation.js'
 
 type GlobalURL = globalThis.URL
 

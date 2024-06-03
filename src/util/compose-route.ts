@@ -1,5 +1,5 @@
-import { Exception } from '~/exception/exception'
-import { KeqRoute } from '~/types/keq-route.js'
+import { Exception } from '../exception/exception'
+import { KeqRoute } from '../types/keq-route.js'
 
 
 export function composeRoute(routes: KeqRoute[]): KeqRoute {

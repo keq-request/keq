@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { Exception } from '~/exception/exception.js'
-import { OverwriteArrayBodyException } from '~/exception/overwrite-array-body.exception.js'
-import { isFormData } from '~/is/is-form-data.js'
-import { isUrlSearchParams } from '~/is/is-url-search-params.js'
-import { KeqContextRequestBody } from '~/types/keq-context-request.js'
+import { Exception } from '../exception/exception.js'
+import { OverwriteArrayBodyException } from '../exception/overwrite-array-body.exception.js'
+import { isFormData } from '../is/is-form-data.js'
+import { isUrlSearchParams } from '../is/is-url-search-params.js'
+
+import type { KeqContextRequestBody } from '../types/keq-context-request.js'
 
 
 export function assignKeqRequestBody(left: KeqContextRequestBody, right: object | Array<any> | FormData | URLSearchParams | string): KeqContextRequestBody {

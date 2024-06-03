@@ -1,8 +1,8 @@
 import { URL } from 'whatwg-url'
-import { Exception } from '~/exception/exception.js'
-import { compilePathnameTemplate } from '~/util/compile-pathname-template.js'
-import { ABORT_PROPERTY } from '~/constant.js'
-import { isBrowser } from '~/is/is-browser.js'
+import { Exception } from '../exception/exception.js'
+import { compilePathnameTemplate } from '../util/compile-pathname-template.js'
+import { ABORT_PROPERTY } from '../constant.js'
+import { isBrowser } from '../is/is-browser.js'
 
 import type { KeqContext } from '~/types/keq-context'
 import type { KeqMiddleware } from '../types/keq-middleware'

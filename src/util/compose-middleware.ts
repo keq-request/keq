@@ -1,7 +1,7 @@
-import { Exception } from '~/exception/exception.js'
+import { Exception } from '../exception/exception.js'
+import { NEXT_INVOKED_PROPERTY } from '../constant.js'
 
 import type { KeqMiddleware } from '../types/keq-middleware.js'
-import { NEXT_INVOKED_PROPERTY } from '~/constant.js'
 
 
 export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {

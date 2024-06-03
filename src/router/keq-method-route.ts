@@ -1,4 +1,4 @@
-import { KeqRoute } from '~/types/keq-route.js'
+import type { KeqRoute } from '~/types/keq-route.js'
 
 
 export function keqMethodRoute(method): KeqRoute {

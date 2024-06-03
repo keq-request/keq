@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { createRequest } from '~/create-request.js'
-import { KeqBaseOperation, KeqOperations } from '~/types/keq-operation.js'
+import { createRequest } from '../src/index.js'
+
+import type { KeqBaseOperation, KeqOperations } from '~/types/keq-operation.js'
 
 
 interface TestModule extends KeqOperations {
