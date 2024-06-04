@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.8](https://github.com/keq-request/keq/compare/v2.6.7...v2.6.8) (2024-06-04)
+
+
+### Performance Improvements
+
+* remove clone and object.fromentries dependencies ([7a3ef9b](https://github.com/keq-request/keq/commit/7a3ef9bb053cc280cca639d1b6b3682a45eaea98))
+
 ## [2.6.7](https://github.com/keq-request/keq/compare/v2.6.6...v2.6.7) (2024-06-03)
 
 
