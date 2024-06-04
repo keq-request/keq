@@ -4,7 +4,7 @@ import { Exception } from './exception/exception.js'
 import { cloneBody } from './util/clone-body.js'
 import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
-import { shadowClone } from './util/shadow-clone.js'
+import { shallowClone } from './util/shallow-clone.js'
 
 import type { KeqContext, KeqContextOptions } from './types/keq-context.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
@@ -73,7 +73,7 @@ export class Core<OUTPUT> {
       method: this.requestContext.method,
       url: new URL(this.requestContext.url.href),
       headers,
-      routeParams: shadowClone(this.requestContext.routeParams),
+      routeParams: shallowClone(this.requestContext.routeParams),
       body: cloneBody(this.requestContext.body),
 
       cache: this.requestContext.cache,
@@ -86,7 +86,7 @@ export class Core<OUTPUT> {
       referrerPolicy: this.requestContext.referrerPolicy,
     }
 
-    const options = shadowClone(this.__options__)
+    const options = shallowClone(this.__options__)
 
     const emitter = mitt<Omit<KeqEvents, never>>()
     for (const eventName in this.__listeners__) {

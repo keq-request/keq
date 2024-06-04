@@ -41,11 +41,9 @@
   },
   "dependencies": {
     "@types/whatwg-url": "^11.0.5",
-    "clone": "^2.1.2",
     "fastq": "^1.17.1",
     "minimatch": "^9.0.4",
     "mitt": "^3.0.1",
-    "object.fromentries": "^2.0.8",
     "ts-custom-error": "^3.3.1",
     "whatwg-url": "^14.0.0"
   },

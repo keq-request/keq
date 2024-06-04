@@ -1,29 +1,29 @@
 import { expect, test } from '@jest/globals'
-import { shadowClone } from './shadow-clone'
+import { shallowClone } from './shallow-clone'
 
 test('clone number', () => {
-  expect(shadowClone(1)).toBe(1)
+  expect(shallowClone(1)).toBe(1)
 })
 
 test('clone string', () => {
-  expect(shadowClone('a')).toBe('a')
+  expect(shallowClone('a')).toBe('a')
 })
 
 test('clone boolean', () => {
-  expect(shadowClone(true)).toBe(true)
+  expect(shallowClone(true)).toBe(true)
 })
 
 test('clone null', () => {
-  expect(shadowClone(null)).toBe(null)
+  expect(shallowClone(null)).toBe(null)
 })
 
 test('clone undefined', () => {
-  expect(shadowClone(undefined)).toBe(undefined)
+  expect(shallowClone(undefined)).toBe(undefined)
 })
 
 test('clone array', () => {
   const a = [1, 2, 3]
-  const b = shadowClone(a)
+  const b = shallowClone(a)
   expect(b).toEqual(a)
   expect(b).not.toBe(a)
 })
@@ -38,7 +38,7 @@ test('clone object', () => {
     f: [1, 2, 3],
     g: { a: 1 },
   }
-  const b = shadowClone(a)
+  const b = shallowClone(a)
   expect(b).toEqual(a)
   expect(b).not.toBe(a)
   expect(b.a).toBe(a.a)
