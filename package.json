@@ -1,6 +1,6 @@
 {
   "name": "keq",
-  "version": "2.6.8",
+  "version": "2.6.9",
   "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
   "keywords": [
     "request",
