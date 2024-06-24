@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-types */
-import { createRequest } from '../src/index.js'
+import { createRequest } from '~/index.js'
 
 import type { KeqBaseOperation, KeqOperations } from '~/types/keq-operation.js'
 
