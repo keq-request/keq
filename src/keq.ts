@@ -5,6 +5,7 @@ import { isBlob } from './is/is-blob.js'
 import { isFile } from './is/is-file.js'
 import { isFormData } from './is/is-form-data.js'
 import { isHeaders } from './is/is-headers.js'
+import { isBuffer } from './is/is-buffer.js'
 import { isUrlSearchParams } from './is/is-url-search-params.js'
 import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './types/keq-flow-control.js'
 import { assignKeqRequestBody } from './util/assign-keq-request-body.js'
@@ -226,7 +227,7 @@ export class Keq<
       file = formData.get(key) as File
     } else if (isFile(value)) {
       file = value
-    } else if (value instanceof Buffer) {
+    } else if (isBuffer(value)) {
       const formData = new FormData()
       formData.set(key, new Blob([value]), arg3)
       file = formData.get(key) as File

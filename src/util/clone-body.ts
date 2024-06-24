@@ -1,3 +1,4 @@
+import { isBuffer } from '~/is/is-buffer.js'
 import { isBlob } from '../is/is-blob.js'
 import { isFile } from '../is/is-file.js'
 import { isFormData } from '../is/is-form-data.js'
@@ -30,7 +31,7 @@ export function cloneBody<T>(obj: T): T {
     return obj
   }
 
-  if (obj instanceof Buffer) {
+  if (isBuffer(obj)) {
     return obj
   }
 
