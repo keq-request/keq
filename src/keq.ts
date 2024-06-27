@@ -22,6 +22,7 @@ import type { CommonContentType, ShorthandContentType } from './types/content-ty
 import type { KeqContextOptions } from './types/keq-context.js'
 import type { ExtractFields, ExtractFiles, ExtractHeaders, ExtractParams, ExtractQuery, KeqBaseOperation, KeqOperation } from './types/keq-operation.js'
 import type { KeqContextRequestBody } from './types/keq-context-request.js'
+import { isValidHeaderValue } from './util/is-valid-header-value.js'
 
 
 /**
@@ -70,9 +71,17 @@ export class Keq<
         this.requestContext.headers.set(key, value)
       })
     } else if (typeof headersOrName === 'string' && value) {
+      if (!isValidHeaderValue(value)) {
+        throw new Exception(`[Invalid header] Key: ${headersOrName} Value: ${value}`)
+      }
+
       this.requestContext.headers.set(headersOrName, value)
     } else if (typeof headersOrName === 'object') {
       for (const [key, value] of Object.entries(headersOrName)) {
+        if (!isValidHeaderValue(value)) {
+          throw new Exception(`[Invalid header] Key: ${key} Value: ${value}`)
+        }
+
         this.requestContext.headers.set(key, value)
       }
     }
