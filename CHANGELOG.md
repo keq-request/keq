@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.10](https://github.com/keq-request/keq/compare/v2.6.9...v2.6.10) (2024-06-27)
+
+
+### Performance Improvements
+
+* optimize the error message of the wrong header ([92f4aa6](https://github.com/keq-request/keq/commit/92f4aa6d58d258521ee0a2913a8cfb52597e9ed8))
+
 ## [2.6.9](https://github.com/keq-request/keq/compare/v2.6.8...v2.6.9) (2024-06-24)
 
 
