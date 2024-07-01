@@ -22,7 +22,7 @@ type PickKeqOperationsProperty<T extends KeqOperations, P extends keyof T, X ext
   }
 } ? R extends KeqOperation ? R[X] : never : never
 
-export interface KeqRequest<OPERATIONS extends KeqOperations> {
+export interface KeqRequest<OPERATIONS extends KeqOperations = KeqOperations> {
   <Path extends keyof OPERATIONS>(url: Path, init: Omit<KeqInit, 'global'>): Keq<Exclude<PickKeqOperationsProperty<OPERATIONS, Path, 'responseBody'>, undefined>>
   <OUTPUT = any>(url: string, init: Omit<KeqInit, 'global'>): Keq<OUTPUT>
   <OUTPUT = any>(url: URL, init: Omit<KeqInit, 'global'>): Keq<OUTPUT>
