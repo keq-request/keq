@@ -4,9 +4,13 @@ export type KeqContextRequestBody = object | Array<any> | string | undefined
 
 export interface KeqContextRequest {
   url: URL | globalThis.URL
+  routeParams: Record<string, string>
+
+  // the url merged routeParams
+  readonly __url__: Readonly<URL> | Readonly<globalThis.URL>
+
   method: KeqContextRequestMethod
   headers: Headers
-  routeParams: Record<string, string>
   body: KeqContextRequestBody
   cache?: RequestCache
   credentials?: RequestCredentials

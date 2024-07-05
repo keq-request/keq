@@ -13,11 +13,15 @@ const common = {
 
 const jestConfig: JestConfigWithTsJest = {
   collectCoverage: true,
-  collectCoverageFrom: ['./src/**'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**',
+    '!<rootDir>/src/types/*.ts',
+    '!<rootDir>/**/*.node.spec.ts',
+    '!<rootDir>/**/*.browser.spec.ts',
+  ],
   coverageReporters: ['text', 'cobertura', 'html'],
   coveragePathIgnorePatterns: [
     '.*__snapshots__/.*',
-    '/src/types/',
   ],
 
   projects: [

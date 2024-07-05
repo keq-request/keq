@@ -1,6 +1,4 @@
-import { URL } from 'whatwg-url'
 import { Exception } from '../exception/exception.js'
-import { compilePathnameTemplate } from '../util/compile-pathname-template.js'
 import { ABORT_PROPERTY } from '../constant.js'
 import { isBuffer } from '~/is/is-buffer.js'
 
@@ -8,18 +6,6 @@ import type { KeqContext } from '~/types/keq-context'
 import type { KeqMiddleware } from '../types/keq-middleware'
 import type { KeqContextRequestBody } from '~/types/keq-context-request.js'
 
-
-function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<string, string>): string {
-  const url = new URL(typeof obj === 'string' ? obj : obj.href)
-
-  try {
-    url.pathname = compilePathnameTemplate(url.pathname, routeParams)
-  } catch (e) {
-    throw new Exception(`Cannot compile the params in ${url.pathname}, Because ${(e as Error)?.message}.`)
-  }
-
-  return url.href
-}
 
 function inferContentTypeByBody(body: KeqContextRequestBody): string {
   if (!body) return 'text/plain'
@@ -84,8 +70,7 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
 export function fetchArgumentsMiddleware(): KeqMiddleware {
   return async function fetchArgumentsMiddleware(ctx, next) {
     const request = ctx.request
-    const url = compileUrl(request.url, request.routeParams)
-
+    const url = ctx.request.__url__.href
 
     if (!request.headers.has('Content-Type') && request.body) {
       request.headers.set('Content-Type', inferContentTypeByBody(ctx.request.body))

@@ -5,6 +5,7 @@ import { cloneBody } from './util/clone-body.js'
 import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
 import { shallowClone } from './util/shallow-clone.js'
+import { compileUrl } from './util/compile-url.js'
 
 import type { KeqContext, KeqContextOptions } from './types/keq-context.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
@@ -19,7 +20,7 @@ import type { KeqContextRequest } from './types/keq-context-request.js'
 export class Core<OUTPUT> {
   private requestPromise?: Promise<OUTPUT>
 
-  protected requestContext: Omit<KeqContextRequest, 'abort'>
+  protected requestContext: Omit<KeqContextRequest, 'abort' | '__url__'>
 
   protected __listeners__: KeqListeners = {}
 
@@ -70,10 +71,15 @@ export class Core<OUTPUT> {
     }
 
     const requestContext: KeqContextRequest = {
-      method: this.requestContext.method,
       url: new URL(this.requestContext.url.href),
-      headers,
       routeParams: shallowClone(this.requestContext.routeParams),
+
+      get __url__() {
+        return compileUrl(this.url, this.routeParams)
+      },
+
+      method: this.requestContext.method,
+      headers,
       body: cloneBody(this.requestContext.body),
 
       cache: this.requestContext.cache,
