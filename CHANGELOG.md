@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.0](https://github.com/keq-request/keq/compare/v2.6.10...v2.7.0) (2024-07-05)
+
+
+### Features
+
+* add ctx.request.__url__ that return a url merged routeParams ([896c029](https://github.com/keq-request/keq/commit/896c0293e8a0bd0243cd81b780ea2f9e09cbfeea))
+
+
+### Bug Fixes
+
+* the default parameter of KeqRequest ([d7939d2](https://github.com/keq-request/keq/commit/d7939d2f2e1f79e719db3c663658c05586be10cf))
+
 ## [2.6.10](https://github.com/keq-request/keq/compare/v2.6.9...v2.6.10) (2024-06-27)
 
 
