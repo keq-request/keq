@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.1](https://github.com/keq-request/keq/compare/v2.7.0...v2.7.1) (2024-07-20)
+
+
+### Performance Improvements
+
+* remove whatwg-url because mosts browsers had support ([6877d79](https://github.com/keq-request/keq/commit/6877d79e95721ea76adcf54013c1909b0dec98a3))
+
 ## [2.7.0](https://github.com/keq-request/keq/compare/v2.6.10...v2.7.0) (2024-07-05)
 
 
