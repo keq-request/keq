@@ -1,18 +1,14 @@
 import { FlattenOperations, KeqOperation, KeqOperations } from './keq-operation.js'
 
-import type { URL } from 'whatwg-url'
 import type { KeqRouter } from '~/router/keq-router.js'
 import type { Keq } from '~/keq.js'
 import type { KeqMiddleware } from './keq-middleware.js'
 import type { KeqInit } from './keq-init.js'
 
-type GlobalURL = globalThis.URL
-
 interface KeqRequestFn<OPERATIONS extends Record<string, KeqOperation>> {
   <Path extends keyof OPERATIONS>(url: Path): Keq<OPERATIONS[Path]['responseBody'], OPERATIONS[Path]>
   <OUTPUT = any>(url: string): Keq<OUTPUT>
   <OUTPUT = any>(url: URL): Keq<OUTPUT>
-  <OUTPUT = any>(url: GlobalURL): Keq<OUTPUT>
 }
 
 
@@ -26,7 +22,6 @@ export interface KeqRequest<OPERATIONS extends KeqOperations = KeqOperations> {
   <Path extends keyof OPERATIONS>(url: Path, init: Omit<KeqInit, 'global'>): Keq<Exclude<PickKeqOperationsProperty<OPERATIONS, Path, 'responseBody'>, undefined>>
   <OUTPUT = any>(url: string, init: Omit<KeqInit, 'global'>): Keq<OUTPUT>
   <OUTPUT = any>(url: URL, init: Omit<KeqInit, 'global'>): Keq<OUTPUT>
-  <OUTPUT = any>(url: GlobalURL, init: Omit<KeqInit, 'global'>): Keq<OUTPUT>
 
   baseOrigin: (baseOrigin: string) => void
 

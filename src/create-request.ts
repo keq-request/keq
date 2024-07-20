@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-import { URL } from 'whatwg-url'
 import { isBrowser } from './is/is-browser.js'
 import { Keq } from './keq.js'
 import { abortFlowControlMiddleware } from './middlewares/abort-flow-control-middleware.js'
@@ -50,7 +49,7 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
    */
   const global: KeqGlobal = {}
 
-  const formatUrl = (url: string | URL | globalThis.URL): URL => {
+  const formatUrl = (url: string | URL): URL => {
     if (typeof url === 'string') {
       return new URL(url, baseOrigin)
     }

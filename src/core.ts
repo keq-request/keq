@@ -1,5 +1,4 @@
 import mitt from 'mitt'
-import { URL } from 'whatwg-url'
 import { Exception } from './exception/exception.js'
 import { cloneBody } from './util/clone-body.js'
 import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
@@ -33,7 +32,7 @@ export class Core<OUTPUT> {
     resolveWith: 'intelligent',
   }
 
-  public constructor(url: (URL | globalThis.URL), init: KeqInit, global: Record<string, any> = {}) {
+  public constructor(url: URL, init: KeqInit, global: Record<string, any> = {}) {
     this.__global__ = global
 
 

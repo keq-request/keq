@@ -1,13 +1,12 @@
-import { URL } from 'whatwg-url'
 export type KeqContextRequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch'
 export type KeqContextRequestBody = object | Array<any> | string | undefined
 
 export interface KeqContextRequest {
-  url: URL | globalThis.URL
+  url: URL
   routeParams: Record<string, string>
 
   // the url merged routeParams
-  readonly __url__: Readonly<URL> | Readonly<globalThis.URL>
+  readonly __url__: Readonly<URL>
 
   method: KeqContextRequestMethod
   headers: Headers

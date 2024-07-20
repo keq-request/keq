@@ -1,5 +1,3 @@
-import { URL } from 'whatwg-url'
-
 function compilePathnameTemplate(template: string, params: Record<string, string | number>): string {
   return template
     .replace(/(^|\/)(?::([^/]+)|{([^/]+)}|%7B([^/]+)%7D)(?=$|\/)/g, (_, prefix, group1, group2, group3) => {
@@ -16,7 +14,7 @@ function compilePathnameTemplate(template: string, params: Record<string, string
 }
 
 
-export function compileUrl(obj: string | URL | globalThis.URL, routeParams: Record<string, string | number>): URL {
+export function compileUrl(obj: string | URL, routeParams: Record<string, string | number>): URL {
   const url = new URL(typeof obj === 'string' ? obj : obj.href)
   url.pathname = compilePathnameTemplate(url.pathname, routeParams)
   return url
