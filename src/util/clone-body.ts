@@ -1,4 +1,4 @@
-import { isBuffer } from '~/is/is-buffer.js'
+import { isBuffer } from '../is/is-buffer.js'
 import { isBlob } from '../is/is-blob.js'
 import { isFile } from '../is/is-file.js'
 import { isFormData } from '../is/is-form-data.js'
