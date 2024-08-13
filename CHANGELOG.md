@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.3](https://github.com/keq-request/keq/compare/v2.7.2...v2.7.3) (2024-08-13)
+
+
+### Bug Fixes
+
+* .set(key, value) cannot set the number type value when adding a custom header ([2085cc6](https://github.com/keq-request/keq/commit/2085cc613f68b26018fdabb3b6bb39d0b208a50e))
+
 ## [2.7.2](https://github.com/keq-request/keq/compare/v2.7.1...v2.7.2) (2024-08-13)
 
 
