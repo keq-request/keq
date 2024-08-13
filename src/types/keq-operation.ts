@@ -13,7 +13,7 @@ export interface KeqOperation {
   }
 
   requestHeaders: {
-    [key: string]: string
+    [key: string]: string | number
   }
 
   requestBody: FormData | URLSearchParams | object | Array<any> | string

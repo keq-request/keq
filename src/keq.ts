@@ -64,7 +64,7 @@ export class Keq<
   set(name: string, value: string): this
   set(
     headersOrName: ExtractHeaders<OPERATION> | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
-    value?: string
+    value?: string | number
   ): this {
     if (isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
@@ -75,14 +75,14 @@ export class Keq<
         throw new Exception(`[Invalid header] Key: ${headersOrName} Value: ${value}`)
       }
 
-      this.requestContext.headers.set(headersOrName, value)
+      this.requestContext.headers.set(headersOrName, String(value))
     } else if (typeof headersOrName === 'object') {
       for (const [key, value] of Object.entries(headersOrName)) {
         if (!isValidHeaderValue(value)) {
           throw new Exception(`[Invalid header] Key: ${key} Value: ${value}`)
         }
 
-        this.requestContext.headers.set(key, value)
+        this.requestContext.headers.set(key, String(value))
       }
     }
     return this
