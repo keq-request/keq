@@ -61,7 +61,7 @@ export class Keq<
   set<T extends keyof KeqBaseOperation['requestHeaders']>(name: T, value: KeqBaseOperation['requestHeaders'][T]): this
   set(headers: Headers): this
   set(headers: Record<string, string>): this
-  set(name: string, value: string): this
+  set(name: string, value: string | number): this
   set(
     headersOrName: ExtractHeaders<OPERATION> | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
     value?: string | number
