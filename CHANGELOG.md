@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.2](https://github.com/keq-request/keq/compare/v2.7.1...v2.7.2) (2024-08-13)
+
+
+### Performance Improvements
+
+* allow header to add number type fields ([bacacaa](https://github.com/keq-request/keq/commit/bacacaac66d9e249a6b66d539bafb94d9f064869))
+
 ## [2.7.1](https://github.com/keq-request/keq/compare/v2.7.0...v2.7.1) (2024-07-20)
 
 
