@@ -119,6 +119,13 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
     return keq as any
   }
 
+  request.options = function (url) {
+    const keq = new Keq(formatUrl(url), { method: 'options' }, global)
+    keq.appendMiddlewares(...appendMiddlewares)
+    keq.prependMiddlewares(...prependMiddlewares)
+    return keq as any
+  }
+
   request.use = function use(middleware: KeqMiddleware, ...middlewares: KeqMiddleware[]): KeqRequest<OPERATIONS> {
     prependMiddlewares.push(middleware, ...middlewares)
     return request

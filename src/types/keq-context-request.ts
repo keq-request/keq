@@ -1,4 +1,4 @@
-export type KeqContextRequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch'
+export type KeqContextRequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch' | 'options'
 export type KeqContextRequestBody = object | Array<any> | string | undefined
 
 export interface KeqContextRequest {

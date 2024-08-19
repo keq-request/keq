@@ -32,6 +32,7 @@ export interface KeqRequest<OPERATIONS extends KeqOperations = KeqOperations> {
   put: KeqRequestFn<FlattenOperations<OPERATIONS, 'put'>>
   patch: KeqRequestFn<FlattenOperations<OPERATIONS, 'patch'>>
   head: KeqRequestFn<FlattenOperations<OPERATIONS, 'head'>>
+  options: KeqRequestFn<FlattenOperations<OPERATIONS, 'options'>>
 
   use(firstMiddleware: KeqMiddleware, ...middleware: KeqMiddleware[]): this
   useRouter(): KeqRouter
