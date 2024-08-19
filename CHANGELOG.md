@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.4](https://github.com/keq-request/keq/compare/v2.7.3...v2.7.4) (2024-08-19)
+
+
+### Performance Improvements
+
+* add options method support ([bfc7ae4](https://github.com/keq-request/keq/commit/bfc7ae45f4ad1e14bfca4ec7d6c599915424df43))
+
 ## [2.7.3](https://github.com/keq-request/keq/compare/v2.7.2...v2.7.3) (2024-08-13)
 
 
