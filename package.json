@@ -25,6 +25,10 @@
   "main": "dist/umd/src/index.js",
   "module": "dist/esm/src/index.js",
   "types": "dist/esm/src/index.d.ts",
+  "exports": {
+    "require": "./dist/umd/src/index.js",
+    "import": "./dist/esm/src/index.js"
+  },
   "directories": {
     "doc": "doc",
     "test": "test"
