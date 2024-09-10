@@ -14,14 +14,6 @@
     "axios",
     "got"
   ],
-  "homepage": "https://github.com/keq-request/keq#readme",
-  "bugs": {
-    "url": "https://github.com/keq-request/keq/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/keq-request/keq.git"
-  },
   "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
   "main": "dist/umd/src/index.js",
@@ -31,9 +23,13 @@
     "require": "./dist/umd/src/index.js",
     "import": "./dist/esm/src/index.js"
   },
-  "directories": {
-    "doc": "doc",
-    "test": "test"
+  "homepage": "https://github.com/keq-request/keq#readme",
+  "bugs": {
+    "url": "https://github.com/keq-request/keq/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keq-request/keq.git"
   },
   "scripts": {
     "build": "npm run clean && ./build/build.sh",
