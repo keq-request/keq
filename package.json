@@ -10,7 +10,9 @@
     "nodejs",
     "browser",
     "middleware",
-    "middlewares"
+    "middlewares",
+    "axios",
+    "got"
   ],
   "homepage": "https://github.com/keq-request/keq#readme",
   "bugs": {
