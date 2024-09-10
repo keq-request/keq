@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.7.5](https://github.com/keq-request/keq/compare/v2.7.4...v2.7.5) (2024-09-10)
+
+
+### Bug Fixes
+
+* cannot import esm ([e6c1cfb](https://github.com/keq-request/keq/commit/e6c1cfb3c283e7cd3d44cd7d60d30aaf7a380ecc))
+
 ## [2.7.4](https://github.com/keq-request/keq/compare/v2.7.3...v2.7.4) (2024-08-19)
 
 
