@@ -6,6 +6,7 @@ test('compose two route', async () => {
   const route2 = jest.fn(() => true)
 
   const route = composeRoute([route1, route2])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await route({} as any)
 
   expect(route1).toBeCalled()

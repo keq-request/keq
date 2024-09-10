@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Exception } from '../exception/exception.js'
 import { OverwriteArrayBodyException } from '../exception/overwrite-array-body.exception.js'
 import { isFormData } from '../is/is-form-data.js'

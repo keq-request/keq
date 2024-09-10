@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isBrowser } from './is/is-browser.js'
 import { Keq } from './keq.js'
 import { abortFlowControlMiddleware } from './middlewares/abort-flow-control-middleware.js'

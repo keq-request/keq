@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FlattenOperations, KeqOperation, KeqOperations } from './keq-operation.js'
 
 import type { KeqRouter } from '~/router/keq-router.js'

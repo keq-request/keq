@@ -41,6 +41,7 @@ test('assign string to undefined', () => {
 })
 
 test('assign number to undefined throw error', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expect(() => assignKeqRequestBody(undefined, 123 as any)).toThrow()
 })
 

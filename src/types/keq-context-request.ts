@@ -1,4 +1,5 @@
 export type KeqContextRequestMethod = 'get' | 'post' | 'put' | 'delete' | 'head' | 'patch' | 'options'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type KeqContextRequestBody = object | Array<any> | string | undefined
 
 export interface KeqContextRequest {

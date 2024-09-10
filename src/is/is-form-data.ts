@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isFunction } from './is-function.js'
 import { isObject } from './is-object.js'
 

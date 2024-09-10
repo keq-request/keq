@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isBlob } from './is-blob.js'
 import { isBrowser } from './is-browser.js'
 

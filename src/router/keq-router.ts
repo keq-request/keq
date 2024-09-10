@@ -11,7 +11,7 @@ import type { KeqRoute } from '~/types/keq-route.js'
 
 export class KeqRouter {
   constructor(
-    private readonly prependMiddlewares: KeqMiddleware[] = []
+    private readonly prependMiddlewares: KeqMiddleware[] = [],
   ) { }
 
   route(route: KeqRoute, ...middlewares: KeqMiddleware[]): this {

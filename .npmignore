@@ -10,3 +10,4 @@
 .commitlintrc.yml
 jest.config.ts
 .node-version
+eslint.config.cjs

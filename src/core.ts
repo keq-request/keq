@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mitt from 'mitt'
 import { Exception } from './exception/exception.js'
 import { cloneBody } from './util/clone-body.js'
@@ -134,7 +135,7 @@ export class Core<OUTPUT> {
 
     const middleware = composeMiddleware([...this.__prepend_middlewares__, ...this.__append_middlewares__])
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+
     await middleware(ctx, async function emptyNext() {})
 
 

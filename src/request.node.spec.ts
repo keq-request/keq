@@ -38,7 +38,7 @@ test('send request with custom fetch API', async () => {
       headers: {
         'content-type': 'application/json',
       },
-    }
+    },
   )))
 
 

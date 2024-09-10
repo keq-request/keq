@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Keq } from '~/keq.js'
 import type { KeqFlowControl } from './keq-flow-control.js'
 import type { KeqResolveMethod } from './keq-resolve-with-mode.js'

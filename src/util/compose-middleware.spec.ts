@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { expect, test } from '@jest/globals'
 import { composeMiddleware } from './compose-middleware.js'
 import { KeqMiddleware } from '~/types/keq-middleware.js'
@@ -10,6 +11,7 @@ test('forget await when calling next', async () => {
   function m1(): KeqMiddleware {
     return async function m1(ctx, next) {
       // forget await
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       next()
     }
   }
@@ -35,7 +37,7 @@ test('forget await when calling next', async () => {
     composeMiddleware([
       m1(),
       m3(),
-    ])({} as any, () => {})
+    ])({} as any, () => {}),
   ).rejects.toThrowError()
 
   // await expect(
@@ -48,6 +50,6 @@ test('forget await when calling next', async () => {
   await expect(
     composeMiddleware([
       m3(),
-    ])({} as any, () => {})
+    ])({} as any, () => {}),
   ).resolves.not.toThrowError()
 })

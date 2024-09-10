@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ExtractProperty } from './extract-property.js'
 import { KeqContextRequestMethod } from './keq-context-request.js'
 

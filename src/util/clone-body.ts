@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { isBuffer } from '../is/is-buffer.js'
 import { isBlob } from '../is/is-blob.js'
 import { isFile } from '../is/is-file.js'

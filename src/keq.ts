@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Core } from './core.js'
 import { Exception } from './exception/exception.js'
 import { InvalidArgumentsExceptions } from './exception/invalid-arguments.exception.js'
@@ -30,7 +31,7 @@ import { isValidHeaderValue } from './util/is-valid-header-value.js'
  */
 export class Keq<
   OUTPUT,
-  OPERATION extends Omit<KeqOperation, 'responseBody'> = KeqBaseOperation
+  OPERATION extends Omit<KeqOperation, 'responseBody'> = KeqBaseOperation,
 > extends Core<OUTPUT> {
   use(...middlewares: KeqMiddleware[]): this {
     return this.prependMiddlewares(...middlewares)
@@ -64,7 +65,7 @@ export class Keq<
   set(name: string, value: string | number): this
   set(
     headersOrName: ExtractHeaders<OPERATION> | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
-    value?: string | number
+    value?: string | number,
   ): this {
     if (isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
@@ -307,7 +308,7 @@ export class Keq<
   resolveWith<U = any>(m: 'json' | 'form-data'): Keq<U>
   resolveWith<U = any>(m: KeqResolveMethod): Keq<U> | Keq<string> | Keq<Blob> | Keq<ArrayBuffer> | Keq<Response> {
     this.option('resolveWith', m)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+
     return this as any
   }
 }
