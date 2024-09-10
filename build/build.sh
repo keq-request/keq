@@ -1,8 +1,5 @@
 #!/bin/bash
 
-tsc -p ./build/tsconfig.lib.json &
-tsc -p ./build/tsconfig.es.json
-
 buildUMD() {
   echo "Building UMD bundle..."
   tsc -p ./build/tsconfig.umd.json
