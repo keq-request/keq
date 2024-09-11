@@ -28,9 +28,53 @@ export interface KeqContext {
   [ABORT_PROPERTY]?: AbortController
   abort: (reason: any) => void
 
+  /**
+   * The unique identifier of the request's location in the code
+   */
+  identifier: string
+
   emitter: Emitter<Omit<KeqEvents, never>>
 
   options: KeqContextOptions
+
+  /**
+   * keq request context
+   */
+  request: KeqContextRequest
+
+  /**
+   * original response
+   */
+  res?: Response
+
+  /**
+   * proxy response
+   */
+  response?: Response
+
+  /**
+   * the result get by user
+   */
+  output: any
+  [OUTPUT_PROPERTY]?: any
+
+  /**
+   * share data between requests
+   */
+  global: KeqGlobal
+
+  // ===================================================
+  // The following properties are extends by middleware
+  // ===================================================
+
+  /**
+   * retry information, undefined is no retry
+   */
+  retry?: {
+    attempt: number
+    error: unknown | null
+    delay: number
+  }
 
   /**
    * Fetch API Arguments
@@ -38,30 +82,7 @@ export interface KeqContext {
   fetchArguments?: [RequestInfo | string, RequestInit]
 
   /**
-   * keq request context
-   */
-  request: KeqContextRequest
-
-  /** original response */
-  res?: Response
-
-  /** proxy response */
-  response?: Response
-
-  /** the result get by user */
-  output: any
-  [OUTPUT_PROPERTY]?: any
-
-  /** share data between requests */
-  global: KeqGlobal
-
-  /** retry information, undefined is no retry */
-  retry?: {
-    attempt: number
-    error: unknown | null
-    delay: number
-  }
-
-  /** extends by middleware */
+   * extends by middleware
+   * */
   [key: string]: any
 }

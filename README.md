@@ -526,6 +526,7 @@ Keq's context object has many parameters. The following lists all the built-in c
 | `context.res`                    | The origin [`Response`][Response MDN] Class. It will be undefined before run `await next()` or error throwed.                                                                                                                     |
 | `context.response`               | Cloned from `ctx.res`.                                                                                                                                                                                                            |
 | `context.output`                 | Custom return value of `await request()`。 It only take effect when `resolveWith` is not set or set to 'intelligent'. **This property is writeonly.** |
+| `content.identifier`   |  The unique identifier of the request's location in the code. It is used as default key of FlowControl and Cache.
 
 #### .useRouter()
 

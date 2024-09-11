@@ -9,6 +9,7 @@ import { retryMiddleware } from './middlewares/retry-middleware.js'
 import { serialFlowControlMiddleware } from './middlewares/serial-flow-control-middleware.js'
 import { KeqRouter } from './router/keq-router.js'
 import { timeoutMiddleware } from './middlewares/timeout-middleware.js'
+import { getUniqueCodeIdentifier } from './util/get-unique-code-identifier.js'
 
 import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqRequest } from './types/keq-request.js'
@@ -60,7 +61,7 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
   const router = new KeqRouter(prependMiddlewares)
 
   const request: KeqRequest<OPERATIONS> = function (url, init) {
-    const keq = new Keq(formatUrl(url), { ...init }, global)
+    const keq = new Keq(formatUrl(url), { ...init }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
@@ -76,21 +77,21 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
   }
 
   request.get = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'get' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'get' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
   }
 
   request.put = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'put' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'put' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
   }
 
   request.delete = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'delete' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'delete' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
@@ -99,28 +100,28 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
   request.del = request.delete
 
   request.post = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'post' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'post' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
   }
 
   request.head = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'head' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'head' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
   }
 
   request.patch = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'patch' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'patch' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any
   }
 
   request.options = function (url) {
-    const keq = new Keq(formatUrl(url), { method: 'options' }, global)
+    const keq = new Keq(formatUrl(url), { method: 'options' }, getUniqueCodeIdentifier(1), global)
     keq.appendMiddlewares(...appendMiddlewares)
     keq.prependMiddlewares(...prependMiddlewares)
     return keq as any

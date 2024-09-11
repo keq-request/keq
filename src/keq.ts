@@ -12,7 +12,6 @@ import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './type
 import { assignKeqRequestBody } from './util/assign-keq-request-body.js'
 import { base64Encode } from './util/base64.js'
 import { fixContentType } from './util/fix-content-type.js'
-import { getUniqueCodeIdentifier } from './util/get-unique-code-identifier.js'
 
 import type { KeqRetryOn, KeqRetryDelay } from './types/keq-retry.js'
 import type { KeqMiddleware } from './types/keq-middleware.js'
@@ -281,7 +280,7 @@ export class Keq<
   }
 
   flowControl(mode: KeqFlowControlMode, signal?: KeqFlowControlSignal): this {
-    const sig = signal ? signal : getUniqueCodeIdentifier(1)
+    const sig = signal ? signal : this.__identifier__
 
     if (!sig) {
       throw new Exception('please set signal to .flowControl()')

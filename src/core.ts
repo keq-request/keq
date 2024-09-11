@@ -18,6 +18,11 @@ import type { KeqContextRequest } from './types/keq-context-request.js'
  * @description Keq 核心 API，发送请求必要的原子化的API
  */
 export class Core<OUTPUT> {
+  /**
+   * The unique identifier of the request's location in the code
+   */
+  __identifier__: string
+
   private requestPromise?: Promise<OUTPUT>
 
   protected requestContext: Omit<KeqContextRequest, 'abort' | '__url__'>
@@ -33,9 +38,9 @@ export class Core<OUTPUT> {
     resolveWith: 'intelligent',
   }
 
-  public constructor(url: URL, init: KeqInit, global: Record<string, any> = {}) {
+  public constructor(url: URL, init: KeqInit, identifier: string, global: Record<string, any> = {}) {
     this.__global__ = global
-
+    this.__identifier__ = identifier
 
     this.requestContext = {
       method: 'get',
@@ -108,6 +113,8 @@ export class Core<OUTPUT> {
         entryNextTimes: 0,
         outNextTimes: 0,
       },
+
+      identifier: this.__identifier__,
 
       emitter,
 
