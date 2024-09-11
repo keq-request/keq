@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.0](https://github.com/keq-request/keq/compare/v2.7.5...v2.8.0) (2024-09-11)
+
+
+### Features
+
+* add the unique identifier of the request's location in the code ([e9eb95f](https://github.com/keq-request/keq/commit/e9eb95fc09bfaf59884379be9b50962660c9574f))
+
 ## [2.7.5](https://github.com/keq-request/keq/compare/v2.7.4...v2.7.5) (2024-09-10)
 
 
