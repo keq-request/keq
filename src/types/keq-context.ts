@@ -30,8 +30,9 @@ export interface KeqContext {
 
   /**
    * The unique identifier of the request's location in the code
+   * @readonly
    */
-  identifier: string
+  readonly identifier: string
 
   emitter: Emitter<Omit<KeqEvents, never>>
 
