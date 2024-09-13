@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.1](https://github.com/keq-request/keq/compare/v2.8.0...v2.8.1) (2024-09-13)
+
+
+### Performance Improvements
+
+* allow middleware access context.metadata ([4561592](https://github.com/keq-request/keq/commit/4561592390c78a47cedb2d230e4765f51de7d854))
+* set identifier to be readonly ([6f64f1b](https://github.com/keq-request/keq/commit/6f64f1b5e5a698bae15c2ddb1f3c4fe3a6e2a6ae))
+
 ## [2.8.0](https://github.com/keq-request/keq/compare/v2.7.5...v2.8.0) (2024-09-11)
 
 
