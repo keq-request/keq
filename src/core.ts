@@ -2,7 +2,7 @@
 import mitt from 'mitt'
 import { Exception } from './exception/exception.js'
 import { cloneBody } from './util/clone-body.js'
-import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
+import { ABORT_PROPERTY, OUTPUT_PROPERTY } from './constant.js'
 import { composeMiddleware } from './util/compose-middleware.js'
 import { shallowClone } from './util/shallow-clone.js'
 import { compileUrl } from './util/compile-url.js'
@@ -108,7 +108,7 @@ export class Core<OUTPUT> {
     }
 
     const ctx: KeqContext = {
-      [NEXT_INVOKED_PROPERTY]: {
+      metadata: {
         finished: false,
         entryNextTimes: 0,
         outNextTimes: 0,

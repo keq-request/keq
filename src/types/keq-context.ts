@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ABORT_PROPERTY, NEXT_INVOKED_PROPERTY, OUTPUT_PROPERTY } from '../constant.js'
+import { ABORT_PROPERTY, OUTPUT_PROPERTY } from '../constant.js'
 
 import type { Emitter } from 'mitt'
 import type { KeqOptionsParameter } from './keq-options.js'
@@ -14,16 +14,22 @@ export interface KeqContextOptions extends KeqOptionsParameter {
 
 export interface KeqContext {
   /**
-   * Middleware invoker counter
+   * Middleware metadata
    *
-   * to prevent someone from calling next
-   * multiple times or forgetting to write await
+   * This property does not share between middlewares
+   * And will be destroyed after the middleware finish
+   *
+   * next: to prevent someone invoke `next()` multiple times or forgetting await
    */
-  [NEXT_INVOKED_PROPERTY]: {
+  metadata: {
+    // Is middleware running completed
     finished: boolean
+    // How many times the next() is called
     entryNextTimes: number
+    // How many times the next() is returned
     outNextTimes: number
   }
+
 
   [ABORT_PROPERTY]?: AbortController
   abort: (reason: any) => void

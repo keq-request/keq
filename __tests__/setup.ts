@@ -14,7 +14,7 @@ const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => Pr
     headers: {
       'content-type': 'application/json',
     },
-  }
+  },
 )))
 
 const unMockedFetch = global.fetch

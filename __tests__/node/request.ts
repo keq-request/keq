@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 import { createRequest } from '~/index.js'
 
 import type { KeqBaseOperation, KeqOperations } from '~/types/keq-operation.js'

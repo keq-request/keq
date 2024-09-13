@@ -1,5 +1,4 @@
 import { Exception } from '../exception/exception.js'
-import { NEXT_INVOKED_PROPERTY } from '../constant.js'
 
 import type { KeqMiddleware } from '../types/keq-middleware.js'
 
@@ -13,7 +12,7 @@ export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
     .reverse()
     .reduce(function (prev, curr): KeqMiddleware {
       return async (ctx, next) => {
-        const invoked = {
+        const metadata = {
           finished: false,
           entryNextTimes: 0,
           outNextTimes: 0,
@@ -21,9 +20,7 @@ export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
 
         const context = new Proxy(ctx, {
           get(target, property) {
-            if (property === NEXT_INVOKED_PROPERTY) {
-              return invoked
-            }
+            if (property === 'metadata') return metadata
 
             // @ts-ignore
             return target[property]
@@ -31,29 +28,29 @@ export function composeMiddleware(middlewares: KeqMiddleware[]): KeqMiddleware {
         })
 
         await curr(context, async () => {
-          if (invoked.finished) {
+          if (metadata.finished) {
             throw new Exception([
               `next() should not invoke after ${curr.toString()} middleware finished.`,
             ].join(''))
           }
 
-          if (invoked.entryNextTimes > 1) {
+          if (metadata.entryNextTimes > 1) {
             console.warn(`next() had be invoke multiple times at ${curr.toString()} middleware`)
           }
-          invoked.entryNextTimes += 1
+          metadata.entryNextTimes += 1
 
           await prev(ctx, next)
 
-          invoked.outNextTimes += 1
+          metadata.outNextTimes += 1
         })
 
 
-        invoked.finished = true
-        if (invoked.entryNextTimes === 0) {
+        metadata.finished = true
+        if (metadata.entryNextTimes === 0) {
           console.warn(`next() is not invoked at ${curr.toString()}.`)
         }
 
-        if (invoked.entryNextTimes !== invoked.outNextTimes) {
+        if (metadata.entryNextTimes !== metadata.outNextTimes) {
           throw new Exception([
             `next() should be invoke before ${curr.toString()} middleware finish.`,
             'Maybe you forgot to await when calling next().',

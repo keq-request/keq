@@ -1,5 +1,3 @@
-import { NEXT_INVOKED_PROPERTY } from '../constant.js'
-
 import type { KeqMiddleware } from '~/types/keq-middleware'
 import type { KeqRetryDelay } from '~/types/keq-retry.js'
 
@@ -44,8 +42,8 @@ export function retryMiddleware(): KeqMiddleware {
         ctx.fetchArguments = undefined
         ctx.response = undefined
         ctx.req = undefined
-        ctx[NEXT_INVOKED_PROPERTY].entryNextTimes = 0
-        ctx[NEXT_INVOKED_PROPERTY].outNextTimes = 0
+        ctx.metadata.entryNextTimes = 0
+        ctx.metadata.outNextTimes = 0
         await next()
       } catch (e) {
         err = e
