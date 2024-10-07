@@ -1,8 +1,10 @@
 export { createRequest } from './create-request.js'
 export { Keq } from './keq.js'
 export { request } from './request.js'
+
 export { composeMiddleware } from './util/compose-middleware.js'
 export { composeRoute } from './util/compose-route.js'
+export { createResponseProxy } from './util/create-response-proxy.js'
 
 export type { KeqContext, KeqContextOptions } from './types/keq-context.js'
 export type { KeqMiddleware } from './types/keq-middleware.js'
