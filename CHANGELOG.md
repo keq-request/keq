@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.2](https://github.com/keq-request/keq/compare/v2.8.1...v2.8.2) (2024-10-07)
+
+
+### Performance Improvements
+
+* export createResponseProxy function ([261606e](https://github.com/keq-request/keq/commit/261606e74f12d32c80428eb9b20d175b60171bff))
+
 ## [2.8.1](https://github.com/keq-request/keq/compare/v2.8.0...v2.8.1) (2024-09-13)
 
 
