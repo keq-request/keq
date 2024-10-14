@@ -76,6 +76,8 @@ export interface KeqContext {
 
   /**
    * retry information, undefined is no retry
+   *
+   * @deprecated
    */
   retry?: {
     attempt: number
