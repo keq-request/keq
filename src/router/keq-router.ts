@@ -5,7 +5,7 @@ import { keqMethodRoute } from './keq-method-route.js'
 import { keqModuleRoute } from './keq-module-route.js'
 import { keqPathnameRoute } from './keq-pathname-route.js'
 
-import type { KeqMiddleware } from '~/types/keq-middleware'
+import type { KeqMiddleware } from '~/types/keq-middleware.js'
 import type { KeqRoute } from '~/types/keq-route.js'
 
 

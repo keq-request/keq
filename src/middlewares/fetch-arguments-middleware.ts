@@ -2,8 +2,8 @@ import { Exception } from '../exception/exception.js'
 import { ABORT_PROPERTY } from '../constant.js'
 import { isBuffer } from '~/is/is-buffer.js'
 
-import type { KeqContext } from '~/types/keq-context'
-import type { KeqMiddleware } from '../types/keq-middleware'
+import type { KeqContext } from '~/types/keq-context.js'
+import type { KeqMiddleware } from '../types/keq-middleware.js'
 import type { KeqContextRequestBody } from '~/types/keq-context-request.js'
 
 

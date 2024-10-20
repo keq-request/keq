@@ -1,4 +1,4 @@
-import type { KeqMiddleware } from '~/types/keq-middleware'
+import type { KeqMiddleware } from '~/types/keq-middleware.js'
 import type { KeqRetryDelay } from '~/types/keq-retry.js'
 
 function sleep(ms: number): Promise<void> {
