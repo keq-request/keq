@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.4](https://github.com/keq-request/keq/compare/v2.8.3...v2.8.4) (2024-10-20)
+
+
+### Bug Fixes
+
+* esm improt error ([f23cece](https://github.com/keq-request/keq/commit/f23cece5d55c21a73deb9e9191cc52dafff35bc6))
+
 ## [2.8.3](https://github.com/keq-request/keq/compare/v2.8.2...v2.8.3) (2024-10-20)
 
 
