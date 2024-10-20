@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.3](https://github.com/keq-request/keq/compare/v2.8.2...v2.8.3) (2024-10-20)
+
+
+### Bug Fixes
+
+* esm import error ([97dbd78](https://github.com/keq-request/keq/commit/97dbd78eaa8b57a1a22e776347a90baf8f47335e))
+
+
+### Performance Improvements
+
+* set context.retry to be deprecated ([e8b76a4](https://github.com/keq-request/keq/commit/e8b76a48a6e824892cb0eb3e8d97b36c11b07a3d))
+
 ## [2.8.2](https://github.com/keq-request/keq/compare/v2.8.1...v2.8.2) (2024-10-07)
 
 
