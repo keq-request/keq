@@ -1,29 +1,27 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Exception } from '../exception/exception.js'
-import { OverwriteArrayBodyException } from '../exception/overwrite-array-body.exception.js'
 import { isFormData } from '../is/is-form-data.js'
 import { isUrlSearchParams } from '../is/is-url-search-params.js'
 
 import type { KeqContextRequestBody } from '../types/keq-context-request.js'
 
 
-export function assignKeqRequestBody(left: KeqContextRequestBody, right: object | Array<any> | FormData | URLSearchParams | string): KeqContextRequestBody {
-  if (Array.isArray(left)) {
-    throw new OverwriteArrayBodyException()
-  }
-  if (Array.isArray(right) && left) {
-    throw new Exception(`Cannot overwrite body(${typeof right}) with array`)
-  }
-  if (typeof right === 'string' && left) {
-    throw new Exception(`Cannot overwrite body(${typeof left}) with string`)
+export function mergeKeqRequestBody(left: KeqContextRequestBody, right: KeqContextRequestBody): KeqContextRequestBody {
+  if (right === undefined) return left
+
+  if (typeof right === 'number') {
+    throw new TypeError('Not support number type')
   }
 
-  if (Array.isArray(right)) {
-    return [...right]
-  }
-
-  if (typeof right === 'string') {
-    return right
+  if (
+    left === null ||
+    right === null ||
+    Array.isArray(left) ||
+    Array.isArray(right) ||
+    (typeof left !== 'object' && left !== undefined) ||
+    typeof right !== 'object'
+  ) {
+    return Array.isArray(right) ? [...right] : right
   }
 
   const result = left || {}
@@ -49,7 +47,8 @@ export function assignKeqRequestBody(left: KeqContextRequestBody, right: object 
       }
     }
   } else if (typeof right === 'object') {
-    for (const key in right) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    for (const key in (right as any)) {
       result[key] = right[key]
     }
   } else {

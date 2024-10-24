@@ -9,7 +9,7 @@ import { isHeaders } from './is/is-headers.js'
 import { isBuffer } from './is/is-buffer.js'
 import { isUrlSearchParams } from './is/is-url-search-params.js'
 import { KeqFlowControl, KeqFlowControlMode, KeqFlowControlSignal } from './types/keq-flow-control.js'
-import { assignKeqRequestBody } from './util/assign-keq-request-body.js'
+import { mergeKeqRequestBody } from './util/merge-keq-request-body.js'
 import { base64Encode } from './util/base64.js'
 import { fixContentType } from './util/fix-content-type.js'
 
@@ -190,8 +190,8 @@ export class Keq<
   send(value: URLSearchParams): this
   send(value: Array<any>): this
   send(value: string): this
-  send(value: FormData | URLSearchParams | object | Array<any> | string): this {
-    this.requestContext.body = assignKeqRequestBody(this.requestContext.body, value)
+  send(value: KeqContextRequestBody): this {
+    this.requestContext.body = mergeKeqRequestBody(this.requestContext.body, value)
 
     if (isUrlSearchParams(value)) {
       this.setTypeIfEmpty('form')
@@ -211,9 +211,9 @@ export class Keq<
   field(arg1: Record<string, string>): this
   field(arg1: ExtractFields<OPERATION> | string | Record<string, string>, arg2?: any): this {
     if (typeof arg1 === 'object') {
-      this.requestContext.body = assignKeqRequestBody(this.requestContext.body, arg1)
+      this.requestContext.body = mergeKeqRequestBody(this.requestContext.body, arg1)
     } else if (arg2) {
-      this.requestContext.body = assignKeqRequestBody(this.requestContext.body, { [arg1]: arg2 })
+      this.requestContext.body = mergeKeqRequestBody(this.requestContext.body, { [arg1]: arg2 })
     } else {
       throw new InvalidArgumentsExceptions()
     }
@@ -244,7 +244,7 @@ export class Keq<
       throw new InvalidArgumentsExceptions()
     }
 
-    this.requestContext.body = assignKeqRequestBody(this.requestContext.body, { [key]: file })
+    this.requestContext.body = mergeKeqRequestBody(this.requestContext.body, { [key]: file })
     this.setTypeIfEmpty('form-data')
     return this
   }
