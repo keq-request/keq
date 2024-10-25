@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.5](https://github.com/keq-request/keq/compare/v2.8.4...v2.8.5) (2024-10-25)
+
+
+### Performance Improvements
+
+* support send binary body ([4f17198](https://github.com/keq-request/keq/commit/4f17198915e46bfb08a6900c2b784c5299164c2f))
+
 ## [2.8.4](https://github.com/keq-request/keq/compare/v2.8.3...v2.8.4) (2024-10-20)
 
 
