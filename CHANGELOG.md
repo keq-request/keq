@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.6](https://github.com/keq-request/keq/compare/v2.8.5...v2.8.6) (2024-10-25)
+
+
+### Bug Fixes
+
+* cannot send blob body ([ba7a14d](https://github.com/keq-request/keq/commit/ba7a14d10090aded2525789f0ef543564ce05434))
+* cannot send readableStream ([1b16142](https://github.com/keq-request/keq/commit/1b16142e84f08a7b5c300ba69f5c0036fdb1c9ef))
+
 ## [2.8.5](https://github.com/keq-request/keq/compare/v2.8.4...v2.8.5) (2024-10-25)
 
 
