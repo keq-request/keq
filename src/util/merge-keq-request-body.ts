@@ -7,6 +7,7 @@ import { isUrlSearchParams } from '../is/is-url-search-params.js'
 import type { KeqContextRequestBody } from '../types/keq-context-request.js'
 import { isArrayBuffer } from '~/is/is-array-buffer.js'
 import { isBlob } from '~/is/is-blob.js'
+import { isReadableStream } from '~/is/is-readable-stream.js'
 
 
 export function mergeKeqRequestBody(left: KeqContextRequestBody, right: KeqContextRequestBody): KeqContextRequestBody {
@@ -22,9 +23,11 @@ export function mergeKeqRequestBody(left: KeqContextRequestBody, right: KeqConte
     isBuffer(right) ||
     isArrayBuffer(right) ||
     isBlob(right) ||
+    isReadableStream(right) ||
     isBuffer(left) ||
     isArrayBuffer(left) ||
     isBlob(left) ||
+    isReadableStream(left) ||
     Array.isArray(left) ||
     Array.isArray(right) ||
     (typeof left !== 'object' && left !== undefined) ||

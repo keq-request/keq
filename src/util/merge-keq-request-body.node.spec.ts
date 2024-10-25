@@ -14,6 +14,7 @@ test('mergeKeqResponseBody(any, object)', () => {
   expect(mergeKeqRequestBody([1, 2, 3], { a: 1 })).toEqual({ a: 1 })
   expect(mergeKeqRequestBody('abc', { a: 1 })).toEqual({ a: 1 })
   expect(mergeKeqRequestBody({ a: 1 }, { b: 2 })).toEqual({ a: 1, b: 2 })
+  expect(mergeKeqRequestBody(new Blob(['hello world']), { b: 2 })).toEqual({ b: 2 })
 })
 
 test('mergeKeqResponseBody(any, FormData)', () => {
@@ -43,4 +44,22 @@ test('mergeKeqRequestBody(any, string)', () => {
 
 test('mergeKeqRequestBody(unExpect, unExpect)', () => {
   expect(() => mergeKeqRequestBody(undefined, 123 as any)).toThrow()
+})
+
+test('mergeKeqRequestBody(unExpect, Blob)', () => {
+  const blob = new Blob(['hello world'])
+  expect(mergeKeqRequestBody(undefined, blob)).toBe(blob)
+  expect(mergeKeqRequestBody({ a: 1 }, blob)).toBe(blob)
+})
+
+test('mergeKeqRequestBody(unExpect, ArrayBuffer)', () => {
+  const arrayBuffer = new ArrayBuffer(2)
+  expect(mergeKeqRequestBody(undefined, arrayBuffer)).toBe(arrayBuffer)
+  expect(mergeKeqRequestBody({ a: 1 }, arrayBuffer)).toBe(arrayBuffer)
+})
+
+test('mergeKeqRequestBody(unExpect, ReadableStream)', () => {
+  const readableStream = new ReadableStream()
+  expect(mergeKeqRequestBody(undefined, readableStream)).toBe(readableStream)
+  expect(mergeKeqRequestBody({ a: 1 }, readableStream)).toBe(readableStream)
 })
