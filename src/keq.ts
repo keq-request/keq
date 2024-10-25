@@ -23,6 +23,8 @@ import type { KeqContextOptions } from './types/keq-context.js'
 import type { ExtractFields, ExtractFiles, ExtractHeaders, ExtractParams, ExtractQuery, KeqBaseOperation, KeqOperation } from './types/keq-operation.js'
 import type { KeqContextRequestBody } from './types/keq-context-request.js'
 import { isValidHeaderValue } from './util/is-valid-header-value.js'
+import { isReadableStream } from './is/is-readable-stream.js'
+import { isArrayBuffer } from './is/is-array-buffer.js'
 
 
 /**
@@ -197,6 +199,8 @@ export class Keq<
       this.setTypeIfEmpty('form')
     } else if (isFormData(value)) {
       this.setTypeIfEmpty('form-data')
+    } else if (isBlob(value) || isReadableStream(value) || isArrayBuffer(value)) {
+      // don't set content-type
     } else if (typeof value === 'object') {
       this.setTypeIfEmpty('json')
     }

@@ -1,9 +1,12 @@
 
+import { isBuffer } from '~/is/is-buffer.js'
 import { Exception } from '../exception/exception.js'
 import { isFormData } from '../is/is-form-data.js'
 import { isUrlSearchParams } from '../is/is-url-search-params.js'
 
 import type { KeqContextRequestBody } from '../types/keq-context-request.js'
+import { isArrayBuffer } from '~/is/is-array-buffer.js'
+import { isBlob } from '~/is/is-blob.js'
 
 
 export function mergeKeqRequestBody(left: KeqContextRequestBody, right: KeqContextRequestBody): KeqContextRequestBody {
@@ -16,6 +19,12 @@ export function mergeKeqRequestBody(left: KeqContextRequestBody, right: KeqConte
   if (
     left === null ||
     right === null ||
+    isBuffer(right) ||
+    isArrayBuffer(right) ||
+    isBlob(right) ||
+    isBuffer(left) ||
+    isArrayBuffer(left) ||
+    isBlob(left) ||
     Array.isArray(left) ||
     Array.isArray(right) ||
     (typeof left !== 'object' && left !== undefined) ||

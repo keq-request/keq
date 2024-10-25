@@ -1,6 +1,9 @@
 import { Exception } from '../exception/exception.js'
 import { ABORT_PROPERTY } from '../constant.js'
 import { isBuffer } from '~/is/is-buffer.js'
+import { isBlob } from '~/is/is-blob.js'
+import { isArrayBuffer } from '~/is/is-array-buffer.js'
+import { isReadableStream } from '~/is/is-readable-stream.js'
 
 import type { KeqContext } from '~/types/keq-context.js'
 import type { KeqMiddleware } from '../types/keq-middleware.js'
@@ -19,10 +22,23 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
 
   const contentType = request.headers.get('Content-Type')
 
-  if (contentType === 'application/json' && body) {
+  if (body === undefined) return
+  if (body === null) return 'null'
+  if (typeof body === 'string') return body
+  if (typeof body === 'number') return String(body)
+  if (isBuffer(body)) return body
+  if (isBlob(body)) return body
+  if (isArrayBuffer(body)) return body
+  if (isReadableStream(body)) return body
+
+  if (contentType === 'application/json') {
     return typeof body === 'object' ? JSON.stringify(body) : body
-  } else if (contentType === 'application/x-www-form-urlencoded' && body) {
-    if (Array.isArray(body)) return
+  }
+
+  if (contentType === 'application/x-www-form-urlencoded') {
+    if (Array.isArray(body)) {
+      throw new Exception('application/x-www-form-urlencoded cannot send array')
+    }
 
     const params = new URLSearchParams()
     Object.entries(body).map(([key, value]) => {
@@ -35,14 +51,13 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
       }
     })
     return params
-  } else if (contentType === 'multipart/form-data') {
-    if (Array.isArray(ctx.request.body)) {
+  }
+
+  if (contentType === 'multipart/form-data') {
+    if (Array.isArray(body)) {
       throw new Exception('FormData cannot send array')
     }
 
-    if (!ctx.request.body) return
-
-    const body = ctx.request.body
     const form = new FormData()
 
     for (const [key, value] of Object.entries(body)) {
@@ -59,11 +74,8 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
     return form
   }
 
-  if (isBuffer(body)) return body
-  if (body === undefined) return body
-  if (body === null) return 'null'
-  if (typeof body === 'string') return body
-  if (typeof body === 'number') return String(body)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return body as any
 }
 
 
