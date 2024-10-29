@@ -218,5 +218,8 @@ export class Core<OUTPUT> {
   catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<OUTPUT | TResult> {
     return this.end().catch(onrejected)
   }
-}
 
+  finally(onfinally?: (() => void) | undefined | null): Promise<OUTPUT> {
+    return this.end().finally(onfinally)
+  }
+}
