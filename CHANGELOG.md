@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.7](https://github.com/keq-request/keq/compare/v2.8.6...v2.8.7) (2024-10-29)
+
+
+### Bug Fixes
+
+* `.finally()` cannot invoke at keq request ([4315979](https://github.com/keq-request/keq/commit/4315979d1fc4e0ad11aaaadb3341886e62bfe448))
+
 ## [2.8.6](https://github.com/keq-request/keq/compare/v2.8.5...v2.8.6) (2024-10-25)
 
 
