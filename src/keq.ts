@@ -141,7 +141,7 @@ export class Keq<
         this.requestContext.routeParams[k] = String(v)
       }
     } else {
-      throw new Exception('please set params value')
+      throw new TypeError('Invalid Arguments for .params()')
     }
 
     return this
