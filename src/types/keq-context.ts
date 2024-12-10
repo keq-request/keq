@@ -21,7 +21,7 @@ export interface KeqContext {
    *
    * next: to prevent someone invoke `next()` multiple times or forgetting await
    */
-  metadata: {
+  readonly metadata: {
     // Is middleware running completed
     finished: boolean
     // How many times the next() is called
@@ -40,14 +40,14 @@ export interface KeqContext {
    */
   readonly identifier: string
 
-  emitter: Emitter<Omit<KeqEvents, never>>
+  readonly emitter: Emitter<Omit<KeqEvents, never>>
 
   options: KeqContextOptions
 
   /**
    * keq request context
    */
-  request: KeqContextRequest
+  readonly request: KeqContextRequest
 
   /**
    * original response
@@ -68,7 +68,7 @@ export interface KeqContext {
   /**
    * share data between requests
    */
-  global: KeqGlobal
+  readonly global: KeqGlobal
 
   // ===================================================
   // The following properties are extends by middleware
