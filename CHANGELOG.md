@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.8](https://github.com/keq-request/keq/compare/v2.8.7...v2.8.8) (2024-12-10)
+
+
+### Bug Fixes
+
+* make some properties in KeqContext readonly to prevent modifications ([b2321cf](https://github.com/keq-request/keq/commit/b2321cf30ea0787a1e9a984bd05704cc6268fbef))
+
 ## [2.8.7](https://github.com/keq-request/keq/compare/v2.8.6...v2.8.7) (2024-10-29)
 
 
