@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.9](https://github.com/keq-request/keq/compare/v2.8.8...v2.8.9) (2024-12-22)
+
+
+### Bug Fixes
+
+* wrong type of .query/.set/.params ([b11b959](https://github.com/keq-request/keq/commit/b11b9591dbff167a2cbd4f925d196bbc83e39b63))
+
+
+### Performance Improvements
+
+* support stict type checking for .send/.params/.set/.query ([2c82b01](https://github.com/keq-request/keq/commit/2c82b016a5032422ae52455c267066ac2c8ba7f0))
+
 ## [2.8.8](https://github.com/keq-request/keq/compare/v2.8.7...v2.8.8) (2024-12-10)
 
 
