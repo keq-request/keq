@@ -21,9 +21,6 @@ export interface KeqOperation {
   responseBody: any
 }
 
-export type ExtractHeaders<T extends Pick<KeqOperation, 'requestHeaders'>> = ExtractProperty<T['requestHeaders'], string>
-export type ExtractQuery<T extends Pick<KeqOperation, 'requestQuery'>> = ExtractProperty<T['requestQuery'], string | string[]>
-export type ExtractParams<T extends Pick<KeqOperation, 'requestParams'>> = ExtractProperty<T['requestParams'], string>
 export type ExtractFields<T extends Pick<KeqOperation, 'requestBody'>> = ExtractProperty<Exclude<Extract<T['requestBody'], object>, FormData | URLSearchParams | Array<any>>, string>
 export type ExtractFiles<T extends Pick<KeqOperation, 'requestBody'>> = ExtractProperty<Exclude<Extract<T['requestBody'], object>, FormData | URLSearchParams | Array<any>>, Buffer | Blob | File>
 

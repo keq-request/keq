@@ -20,7 +20,7 @@ import type { KeqQueryValue } from './types/keq-query-value.js'
 import type { KeqResolveMethod } from './types/keq-resolve-with-mode.js'
 import type { CommonContentType, ShorthandContentType } from './types/content-type.js'
 import type { KeqContextOptions } from './types/keq-context.js'
-import type { ExtractFields, ExtractFiles, ExtractHeaders, ExtractParams, ExtractQuery, KeqBaseOperation, KeqOperation } from './types/keq-operation.js'
+import type { ExtractFields, ExtractFiles, KeqBaseOperation, KeqOperation } from './types/keq-operation.js'
 import type { KeqContextRequestBody } from './types/keq-context-request.js'
 import { isValidHeaderValue } from './util/is-valid-header-value.js'
 import { isReadableStream } from './is/is-readable-stream.js'
@@ -58,14 +58,14 @@ export class Keq<
    *
    * @description 设置请求头
    */
-  set(headers: ExtractHeaders<OPERATION>): this
-  set<T extends keyof ExtractHeaders<OPERATION>>(name: T, value: ExtractHeaders<OPERATION>[T]): this
+  set(headers: OPERATION['requestHeaders']): this
+  set<T extends keyof OPERATION['requestHeaders']>(name: T, value: OPERATION['requestHeaders'][T]): this
   set<T extends keyof KeqBaseOperation['requestHeaders']>(name: T, value: KeqBaseOperation['requestHeaders'][T]): this
   set(headers: Headers): this
   set(headers: Record<string, string>): this
   set(name: string, value: string | number): this
   set(
-    headersOrName: ExtractHeaders<OPERATION> | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
+    headersOrName: OPERATION['requestHeaders'] | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
     value?: string | number,
   ): this {
     if (isHeaders(headersOrName)) {
@@ -94,11 +94,11 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query(key: ExtractQuery<OPERATION>): this
-  query<T extends keyof ExtractQuery<OPERATION>>(key: T, value: ExtractQuery<OPERATION>[T]): this
+  query(key: OPERATION['requestQuery']): this
+  query<T extends keyof OPERATION['requestQuery']>(key: T, value: OPERATION['requestQuery'][T]): this
   query(key: Record<string, KeqQueryValue | KeqQueryValue[]>): this
   query(key: string, value: KeqQueryValue | KeqQueryValue[]): this
-  query(key: string | ExtractQuery<OPERATION> | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
+  query(key: string | OPERATION['requestQuery'] | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
     if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
         if (v === undefined) continue
@@ -129,11 +129,11 @@ export class Keq<
   /**
    * Set request route params
    */
-  params(key: ExtractParams<OPERATION>): this
-  params<T extends keyof ExtractParams<OPERATION>>(key: T, value: ExtractParams<OPERATION>[T]): this
+  params(key: OPERATION['requestParams']): this
+  params<T extends keyof OPERATION['requestParams']>(key: T, value: OPERATION['requestParams'][T]): this
   params(key: Record<string, string | number>): this
   params(key: string, value: string | number): this
-  params(key: string | ExtractParams<OPERATION> | Record<string, string | number>, value?: string | number): this {
+  params(key: string | OPERATION['requestParams'] | Record<string, string | number>, value?: string | number): this {
     if (typeof key === 'string') {
       this.requestContext.routeParams[key] = String(value)
     } else if (typeof key === 'object') {
