@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Core } from './core.js'
 import { Exception } from './exception/exception.js'
@@ -58,8 +59,8 @@ export class Keq<
    *
    * @description 设置请求头
    */
-  set(headers: OPERATION['requestHeaders']): this
-  set<T extends keyof OPERATION['requestHeaders']>(name: T, value: OPERATION['requestHeaders'][T]): this
+  set<K extends 'strict'>(headers: OPERATION['requestHeaders']): this
+  set<K extends 'strict', T extends keyof OPERATION['requestHeaders']>(name: T, value: OPERATION['requestHeaders'][T]): this
   set<T extends keyof KeqBaseOperation['requestHeaders']>(name: T, value: KeqBaseOperation['requestHeaders'][T]): this
   set(headers: Headers): this
   set(headers: Record<string, string>): this
@@ -94,8 +95,8 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query(key: OPERATION['requestQuery']): this
-  query<T extends keyof OPERATION['requestQuery']>(key: T, value: OPERATION['requestQuery'][T]): this
+  query<K extends 'strict'>(key: OPERATION['requestQuery']): this
+  query<K extends 'strict', T extends keyof OPERATION['requestQuery']>(key: T, value: OPERATION['requestQuery'][T]): this
   query(key: Record<string, KeqQueryValue | KeqQueryValue[]>): this
   query(key: string, value: KeqQueryValue | KeqQueryValue[]): this
   query(key: string | OPERATION['requestQuery'] | Record<string, KeqQueryValue | KeqQueryValue[]>, value?: KeqQueryValue | KeqQueryValue[]): this {
@@ -129,8 +130,8 @@ export class Keq<
   /**
    * Set request route params
    */
-  params(key: OPERATION['requestParams']): this
-  params<T extends keyof OPERATION['requestParams']>(key: T, value: OPERATION['requestParams'][T]): this
+  params<K extends 'strict'>(key: OPERATION['requestParams']): this
+  params<K extends 'strict', T extends keyof OPERATION['requestParams']>(key: T, value: OPERATION['requestParams'][T]): this
   params(key: Record<string, string | number>): this
   params(key: string, value: string | number): this
   params(key: string | OPERATION['requestParams'] | Record<string, string | number>, value?: string | number): this {
@@ -187,7 +188,8 @@ export class Keq<
   /**
    * set request body
    */
-  send(value: OPERATION['requestBody'] | object): this
+  send<K extends 'strict'>(value: OPERATION['requestBody']): this
+  send(value: object): this
   send(value: FormData): this
   send(value: URLSearchParams): this
   send(value: Array<any>): this
