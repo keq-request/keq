@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.10](https://github.com/keq-request/keq/compare/v2.8.9...v2.8.10) (2024-12-26)
+
+
+### Bug Fixes
+
+* cannot extend KeqOperations ([908983d](https://github.com/keq-request/keq/commit/908983dd12037befb85bd944801a6b111979d4ce))
+
 ## [2.8.9](https://github.com/keq-request/keq/compare/v2.8.8...v2.8.9) (2024-12-22)
 
 
