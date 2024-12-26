@@ -25,7 +25,7 @@ export type ExtractFields<T extends Pick<KeqOperation, 'requestBody'>> = Extract
 export type ExtractFiles<T extends Pick<KeqOperation, 'requestBody'>> = ExtractProperty<Exclude<Extract<T['requestBody'], object>, FormData | URLSearchParams | Array<any>>, Buffer | Blob | File>
 
 
-export type KeqOperations = {
+export interface KeqOperations {
   [url: string]: {
     [method in KeqContextRequestMethod]?: KeqOperation
   }
