@@ -15,6 +15,8 @@ test('mergeKeqResponseBody(any, object)', () => {
   expect(mergeKeqRequestBody('abc', { a: 1 })).toEqual({ a: 1 })
   expect(mergeKeqRequestBody({ a: 1 }, { b: 2 })).toEqual({ a: 1, b: 2 })
   expect(mergeKeqRequestBody(new Blob(['hello world']), { b: 2 })).toEqual({ b: 2 })
+  // If .send({}) is called, the body should be set to empty object
+  expect(mergeKeqRequestBody(undefined, {})).toEqual({})
 })
 
 test('mergeKeqResponseBody(any, FormData)', () => {
