@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.11](https://github.com/keq-request/keq/compare/v2.8.10...v2.8.11) (2025-03-06)
+
+
+### Bug Fixes
+
+* allow undefined value in .set() method ([f041ca8](https://github.com/keq-request/keq/commit/f041ca84c5b9ecaf49d7f53f68362749b7b77547))
+
 ## [2.8.10](https://github.com/keq-request/keq/compare/v2.8.9...v2.8.10) (2024-12-26)
 
 
