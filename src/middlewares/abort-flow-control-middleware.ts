@@ -20,12 +20,15 @@ export function abortFlowControlMiddleware(): KeqMiddleware {
       abort(reason)
     }
 
-    ctx.global.abortFlowControl[key] = ctx.abort.bind(ctx)
+    const fn = ctx.abort.bind(ctx)
+    ctx.global.abortFlowControl[key] = fn
 
     try {
       await next()
     } finally {
-      ctx.global.abortFlowControl[key] = undefined
+      if (ctx.global.abortFlowControl[key] === fn) {
+        ctx.global.abortFlowControl[key] = undefined
+      }
     }
   }
 }
