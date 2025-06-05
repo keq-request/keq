@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.8.11](https://github.com/keq-request/keq/compare/v2.8.10...v2.8.11) (2025-06-05)
+
+
+### Bug Fixes
+
+* ensure proper cleanup of abort flow control function ([fc5ad5e](https://github.com/keq-request/keq/commit/fc5ad5ea34a1fcbd83a65f4906750113a424780d))
+
 ## [2.8.10](https://github.com/keq-request/keq/compare/v2.8.9...v2.8.10) (2024-12-26)
 
 
