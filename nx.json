@@ -22,7 +22,6 @@
         "createRelease": "github"
       },
       "projectChangelogs": {
-        "file": "CHANGELOG.md",
         "createRelease": false
       }
     }
