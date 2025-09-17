@@ -1,3 +1,7 @@
+## 5.0.0-alpha.6 (2025-09-17)
+
+This was a version bump only for keq-cli to align it with other projects, there were no code changes.
+
 ## 5.0.0-alpha.5 (2025-09-17)
 
 ### 🩹 Fixes
