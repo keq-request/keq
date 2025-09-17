@@ -1,0 +1,18 @@
+{
+  "targets": {
+    "rollup:build": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+
+      "options": {
+        "deleteOutputPath": true,
+        "format": ["esm", "cjs"],
+        "main": "./src/index.ts",
+        "tsConfig": "./tsconfig.lib.json",
+        "outputPath": "./dist",
+        "additionalEntryPoints": ["./src/cli.ts"],
+        "rollupConfig": "packages/cli/rollup.config.js"
+      }
+    }
+  }
+}

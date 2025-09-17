@@ -1,9 +1,14 @@
 on:
-  push:
-    branches:
-      - main
-      - alpha
-      - beta
+  # push:
+  #   branches:
+  #     - main
+  #     # - alpha
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "Version to release (semver)"
+        required: false
 
 name: Release
 
@@ -40,8 +45,29 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - run: npx semantic-release
+      - name: Print Environment Info
+        run: npx nx report
+        shell: bash
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Release
+        if: github.ref_name == 'main'
+        run: npx nx release ${{ inputs.version }} --y
         env:
           GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          # NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_CONFIG_PROVENANCE: true
+
+      - name: Release Alpha
+        if: github.ref_name != 'main'
+        run: npx nx release ${{ inputs.version }} --preid ${{ github.ref_name }} --y
+        env:
+          GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          # NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_CONFIG_PROVENANCE: true

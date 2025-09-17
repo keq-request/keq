@@ -1,0 +1,322 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "user.service",
+    "description": "",
+    "version": "0.0.1",
+    "contact": {}
+  },
+  "components": {
+    "schemas": {
+      "RootSchema": {
+        "type": "object",
+        "required": [
+          "constProp"
+        ],
+        "properties": {
+          "unknownProp": {},
+          "constProp": {
+            "const": "constValue"
+          },
+          "enumProp": {
+            "enum": [
+              "str",
+              1,
+              {
+                "key": true
+              }
+            ]
+          },
+          "deprecatedStringProp": {
+            "type": "string",
+            "deprecated": true
+          },
+          "deprecatedNumberProp": {
+            "type": "string",
+            "description": "Deprecated Number Prop",
+            "deprecated": true
+          },
+          "emptyObjectProp": {
+            "type": "object"
+          },
+          "stringProp": {
+            "description": "This is String Prop",
+            "type": "string"
+          },
+          "numberProp": {
+            "description": "Multiple line description\nThis is Number Prop",
+            "type": "number"
+          },
+          "booleanProp": {
+            "type": "boolean"
+          },
+          "integerProp": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "tupleProp": {
+            "type": "array",
+            "items": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "stringPropWithMaxLength": {
+            "type": "string",
+            "minLength": 6
+          },
+          "arrayOfStringsProp": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "arrayOfNullableRefProp": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ObjectWithSpecifiedTypeAdditionalPropertiesSchema",
+              "nullable": true
+            }
+          },
+          "refProp": {
+            "$ref": "#/components/schemas/ArrayOfStringsSchema"
+          },
+          "objectProp": {
+            "type": "object",
+            "properties": {
+              "stringPropRequired": {
+                "type": "string"
+              },
+              "stringPropNullable": {
+                "type": "string",
+                "nullable": true
+              },
+              "refPropNullable": {
+                "$ref": "#/components/schemas/ObjectWithAdditionalPropertiesSchema",
+                "nullable": true
+              }
+            },
+            "required": [
+              "stringPropRequired"
+            ]
+          }
+        }
+      },
+      "ArrayOfStringsSchema": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "ObjectWithAdditionalPropertiesSchema": {
+        "additionalProperties": true
+      },
+      "ObjectWithSpecifiedTypeAdditionalPropertiesSchema": {
+        "additionalProperties": {
+          "description": "This is String Addition Prop",
+          "type": "string"
+        }
+      },
+      "RefSchema": {
+        "$ref": "#/components/schemas/ArrayOfStringsSchema"
+      },
+      "NullableObjectSchema": {
+        "type": "object",
+        "properties": {
+          "stringProp": {
+            "type": "string"
+          }
+        },
+        "nullable": true
+      },
+      "OneOfSchema": {
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "AnyOfSchema": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          }
+        ]
+      },
+      "AllOfSchema": {
+        "allOf": [
+          {
+            "type": "object",
+            "properties": {
+              "stringProp": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "numberProp": {
+                "type": "number"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "requestBodies": {
+      "id_post": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/RootSchema"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/{id}": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "requiredQueryProp",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "optionalQueryProp",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "headerProp",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {}
+          }
+        }
+      },
+      "post": {
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/id_post"
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RootSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simple": {
+      "get": {},
+      "post": {
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/keyword": {
+      "delete": {
+        "operationId": "deleteKeyword"
+      }
+    },
+    "/upload": {
+      "post": {
+        "summary": "Upload File",
+        "description": "Upload File \nDescription",
+        "operationId": "upload",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "description": "file",
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    }
+  }
+}

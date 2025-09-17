@@ -1,0 +1,10 @@
+{{#if (r__isObject properties)}}
+{{#each properties}}
+{{> snippet/comment description=description summary=summary deprecated=deprecated type=format}}
+"{{@key}}"{{#unless (r__includes @key (r__defaultTo (r__Array) ../required))}}?{{/unless}}: {{> t_json_schema_shape this}}
+{{/each}}
+{{~/if}}
+{{#with additionalProperties}}
+{{> snippet/comment description=description summary=summary deprecated=deprecated type=format}}
+[key: string]: undefined | {{#if (r__isBoolean this)}}any{{else}}{{> t_json_schema_shape this}}{{/if}}
+{{/with~}}

@@ -1,0 +1,53 @@
+{{~#if const~}}
+{{{h__stringify const}}}
+
+{{~else if enum.length~}}
+{{> t_json_schema_shape__enum}}
+
+{{~else if (r__isString $ref)~}}
+{{~#if (h__is-local-ref-name $ref)}}
+{{h__ref-name $ref}}
+{{~else}}
+any /* {{h__ref-name $ref}} */
+{{~/if}}
+
+{{~else if (r__isArray anyOf)~}}
+{{> t_json_schema_shape__any_of}}
+
+{{~else if (r__isArray oneOf)~}}
+{{> t_json_schema_shape__one_of}}
+
+{{~else if (r__isArray allOf)~}}
+{{> t_json_schema_shape__all_of}}
+
+{{~else if (r__equals type "number")~}}
+number
+
+{{~else if (r__equals type "integer")~}}
+number
+
+{{~else if (r__equals type "string")~}}
+
+  {{~#if (r__equals format "binary")}}
+Blob | Buffer
+  {{~else~}}
+string
+  {{~/if~}}
+
+{{~else if (r__equals type "boolean")~}}
+boolean
+
+{{~else if (r__equals type "array")~}}
+{{> t_json_schema_shape__array}}
+
+{{~else if (h__or (r__equals type "object") (r__isObject properties) additionalProperties)~}}
+{
+  {{> t_json_schema_shape__object}}
+}
+
+{{~else~}}
+any
+
+{{~/if~}}
+
+{{~#if nullable}} | null{{/if~}}
