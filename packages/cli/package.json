@@ -5,7 +5,7 @@
   "types": "dist/index.d.ts",
   "bin": "dist/cli.cjs.js",
   "description": "Transform Swagger 3.0 to the function that send request by keq",
-  "version": "5.0.0-alpha.2",
+  "version": "5.0.0-alpha.3",
   "engines": {
     "node": ">=18.0.0"
   },
