@@ -1,3 +1,13 @@
+## 5.0.0-alpha.5 (2025-09-17)
+
+### 🩹 Fixes
+
+- **keq-cli:** cannot import handlebar ([9274423](https://github.com/keq-request/keq/commit/9274423))
+
+### ❤️ Thank You
+
+- val.istar.guo
+
 # Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
