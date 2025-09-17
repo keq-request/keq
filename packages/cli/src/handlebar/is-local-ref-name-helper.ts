@@ -1,6 +1,4 @@
-
-
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 import * as R from 'ramda'
 import { dropLastArguments } from '../utils/drop-last-arguments.js'
 

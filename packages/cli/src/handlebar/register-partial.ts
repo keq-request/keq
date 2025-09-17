@@ -1,6 +1,6 @@
 
 
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 // import { readTemplate } from '../utils/read-template.js'
 import commentTemplateStr from '../templates/snippet/comment.hbs'
 import shapeTemplateStr from '../templates/json-schema/shape.hbs'

@@ -1,5 +1,4 @@
-
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 import { OpenAPIV3 } from 'openapi-types'
 import { dereference } from '../utils/dereference.js'
 

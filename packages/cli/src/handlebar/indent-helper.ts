@@ -1,4 +1,4 @@
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 
 
 Handlebars.registerHelper('h__indent', (num, str) => {

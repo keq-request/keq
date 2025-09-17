@@ -1,3 +1,3 @@
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 
 Handlebars.registerHelper('h__stringify', (value) => JSON.stringify(value, null, 2))

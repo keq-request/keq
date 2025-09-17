@@ -1,3 +1,3 @@
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 
 Handlebars.registerHelper('newline', () => '\n')

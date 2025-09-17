@@ -11,7 +11,7 @@ import './stringify-helper.js'
 import './indent-helper.js'
 import './is-local-ref-name-helper.js'
 
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 import * as HandlebarsRamdaHelpers from 'handlebars-ramda-helpers'
 
 HandlebarsRamdaHelpers.register(Handlebars)

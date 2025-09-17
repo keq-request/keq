@@ -1,6 +1,4 @@
-
-
-import * as Handlebars from 'handlebars'
+import Handlebars from 'handlebars'
 import { getSafeOperationName } from '../utils/get-safe-operation-name.js'
 
 
