@@ -16,6 +16,10 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  NPM_CONFIG_TAG: "${{ github.ref_name == 'main' && 'latest' || github.ref_name }}"
+  NPM_CONFIG_PROVENANCE: true
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -24,6 +28,7 @@ jobs:
       issues: write
       pull-requests: write
       id-token: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,19 +59,51 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Release
-        if: github.ref_name == 'main'
-        run: npx nx release ${{ inputs.version }} --y
-        env:
-          GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
+      - name: Detect last tag and whether it is prerelease
+        id: last
+        shell: bash
+        run: |
+          LAST_TAG=$(git tag --list "v*" --sort=-v:refname | head -n 1)
+          echo "last_tag=$LAST_TAG" >> $GITHUB_OUTPUT
 
-      - name: Release Alpha
-        if: github.ref_name != 'main'
-        run: npx nx release ${{ inputs.version }} --preid ${{ github.ref_name }} --y
+          if [ -z "$LAST_TAG" ]; then
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # 含有连字符的语义版本一般为预发布，如 v1.2.0-rc.3
+          if [[ "$LAST_TAG" == *-* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Manual Release
+        if: github.event.inputs.version
+        run: |
+          echo "Releasing version ${{ inputs.version }}"
+          npx nx release ${{ inputs.version }} --y
         env:
           GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
-          NPM_CONFIG_TAG: ${{ github.ref_name }}
+
+      - name: Prerelease Release
+        if: github.ref_name != 'main' && !github.event.inputs.version
+        run: npx nx release --specifier prerelease --preid ${{ github.ref_name }} --y
+        env:
+          GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      - name: Release
+        if: github.ref_name == 'main' && !github.event.inputs.version
+        run: |
+          if [ "${{ steps.last.outputs.is_prerelease }}" == "true" ]; then
+            echo "Last tag ${{ steps.last.outputs.last_tag }} is a prerelease."
+            npx nx release --specifier patch --y
+          else
+            echo "Last tag ${{ steps.last.outputs.last_tag }} is not a prerelease."
+            npx nx release --y
+          fi
+        env:
+          GITHUB_TOKEN: ${{secrets.RELEASE_TOKEN}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
