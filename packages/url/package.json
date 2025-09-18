@@ -13,13 +13,13 @@
     "middlewares",
     "url"
   ],
-  "homepage": "https://github.com/keq-request/keq-url#readme",
+  "homepage": "https://github.com/keq-request/keq#readme",
   "bugs": {
-    "url": "https://github.com/keq-request/keq-url/issues"
+    "url": "https://github.com/keq-request/keq/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/keq-request/keq-url.git"
+    "url": "git+https://github.com/keq-request/keq.git"
   },
   "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
