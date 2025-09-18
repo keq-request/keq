@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "declaration": true,
+    "noEmitOnError": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ESNext",
+    "baseUrl": "./",
+    "rootDir": "./",
+    "lib": ["DOM", "Es2015.Proxy", "ESNext", "DOM.Iterable"],
+    "paths": {
+      "~/*": ["src/*"],
+      "~~/*": ["./*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+
+  "include": ["**/*.ts", ".eslintrc.cjs", "jest.config.ts"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
+}

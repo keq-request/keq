@@ -11,6 +11,33 @@
         "tsConfig": "./tsconfig.lib.json",
         "outputPath": "./dist"
       }
+    },
+
+    "jest:test:browser": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "{projectRoot}/jest.browser.config.ts",
+        "tsConfig": "{projectRoot}/tsconfig.json",
+        "passWithNoTests": true
+      }
+    },
+    "jest:test:node": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+
+    "jest:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx run {projectName}:jest:test:node",
+          "nx run {projectName}:jest:test:browser"
+        ],
+        "parallel": true
+      }
     }
   }
 }

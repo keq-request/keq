@@ -6,7 +6,4 @@ import { compilerOptions } from './tsconfig.json'
 export default async (): Promise<Config> => ({
   preset: 'ts-jest',
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/', useESM: true }),
-  transform: {
-    '\\.hbs$': '<rootDir>/__tests__/jest-raw.transform.cjs',
-  },
 })
