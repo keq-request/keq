@@ -5,6 +5,7 @@
       "outputs": ["{options.outputPath}"],
 
       "options": {
+        "deleteOutputPath": true,
         "useLegacyTypescriptPlugin": false,
         "format": ["esm", "cjs"],
         "main": "./src/index.ts",

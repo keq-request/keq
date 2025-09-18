@@ -1,0 +1,12 @@
+/.github
+/.husky
+/build
+/coverage
+/doc
+/src
+/test
+
+.commitlintrc.yml
+.eslintrc.cjs
+.gitignore
+jest.config.ts

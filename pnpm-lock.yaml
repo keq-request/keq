@@ -248,6 +248,24 @@ importers:
         specifier: 5.4.5
         version: 5.4.5
 
+  packages/url:
+    devDependencies:
+      '@buka/eslint-config':
+        specifier: ^2.1.1
+        version: 2.1.6(eslint@9.35.0(jiti@2.5.1))(typescript@5.4.5)
+      '@types/node':
+        specifier: ^20.11.20
+        version: 20.19.14
+      eslint:
+        specifier: ^9.12.0
+        version: 9.35.0(jiti@2.5.1)
+      keq:
+        specifier: workspace:*
+        version: link:../keq
+      typescript:
+        specifier: 5.4.5
+        version: 5.4.5
+
 packages:
 
   '@apidevtools/json-schema-ref-parser@11.7.2':
