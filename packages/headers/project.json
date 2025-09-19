@@ -6,7 +6,6 @@
 
       "options": {
         "deleteOutputPath": true,
-        "useLegacyTypescriptPlugin": false,
         "format": ["esm", "cjs"],
         "main": "./src/index.ts",
         "tsConfig": "./tsconfig.lib.json",

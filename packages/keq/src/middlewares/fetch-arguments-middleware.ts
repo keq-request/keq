@@ -26,7 +26,7 @@ function compileBody(ctx: KeqContext): RequestInit['body'] {
   if (body === null) return 'null'
   if (typeof body === 'string') return body
   if (typeof body === 'number') return String(body)
-  if (isBuffer(body)) return body
+  if (isBuffer(body)) return body as any
   if (isBlob(body)) return body
   if (isArrayBuffer(body)) return body
   if (isReadableStream(body)) return body
