@@ -1,6 +1,6 @@
-import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options'
-import { debug } from '~/utils/debug'
-import { KeqCacheStorage } from '../keq-cache-storage'
+import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options.js'
+import { debug } from '~/utils/debug.js'
+import { KeqCacheStorage } from '../keq-cache-storage.js'
 
 
 export abstract class InternalStorage extends KeqCacheStorage {

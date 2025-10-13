@@ -1,5 +1,5 @@
 import { Promisable } from 'type-fest'
-import { CacheEntry } from '~/cache-entry/cache-entry'
+import { CacheEntry } from '~/cache-entry/cache-entry.js'
 
 
 export abstract class KeqCacheStorage {

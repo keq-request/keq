@@ -3,7 +3,9 @@
   "compilerOptions": {
     "preserveWatchOutput": true,
     "resolveJsonModule": false,
-    "declaration": false
+    "declaration": false,
+    "module": "ES2020",
+    "moduleResolution": "bundler"
   },
   "include": ["./src/**/*.ts", "./src/**/*.hbs", "./global.d.ts"],
   "exclude": ["./src/**/*.spec.ts", "dist"]

@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals'
 import { OpenAPIV3 } from 'openapi-types'
 import { compile } from '~/compile-openapi'
 import * as swagger from '../swagger.json'
-import { FileNamingStyle } from '~/types/file-naming-style'
+import { FileNamingStyle } from '~/constants/file-naming-style'
 import { disinfect } from '~/utils/disinfect'
 
 

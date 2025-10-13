@@ -1,0 +1,91 @@
+import * as R from 'ramda'
+import { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { ModuleDefinition } from './module-definition'
+import { isKeywords } from '~/utils/is-keywords'
+import { isReservedWord } from '~/utils/is-reserved-word'
+import { ApiDocumentV3_1 } from './api-document_v3_1'
+import { JSONPath } from 'jsonpath-plus'
+import { SchemaDefinition } from './schema-definition'
+
+
+export class OperationDefinition {
+  readonly module: ModuleDefinition
+
+  readonly operationId: string
+  readonly method: string
+  readonly pathname: string
+  readonly operation: OpenAPIV3_1.OperationObject
+  readonly document: ApiDocumentV3_1
+
+  constructor(args: {
+    method: string
+    pathname: string
+    operation: OpenAPIV3_1.OperationObject
+    module: ModuleDefinition
+    document: ApiDocumentV3_1
+  }) {
+    this.module = args.module
+    this.method = args.method.toLowerCase()
+    this.pathname = args.pathname
+    this.document = args.document
+    this.operationId = this.formatOperationId(args.method, args.pathname, args.operation)
+
+    this.operation = {
+      ...args.operation,
+      operationId: this.operationId,
+    }
+  }
+
+  private formatOperationId(method: string, pathname: string, operation: OpenAPIV3_1.OperationObject): string {
+    const operationId = operation.operationId
+
+    if (
+      operationId &&
+      operationId !== 'index' &&
+      !isKeywords(operationId) &&
+      !isReservedWord(operationId)
+    ) {
+      return operationId
+    }
+
+    return `${method}_${pathname}`
+      .replace(/\//g, '_')
+      .replace(/-/g, '_')
+      .replace(/:/g, '$$')
+      .replace(/{(.+)}/, '$$$1')
+  }
+
+  getDependencies(): SchemaDefinition[] {
+    const refs = R.uniq([
+      ...JSONPath<string>({
+        path: '$.requestBody.content..schema..$ref',
+        json: this.operation,
+      }),
+      ...JSONPath<string>({
+        path: '$.responses..content..schema..$ref',
+        json: this.operation,
+      }),
+      ...JSONPath<string>({
+        path: '$.parameters..schema..$ref',
+        json: this.operation,
+      }),
+    ])
+
+    const dependencies = refs
+      .filter((ref) => typeof ref === 'string' && ref)
+      .map((ref) => {
+        const schemaDefinition = this.document.dereference(ref)
+        if (schemaDefinition) return schemaDefinition
+
+        return new SchemaDefinition({
+          id: ref,
+          name: 'unknown',
+          schema: {},
+          module: this.module,
+          document: this.document,
+        })
+      })
+
+    return dependencies
+  }
+}

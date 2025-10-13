@@ -10,8 +10,7 @@
         "main": "./src/index.ts",
         "tsConfig": "./tsconfig.lib.json",
         "outputPath": "./dist",
-        "additionalEntryPoints": ["./src/cli.ts"],
-        "rollupConfig": "packages/cli/rollup.config.js"
+        "additionalEntryPoints": ["./src/cli.ts"]
       }
     }
   }

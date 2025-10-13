@@ -1,6 +1,6 @@
-import { KeqCacheEvents } from './keq-cache-events'
-import { KeqCacheStrategy } from './keq-cache-strategy'
-import { KeqCacheKey } from './keq-cache-key'
+import { KeqCacheEvents } from './keq-cache-events.js'
+import { KeqCacheStrategy } from './keq-cache-strategy.js'
+import { KeqCacheKey } from './keq-cache-key.js'
 
 
 export interface KeqCacheOption extends KeqCacheEvents {

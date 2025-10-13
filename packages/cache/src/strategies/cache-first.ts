@@ -1,6 +1,6 @@
 import { createResponseProxy } from 'keq'
-import { CacheEntry } from '~/cache-entry'
-import { KeqCacheStrategy } from '~/types/keq-cache-strategy'
+import { CacheEntry } from '~/cache-entry/index.js'
+import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
 
 
 export const cacheFirst: KeqCacheStrategy = function (opts) {

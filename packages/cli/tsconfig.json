@@ -8,9 +8,9 @@
     "noEmitOnError": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "module": "ESNext",
-    "target": "ESNext",
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "target": "esnext",
     "baseUrl": "./",
     "rootDir": "./",
     "lib": ["DOM", "Es2015.Proxy", "ESNext", "DOM.Iterable"],
@@ -19,6 +19,7 @@
       "~~/*": ["./*"]
     }
   },
+  "exclude": ["./src/**/*.spec.ts", "dist"],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"

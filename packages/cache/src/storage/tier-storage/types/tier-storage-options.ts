@@ -1,7 +1,7 @@
-import { MemoryStorageOptions } from '~/storage/memory-storage/types/memory-storage-options'
-import { IndexedDbStorageOptions } from '~/storage/indexed-db-storage/types/indexed-db-storage-options'
-import { MemoryStorage } from '~/storage/memory-storage/memory-storage'
-import { IndexedDBStorage } from '~/storage/indexed-db-storage/indexed-db-storage'
+import { MemoryStorageOptions } from '~/storage/memory-storage/types/memory-storage-options.js'
+import { IndexedDbStorageOptions } from '~/storage/indexed-db-storage/types/indexed-db-storage-options.js'
+import { MemoryStorage } from '~/storage/memory-storage/memory-storage.js'
+import { IndexedDBStorage } from '~/storage/indexed-db-storage/indexed-db-storage.js'
 
 /**
  * @en Configuration options for TierStorage

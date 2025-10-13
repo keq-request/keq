@@ -1,4 +1,4 @@
-import { KeqCacheStrategy } from '~/types/keq-cache-strategy'
+import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
 import { StrategyOptions } from '~/types/strategies-options.js'
 
 

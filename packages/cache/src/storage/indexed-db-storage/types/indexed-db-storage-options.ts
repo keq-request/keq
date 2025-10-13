@@ -1,5 +1,5 @@
-import { Eviction } from '~/constants/eviction.enum'
-import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options'
+import { Eviction } from '~/constants/eviction.enum.js'
+import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options.js'
 
 
 export interface IndexedDbStorageOptions extends InternalStorageOptions {
