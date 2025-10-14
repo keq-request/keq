@@ -1,11 +1,17 @@
 import { ListrTask } from 'listr2'
-import { Context } from '~/types/context'
+import { TaskContext } from '~/tasks/types/task-context.js'
 import { Debugger } from '~/utils/debugger'
 
+interface ValidateTaskOptions {
+  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
+  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
+}
 
-export function createValidateTask(): ListrTask<Context> {
+export function createValidateTask(options?: ValidateTaskOptions): ListrTask<TaskContext> {
   return {
     title: 'Validate',
+    enabled: options?.enabled,
+    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.downloaded) throw new Error('Please run download task first.')
@@ -19,7 +25,7 @@ export function createValidateTask(): ListrTask<Context> {
       }
 
       return task.newListr(
-        downloadedDocuments.map((document): ListrTask<Context> => ({
+        downloadedDocuments.map((document): ListrTask<TaskContext> => ({
           title: document.module.name,
           task: async (ctx, task) => {
             const { valid, errors } = await document.validate()

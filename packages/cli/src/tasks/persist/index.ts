@@ -1,12 +1,22 @@
 import * as path from 'path'
 import * as fs from 'fs-extra'
 import { ListrTask } from 'listr2'
-import { Context } from '~/types/context'
+import { TaskContext } from '~/tasks/types/task-context.js'
 
 
-export function createPersistTask(): ListrTask<Context> {
+interface PersistTaskOptions {
+  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
+  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
+
+  persistIgnore?: boolean
+  persistArtifacts?: boolean
+}
+
+function createPersistArtifactTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
   return {
-    title: 'Persist',
+    title: 'Write files',
+    enabled: options?.persistArtifacts,
+    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.compiled) throw new Error('Please run compile task first.')
@@ -30,5 +40,40 @@ export function createPersistTask(): ListrTask<Context> {
         task.output = `Persisted ${completed}/${total} files`
       }))
     },
+  }
+}
+
+function createPersistIgnoreTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Update .keqignore',
+    enabled: options?.persistIgnore,
+    skip: options?.skip,
+    task: async (context, task) => {
+      if (!context.setup) throw new Error('Please run setup task first.')
+
+      const matcher = context.setup.matcher
+      await matcher.write('.keqignore')
+    },
+  }
+}
+
+
+export function createPersistTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Persist',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: async (context, task) => task.newListr(
+      [
+        createPersistArtifactTask(options),
+        createPersistIgnoreTask(options),
+      ],
+      {
+        concurrent: true,
+        rendererOptions: {
+          collapseSubtasks: true,
+        },
+      },
+    ),
   }
 }

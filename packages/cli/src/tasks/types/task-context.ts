@@ -1,14 +1,13 @@
 import { ApiDocument } from '~/tasks/utils/api-document'
-import { CliOptions } from './cli-options'
-import { RuntimeConfig } from './runtime-config'
 import { ApiDocumentV3_1 } from '~/tasks/utils/api-document_v3_1'
 import { Artifact } from '~/tasks/utils/artifact'
+import { RuntimeConfig } from '~/types/runtime-config'
+import { IgnoreMatcher } from '~/utils/ignore-matcher'
 
-export interface Context {
-  cli?: CliOptions
-
+export interface TaskContext {
   setup?: {
     rc: RuntimeConfig
+    matcher: IgnoreMatcher
   }
 
   downloaded?: {

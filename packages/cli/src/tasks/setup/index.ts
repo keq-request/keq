@@ -1,29 +1,32 @@
 import * as R from 'ramda'
 import * as fs from 'fs-extra'
+import path from 'path'
 import chalk from 'chalk'
 import { CosmiconfigResult } from 'cosmiconfig/dist/types'
 import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
-import { CliOptions } from '~/types/cli-options.js'
 import { ListrTask } from 'listr2'
 import { RuntimeConfig } from '~/types/runtime-config.js'
-import { Context } from '~/types/context'
+import { validateModules } from './utils/validate-modules'
+import { IgnoreMatcher } from '../../utils/ignore-matcher'
+import { TaskContext } from '../types/task-context'
 
 
-export interface ConfigProcessorOptions {
-  cli?: CliOptions
+export interface SetupTaskOptions {
+  config?: string
+  debug?: boolean
+  tolerant?: boolean
+  modules?: string[]
 }
 
 const explore = cosmiconfig('keq')
 
-export function createSetupTask(): ListrTask<Context> {
+export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContext> {
   return {
     title: 'Setup',
     task: async (context, task) => {
-      const cli = context.cli
-
-      const result: CosmiconfigResult = cli?.config
-        ? await explore.load(cli.config)
+      const result: CosmiconfigResult = options?.config
+        ? await explore.load(options.config)
         : await explore.search()
 
       if (!result || ('isEmpty' in result && result.isEmpty)) {
@@ -38,29 +41,48 @@ export function createSetupTask(): ListrTask<Context> {
 
       const rc = Value.Default(RuntimeConfig, result.config) as RuntimeConfig
 
-      if (cli?.debug) {
+      validateModules(rc.modules)
+
+      if (options?.debug) {
         await fs.ensureDir('.keq')
         rc.debug = true
       }
 
-      if (cli?.tolerant) {
+      if (options?.tolerant) {
         rc.tolerant = true
-      }
-
-      if (cli?.module) {
-        const notExistModules = cli.module.filter((moduleName) => !(moduleName in rc.modules))
-        if (notExistModules.length) {
-          throw new Error(`Cannot find module(s) ${notExistModules.join(', ')} in config file.`)
-        }
-
-        rc.modules = R.pick(cli.module, rc.modules)
       }
 
       if (rc.request) {
         rc.request = rc.request.replace(/\.(ts|js)$/, '')
       }
 
-      context.setup = { rc }
+      let filter: IgnoreMatcher = new IgnoreMatcher([])
+      if (result.filepath) {
+        const ignoreFilepath = path.resolve(path.dirname(result.filepath), '.keqignore')
+        if (await fs.exists(ignoreFilepath)) {
+          filter = await IgnoreMatcher.read(ignoreFilepath)
+        }
+      }
+
+      if (options?.modules && options.modules.length) {
+        const notExistModules = options.modules.filter((moduleName) => !(moduleName in rc.modules))
+        if (notExistModules.length) {
+          throw new Error(`Cannot find module(s) ${notExistModules.join(', ')} in config file.`)
+        }
+
+        const ignoredModules = R.difference(R.keys(rc.modules), options.modules)
+        for (const moduleName of ignoredModules) {
+          filter.append({
+            persist: false,
+            ignore: true,
+            moduleName,
+            operationMethod: '*',
+            operationPathname: '*',
+          })
+        }
+      }
+
+      context.setup = { rc, matcher: filter }
       // return rc
     },
   }

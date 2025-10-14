@@ -1,39 +1,61 @@
-import * as R from 'ramda'
 import { ListrTask } from 'listr2'
-import { Context } from '~/types/context'
-import { OperationFilter } from '~/types/operation-filter'
-import { cliPrompt } from '../utils/cli-prompt'
+import { TaskContext } from '~/tasks/types/task-context.js'
 
 
-export function createShakingTask(): ListrTask<Context> {
+interface ShakingTaskOptions {
+  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
+  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
+
+  skipIgnoredModules?: boolean
+  skipEmptyDocuments?: boolean
+}
+
+
+export function createShakingTask(options?: ShakingTaskOptions): ListrTask<TaskContext> {
   return {
     title: 'Shaking',
+    enabled: options?.enabled,
+    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.validated) throw new Error('Please run validate task first.')
 
-      const cli = context.cli
+      const matcher = context.setup.matcher
       const documents = context.validated.documents
 
-
-      const filterMethods: string[] = R.uniq(R.map(R.toLower, <string[]>(cli?.method || [])))
-      const filterPathnames: string[] = cli?.pathname || []
-
-      let filters: OperationFilter[] = []
-
-      if (cli?.interactive) {
-        filters = await cliPrompt(documents, { methods: filterMethods, pathnames: filterPathnames })
-      } else if (!filterPathnames.length && filterMethods.length) {
-        filters = filterMethods.map((method) => ({ method }))
-      } else {
-        filters = R.xprod(filterMethods, filterPathnames)
-          .map(([method, pathname]): OperationFilter => ({ method, pathname }))
-      }
-
       context.shaken = {
-        // TODO: remove empty documents
-        documents: documents.map((document) => document.sharking(filters)),
+        documents: [],
       }
+
+      return task.newListr(
+        documents.map((document): ListrTask<TaskContext> => ({
+          title: document.module.name,
+          task: async (ctx, task) => {
+            if (options?.skipIgnoredModules && matcher.isModuleIgnored(document.module)) {
+              task.skip(`${document.module.name} module is ignored`)
+              return
+            }
+
+            const shakenDocument = document.sharking(
+              (operationDefinition) => !matcher.isOperationIgnored(operationDefinition),
+            )
+
+            if (options?.skipEmptyDocuments && shakenDocument.isEmpty()) {
+              task.skip(`${document.module.name} module is empty`)
+              return
+            }
+
+            ctx.shaken!.documents.push(shakenDocument)
+          },
+        })),
+        {
+          concurrent: true,
+          rendererOptions: {
+            collapseSubtasks: false,
+            suffixSkips: true,
+          },
+        },
+      )
     },
   }
 }

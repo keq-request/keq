@@ -1,18 +1,27 @@
 import { ListrTask } from 'listr2'
-import { Context } from '~/types/context'
+import { TaskContext } from '~/tasks/types/task-context.js'
 import { compileSchemaDefinition } from './utils/compile-schema-definition'
 import { compileOperationDefinition } from './utils/compile-operation-definition'
 
 
-export function createCompileTask(): ListrTask<Context> {
+export interface CompileTaskOptions {
+  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
+  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
+}
+
+export function createCompileTask(options?: CompileTaskOptions): ListrTask<TaskContext> {
   return {
     title: 'Compile',
+    enabled: options?.enabled,
+    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.shaken) throw new Error('Please run shaking task first.')
 
       const rc = context.setup.rc
+      const matcher = context.setup.matcher
       const documents = context.shaken.documents
+        .filter((document) => !matcher.isModuleIgnored(document.module))
 
       const schemaDefinitions = documents.flatMap((document) => document.schemas)
       const operationDefinitions = documents.flatMap((document) => document.operations)

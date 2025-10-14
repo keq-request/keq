@@ -5,7 +5,6 @@ import { SupportedMethods } from '~/constants/supported-methods'
 import { OperationDefinition } from './operation-definition'
 import { SchemaDefinition } from './schema-definition'
 import { logger } from '~/utils/logger'
-import { OperationFilter } from '~/types/operation-filter'
 import { openapiShakingSync } from '@opendoc/openapi-shaking'
 
 
@@ -67,23 +66,25 @@ export class ApiDocumentV3_1 {
     return false
   }
 
-  sharking(filters: OperationFilter[]): ApiDocumentV3_1 {
-    const isAccepted = (pathname: string, method: string): boolean => {
+  sharking(filter: (operationDefinition: OperationDefinition) => boolean): ApiDocumentV3_1 {
+    const isAccepted = (pathname: string, method: string, operation: OpenAPIV3_1.Document): boolean => {
       if (!SupportedMethods.includes(method)) return false
-      if (!filters.length) return true
 
-      return !filters.every((f) => {
-        if (f.method && method !== f.method.toLowerCase().trim()) return true
-        if (f.pathname && pathname !== f.pathname.trim()) return true
-
-        return false
+      const operationDefinition = new OperationDefinition({
+        method,
+        pathname,
+        operation,
+        module: this.module,
+        document: this,
       })
+
+      return filter(operationDefinition)
     }
 
 
     const sharkedSwagger = openapiShakingSync(
       this.swagger as any,
-      isAccepted,
+      isAccepted as any,
       { tolerant: true },
     ) as OpenAPIV3_1.Document
 
