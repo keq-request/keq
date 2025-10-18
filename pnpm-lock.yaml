@@ -87,8 +87,8 @@ importers:
         specifier: ^0.30.1
         version: 0.30.1
       type-fest:
-        specifier: ^4.27.0
-        version: 4.41.0
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@buka/eslint-config':
         specifier: ^2.1.7
@@ -184,8 +184,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       type-fest:
-        specifier: ^5.0.1
-        version: 5.0.1
+        specifier: ^5.1.0
+        version: 5.1.0
       typescript:
         specifier: 5.5.4
         version: 5.5.4
@@ -236,8 +236,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       type-fest:
-        specifier: ^4.41.0
-        version: 4.41.0
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@buka/eslint-config':
         specifier: ^2.1.7
@@ -291,8 +291,8 @@ importers:
         specifier: ^3.3.1
         version: 3.3.1
       type-fest:
-        specifier: ^4.30.2
-        version: 4.41.0
+        specifier: ^5.1.0
+        version: 5.1.0
     devDependencies:
       '@buka/eslint-config':
         specifier: ^2.1.7
@@ -5204,8 +5204,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  type-fest@5.0.1:
-    resolution: {integrity: sha512-9MpwAI52m8H6ssA542UxSLnSiSD2dsC3/L85g6hVubLSXd82wdI80eZwTWhdOfN67NlA+D+oipAs1MlcTcu3KA==}
+  type-fest@5.1.0:
+    resolution: {integrity: sha512-wQ531tuWvB6oK+pchHIu5lHe5f5wpSCqB8Kf4dWQRbOYc9HTge7JL0G4Qd44bh6QuJCccIzL3bugb8GI0MwHrg==}
     engines: {node: '>=20'}
 
   typed-array-buffer@1.0.3:
@@ -11721,7 +11721,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  type-fest@5.0.1:
+  type-fest@5.1.0:
     dependencies:
       tagged-tag: 1.0.0
 

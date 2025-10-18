@@ -3,7 +3,6 @@ import { request } from './request.js'
 
 
 test('abort flowController request', async () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
     let finished = false
 
@@ -29,7 +28,7 @@ test('abort flowController request', async () => {
             headers: {
               'content-type': 'application/json',
             },
-          }
+          },
         ))
       },
       100,
@@ -59,7 +58,6 @@ test('abort flowController request', async () => {
 })
 
 test('serial flowController request', async () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
     let finished = false
 
@@ -85,7 +83,7 @@ test('serial flowController request', async () => {
             headers: {
               'content-type': 'application/json',
             },
-          }
+          },
         ))
       },
       100,

@@ -1,7 +1,7 @@
-import { isBrowser } from '../is/is-browser.js'
+import { Validator } from '../validator/index.js'
 
-import type { KeqRoute } from '~/types/keq-route.js'
+import type { KeqRoute } from '~/router/types/keq-route.js'
 
 export function keqLocationRoute(): KeqRoute {
-  return (ctx) => isBrowser() && ctx.request.url.host === window.location.host
+  return (ctx) => Validator.isBrowser() && ctx.request.url.host === window.location.host
 }

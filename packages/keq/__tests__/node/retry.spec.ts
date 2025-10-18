@@ -1,5 +1,5 @@
 import { expect, jest, test } from '@jest/globals'
-import { KeqRetryOn } from '~~/src/index.js'
+import { KeqContext, KeqRetryOn } from '~~/src/index.js'
 import { request } from './request.js'
 
 
@@ -14,13 +14,14 @@ test('send request retry twice', async () => {
     .option('fetchAPI', mockedFetch)
     .on('retry', mockedListener)
 
-  expect(mockedFetch.mock.calls).toHaveLength(3)
-  expect(mockedListener.mock.calls).toHaveLength(2)
+  expect(mockedFetch).toBeCalledTimes(3)
+  expect(mockedListener).toBeCalledTimes(2)
+  expect(retryOn).toBeCalledTimes(2)
 
   expect(retryOn.mock.calls.length).toBe(2)
   expect(retryOn.mock.calls[0][0]).toBe(0)
   expect(retryOn.mock.calls[1][0]).toBe(1)
-  expect((retryOn.mock.calls[1][2] as any).retry?.delay).toBe(10)
+  expect((retryOn.mock.calls[1][2] as unknown as KeqContext).options.retry?.delay).toBe(10)
 })
 
 test('send request retry once', async () => {
