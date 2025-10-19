@@ -1,22 +1,27 @@
 import { expect, jest, test } from '@jest/globals'
 import { request } from './request.js'
+import { AbortException } from '~/exception/index.js'
 
 
-test('abort flowController request', async () => {
-  const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
+function createMockedFetch(millisecond: number = 0): typeof fetch {
+  return jest.fn<typeof fetch>((input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((resolve, reject) => {
     let finished = false
 
     if (init?.signal) {
+      if (init.signal.aborted) {
+        console.log(`mockedFetch(${input.toString()}): already aborted`)
+        reject(init.signal.reason || new DOMException('AbortError', 'AbortError'))
+        return
+      }
+
       const signal = init.signal
       signal.onabort = () => {
         if (finished) return
         finished = true
-        if (signal.reason) reject(signal.reason)
-        reject(new DOMException('AbortError', 'AbortError'))
+        reject(init.signal?.reason || new DOMException('AbortError', 'AbortError'))
       }
     }
 
-    // sleet 500ms
     setTimeout(
       () => {
         if (finished) return
@@ -31,78 +36,52 @@ test('abort flowController request', async () => {
           },
         ))
       },
-      100,
+      millisecond,
     )
   }))
+}
 
-  async function abortRequest(): Promise<void> {
-    try {
-      await request
-        .get('http://test.com')
-        .option('fetchAPI', mockedFetch)
-        .flowControl('abort', 'test')
-    } catch (e) {
-      expect(e).toBeInstanceOf(DOMException)
-      expect((e as DOMException).name).toBe('AbortError')
-    }
+test.only('abort flowController request', async () => {
+  const mockedFetch = createMockedFetch(500)
+  const abortListener = jest.fn()
+
+  async function sendRequest(url: string): Promise<void> {
+    await request
+      .get(url)
+      .option('fetchAPI', mockedFetch)
+      .flowControl('abort', 'test')
+      .on('abort', abortListener)
+      .end()
   }
 
-  void abortRequest()
+  let error: unknown = null
+  void sendRequest('http://test.com/1')
+    .catch((err) => error = err)
 
-  await request
-    .get('http://test.com')
-    .option('fetchAPI', mockedFetch)
-    .flowControl('abort', 'test')
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await sendRequest('http://test.com/2')
 
+  expect(error).toBeInstanceOf(AbortException)
+  expect(error).toBeInstanceOf(DOMException)
   expect(mockedFetch).toBeCalledTimes(2)
+  expect(abortListener).toBeCalledTimes(1)
 })
 
 test('serial flowController request', async () => {
-  const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
-    let finished = false
+  const mockedFetch = createMockedFetch(500)
 
-    if (init?.signal) {
-      const signal = init.signal
-      signal.onabort = () => {
-        if (finished) return
-        finished = true
-        if (signal.reason) reject(signal.reason)
-        reject(new DOMException('AbortError', 'AbortError'))
-      }
-    }
-
-    // sleet 500ms
-    setTimeout(
-      () => {
-        if (finished) return
-        finished = true
-
-        resolve(new Response(
-          JSON.stringify({ code: '200' }),
-          {
-            headers: {
-              'content-type': 'application/json',
-            },
-          },
-        ))
-      },
-      100,
-    )
-  }))
-
-  async function serialRequest(): Promise<void> {
+  async function sendRequest(): Promise<void> {
     await request
       .get('http://test.com')
       .option('fetchAPI', mockedFetch)
       .flowControl('serial', 'test')
+      .end()
   }
 
-  void serialRequest()
-
-  await request
-    .get('http://test.com')
-    .option('fetchAPI', mockedFetch)
-    .flowControl('abort', 'test')
+  const r1 = sendRequest()
+  await new Promise((resolve) => setTimeout(resolve, 50))
+  await sendRequest()
 
   expect(mockedFetch).toBeCalledTimes(2)
+  await expect(r1).rejects.not.toThrow()
 })

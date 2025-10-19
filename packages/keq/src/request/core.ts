@@ -97,7 +97,7 @@ export class Core<OUTPUT> {
       const orchestrator = new KeqMiddlewareOrchestrator(sharedContext, this.__middlewares__)
 
       if (attempt !== undefined) sharedContext.data.retry = { attempt }
-      if (attempt && attempt >= 1) sharedContext.emitter.emit('retry', sharedContext)
+      if (attempt && attempt >= 1) sharedContext.emitter.emit('retry', { context: sharedContext })
 
       let error: unknown = null
 
@@ -116,13 +116,14 @@ export class Core<OUTPUT> {
         else if (!Number.isInteger(retryTimes)) retryTimes = Math.floor(retryTimes)
       }
 
-      if (attemptWithDefault >= retryTimes) {
-        if (error) throw error
-        return sharedContext
-      }
-
-      if ((await retryOn(attemptWithDefault, error, sharedContext)) === false) {
-        if (error) throw error
+      if (
+        attemptWithDefault >= retryTimes ||
+        (await retryOn(attemptWithDefault, error, sharedContext)) === false
+      ) {
+        if (error) {
+          sharedContext.emitter.emit('error', { context: sharedContext })
+          throw error
+        }
         return sharedContext
       }
 

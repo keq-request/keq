@@ -20,7 +20,9 @@ export class KeqMiddlewareExecutor {
 
     try {
       this.status = 'pending'
+      await context.emitter.emit('middleware:before', { context })
       await this.middleware(context, next)
+      await context.emitter.emit('middleware:after', { context })
       this.status = 'fulfilled'
     } catch (error) {
       this.status = 'rejected'

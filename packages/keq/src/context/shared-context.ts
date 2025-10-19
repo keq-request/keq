@@ -12,6 +12,7 @@ import {
 } from '~/request-init/index.js'
 
 import { shallowClone } from '~/utils/shallow-clone.js'
+import { watchObject } from './utils'
 
 
 export class KeqSharedContext {
@@ -19,7 +20,7 @@ export class KeqSharedContext {
 
   private readonly __request__: KeqRequestInit
   private readonly __global__: Record<string, any>
-  private readonly __emitter__ = mitt<Omit<KeqEvents, never>>()
+  private readonly __emitter__: KeqContextEmitter = mitt<Omit<KeqEvents, never>>()
   private readonly __options__: KeqContextOptions
 
   // The properties extends by middleware
@@ -39,7 +40,13 @@ export class KeqSharedContext {
     options?: KeqContextOptions
   }) {
     this.__locationId__ = options.locationId
-    this.__request__ = new KeqRequestInit(options.request)
+
+    this.__request__ = watchObject(new KeqRequestInit(options.request), {
+      abort: (target, thisArg, argArray) => {
+        this.__emitter__.emit('abort', { context: this, reason: argArray[0] })
+      },
+    })
+
     this.__global__ = options.global
     this.__options__ = options.options ? shallowClone(options.options) : {}
   }

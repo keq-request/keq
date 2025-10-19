@@ -5,11 +5,13 @@ import { KeqMiddleware } from '~/middleware/types'
  * Send Request
  */
 export function keqFetchMiddleware(): KeqMiddleware {
-  return async function fetchMiddleware(ctx: KeqContext) {
-    ctx.emitter.emit('fetch', ctx)
-    const fetch = ctx.options.fetchAPI || globalThis.fetch
+  return async function fetchMiddleware(context: KeqContext) {
+    const fetch = context.options.fetchAPI || globalThis.fetch
 
-    const response = await fetch(...ctx.request.toFetchArguments())
-    ctx.res = response
+    context.emitter.emit('fetch:before', { context })
+    const response = await fetch(...context.request.toFetchArguments())
+    context.emitter.emit('fetch:after', { context })
+
+    context.res = response
   }
 }

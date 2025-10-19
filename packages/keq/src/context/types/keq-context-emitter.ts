@@ -4,8 +4,20 @@ import { KeqSharedContext } from '../shared-context'
 
 
 export interface KeqEvents {
-  fetch: KeqContext
-  retry: KeqSharedContext
+  retry: { context: KeqSharedContext }
+  error: { context: KeqSharedContext }
+  abort: {
+    context: KeqSharedContext
+    reason: any
+  }
+
+  timeout: { context: KeqContext }
+
+  'fetch:before': { context: KeqContext }
+  'fetch:after': { context: KeqContext }
+
+  'middleware:before': { context: KeqContext }
+  'middleware:after': { context: KeqContext }
 }
 
 export type KeqListeners = {
