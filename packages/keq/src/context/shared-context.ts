@@ -1,3 +1,4 @@
+import { klona } from 'klona/full'
 import mitt from 'mitt'
 import {
   KeqContextOptions,
@@ -38,6 +39,7 @@ export class KeqSharedContext {
     request: KeqRequestInitOptions
     global: KeqGlobal
     options?: KeqContextOptions
+    data?: KeqContextData
   }) {
     this.__locationId__ = options.locationId
 
@@ -49,6 +51,7 @@ export class KeqSharedContext {
 
     this.__global__ = options.global
     this.__options__ = options.options ? shallowClone(options.options) : {}
+    this.__data__ = options.data || {}
   }
 
   /**
@@ -120,8 +123,14 @@ export class KeqSharedContext {
     return this.__data__
   }
 
-  set data(value: KeqContextData) {
-    Object.assign(this.__data__, value)
+  clone(): KeqSharedContext {
+    return new KeqSharedContext({
+      locationId: this.__locationId__,
+      request: this.__request__.clone(),
+      global: this.__global__,
+      options: klona(this.__options__),
+      data: klona(this.__data__),
+    })
   }
 }
 

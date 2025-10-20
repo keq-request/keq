@@ -6,11 +6,28 @@
 
       "options": {
         "deleteOutputPath": true,
-        "useLegacyTypescriptPlugin": false,
         "format": ["esm", "cjs"],
         "main": "./src/index.ts",
         "tsConfig": "./tsconfig.lib.json",
+        "rollupConfig": "./packages/keq/rollup.config.js",
         "outputPath": "./dist"
+      }
+    },
+
+    "js:build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+
+      "options": {
+        "outputPath": "./packages/keq/dist",
+        "main": "./packages/keq/src/index.ts",
+        "tsConfig": "./packages/keq/tsconfig.lib.json",
+        "transformers": [
+          {
+            "name": "typescript-transform-paths/nx-transformer",
+            "options": { "afterDeclarations": true }
+          }
+        ]
       }
     },
 

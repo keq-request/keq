@@ -7,7 +7,7 @@ import { KeqMiddlewareExecutor } from './executor.js'
 export class KeqMiddlewareOrchestrator {
   status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
   context: KeqSharedContext
-  readonly executors: KeqMiddlewareExecutor[] = []
+  executors: KeqMiddlewareExecutor[] = []
 
   constructor(
     context: KeqSharedContext,
@@ -46,5 +46,15 @@ export class KeqMiddlewareOrchestrator {
       this.status = 'rejected'
       throw error
     }
+  }
+
+  fork(): KeqMiddlewareOrchestrator {
+    const context = this.context.clone()
+    const middlewares = this.executors
+      .filter((executor) => executor.status === 'idle')
+      .map((executor) => executor.middleware)
+
+    const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares)
+    return forkedOrchestrator
   }
 }

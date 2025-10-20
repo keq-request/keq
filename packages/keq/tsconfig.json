@@ -16,7 +16,11 @@
     "paths": {
       "~/*": ["./src/*"],
       "~~/*": ["./*"]
-    }
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
   },
   "exclude": ["node_modules", "dist"],
   "include": ["**/*.ts", "eslint.config.cjs", "jest.config.ts"],

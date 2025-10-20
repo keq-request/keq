@@ -1,4 +1,4 @@
-import type { Keq, KeqMiddleware } from 'keq'
+import type { Keq, KeqContext, KeqMiddleware } from 'keq'
 import { KeqCacheOption } from './types/keq-cache-option.js'
 import { KeqCacheParameters } from './types/keq-cache-parameters.js'
 import { KeqCacheRule } from './types/keq-cache-rule.js'
@@ -11,6 +11,43 @@ declare module 'keq' {
      * [keq-cache](https://github.com/keq-request/keq-cache)
      */
     cache(option: KeqCacheOption): Keq<T>
+  }
+
+  export interface KeqEvents {
+    'cache:hit': {
+      key: string
+      response: Response
+      context: KeqContext
+    }
+    'cache:miss': {
+      key: string
+      context: KeqContext
+    }
+    // 'cache:expired': { key: string }
+
+    'cache:set': {
+      key: string
+      response: Response
+      context: KeqContext
+    }
+
+    // 'cache:update': {
+    //   key: string
+    //   newResponse: Response
+    //   oldResponse: Response
+    //   context: KeqContext
+    // }
+
+    'cache:remove': {
+      key: string
+      context: KeqContext
+    }
+
+    'cache:evict': {
+      key: string
+      response: Response
+      context: KeqContext
+    }
   }
 }
 
@@ -52,7 +89,6 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       storage,
       ttl: cOpt.ttl,
       exclude: cOpt.exclude,
-      onNetworkResponse: cOpt.onNetworkResponse,
     }
 
     await strategy(opt)(ctx, next)

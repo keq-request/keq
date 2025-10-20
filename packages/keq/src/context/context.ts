@@ -68,8 +68,4 @@ export class KeqContext {
   get data(): KeqContextData {
     return this.__orchestrator__.context.data
   }
-
-  set data(value: KeqContextData) {
-    this.__orchestrator__.context.data = value
-  }
 }

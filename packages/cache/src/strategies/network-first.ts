@@ -1,4 +1,3 @@
-import { createResponseProxy } from 'keq'
 import { CacheEntry } from '~/cache-entry/index.js'
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
 import { StrategyOptions } from '~/types/strategies-options.js'
@@ -7,32 +6,38 @@ import { StrategyOptions } from '~/types/strategies-options.js'
 export const networkFirst: KeqCacheStrategy = function (opts: StrategyOptions) {
   const { key, storage } = opts
 
-  return async function (ctx, next): Promise<void> {
+  return async function (context, next): Promise<void> {
     try {
       await next()
 
-      if (ctx.response) {
-        if (!opts.exclude || !(await opts.exclude(ctx.response))) {
-          storage.set(await CacheEntry.build({
+      if (context.response) {
+        if (!opts.exclude || !(await opts.exclude(context.response))) {
+          const entry = await CacheEntry.build({
             key: key,
-            response: ctx.response,
+            response: context.response,
+            expiredAt: undefined,
             ttl: opts.ttl,
-          }))
+          })
+
+          storage.set(entry)
+
+          context.emitter.emit('cache:set', { key, response: entry.response, context })
         }
 
-        if (opts.onNetworkResponse) {
-          const cache = await storage.get(key)
-          opts.onNetworkResponse(ctx.response.clone(), cache?.response.clone())
-        }
+        // if (opts.onNetworkResponse) {
+        //   const cache = await storage.get(key)
+        //   opts.onNetworkResponse(ctx.response.clone(), cache?.response.clone())
+        // }
       }
     } catch (err) {
       const cache = await storage.get(key)
-      if (!cache) throw err
+      if (!cache) {
+        context.emitter.emit('cache:miss', { key, context })
+        throw err
+      }
 
-      ctx.res = cache.response
-      ctx.response = createResponseProxy(cache.response)
-      ctx.metadata.entryNextTimes = 1
-      ctx.metadata.outNextTimes = 1
+      context.emitter.emit('cache:hit', { key, response: cache.response, context })
+      context.res = cache.response
     }
   }
 }

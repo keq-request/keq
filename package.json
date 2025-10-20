@@ -50,8 +50,10 @@
     "nx": "21.5.2",
     "rollup": "^4.14.0",
     "rollup-plugin-string": "^3.0.0",
+    "rollup-plugin-typescript-paths": "^1.5.0",
     "ts-jest": "^29.4.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript-transform-paths": "^3.5.5"
   },
   "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
   "engines": {

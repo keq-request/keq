@@ -4,11 +4,11 @@ import { KeqNext } from '~/middleware/types/keq-next.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 
 export class KeqMiddlewareExecutor {
-  name: string
+  readonly name: string
   status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
 
   constructor(
-    private readonly middleware: KeqMiddleware,
+    public readonly middleware: KeqMiddleware,
   ) {
     this.name = middleware.__keqMiddlewareName__ || middleware.name
   }
@@ -28,5 +28,11 @@ export class KeqMiddlewareExecutor {
       this.status = 'rejected'
       throw error
     }
+  }
+
+  fork(): KeqMiddlewareExecutor {
+    const executor = new KeqMiddlewareExecutor(this.middleware)
+    executor.status = this.status
+    return executor
   }
 }
