@@ -16,13 +16,14 @@
   ],
   "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
-  "main": "dist/index.js",
-  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "exports": {
-    "require": "./dist/index.cjs.js",
-    "import": "./dist/index.esm.js",
-    "types": "./dist/index.d.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
   },
   "homepage": "https://github.com/keq-request/keq#readme",
   "bugs": {
@@ -33,12 +34,14 @@
     "url": "git+https://github.com/keq-request/keq.git"
   },
   "scripts": {
-    "build": "nx rollup:build",
-    "test": "nx jest:test",
-    "test:update": "nx jest:test -u"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:update": "jest -u"
   },
   "dependencies": {
     "fastq": "^1.17.1",
+    "klona": "^2.0.6",
     "minimatch": "^9.0.4",
     "mitt": "^3.0.1",
     "qs": "^6.13.1",
@@ -50,9 +53,7 @@
     "@types/clone": "^2.1.4",
     "@types/minimatch": "^5.1.2",
     "@types/node": "^20.14.1",
-    "@types/qs": "^6.9.17",
-    "eslint": "^9.13.0",
-    "typescript": "5.4.5"
+    "@types/qs": "^6.9.17"
   },
   "engines": {
     "node": ">=20.0.0"

@@ -1,47 +1,31 @@
-import { createResponseProxy } from 'keq'
-import { CacheEntry } from '~/cache-entry/index.js'
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
+import { cacheContext } from './utils'
 
 
 export const cacheFirst: KeqCacheStrategy = function (opts) {
-  const { storage, key, onNetworkResponse } = opts
+  const { storage, key } = opts
 
-  return async function (ctx, next): Promise<void> {
+  return async function (context, next): Promise<void> {
     const cache = await storage.get(key)
-    let cacheResponseProxy: Response | undefined
 
     if (cache) {
       // hit cache
-
-      // Create a Response that can be consumed multiple time
-      cacheResponseProxy = createResponseProxy(cache?.response)
-
-      ctx.res = cache.response
-      ctx.response = cacheResponseProxy
-
-      // Avoid next function not called warning
-      ctx.metadata.entryNextTimes = 1
-      ctx.metadata.outNextTimes = 1
-
+      context.emitter.emit('cache:hit', { key, response: cache.response, context })
+      context.res = cache.response
       return
     }
 
+    context.emitter.emit('cache:miss', { key, context })
+
     await next()
-
-    if (ctx.response) {
-      if (!opts.exclude || !(await opts.exclude(ctx.response))) {
-        // Set cache if not excluded
-        storage.set(await CacheEntry.build({
-          key: key,
-          response: ctx.response,
-          expiredAt: undefined,
-          ttl: opts.ttl,
-        }))
-      }
-
-      if (onNetworkResponse) {
-        onNetworkResponse(ctx.response.clone(), cacheResponseProxy?.clone())
-      }
+    const entry = await cacheContext(opts, context)
+    if (entry) {
+      context.emitter.emit('cache:update', {
+        key,
+        oldResponse: undefined,
+        newResponse: entry.response,
+        context,
+      })
     }
   }
 }

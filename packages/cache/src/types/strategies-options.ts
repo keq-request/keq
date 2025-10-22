@@ -1,8 +1,7 @@
 import { KeqCacheStorage } from '~/storage/keq-cache-storage.js'
-import { KeqCacheEvents } from './keq-cache-events.js'
 
 
-export interface StrategyOptions extends KeqCacheEvents {
+export interface StrategyOptions {
   key: string
 
   /**

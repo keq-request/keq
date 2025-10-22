@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2'
-import { TaskContext } from '../types/task-context'
-import { selectOperationDefinitions } from './utils/select-operation-definitions'
-import { IgnoreMode } from '../types/ignore-mode'
+import { TaskContext } from '../types/task-context.js'
+import { selectOperationDefinitions } from './utils/select-operation-definitions.js'
+import { IgnoreMode } from '../types/ignore-mode.js'
 
 interface InteractiveTaskOptions {
   enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)

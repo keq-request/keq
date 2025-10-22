@@ -1,3 +1,4 @@
+import { CacheEntry } from '~/cache-entry/index.js'
 import { BaseIndexedDBStorage } from './base-indexed-db-storage.js'
 import { IndexedDbStorageOptions } from './types/indexed-db-storage-options.js'
 
@@ -5,6 +6,22 @@ import { IndexedDbStorageOptions } from './types/indexed-db-storage-options.js'
 export class TTLIndexedDBStorage extends BaseIndexedDBStorage {
   constructor(options?: IndexedDbStorageOptions) {
     super(options)
+  }
+
+  async get(key: string): Promise<CacheEntry | undefined> {
+    const entry = await super.get(key)
+    this.__onCacheGet__?.({ key })
+    return entry
+  }
+
+  async set(value: CacheEntry): Promise<void> {
+    await super.set(value)
+    this.__onCacheSet__?.({ key: value.key })
+  }
+
+  async remove(key: string): Promise<void> {
+    await super.remove(key)
+    this.__onCacheRemove__?.({ key })
   }
 
   async evict(expectSize: number): Promise<boolean> {
@@ -45,6 +62,7 @@ export class TTLIndexedDBStorage extends BaseIndexedDBStorage {
 
     await this.__remove__(tx, keys)
     await tx.done
+    await this.__onCacheEvict__?.({ keys })
     return true
   }
 }

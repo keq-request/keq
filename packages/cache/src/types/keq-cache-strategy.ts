@@ -1,7 +1,7 @@
-import { KeqContext, KeqNext } from 'keq'
+import { KeqExecutionContext, KeqNext } from 'keq'
 import { StrategyOptions } from './strategies-options.js'
 
 
 export interface KeqCacheStrategy {
-  (options: StrategyOptions): (ct: KeqContext, next: KeqNext) => Promise<void>
+  (options: StrategyOptions): (context: KeqExecutionContext, next: KeqNext) => Promise<void>
 }

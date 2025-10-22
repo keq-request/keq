@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2'
-import { IgnoreMatcherRule } from '~/utils/ignore-matcher'
-import { TaskContext } from '../types/task-context'
-import { IgnoreMode } from '../types/ignore-mode'
+import { IgnoreMatcherRule } from '~/utils/ignore-matcher.js'
+import { TaskContext } from '../types/task-context.js'
+import { IgnoreMode } from '../types/ignore-mode.js'
 
 
 export interface AppendIgnoreRulesTaskOptions {

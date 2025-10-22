@@ -1,8 +1,8 @@
-import { KeqContext } from '~/context/context.js'
+import { KeqExecutionContext } from '~/context/execution-context.js'
 import type { KeqNext } from './keq-next.js'
 
 
 export interface KeqMiddleware {
-  (ctx: KeqContext, next: KeqNext): Promise<void>
+  (ctx: KeqExecutionContext, next: KeqNext): Promise<void>
   __keqMiddlewareName__?: string
 }

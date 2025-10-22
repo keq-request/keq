@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import { jsonSchemaRenderer } from '~/renderer/json-schema/index.js'
-import { Artifact } from '~/tasks/utils/artifact'
-import { SchemaDefinition } from '~/tasks/utils/schema-definition'
+import { Artifact } from '~/tasks/utils/artifact.js'
+import { SchemaDefinition } from '~/tasks/utils/schema-definition.js'
 
 
 interface CompileProcessorOptions {

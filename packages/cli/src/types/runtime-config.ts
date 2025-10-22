@@ -1,6 +1,6 @@
 import { Static, Type } from '@sinclair/typebox'
-import { OperationIdFactory } from './operation-id-factory'
-import { FileNamingStyle } from '../constants/file-naming-style'
+import { OperationIdFactory } from './operation-id-factory.js'
+import { FileNamingStyle } from '../constants/file-naming-style.js'
 
 
 export const RuntimeConfig = Type.Object({

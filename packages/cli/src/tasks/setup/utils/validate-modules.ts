@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import isURL from 'validator/lib/isURL'
+import { isURL } from 'validator'
 
 
 export function validateModules(modules: Record<string, string>): void {

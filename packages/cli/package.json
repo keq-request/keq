@@ -1,10 +1,10 @@
 {
+  "type": "module",
   "name": "keq-cli",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "bin": "dist/cli.cjs.js",
-  "description": "Transform Swagger 3.0 to the function that send request by keq",
+  "bin": "dist/cli.js",
+  "description": "Transform Swagger/OpenAPI to the function that send request by keq",
   "version": "5.0.0-alpha.6",
   "engines": {
     "node": ">=18.0.0"
@@ -22,6 +22,7 @@
     "cli",
     "command",
     "swagger",
+    "openapi",
     "request"
   ],
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
@@ -31,9 +32,10 @@
   },
   "homepage": "https://github.com/keq-request/keq#readme",
   "scripts": {
-    "build": "nx rollup:build",
-    "test": "nx jest:test",
-    "test:update": "nx jest:test --updateSnapshot"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:update": "jest -u"
   },
   "devDependencies": {
     "@buka/eslint-config": "^2.1.7",
@@ -41,11 +43,8 @@
     "@types/node": "^20.16.7",
     "@types/ramda": "^0.30.2",
     "@types/swagger2openapi": "^7.0.4",
-    "cpx2": "^7.0.1",
-    "eslint": "^9.11.1",
     "globals": "^15.9.0",
-    "keq": "workspace:*",
-    "typescript-transform-paths": "^3.5.1"
+    "keq": "workspace:*"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "^10.1.0",
@@ -71,7 +70,6 @@
     "swagger-fix": "^1.0.5",
     "ts-custom-error": "^3.3.1",
     "type-fest": "^5.1.0",
-    "typescript": "5.5.4",
     "valid-url": "^1.0.9",
     "validator": "^13.15.15",
     "word-wrap": "^1.2.5"

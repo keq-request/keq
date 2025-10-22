@@ -1,7 +1,7 @@
-import { isReferenceObject } from '../utils/is-reference-object'
-import { generateSchema, indent } from '../utils/generate-schema'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { OperationDefinition } from '~/tasks/utils/operation-definition'
+import { isReferenceObject } from '../utils/is-reference-object.js'
+import { generateSchema, indent } from '../utils/generate-schema.js'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import * as changeCase from 'change-case'
 
 

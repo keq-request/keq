@@ -1,5 +1,5 @@
 import type { Emitter } from 'mitt'
-import { KeqContext } from '../context'
+import { KeqExecutionContext } from '../execution-context'
 import { KeqSharedContext } from '../shared-context'
 
 
@@ -11,13 +11,13 @@ export interface KeqEvents {
     reason: any
   }
 
-  timeout: { context: KeqContext }
+  timeout: { context: KeqExecutionContext }
 
-  'fetch:before': { context: KeqContext }
-  'fetch:after': { context: KeqContext }
+  'fetch:before': { context: KeqExecutionContext }
+  'fetch:after': { context: KeqExecutionContext }
 
-  'middleware:before': { context: KeqContext }
-  'middleware:after': { context: KeqContext }
+  'middleware:before': { context: KeqExecutionContext }
+  'middleware:after': { context: KeqExecutionContext }
 }
 
 export type KeqListeners = {

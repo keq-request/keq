@@ -214,14 +214,9 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
       }
 
       await this.__remove__(tx, expiredKeys)
-
-      // await Promise.all([
-      //   ...expiredKeys.map((key) => metadataStore.delete(key)),
-      //   ...expiredKeys.map((key) => responseStore.delete(key)),
-      //   ...expiredKeys.map((key) => visitsStore.delete(key)),
-      // ])
-
       await tx.done
+
+      this.__onCacheExpired__?.({ keys: expiredKeys })
     } catch (error) {
       return
     }

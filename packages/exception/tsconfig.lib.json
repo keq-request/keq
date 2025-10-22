@@ -1,10 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "preserveWatchOutput": true,
-    "resolveJsonModule": false,
-    "declaration": false
+    "rootDir": "./src",
+    "outDir": "./dist"
   },
-  "include": ["./src/**/*.ts", "./src/**/*.hbs", "./global.d.ts"],
-  "exclude": ["./src/**/*.spec.ts", "dist"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "./__tests__/**/*.ts"]
 }

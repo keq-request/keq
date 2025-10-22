@@ -1,6 +1,6 @@
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
-import { Debugger } from '~/utils/debugger'
+import { Debugger } from '~/utils/debugger.js'
 
 interface ValidateTaskOptions {
   enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)

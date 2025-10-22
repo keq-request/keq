@@ -1,10 +1,16 @@
 import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqRequestInit } from '~/request-init/index.js'
 import { KeqOrchestratorContext } from './orchestrator-context.js'
-import type { KeqContextData, KeqContextEmitter, KeqContextOptions, KeqGlobal } from './types/index.js'
+import type {
+  KeqContext,
+  KeqContextData,
+  KeqContextEmitter,
+  KeqContextOptions,
+  KeqGlobal,
+} from './types/index.js'
 
 
-export class KeqContext {
+export class KeqExecutionContext implements KeqContext {
   private readonly __orchestrator__: KeqMiddlewareOrchestrator
   private readonly __orchestrator_context__: KeqOrchestratorContext
 
@@ -67,9 +73,5 @@ export class KeqContext {
   // The properties extends by middleware
   get data(): KeqContextData {
     return this.__orchestrator__.context.data
-  }
-
-  set data(value: KeqContextData) {
-    this.__orchestrator__.context.data = value
   }
 }

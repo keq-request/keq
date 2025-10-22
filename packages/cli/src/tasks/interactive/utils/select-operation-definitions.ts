@@ -1,6 +1,6 @@
 import { ListrTaskWrapper } from 'listr2'
-import { OperationDefinition } from '../../utils/operation-definition'
-import { TaskContext } from '../../types/task-context'
+import { OperationDefinition } from '../../utils/operation-definition.js'
+import { TaskContext } from '../../types/task-context.js'
 import { select } from 'inquirer-select-pro'
 import { ListrInquirerPromptAdapter } from '@listr2/prompt-adapter-inquirer'
 

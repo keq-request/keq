@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals'
-import { OpenAPIV3, OpenAPIV3_1 } from '@scalar/openapi-types'
-import { dereferenceOperation } from './dereference-operation'
+import type { OpenAPIV3, OpenAPIV3_1 } from '@scalar/openapi-types'
+import { dereferenceOperation } from './dereference-operation.js'
 
 
 test('dereferenceOperation', async () => {

@@ -1,3 +1,4 @@
+import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { BaseMemoryStorage } from './base-memory-storage.js'
 import { MemoryStorageOptions } from './types/memory-storage-options.js'
 
@@ -7,16 +8,21 @@ export class LFUMemoryStorage extends BaseMemoryStorage {
     super(options)
   }
 
-  // protected free(arr: CacheEntry[], size: number): void {
-  //   let freedSize = 0
-  //   arr.sort((a, b) => b.visitCount - a.visitCount)
+  get(key: string): CacheEntry | undefined {
+    const entry = super.get(key)
+    this.__onCacheGet__?.({ key })
+    return entry
+  }
 
-  //   while (freedSize < size && arr.length) {
-  //     const item = arr.pop()!
-  //     freedSize += item.size
-  //     this.remove(item.key)
-  //   }
-  // }
+  set(value: CacheEntry): void {
+    super.set(value)
+    this.__onCacheSet__?.({ key: value.key })
+  }
+
+  remove(key: string): void {
+    super.remove(key)
+    this.__onCacheRemove__?.({ key })
+  }
 
   protected evict(expectSize: number): boolean {
     if (expectSize > this.__size__) {
@@ -35,11 +41,15 @@ export class LFUMemoryStorage extends BaseMemoryStorage {
         return bVisitCount - aVisitCount
       })
 
+    const keys: string[] = []
     while (deficitSize > 0 && entries.length) {
       const entry = entries.pop()!
       deficitSize -= entry.size
-      this.remove(entry.key)
+      keys.push(entry.key)
     }
+
+    this.__remove__(keys)
+    this.__onCacheEvict__?.({ keys })
 
     return true
   }

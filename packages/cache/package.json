@@ -8,12 +8,19 @@
   ],
   "license": "MIT",
   "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "main": "dist/index.js",
   "exports": {
-    "require": "./dist/index.cjs.js",
-    "import": "./dist/index.esm.js"
+    ".": {
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      }
+    }
   },
   "homepage": "https://github.com/keq-request/keq#readme",
   "bugs": {
@@ -24,18 +31,18 @@
     "url": "git+https://github.com/keq-request/keq.git"
   },
   "scripts": {
-    "build": "nx rollup:build",
-    "test": "nx jest:test"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:update": "jest --updateSnapshot"
   },
   "devDependencies": {
     "@buka/eslint-config": "^2.1.7",
     "@types/node": "^20.17.6",
     "@types/ramda": "^0.30.2",
-    "eslint": "^9.15.0",
     "fake-indexeddb": "^6.0.0",
     "isomorphic-fetch": "^3.0.0",
-    "keq": "workspace:*",
-    "typescript": "5.4.5"
+    "keq": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0"

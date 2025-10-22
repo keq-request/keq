@@ -1,26 +1,27 @@
+import { klona } from 'klona/full'
 import mitt from 'mitt'
 import {
+  KeqRequestInit,
+  KeqRequestInitOptions,
+} from '~/request-init/index.js'
+import { shallowClone } from '~/utils/shallow-clone.js'
+import { watchObject } from './utils'
+import type {
+  KeqContext,
   KeqContextOptions,
   KeqContextEmitter,
   KeqContextData,
   KeqGlobal,
   KeqEvents,
-} from '~/context/index.js'
-import {
-  KeqRequestInit,
-  KeqRequestInitOptions,
-} from '~/request-init/index.js'
-
-import { shallowClone } from '~/utils/shallow-clone.js'
-import { watchObject } from './utils'
+} from './types/index.js'
 
 
-export class KeqSharedContext {
+export class KeqSharedContext implements KeqContext {
   private readonly __locationId__?: string
 
   private readonly __request__: KeqRequestInit
   private readonly __global__: Record<string, any>
-  private readonly __emitter__: KeqContextEmitter = mitt<Omit<KeqEvents, never>>()
+  private readonly __emitter__: KeqContextEmitter
   private readonly __options__: KeqContextOptions
 
   // The properties extends by middleware
@@ -38,6 +39,8 @@ export class KeqSharedContext {
     request: KeqRequestInitOptions
     global: KeqGlobal
     options?: KeqContextOptions
+    data?: KeqContextData
+    emitter?: KeqContextEmitter
   }) {
     this.__locationId__ = options.locationId
 
@@ -47,8 +50,10 @@ export class KeqSharedContext {
       },
     })
 
+    this.__emitter__ = options.emitter || mitt<Omit<KeqEvents, never>>()
     this.__global__ = options.global
     this.__options__ = options.options ? shallowClone(options.options) : {}
+    this.__data__ = options.data || {}
   }
 
   /**
@@ -120,8 +125,21 @@ export class KeqSharedContext {
     return this.__data__
   }
 
-  set data(value: KeqContextData) {
-    Object.assign(this.__data__, value)
+  clone(): KeqSharedContext {
+    const context =  new KeqSharedContext({
+      locationId: this.__locationId__,
+      request: this.__request__.clone(),
+      global: this.__global__,
+      options: klona(this.__options__),
+      data: klona(this.__data__),
+      emitter: this.__emitter__,
+    })
+
+    this.__emitter__.all.forEach((handler, type) => {
+      context.emitter.on(type as any, handler as any)
+    })
+
+    return context
   }
 }
 

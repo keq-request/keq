@@ -1,28 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "strict": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "noImplicitAny": false,
-    "declaration": true,
-    "noEmitOnError": true,
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "moduleResolution": "nodenext",
     "module": "nodenext",
-    "target": "esnext",
-    "baseUrl": "./",
-    "rootDir": "./",
-    "lib": ["DOM", "Es2015.Proxy", "ESNext", "DOM.Iterable"],
+    "moduleResolution": "nodenext",
+    "baseUrl": "./src",
     "paths": {
-      "~/*": ["src/*"],
-      "~~/*": ["./*"]
-    }
-  },
-  "exclude": ["./src/**/*.spec.ts", "dist"],
-  "ts-node": {
-    "compilerOptions": {
-      "module": "CommonJS"
+      "~/*": ["./*"]
     }
   }
 }
