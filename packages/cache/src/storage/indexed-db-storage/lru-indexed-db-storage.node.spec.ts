@@ -32,6 +32,8 @@ test('new IndexedDBStorage(100, 20, Eviction.LRU)', async () => {
     expect(await storage.get(`temp_${i}`)).toBeDefined()
   }
 
+  await sleep(2)
+
   for (const i of R.range(0, 9)) {
     await storage.get(`temp_${i}`)
     await sleep(2)

@@ -1,8 +1,8 @@
 import * as R from 'ramda'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { ModuleDefinition } from './module-definition'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { ModuleDefinition } from './module-definition.js'
 import { JSONPath } from 'jsonpath-plus'
-import { ApiDocumentV3_1 } from './api-document_v3_1'
+import { ApiDocumentV3_1 } from './api-document_v3_1.js'
 
 
 export class SchemaDefinition {

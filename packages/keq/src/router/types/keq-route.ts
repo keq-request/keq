@@ -1,4 +1,4 @@
-import type { KeqContext } from '../../context/index.js'
+import type { KeqExecutionContext } from '../../context/index.js'
 
 
-export type KeqRoute = (ctx: KeqContext) => Promise<boolean> | boolean
+export type KeqRoute = (ctx: KeqExecutionContext) => Promise<boolean> | boolean

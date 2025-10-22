@@ -2,14 +2,14 @@ import * as R from 'ramda'
 import * as fs from 'fs-extra'
 import path from 'path'
 import chalk from 'chalk'
-import { CosmiconfigResult } from 'cosmiconfig/dist/types'
+import { CosmiconfigResult } from 'cosmiconfig'
 import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
 import { RuntimeConfig } from '~/types/runtime-config.js'
-import { validateModules } from './utils/validate-modules'
-import { IgnoreMatcher } from '../../utils/ignore-matcher'
-import { TaskContext } from '../types/task-context'
+import { validateModules } from './utils/validate-modules.js'
+import { IgnoreMatcher } from '../../utils/ignore-matcher.js'
+import type { TaskContext } from '../types/task-context.js'
 
 
 export interface SetupTaskOptions {

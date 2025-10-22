@@ -1,10 +1,10 @@
 import * as R from 'ramda'
-import { operationTypeRenderer, typeNameFactory } from '~/renderer/operation-type'
-import { RuntimeConfig } from '~/types/runtime-config'
-import { operationRequestRenderer } from '~/renderer/operation-request'
-import { Artifact } from '~/tasks/utils/artifact'
-import { OperationDefinition } from '~/tasks/utils/operation-definition'
-import { isArtifactCompiledBy } from './compile-schema-definition'
+import { operationTypeRenderer, typeNameFactory } from '~/renderer/operation-type/index.js'
+import { RuntimeConfig } from '~/types/runtime-config.js'
+import { operationRequestRenderer } from '~/renderer/operation-request/index.js'
+import { Artifact } from '~/tasks/utils/artifact.js'
+import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
+import { isArtifactCompiledBy } from './compile-schema-definition.js'
 
 
 interface CompileProcessorOptions {

@@ -1,8 +1,9 @@
-import type { Keq, KeqMiddleware } from 'keq'
+import type { Keq, KeqMiddleware, KeqContext } from 'keq'
 import { KeqCacheOption } from './types/keq-cache-option.js'
 import { KeqCacheParameters } from './types/keq-cache-parameters.js'
 import { KeqCacheRule } from './types/keq-cache-rule.js'
 import { StrategyOptions } from './types/strategies-options.js'
+import { Exception } from 'keq'
 
 
 declare module 'keq' {
@@ -11,6 +12,26 @@ declare module 'keq' {
      * [keq-cache](https://github.com/keq-request/keq-cache)
      */
     cache(option: KeqCacheOption): Keq<T>
+  }
+
+  export interface KeqEvents {
+    'cache:hit': {
+      key: string
+      response: Response
+      context: KeqContext
+    }
+
+    'cache:miss': {
+      key: string
+      context: KeqContext
+    }
+
+    'cache:update': {
+      key: string
+      oldResponse?: Response
+      newResponse: Response
+      context: KeqContext
+    }
   }
 }
 
@@ -37,13 +58,15 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       return
     }
 
-    let key = ctx.identifier
+    let key = ctx.locationId
     if (cOpt.key) {
       if (typeof cOpt.key === 'function') key = cOpt.key(ctx)
       else key = cOpt.key
     } else if (opts?.keyFactory) {
       key = opts.keyFactory(ctx)
     }
+
+    if (!key) throw new Exception('Cache key is required')
 
     const strategy = cOpt.strategy
 
@@ -52,21 +75,8 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       storage,
       ttl: cOpt.ttl,
       exclude: cOpt.exclude,
-      onNetworkResponse: cOpt.onNetworkResponse,
     }
 
     await strategy(opt)(ctx, next)
-
-    // if (strategy === Strategy.NETWORK_FIRST) {
-    //   await networkFirst(opt)(ctx, next)
-    // } else if (strategy === Strategy.CATCH_FIRST) {
-    //   await cacheFirst(opt)(ctx, next)
-    // } else if (strategy === Strategy.STALE_WHILE_REVALIDATE) {
-    //   await staleWhileRevalidate(opt)(ctx, next)
-    // } else if (strategy === Strategy.NETWORK_ONLY) {
-    //   await networkOnly(opt)(ctx, next)
-    // } else {
-    //   throw new TypeError(`Unsupported strategy: ${String(strategy)}`)
-    // }
   }
 }

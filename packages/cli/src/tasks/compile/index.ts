@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
-import { compileSchemaDefinition } from './utils/compile-schema-definition'
-import { compileOperationDefinition } from './utils/compile-operation-definition'
+import { compileSchemaDefinition } from './utils/compile-schema-definition.js'
+import { compileOperationDefinition } from './utils/compile-operation-definition.js'
 
 
 export interface CompileTaskOptions {

@@ -1,6 +1,7 @@
 import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options.js'
 import { debug } from '~/utils/debug.js'
 import { KeqCacheStorage } from '../keq-cache-storage.js'
+import { OnCacheEvictEvent, OnCacheExpiredEvent, OnCacheGetEvent, OnCacheRemoveEvent, OnCacheSetEvent } from './types/events.js'
 
 
 export abstract class InternalStorage extends KeqCacheStorage {
@@ -11,12 +12,11 @@ export abstract class InternalStorage extends KeqCacheStorage {
   protected readonly __size__: number
   protected readonly __debug__: boolean
 
-  get __options__(): InternalStorageOptions {
-    return {
-      size: this.__size__,
-      debug: this.__debug__,
-    }
-  }
+  protected readonly __onCacheGet__?: (event: OnCacheGetEvent) => void
+  protected readonly __onCacheSet__?: (event: OnCacheSetEvent) => void
+  protected readonly __onCacheRemove__?: (event: OnCacheRemoveEvent) => void
+  protected readonly __onCacheEvict__?: (event: OnCacheEvictEvent) => void
+  protected readonly __onCacheExpired__?: (event: OnCacheExpiredEvent) => void
 
   constructor(options?: InternalStorageOptions) {
     super()
@@ -24,8 +24,14 @@ export abstract class InternalStorage extends KeqCacheStorage {
     if (options?.size && (typeof options?.size !== 'number' || options.size <= 0)) {
       throw TypeError(`Invalid size: ${String(options?.size)}`)
     }
+
     this.__size__ = options?.size ?? Infinity
     this.__debug__ = !!options?.debug
+
+    this.__onCacheGet__ = options?.onCacheGet
+    this.__onCacheSet__ = options?.onCacheSet
+    this.__onCacheRemove__ = options?.onCacheRemove
+    this.__onCacheEvict__ = options?.onCacheEvict
 
     this.debug((log) => log('Storage Created: ', this))
   }

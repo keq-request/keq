@@ -1,9 +1,9 @@
-import { KeqContext } from '~/context'
+import { KeqExecutionContext } from '~/context'
 
 
 export interface KeqFlowControlOptions {
   mode: 'abort' | 'serial'
-  signal: string | ((ctx: KeqContext) => string)
+  signal: string | ((ctx: KeqExecutionContext) => string)
 }
 
 export type KeqFlowControlMode = KeqFlowControlOptions['mode']

@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import { RuntimeConfig } from '~/types/runtime-config'
+import { RuntimeConfig } from '~/types/runtime-config.js'
 
 
 export class Debugger {

@@ -1,11 +1,11 @@
 import * as R from 'ramda'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { ModuleDefinition } from './module-definition'
-import { isKeywords } from '~/utils/is-keywords'
-import { isReservedWord } from '~/utils/is-reserved-word'
-import { ApiDocumentV3_1 } from './api-document_v3_1'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { ModuleDefinition } from './module-definition.js'
+import { isKeywords } from '~/utils/is-keywords.js'
+import { isReservedWord } from '~/utils/is-reserved-word.js'
+import { ApiDocumentV3_1 } from './api-document_v3_1.js'
 import { JSONPath } from 'jsonpath-plus'
-import { SchemaDefinition } from './schema-definition'
+import { SchemaDefinition } from './schema-definition.js'
 
 
 export class OperationDefinition {

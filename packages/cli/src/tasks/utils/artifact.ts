@@ -1,8 +1,8 @@
 import * as path from 'path'
 import * as changeCase from 'change-case'
-import { Dependency, DependencyOptions, DependencySource } from './dependency'
-import { FileNamingStyle } from '~/constants/file-naming-style'
-import { toComment } from './to-comment'
+import { Dependency, DependencyOptions, DependencySource } from './dependency.js'
+import { FileNamingStyle } from '~/constants/file-naming-style.js'
+import { toComment } from './to-comment.js'
 
 
 const HeaderComment = [

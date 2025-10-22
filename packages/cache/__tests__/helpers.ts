@@ -1,4 +1,4 @@
-import { createResponseProxy, KeqContext, KeqNext } from 'keq'
+import { KeqContext, KeqMiddleware, KeqSharedContext } from 'keq'
 import { Mock } from 'jest-mock'
 import { jest } from '@jest/globals'
 
@@ -21,39 +21,32 @@ export function createResponse(options: { size: number }): Response {
   })
 }
 
-
-export function createKeqContext(): KeqContext {
-  return {
-    metadata: {
-      finished: false,
-      entryNextTimes: 0,
-      outNextTimes: 0,
-    },
+export function createSharedContext(): KeqSharedContext {
+  return new KeqSharedContext({
     request: {
       url: new URL('http://example.com'),
       method: 'get',
-      headers: new Headers({
-        'x-insert1': 'exists1',
-      }),
+      headers: new Headers(),
       routeParams: {},
       body: {},
     },
     options: {},
     global: {},
-  } as unknown as KeqContext
+  })
 }
 
-export function createKeqNext(context: KeqContext, body: string | Error = 'Hello world'): Mock<KeqNext> {
-  const next = jest.fn(async () => {
+
+export function createFetchMiddleware(body: string | Error = 'Hello world', delay = 0): Mock<KeqMiddleware> {
+  return jest.fn(async (context: KeqContext): Promise<void> => {
     if (body instanceof Error) {
       throw body
     }
 
+    await sleep(delay)
+
     const response = new Response(body)
 
     context.res = response
-    context.response = createResponseProxy(response)
   })
-
-  return next
 }
+

@@ -1,11 +1,11 @@
-import { KeqContext } from '~/context/context.js'
+import { KeqExecutionContext } from '~/context/execution-context.js'
 import { KeqMiddleware } from '~/middleware/types'
 
 /**
  * Send Request
  */
 export function keqFetchMiddleware(): KeqMiddleware {
-  return async function fetchMiddleware(context: KeqContext) {
+  return async function fetchMiddleware(context: KeqExecutionContext) {
     const fetch = context.options.fetchAPI || globalThis.fetch
 
     context.emitter.emit('fetch:before', { context })

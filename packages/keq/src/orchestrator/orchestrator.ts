@@ -1,5 +1,5 @@
 import { Exception } from '~/exception/index.js'
-import { KeqContext, KeqSharedContext } from '~/context/index.js'
+import { KeqExecutionContext, KeqSharedContext } from '~/context/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 import { KeqMiddlewareExecutor } from './executor.js'
 
@@ -7,7 +7,7 @@ import { KeqMiddlewareExecutor } from './executor.js'
 export class KeqMiddlewareOrchestrator {
   status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
   context: KeqSharedContext
-  readonly executors: KeqMiddlewareExecutor[] = []
+  executors: KeqMiddlewareExecutor[] = []
 
   constructor(
     context: KeqSharedContext,
@@ -18,7 +18,7 @@ export class KeqMiddlewareOrchestrator {
   }
 
   private async run(): Promise<void> {
-    const context = new KeqContext(this)
+    const context = new KeqExecutionContext(this)
 
     const dispatch = async (i: number): Promise<void> => {
       if (i >= this.executors.length) {
@@ -26,7 +26,9 @@ export class KeqMiddlewareOrchestrator {
       }
 
       const executor = this.executors[i]
-      await executor.execute(context, () => dispatch(i + 1))
+      await executor.execute(context, function next() {
+        return dispatch(i + 1)
+      })
     }
 
     await dispatch(0)
@@ -46,5 +48,15 @@ export class KeqMiddlewareOrchestrator {
       this.status = 'rejected'
       throw error
     }
+  }
+
+  fork(): KeqMiddlewareOrchestrator {
+    const context = this.context.clone()
+    const middlewares = this.executors
+      .filter((executor) => executor.status === 'idle')
+      .map((executor) => executor.middleware)
+
+    const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares)
+    return forkedOrchestrator
   }
 }

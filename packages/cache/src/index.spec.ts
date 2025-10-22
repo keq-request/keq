@@ -14,7 +14,7 @@ test('cache()', async () => {
 
     rules: [{
       pattern: /\/cat/,
-      strategy: Strategy.CATCH_FIRST,
+      strategy: Strategy.CACHE_FIRST,
       ttl: 1000,
     }],
   }))

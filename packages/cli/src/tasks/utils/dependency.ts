@@ -1,6 +1,6 @@
 import * as path from 'path'
-import { Artifact } from './artifact'
-import { toComment } from './to-comment'
+import { Artifact } from './artifact.js'
+import { toComment } from './to-comment.js'
 
 export type DependencySource = string | Artifact
 

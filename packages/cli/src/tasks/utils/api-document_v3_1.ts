@@ -1,10 +1,10 @@
 import * as R from 'ramda'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { ModuleDefinition } from './module-definition'
-import { SupportedMethods } from '~/constants/supported-methods'
-import { OperationDefinition } from './operation-definition'
-import { SchemaDefinition } from './schema-definition'
-import { logger } from '~/utils/logger'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { ModuleDefinition } from './module-definition.js'
+import { SupportedMethods } from '~/constants/supported-methods.js'
+import { OperationDefinition } from './operation-definition.js'
+import { SchemaDefinition } from './schema-definition.js'
+import { logger } from '~/utils/logger.js'
 import { openapiShakingSync } from '@opendoc/openapi-shaking'
 
 

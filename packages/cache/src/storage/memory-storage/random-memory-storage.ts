@@ -1,11 +1,28 @@
 import { random } from '~/utils/random.js'
 import { BaseMemoryStorage } from './base-memory-storage.js'
 import { MemoryStorageOptions } from './types/memory-storage-options.js'
+import { CacheEntry } from '~/cache-entry/cache-entry.js'
 
 
 export class RandomMemoryStorage extends BaseMemoryStorage {
   constructor(options?: MemoryStorageOptions) {
     super(options)
+  }
+
+  get(key: string): CacheEntry | undefined {
+    const entry = super.get(key)
+    this.__onCacheGet__?.({ key })
+    return entry
+  }
+
+  set(value: CacheEntry): void {
+    super.set(value)
+    this.__onCacheSet__?.({ key: value.key })
+  }
+
+  remove(key: string): void {
+    super.remove(key)
+    this.__onCacheRemove__?.({ key })
   }
 
   protected evict(expectSize: number): boolean {
@@ -20,13 +37,17 @@ export class RandomMemoryStorage extends BaseMemoryStorage {
 
     const entries = [...this.storage.values()]
 
+    const keys : string[] = []
     while (deficitSize > 0 && entries.length) {
       const index = random(0, entries.length - 1)
       const entry = entries[index]
       deficitSize -= entry.size
       entries.splice(index, 1)
-      this.remove(entry.key)
+      keys.push(entry.key)
     }
+
+    this.__remove__(keys)
+    this.__onCacheEvict__?.({ keys })
 
     return true
   }

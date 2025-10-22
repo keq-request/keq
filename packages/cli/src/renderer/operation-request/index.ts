@@ -1,5 +1,5 @@
-import { OperationDefinition } from '~/tasks/utils/operation-definition'
-import { typeNameFactory } from '../operation-type'
+import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
+import { typeNameFactory } from '../operation-type/index.js'
 
 
 export function operationRequestRenderer(operationDefinition: OperationDefinition): string {

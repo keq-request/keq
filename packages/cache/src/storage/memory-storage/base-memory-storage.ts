@@ -48,16 +48,22 @@ export abstract class BaseMemoryStorage extends InternalStorage {
     this.debug((log) => log('Storage Size: ', this.size))
   }
 
+  __remove__(keys: string[]): void {
+    for (const key of keys) {
+      const entry = this.storage.get(key)
+      if (!entry) return
+
+      this.storage.delete(key)
+      this.visitCountRecords.delete(key)
+      this.visitTimeRecords.delete(key)
+
+      this.debug((log) => log('Entry Removed: ', entry))
+      this.debug((log) => log('Storage Size: ', this.size))
+    }
+  }
+
   remove(key: string): void {
-    const entry = this.storage.get(key)
-    if (!entry) return
-
-    this.storage.delete(key)
-    this.visitCountRecords.delete(key)
-    this.visitTimeRecords.delete(key)
-
-    this.debug((log) => log('Entry Removed: ', entry))
-    this.debug((log) => log('Storage Size: ', this.size))
+    this.__remove__([key])
   }
 
   private lastEvictExpiredTime = dayjs()
@@ -70,11 +76,15 @@ export abstract class BaseMemoryStorage extends InternalStorage {
 
     if (now.diff(this.lastEvictExpiredTime, 'second') < 1) return
 
+    const keys: string[] = []
     for (const [key, entry] of this.storage.entries()) {
       if (entry.expiredAt && now.isAfter(entry.expiredAt)) {
-        this.remove(key)
+        keys.push(key)
       }
     }
+
+    this.__remove__(keys)
+    this.__onCacheExpired__?.({ keys })
   }
 
   /**

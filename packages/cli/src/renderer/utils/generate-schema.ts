@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { isReferenceObject } from './is-reference-object.js'
 import { isMixedSchemaObject } from './is-mixed-schema-object.js'
 import { isArraySchemaObject } from './is-array-schema-object.js'
