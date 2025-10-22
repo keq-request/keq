@@ -1,91 +1,80 @@
-import { expect, jest, test } from '@jest/globals'
+import { describe, expect, test } from '@jest/globals'
 import { throwException } from './index.js'
 import { RequestException } from './exception.js'
-import { Mock } from 'node:test'
 import { createRequest } from 'keq'
+import { createMockFetch } from '~~/__tests__/helpers'
 
 
-test('throwException()', async () => {
-  const fetchAPI200 = jest.fn(async () => new Response('{}', {
-    status: 200,
-    statusText: 'Ok',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })) as unknown as Mock<typeof fetch>
-
-  const fetchAPI400 = jest.fn(async () => new Response('{"message":"error"}', {
-    status: 400,
-    statusText: 'Bad Request',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })) as unknown as Mock<typeof fetch>
-
-  const fetchAPI500 = jest.fn(async () => new Response('{"message":"error"}', {
-    status: 500,
-    statusText: 'Internal Server Error',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })) as unknown as Mock<typeof fetch>
-
-  const fetchAPIError = jest.fn(async () => {
-    throw new Error('Network Error')
-  }) as unknown as Mock<typeof fetch>
-
+describe('throwException()', () => {
   const request = createRequest()
-
-  request
-    .use(throwException(async (ctx) => {
-      if (ctx.response) {
-        if (ctx.response.status === 400) {
-          throw new RequestException(ctx.response.status, ctx.response.statusText, false)
-        } else if (ctx.response.status === 500) {
-          throw new RequestException(ctx.response.status, ctx.response.statusText)
-        }
+  request.use(throwException(async (ctx) => {
+    if (ctx.response) {
+      if (ctx.response.status === 400) {
+        throw new RequestException(ctx.response.status, ctx.response.statusText, false)
+      } else if (ctx.response.status === 500) {
+        throw new RequestException(ctx.response.status, ctx.response.statusText)
       }
-    }))
+    }
+  }))
 
-  await expect(
-    request
-      .get('https://example.com')
-      .option('fetchAPI', fetchAPI400)
-      .retry(1, 0, (attempt, error) => {
-        if (error) return true
-        return false
-      }),
-  ).rejects.toThrow(RequestException)
+  test('should handle 200 status successfully', async () => {
+    const fetchAPI = createMockFetch({ status: 200, statusText: 'Ok', body: '{}' })
 
-  await expect(
-    request
-      .get('https://example.com')
-      .option('fetchAPI', fetchAPI500)
-      .retry(1, 0, (attempt, error) => {
-        if (error) return true
-        return false
-      }),
-  ).rejects.toThrow(Error)
+    await expect(
+      request
+        .get('https://example.com')
+        .option('fetchAPI', fetchAPI)
+        .retry(1, 0, (attempt, error) => {
+          if (error) return true
+          return false
+        }),
+    ).resolves.toEqual({})
 
-  await expect(
-    request
-      .get('https://example.com')
-      .option('fetchAPI', fetchAPIError)
-      .retry(1, 0),
-  ).rejects.toThrow(Error)
+    expect(fetchAPI).toBeCalledTimes(1)
+  })
 
-  await expect(
-    request
-      .get('https://example.com')
-      .option('fetchAPI', fetchAPI200)
-      .retry(1, 0, (attempt, error) => {
-        if (error) return true
-        return false
-      }),
-  ).resolves.toEqual({})
+  test('should throw RequestException for 400 status and not retry', async () => {
+    const fetchAPI = createMockFetch({ status: 400, statusText: 'Bad Request' })
 
-  expect(fetchAPI200).toBeCalledTimes(1)
-  expect(fetchAPI400).toBeCalledTimes(1)
-  expect(fetchAPI500).toBeCalledTimes(2)
-  expect(fetchAPIError).toBeCalledTimes(2)
+    await expect(
+      request
+        .get('https://example.com')
+        .option('fetchAPI', fetchAPI)
+        .retry(1, 0, (attempt, error) => {
+          if (error) return true
+          return false
+        }),
+    ).rejects.toThrow(RequestException)
+
+    expect(fetchAPI).toBeCalledTimes(2)
+  })
+
+  test('should throw Error for 500 status and retry', async () => {
+    const fetchAPI = createMockFetch({ status: 500, statusText: 'Internal Server Error' })
+
+    await expect(
+      request
+        .get('https://example.com')
+        .option('fetchAPI', fetchAPI)
+        .retry(1, 0, (attempt, error) => {
+          if (error) return true
+          return false
+        }),
+    ).rejects.toThrow(Error)
+
+    expect(fetchAPI).toBeCalledTimes(2)
+  })
+
+  test('should throw Error for network errors and retry', async () => {
+    const fetchAPI = createMockFetch({ error: new Error('Network Error') })
+
+    await expect(
+      request
+        .get('https://example.com')
+        .option('fetchAPI', fetchAPI)
+        .retry(1, 0),
+    ).rejects.toThrow(Error)
+
+    expect(fetchAPI).toBeCalledTimes(2)
+  })
 })
