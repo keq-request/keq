@@ -35,7 +35,6 @@
     "test:update": "jest -u"
   },
   "dependencies": {
-    "ts-custom-error": "^3.3.1",
     "type-fest": "^5.1.0"
   },
   "devDependencies": {

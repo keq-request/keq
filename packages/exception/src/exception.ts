@@ -1,6 +1,6 @@
-import { CustomError } from 'ts-custom-error'
+import { Exception } from 'keq'
 
-export class RequestException extends CustomError {
+export class RequestException extends Exception {
   statusCode: number
   retry: boolean
 
