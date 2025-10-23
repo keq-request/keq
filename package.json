@@ -30,6 +30,7 @@
     "build": "nx run-many -t build"
   },
   "devDependencies": {
+    "@buka/eslint-config": "file:///Users/10009313/code/github/@buka/npm.eslint-config",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/config-rush-scopes": "^19.8.1",
