@@ -1,4 +1,5 @@
-import { Exception } from 'keq'
+import { Exception } from "./exception"
+
 
 export class RequestException extends Exception {
   statusCode: number

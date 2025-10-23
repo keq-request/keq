@@ -1,7 +1,6 @@
 import { describe, expect, test } from '@jest/globals'
 import { throwException } from './index.js'
-import { RequestException } from './exception.js'
-import { createRequest } from 'keq'
+import { createRequest, RequestException } from 'keq'
 import { createMockFetch } from '~~/__tests__/helpers'
 
 

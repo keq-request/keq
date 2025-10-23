@@ -47,6 +47,7 @@ export {
   TypeException,
   TimeoutException,
   AbortException,
+  RequestException,
 } from './exception'
 
 export {
