@@ -1,5 +1,5 @@
 import { KeqEvents, KeqListeners } from '~/context/index.js'
-import { Exception } from '~/exception/exception.js'
+import { Exception, RequestException } from '~/exception/index.js'
 import { sleep } from '~/utils/index.js'
 import { KeqRequestInit } from '~/request-init/index.js'
 import { KeqSharedContext, KeqContextOptions } from '~/context/index.js'
@@ -109,7 +109,10 @@ export class Core<OUTPUT> {
 
       const retryOn = typeof sharedContext.options.retry?.on === 'function'
         ? sharedContext.options.retry.on
-        : (attempt, error) => !!error
+        : (attempt, error) => {
+          if (error instanceof RequestException && error.retry === false) return false
+          return !!error
+        }
       let retryTimes = sharedContext.options.retry?.times || 0
       if (retryTimes) {
         if (retryTimes < 0) retryTimes = 0
