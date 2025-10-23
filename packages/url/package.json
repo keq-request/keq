@@ -39,7 +39,6 @@
     "test:update": "jest -u"
   },
   "devDependencies": {
-    "@buka/eslint-config": "^2.1.7",
     "@types/node": "^20.11.20",
     "keq": "workspace:*"
   },
