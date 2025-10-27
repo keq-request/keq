@@ -11,7 +11,7 @@ import { KeqRequestBody } from '~/request-init/index.js'
 
 import type { KeqMiddleware } from '~/middleware/index.js'
 import type { KeqRetryOn, KeqRetryDelay, KeqOptionsParameter, KeqOptionsReturnType, KeqResolveWithMode, KeqContextOptions } from '~/context/index.js'
-import type { KeqQueryObject, KeqQueryValue, CommonContentType, ShorthandContentType, ExtractFields, ExtractFiles, KeqBaseOperation, KeqOperation } from './types/index.js'
+import type { KeqQueryObject, KeqQueryValue, CommonContentType, ShorthandContentType, ExtractFields, ExtractFiles, KeqBaseOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
 
 
 /**
@@ -211,28 +211,46 @@ export class Keq<
   }
 
 
-  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: Blob | File | Buffer, filename: string): this
-  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: Blob | File | Buffer): this
-  attach(key: string, value: Blob | File | Buffer, filename: string): this
-  attach(key: string, value: Blob | File | Buffer): this
-  attach(key: string, value: Blob | File | Buffer, arg3 = 'file'): this {
-    let file: File
+  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: KeqAttachableFile, filename: string): this
+  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: KeqAttachableFile | KeqAttachableFile[]): this
+  attach(key: string, value: KeqAttachableFile, filename: string): this
+  attach(key: string, value: KeqAttachableFile | KeqAttachableFile[]): this
+  attach(key: string, value: KeqAttachableFile | KeqAttachableFile[], arg3 = 'file'): this {
+    const formData = new FormData()
 
-    if (Validator.isBlob(value)) {
-      const formData = new FormData()
-      formData.set(key, value, arg3)
-      file = formData.get(key) as File
-    } else if (Validator.isFile(value)) {
-      file = value
-    } else if (Validator.isBuffer(value)) {
-      const formData = new FormData()
-      formData.set(key, new Blob([value as any]), arg3)
-      file = formData.get(key) as File
-    } else {
-      throw new TypeException('Invalid file type for .attach()')
+    const appendFile = (file: KeqAttachableFile): void => {
+      if (Validator.isBlob(file)) {
+        formData.append(key, file, arg3)
+      } else if (Validator.isFile(file)) {
+        formData.append(key, file)
+      } else if (Validator.isBuffer(file)) {
+        formData.append(key, new Blob([file as any]), arg3)
+      } else {
+        throw new TypeException('Invalid file type for .attach()')
+      }
     }
 
-    this.requestInit.body = mergeKeqRequestBody(this.requestInit.body, { [key]: file })
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        throw new TypeException('Empty array provided to .attach() is not valid')
+      }
+
+      for (const item of value) {
+        appendFile(item)
+      }
+    } else {
+      appendFile(value)
+    }
+
+    const files = formData.getAll(key)
+
+    this.requestInit.body = mergeKeqRequestBody(
+      this.requestInit.body,
+      {
+        [key]: files.length === 1 ? files[0] : files,
+      },
+    )
+
     this.setTypeIfEmpty('form-data')
     return this
   }
@@ -298,6 +316,7 @@ export class Keq<
   resolveWith<U = any>(m: KeqResolveWithMode): Keq<U> | Keq<string> | Keq<Blob> | Keq<ArrayBuffer> | Keq<Response> {
     this.option('resolveWith', m)
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this as any
   }
 }

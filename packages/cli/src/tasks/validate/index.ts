@@ -12,7 +12,7 @@ export function createValidateTask(options?: ValidateTaskOptions): ListrTask<Tas
     title: 'Validate',
     enabled: options?.enabled,
     skip: options?.skip,
-    task: async (context, task) => {
+    task: (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.downloaded) throw new Error('Please run download task first.')
 
