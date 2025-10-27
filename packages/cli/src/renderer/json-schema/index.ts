@@ -3,6 +3,7 @@ import { isNonArraySchemaObject } from '../utils/is-non-array-schema-object.js'
 import { generateComment, generateSchema } from '../utils/generate-schema.js'
 
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function jsonSchemaRenderer(schemaDefinition: SchemaDefinition): Promise<string> {
   let $comment = generateComment(schemaDefinition.schema)
   if ($comment) $comment += '\n'

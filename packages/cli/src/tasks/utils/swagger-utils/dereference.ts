@@ -1,7 +1,7 @@
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 
 
-export function dereference($ref: string, swagger: OpenAPIV3_1.Document): OpenAPIV3_1.Document {
+export function dereference($ref: string, swagger: OpenAPIV3_1.Document): OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ResponseObject | OpenAPIV3_1.ParameterObject | OpenAPIV3_1.RequestBodyObject | OpenAPIV3_1.ReferenceObject {
   let value
 
   for (const key of $ref.split('/')) {
@@ -14,5 +14,5 @@ export function dereference($ref: string, swagger: OpenAPIV3_1.Document): OpenAP
     if (!value) break
   }
 
-  return value
+  return value as OpenAPIV3_1.Document
 }

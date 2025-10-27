@@ -2,7 +2,8 @@ import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { typeNameFactory } from '../operation-type/index.js'
 
 
-export function operationRequestRenderer(operationDefinition: OperationDefinition): string {
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function operationRequestRenderer(operationDefinition: OperationDefinition): Promise<string> {
   const { operation, operationId, method, pathname } = operationDefinition
 
   if (!operation.responses) return ''

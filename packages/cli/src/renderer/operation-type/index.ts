@@ -10,7 +10,8 @@ export function typeNameFactory(operationDefinition: OperationDefinition) {
   return (name: string) => `${pascalCaseOperationId}${name}`
 }
 
-export function operationTypeRenderer(operationDefinition: OperationDefinition): string {
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function operationTypeRenderer(operationDefinition: OperationDefinition): Promise<string> {
   const { operation } = operationDefinition
 
   if (!operation.responses) return ''
@@ -67,7 +68,7 @@ export function operationTypeRenderer(operationDefinition: OperationDefinition):
   ].join('\n')
 }
 
-export function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[]): string {
+function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[]): string {
   const $parameters = parameters.map((parameter) => {
     const parameterName = `"${parameter.name}"`
     const $key = parameter.required ? parameterName : `${parameterName}?`

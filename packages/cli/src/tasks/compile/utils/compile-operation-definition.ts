@@ -47,8 +47,8 @@ export async function compileOperationDefinition(options: CompileProcessorOption
   const { rc, schemaArtifacts, operationDefinitions } = options
 
 
-  function createTypeArtifact(operationDefinition: OperationDefinition): Artifact {
-    const content = operationTypeRenderer(operationDefinition)
+  async function createTypeArtifact(operationDefinition: OperationDefinition): Promise<Artifact> {
+    const content = await operationTypeRenderer(operationDefinition)
     const filepath = genOperationTypeFilepath(operationDefinition)
 
     const typeArtifact = new Artifact({
@@ -74,10 +74,10 @@ export async function compileOperationDefinition(options: CompileProcessorOption
     return typeArtifact
   }
 
-  function createRequestArtifact(operationDefinition: OperationDefinition, typeArtifact: Artifact): Artifact {
+  async function createRequestArtifact(operationDefinition: OperationDefinition, typeArtifact: Artifact): Promise<Artifact> {
     const typeName = typeNameFactory(operationDefinition)
 
-    const content = operationRequestRenderer(operationDefinition)
+    const content = await operationRequestRenderer(operationDefinition)
     const filepath = genOperationRequestFilepath(operationDefinition)
 
     const artifact = new Artifact({
@@ -111,12 +111,16 @@ export async function compileOperationDefinition(options: CompileProcessorOption
   }
 
 
-  const artifacts = operationDefinitions.flatMap((operationDefinition): Artifact[] => {
-    const typeArtifact = createTypeArtifact(operationDefinition)
-    const operationArtifact = createRequestArtifact(operationDefinition, typeArtifact)
+  const artifacts = R.unnest(
+    await Promise.all(
+      operationDefinitions.map(async (operationDefinition): Promise<Artifact[]> => {
+        const typeArtifact = await createTypeArtifact(operationDefinition)
+        const operationArtifact = await createRequestArtifact(operationDefinition, typeArtifact)
 
-    return [typeArtifact, operationArtifact]
-  })
+        return [typeArtifact, operationArtifact]
+      }),
+    ),
+  )
 
 
   const operationDefinitionsGroupByModuleName = R.groupBy(

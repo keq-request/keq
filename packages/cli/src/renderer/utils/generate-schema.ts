@@ -69,7 +69,7 @@ function generateMixed(schema: MixedSchemaObject): string {
 function generateReference(schema: OpenAPIV3_1.ReferenceObject): string {
   if (!schema.$ref || !schema.$ref.startsWith('#')) return `unknown /* ${schema.$ref.replace('*/', '*\\/')} */`
 
-  const parts = schema.$ref.split('/')
+  const parts: string[] = schema.$ref.split('/')
 
   // TODO: 检查引用是否存在
   return parts[parts.length - 1] || 'unknown'
