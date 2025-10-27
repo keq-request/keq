@@ -2,7 +2,7 @@ import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
 import { beforeEach } from 'node:test'
 import { openDB } from 'idb'
-import { createResponse } from '~~/__tests__/helpers'
+import { createResponse } from 'keq-test'
 import { CacheEntry } from '~/cache-entry'
 import { LFUIndexedDBStorage } from './lfu-indexed-db-storage'
 
@@ -17,7 +17,7 @@ test('new LFUIndexedDBStorage({ size: 100 })', async () => {
   const storage = new LFUIndexedDBStorage({ size: 100 })
 
   for (const i of R.range(0, 10)) {
-    const response = createResponse({ size: 10 })
+    const response = createResponse({ body: { size: 10 } })
     const entry = await CacheEntry.build({
       key: `temp_${i}`,
       response,
@@ -35,7 +35,7 @@ test('new LFUIndexedDBStorage({ size: 100 })', async () => {
 
   const another = await CacheEntry.build({
     key: 'another',
-    response: createResponse({ size: 10 }),
+    response: createResponse({ body: { size: 10 } }),
   })
 
   await storage.set(another)

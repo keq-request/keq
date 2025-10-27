@@ -39,10 +39,15 @@ await request.get("/test");
 import { request } from "keq";
 import { setOrigin } from "keq-url";
 
-request.use(setOrigin("http://example.com:8080"));
 
 await request.get("http://test.com/test");
+  .use(setOrigin("http://example.com:8080"));
 // it will send request to 'http://example.com:8080/test'
+
+// and prefix pathname is also possible
+await request.get("http://test.com/test");
+  .use(setOrigin("/api"));
+// it will send request to 'http://test.com:8080/api/test'
 ```
 
 ### `setHost(host)`

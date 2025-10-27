@@ -1,14 +1,14 @@
 import { expect, test } from '@jest/globals'
 import { MemoryStorage } from './memory-storage'
 import { Eviction } from '~/constants/eviction.enum'
-import { createResponse } from '~~/__tests__/helpers'
+import { createResponse } from 'keq-test'
 import { CacheEntry } from '~/cache-entry'
 
 
 test('new MemoryStorage()', async () => {
   const storage = new MemoryStorage()
 
-  const response = createResponse({ size: 10 })
+  const response = createResponse({ body: { size: 10 } })
   const entry = await CacheEntry.build({
     key: 'key',
     response,
@@ -40,11 +40,11 @@ test('MemoryStorage Isolation', async () => {
 
   const entry1 = await CacheEntry.build({
     key: 'entry_1',
-    response: createResponse({ size: 10 }),
+    response: createResponse({ body: { size: 10 } }),
   })
   const entry2 = await CacheEntry.build({
     key: 'entry_2',
-    response: createResponse({ size: 10 }),
+    response: createResponse({ body: { size: 10 } }),
   })
 
 

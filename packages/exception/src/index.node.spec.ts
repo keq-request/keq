@@ -1,12 +1,12 @@
 import { describe, expect, test } from '@jest/globals'
 import { throwException } from './index.js'
 import { createRequest, RequestException } from 'keq'
-import { createMockFetch } from '~~/__tests__/helpers'
+import { createMockFetch } from 'keq-test'
 
 
 describe('throwException()', () => {
   const request = createRequest()
-  request.use(throwException(async (ctx) => {
+  request.use(throwException((ctx) => {
     if (ctx.response) {
       if (ctx.response.status === 400) {
         throw new RequestException(ctx.response.status, ctx.response.statusText, false)
@@ -17,7 +17,13 @@ describe('throwException()', () => {
   }))
 
   test('should handle 200 status successfully', async () => {
-    const fetchAPI = createMockFetch({ status: 200, statusText: 'Ok', body: '{}' })
+    const fetchAPI = createMockFetch({
+      response: {
+        status: 200,
+        statusText: 'Ok',
+        body: '{}',
+      },
+    })
 
     await expect(
       request
@@ -33,7 +39,12 @@ describe('throwException()', () => {
   })
 
   test('should throw RequestException for 400 status and not retry', async () => {
-    const fetchAPI = createMockFetch({ status: 400, statusText: 'Bad Request' })
+    const fetchAPI = createMockFetch({
+      response: {
+        status: 400,
+        statusText: 'Bad Request',
+      },
+    })
 
     await expect(
       request
@@ -49,7 +60,12 @@ describe('throwException()', () => {
   })
 
   test('should throw Error for 500 status and retry', async () => {
-    const fetchAPI = createMockFetch({ status: 500, statusText: 'Internal Server Error' })
+    const fetchAPI = createMockFetch({
+      response: {
+        status: 500,
+        statusText: 'Internal Server Error',
+      },
+    })
 
     await expect(
       request

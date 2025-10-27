@@ -4,7 +4,7 @@ import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { Eviction } from '~/constants/eviction.enum.js'
 import { MemoryStorage } from '~/storage/memory-storage/memory-storage.js'
 import { IndexedDBStorage } from '~/storage/indexed-db-storage/indexed-db-storage.js'
-import { createResponse } from '~~/__tests__/helpers.js'
+import { createResponse } from 'keq-test'
 
 test('TierStorage should create with default options', () => {
   const storage = new TierStorage()
@@ -57,7 +57,7 @@ test('TierStorage should create with mixed instance and options', () => {
 
 test('TierStorage should store and retrieve cache entries', async () => {
   const storage = new TierStorage()
-  const response = createResponse({ size: 10 })
+  const response = createResponse({ body: { size: 10 } })
   const entry = await CacheEntry.build({
     key: 'test-key',
     response,
@@ -72,7 +72,7 @@ test('TierStorage should store and retrieve cache entries', async () => {
 
 test('TierStorage should remove cache entries from both tiers', async () => {
   const storage = new TierStorage()
-  const response = createResponse({ size: 10 })
+  const response = createResponse({ body: { size: 10 } })
   const entry = await CacheEntry.build({
     key: 'test-key',
     response,

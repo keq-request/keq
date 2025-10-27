@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
-import { createResponse } from '~~/__tests__/helpers'
+import { createResponse } from 'keq-test'
 import { RandomMemoryStorage } from './random-memory-storage'
 import { CacheEntry } from '~/cache-entry'
 
@@ -16,7 +16,7 @@ test('new RandomMemoryStorage({ size: 100, eviction: Eviction.RANDOM })', async 
   const storage = new TestableRandomMemoryStorage({ size: 100 })
 
   for (const i of R.range(0, 10)) {
-    const response = createResponse({ size: 11 })
+    const response = createResponse({ body: { size: 11 } })
     const entry = await CacheEntry.build({
       key: `temp_${i}`,
       response,

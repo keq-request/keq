@@ -15,6 +15,15 @@ import type {
   KeqEvents,
 } from './types/index.js'
 
+export interface KeqSharedContextOptions {
+  locationId?: string
+  request: KeqRequestInitOptions
+  global: KeqGlobal
+  options?: KeqContextOptions
+  data?: KeqContextData
+  emitter?: KeqContextEmitter
+}
+
 
 export class KeqSharedContext implements KeqContext {
   private readonly __locationId__?: string
@@ -34,14 +43,7 @@ export class KeqSharedContext implements KeqContext {
    */
   res?: Response
 
-  constructor(options: {
-    locationId?: string
-    request: KeqRequestInitOptions
-    global: KeqGlobal
-    options?: KeqContextOptions
-    data?: KeqContextData
-    emitter?: KeqContextEmitter
-  }) {
+  constructor(options: KeqSharedContextOptions) {
     this.__locationId__ = options.locationId
 
     this.__request__ = watchObject(new KeqRequestInit(options.request), {
@@ -84,7 +86,7 @@ export class KeqSharedContext implements KeqContext {
   }
 
   get output(): any {
-    return this.__output__
+    return this.__output__ as unknown
   }
 
   get response(): Response | undefined {
@@ -101,9 +103,9 @@ export class KeqSharedContext implements KeqContext {
             return new Proxy(res[prop], {
               apply(target, thisArg, argArray) {
                 const mirror = res.clone()
-                return mirror[prop](...argArray)
+                return mirror[prop](...argArray) as unknown
               },
-            })
+            }) as unknown
           }
 
           if (prop === 'body') {
@@ -113,10 +115,10 @@ export class KeqSharedContext implements KeqContext {
         }
 
         if (typeof res[prop] === 'function') {
-          return res[prop].bind(res)
+          return res[prop].bind(res) as unknown
         }
 
-        return res[prop]
+        return res[prop] as unknown
       },
     })
   }
@@ -126,7 +128,7 @@ export class KeqSharedContext implements KeqContext {
   }
 
   clone(): KeqSharedContext {
-    const context =  new KeqSharedContext({
+    const context = new KeqSharedContext({
       locationId: this.__locationId__,
       request: this.__request__.clone(),
       global: this.__global__,

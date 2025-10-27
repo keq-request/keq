@@ -30,6 +30,7 @@ export {
 export {
   KeqExecutionContext,
   KeqSharedContext,
+  type KeqSharedContextOptions,
   type KeqContext,
   type KeqContextData,
   type KeqContextEmitter,

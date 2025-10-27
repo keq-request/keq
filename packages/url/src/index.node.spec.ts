@@ -1,55 +1,92 @@
-import { expect, jest, test } from '@jest/globals'
+import { describe, expect, test } from '@jest/globals'
 import { setBaseUrl, setOrigin, setHost } from './index.js'
-import { KeqContext } from 'keq'
+import { KeqMiddlewareOrchestrator } from 'keq'
+import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
 
 
-function createKeqContext(): KeqContext {
-  return {
-    options: {},
-    global: {},
-    request: {
-      __url__: new URL('http://test.com/test'),
-      url: new URL('http://test.com/test'),
-      method: 'get',
-      headers: new Headers(),
-      routeParams: {},
-      body: {},
-    },
+describe('setBaseUrl', () => {
+  test('Replace url', async () => {
+    const sharedContext = createSharedContext({
+      request: {
+        url: new URL('http://example.com/test'),
+      },
+    })
+    const fetchMiddleware = createMockFetchMiddleware()
 
-    __output: undefined,
-    get output() {
-      // @ts-ignore
-      return this.__output
-    },
-  } as unknown as KeqContext
-}
+    const orchestrator = new KeqMiddlewareOrchestrator(
+      sharedContext,
+      [
+        setBaseUrl('https://test.com/api'),
+        fetchMiddleware,
+      ],
+    )
 
-test('setBaseUrl', async () => {
-  const ctx = createKeqContext()
-  const next = jest.fn(() => {})
+    await orchestrator.execute()
 
-  await setBaseUrl('https://example.com/api')(ctx, next)
+    expect(sharedContext.request.url.href).toBe('https://test.com/api/test')
+    expect(fetchMiddleware).toBeCalledTimes(1)
+  })
 
-  expect(ctx.request.url.href).toBe('https://example.com/api/test')
-  expect(next).toBeCalledTimes(1)
+  test('Prefix pathname', async () => {
+    const sharedContext = createSharedContext({
+      request: {
+        url: new URL('http://example.com/test'),
+      },
+    })
+    const fetchMiddleware = createMockFetchMiddleware()
+
+    const orchestrator = new KeqMiddlewareOrchestrator(
+      sharedContext,
+      [
+        setBaseUrl('/api'),
+        fetchMiddleware,
+      ],
+    )
+
+    await orchestrator.execute()
+
+    expect(sharedContext.request.url.href).toBe('http://example.com/api/test')
+    expect(fetchMiddleware).toBeCalledTimes(1)
+  })
 })
 
+
 test('setOrigin', async () => {
-  const ctx = createKeqContext()
-  const next = jest.fn(() => undefined)
+  const context = createSharedContext({
+    request: {
+      url: new URL('http://example.com/test'),
+    },
+  })
+  const fetchMiddleware = createMockFetchMiddleware()
+  const orchestrator = new KeqMiddlewareOrchestrator(
+    context,
+    [
+      setOrigin('https://test.com/api'),
+      fetchMiddleware,
+    ],
+  )
+  await orchestrator.execute()
 
-  await setOrigin('https://example.com/api')(ctx, next)
-
-  expect(ctx.request.url.href).toBe('https://example.com/test')
-  expect(next).toBeCalledTimes(1)
+  expect(context.request.url.href).toBe('https://test.com/test')
+  expect(fetchMiddleware).toBeCalledTimes(1)
 })
 
 test('setHost', async () => {
-  const ctx = createKeqContext()
-  const next = jest.fn(() => undefined)
+  const context = createSharedContext({
+    request: {
+      url: new URL('http://example.com/test'),
+    },
+  })
 
-  await setHost('example.com')(ctx, next)
+  const fetchMiddleware = createMockFetchMiddleware()
 
-  expect(ctx.request.url.href).toBe('http://example.com/test')
-  expect(next).toBeCalledTimes(1)
+  const orchestrator = new KeqMiddlewareOrchestrator(context, [
+    setHost('test.com'),
+    fetchMiddleware,
+  ])
+
+  await orchestrator.execute()
+
+  expect(context.request.url.href).toBe('http://test.com/test')
+  expect(fetchMiddleware).toBeCalledTimes(1)
 })

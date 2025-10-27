@@ -1,13 +1,11 @@
 import { Mock } from 'jest-mock'
 import { jest } from '@jest/globals'
 import { sleep } from './sleep.js'
+import { createResponse, CreateResponseOptions } from './create-response.js'
 
 export interface MockFetchSuccessOptions {
-  status?: number
-  statusText?: string
-  body?: string
+  response?: CreateResponseOptions
   delay?: number
-  headers?: HeadersInit
 }
 
 export interface MockFetchErrorOptions {
@@ -28,22 +26,21 @@ export const createMockFetch = (options: MockFetchOptions = {}): Mock<typeof fet
     }) as unknown as Mock<typeof fetch>
   }
 
-  const {
-    status = 200,
-    statusText = 'OK',
-    body = '{"message":"Hello World"}',
-    delay = 0,
-    headers = { 'Content-Type': 'application/json' },
-  } = options as MockFetchSuccessOptions
+  const { delay = 0 } = options as MockFetchSuccessOptions
 
-  return jest.fn(async () => {
-    if (delay > 0) {
-      await sleep(delay)
-    }
-    return new Response(body, {
-      status,
-      statusText,
-      headers,
-    })
-  }) as unknown as Mock<typeof fetch>
+  const createResponseOptions: CreateResponseOptions = {
+    status: 200,
+    statusText: 'OK',
+    headers: { 'Content-Type': 'application/json' },
+    body: '{"message":"Hello World"}',
+  }
+
+  if (options && 'response' in options && options.response) {
+    Object.assign(createResponseOptions, options.response)
+  }
+
+  return jest.fn<typeof fetch>(async () => {
+    if (delay > 0) await sleep(delay)
+    return createResponse(createResponseOptions)
+  })
 }

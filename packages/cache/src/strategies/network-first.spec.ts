@@ -4,7 +4,7 @@ import { networkFirst } from './network-first'
 import { MemoryStorage } from '~/storage'
 import { Eviction } from '~/constants/eviction.enum'
 import { spyOn } from 'jest-mock'
-import { createFetchMiddleware, createSharedContext } from '~~/__tests__/helpers'
+import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
 import { KeqMiddlewareOrchestrator } from 'keq'
 
 
@@ -22,7 +22,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   const sharedContext1 = createSharedContext()
   const cacheUpdateHandler1 = jest.fn()
   sharedContext1.emitter.on('cache:update', cacheUpdateHandler1)
-  const fetchMiddleware1 = createFetchMiddleware('1')
+  const fetchMiddleware1 = createMockFetchMiddleware({ response: { body: '1' }})
   const orchestrator1 = new KeqMiddlewareOrchestrator(sharedContext1, [
     networkFirst({ key: 'key1', storage }),
     fetchMiddleware1,
@@ -37,7 +37,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   const sharedContext2 = createSharedContext()
   const cacheUpdateHandler2 = jest.fn()
   sharedContext2.emitter.on('cache:update', cacheUpdateHandler2)
-  const fetchMiddleware2 = createFetchMiddleware('2')
+  const fetchMiddleware2 = createMockFetchMiddleware({ response: { body: '2' }})
   const orchestrator2 = new KeqMiddlewareOrchestrator(sharedContext2, [
     networkFirst({ key: 'key1', storage }),
     fetchMiddleware2,
@@ -55,7 +55,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   const cacheHitHandler3 = jest.fn()
   sharedContext3.emitter.on('cache:update', cacheUpdateHandler3)
   sharedContext3.emitter.on('cache:hit', cacheHitHandler3)
-  const fetchMiddleware3 = createFetchMiddleware(new Error('Network error'))
+  const fetchMiddleware3 = createMockFetchMiddleware({ error: new Error('fetch failed')} )
   const orchestrator3 = new KeqMiddlewareOrchestrator(sharedContext3, [
     networkFirst({ key: 'key1', storage }),
     fetchMiddleware3,
@@ -72,7 +72,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   const sharedContext = createSharedContext()
   const cacheMissHandler = jest.fn()
   sharedContext.emitter.on('cache:miss', cacheMissHandler)
-  const fetchMiddleware4 = createFetchMiddleware(new Error('Network error'))
+  const fetchMiddleware4 = createMockFetchMiddleware({ error: new Error('fetch failed') })
   const orchestrator4 = new KeqMiddlewareOrchestrator(sharedContext, [
     networkFirst({ key: 'key2', storage }),
     fetchMiddleware4,

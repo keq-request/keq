@@ -1,13 +1,13 @@
 import { expect, jest, test } from '@jest/globals'
 import { catchException } from './catch-exception'
 import { KeqMiddlewareOrchestrator } from 'keq'
-import { createFetchMiddleware, createSharedContext } from '~~/__tests__/helpers'
+import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
 
 
 test('catchException(handler)', async () => {
   const sharedContext = createSharedContext()
   const err = new Error('fetch failed')
-  const fetchMiddleware = createFetchMiddleware({ error: err })
+  const fetchMiddleware = createMockFetchMiddleware({ error: err })
 
   const handler = jest.fn(() => {})
   const orchestrator = new KeqMiddlewareOrchestrator(sharedContext, [

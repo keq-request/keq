@@ -7,15 +7,4 @@ test('cache()', async () => {
     size: 2 * 1000 * 1000,
   })
   expect(cache({ storage })).toBeInstanceOf(Function)
-
-  expect(cache({
-    storage,
-    keyFactory: (ctx) => ctx.request.__url__.href,
-
-    rules: [{
-      pattern: /\/cat/,
-      strategy: Strategy.CACHE_FIRST,
-      ttl: 1000,
-    }],
-  }))
 })

@@ -2,6 +2,13 @@ import { KeqMiddleware } from 'keq'
 
 
 export function setBaseUrl(base: string): KeqMiddleware {
+  if (base.startsWith('/')) {
+    return async function setBaseUrl(ctx, next) {
+      ctx.request.url.pathname = `${base.replace(/\/$/, '')}/${ctx.request.url.pathname.replace(/^\//, '')}`
+      await next()
+    }
+  }
+
   const url = new URL(base)
 
   return async function setBaseUrl(ctx, next) {

@@ -3,7 +3,7 @@ import { expect, test } from '@jest/globals'
 import { beforeEach } from 'node:test'
 import { openDB } from 'idb'
 import { CacheEntry } from '~/cache-entry'
-import { createResponse, sleep } from '~~/__tests__/helpers'
+import { createResponse, sleep } from 'keq-test'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 import { IndexedDBSchema } from './types/indexed-db-schema'
 import { LRUIndexedDBStorage } from './lru-indexed-db-storage'
@@ -20,7 +20,7 @@ test('new IndexedDBStorage(100, 20, Eviction.LRU)', async () => {
   const storage = new LRUIndexedDBStorage({ size: 100 })
 
   for (const i of R.range(0, 10)) {
-    const response = createResponse({ size: 10 })
+    const response = createResponse({ body: { size: 10 } })
     const entry = await CacheEntry.build({
       key: `temp_${i}`,
       response,
@@ -41,7 +41,7 @@ test('new IndexedDBStorage(100, 20, Eviction.LRU)', async () => {
 
   const another = await CacheEntry.build({
     key: 'another',
-    response: createResponse({ size: 10 }),
+    response: createResponse({ body: { size: 10 } }),
   })
 
   await storage.set(another)
