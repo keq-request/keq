@@ -1,15 +1,13 @@
 import type { Config } from 'jest'
 import { pathsToModuleNameMapper } from 'ts-jest'
+import tsconfig from './tsconfig.json'
 
 
-export default async (): Promise<Config> => {
-  const tsconfig = (await import('./tsconfig.json', { with: { type: 'json' } })).default
-
+export default (): Config => {
   return {
     preset: 'ts-jest',
     setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
-    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/', useESM: true }),
-    // displayName: 'Keq Node',
+    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/src', useESM: true }),
     testEnvironment: 'node',
     testMatch: [
       '<rootDir>/__tests__/node/**/*.spec.ts',

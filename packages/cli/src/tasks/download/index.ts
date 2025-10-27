@@ -16,7 +16,7 @@ export function createDownloadTask(options?: DownloadTaskOptions): ListrTask<Tas
     title: 'Download',
     enabled: options?.enabled,
     skip: options?.skip,
-    task: async (context, task) => {
+    task: (context, task) => {
       if (!context.setup) {
         throw new Error('Please run setup task first.')
       }

@@ -12,20 +12,20 @@ export function mergeKeqRequestBody(left: KeqRequestBody, right: KeqRequestBody)
   }
 
   if (
-    left === null ||
-    right === null ||
-    Validator.isBuffer(right) ||
-    Validator.isArrayBuffer(right) ||
-    Validator.isBlob(right) ||
-    Validator.isReadableStream(right) ||
-    Validator.isBuffer(left) ||
-    Validator.isArrayBuffer(left) ||
-    Validator.isBlob(left) ||
-    Validator.isReadableStream(left) ||
-    Array.isArray(left) ||
-    Array.isArray(right) ||
-    (typeof left !== 'object' && left !== undefined) ||
-    typeof right !== 'object'
+    left === null
+    || right === null
+    || Validator.isBuffer(right)
+    || Validator.isArrayBuffer(right)
+    || Validator.isBlob(right)
+    || Validator.isReadableStream(right)
+    || Validator.isBuffer(left)
+    || Validator.isArrayBuffer(left)
+    || Validator.isBlob(left)
+    || Validator.isReadableStream(left)
+    || Array.isArray(left)
+    || Array.isArray(right)
+    || (typeof left !== 'object' && left !== undefined)
+    || typeof right !== 'object'
   ) {
     return Array.isArray(right) ? [...right] : right
   }

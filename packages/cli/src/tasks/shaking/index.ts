@@ -16,7 +16,7 @@ export function createShakingTask(options?: ShakingTaskOptions): ListrTask<TaskC
     title: 'Shaking',
     enabled: options?.enabled,
     skip: options?.skip,
-    task: async (context, task) => {
+    task: (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.validated) throw new Error('Please run validate task first.')
 
@@ -30,7 +30,7 @@ export function createShakingTask(options?: ShakingTaskOptions): ListrTask<TaskC
       return task.newListr(
         documents.map((document): ListrTask<TaskContext> => ({
           title: document.module.name,
-          task: async (ctx, task) => {
+          task: (ctx, task) => {
             if (options?.skipIgnoredModules && matcher.isModuleIgnored(document.module)) {
               task.skip(`${document.module.name} module is ignored`)
               return
