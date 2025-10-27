@@ -12,13 +12,13 @@ export interface AppendIgnoreRulesTaskOptions {
 export function createAppendIgnoreRulesTask(options: AppendIgnoreRulesTaskOptions): ListrTask<TaskContext> {
   return {
     title: 'Update .keqignore file',
-    task: async (context, task) => {
+    task: (context, task) => {
       if (!context.setup) throw new Error('Setup task has not been executed.')
 
       const matcher = context.setup.matcher
 
       for (const rule of options.rules) {
-        await matcher.append({
+        matcher.append({
           persist: true,
           ignore: options.mode === 'add',
           moduleName: rule.moduleName,

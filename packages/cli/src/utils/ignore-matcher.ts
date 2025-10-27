@@ -12,13 +12,6 @@ export interface IgnoreMatcherRule {
   operationPathname: string
 }
 
-function ruleEqual(a: IgnoreMatcherRule, b: IgnoreMatcherRule): boolean {
-  return a.persist === b.persist &&
-  a.ignore === b.ignore &&
-  a.moduleName === b.moduleName &&
-  a.operationMethod === b.operationMethod &&
-  a.operationPathname === b.operationPathname
-}
 
 export class IgnoreMatcher {
   private rules: IgnoreMatcherRule[]

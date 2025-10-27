@@ -63,7 +63,7 @@ export function createPersistTask(options?: PersistTaskOptions): ListrTask<TaskC
     title: 'Persist',
     enabled: options?.enabled,
     skip: options?.skip,
-    task: async (context, task) => task.newListr(
+    task: (context, task) => task.newListr(
       [
         createPersistArtifactTask(options),
         createPersistIgnoreTask(options),

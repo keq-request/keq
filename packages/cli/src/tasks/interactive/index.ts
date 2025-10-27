@@ -36,7 +36,7 @@ export function createInteractiveTask(options: InteractiveTaskOptions): ListrTas
       }
 
       for (const op of selectedOperationDefinitions) {
-        await matcher.append({
+        matcher.append({
           persist: true,
           ignore: options.mode === 'add',
           moduleName: op.module.name,

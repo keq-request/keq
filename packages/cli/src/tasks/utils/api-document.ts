@@ -83,7 +83,7 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
 
   // remove chinese and special symbols
   fix(): ApiDocument {
-    const swagger: any = fixSwagger(this.swagger as any)
+    const swagger: T = fixSwagger(this.swagger as any)
 
     return new ApiDocument(
       swagger,
@@ -94,6 +94,7 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async toV3_1(rc?: RuntimeConfig): Promise<ApiDocumentV3_1> {
     const debug = new Debugger(rc)
     let swagger: any = this.swagger

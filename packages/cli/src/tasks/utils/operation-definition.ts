@@ -40,12 +40,12 @@ export class OperationDefinition {
     const operationId = operation.operationId
 
     if (
-      operationId &&
-      operationId !== 'index' &&
-      !isKeywords(operationId) &&
-      !isReservedWord(operationId)
+      operationId
+      && operationId !== 'index'
+      && !isKeywords(operationId)
+      && !isReservedWord(operationId)
     ) {
-      return operationId
+      return operationId as string
     }
 
     return `${method}_${pathname}`

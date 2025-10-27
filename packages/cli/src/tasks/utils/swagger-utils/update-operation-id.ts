@@ -3,7 +3,7 @@ import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { SupportedMethods } from '~/constants/supported-methods.js'
 
 
-type OperationUpdater = (method: string, pathname: string, operation: OpenAPIV3_1.OperationObject,) => string | undefined
+type OperationUpdater = (method: string, pathname: string, operation: OpenAPIV3_1.OperationObject) => string | undefined
 
 
 export function updateOperationId(swagger: OpenAPIV3_1.Document, fn: OperationUpdater): OpenAPIV3_1.Document {
