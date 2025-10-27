@@ -40,7 +40,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.20",
-    "keq": "workspace:*"
+    "keq": "workspace:*",
+    "keq-test": "workspace:*"
   },
   "peerDependencies": {
     "keq": "^2.3.2"

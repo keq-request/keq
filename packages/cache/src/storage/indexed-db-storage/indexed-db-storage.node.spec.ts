@@ -4,7 +4,7 @@ import { Eviction } from '~/constants/eviction.enum'
 import { beforeEach } from 'node:test'
 import { openDB } from 'idb'
 import { CacheEntry } from '~/cache-entry'
-import { createResponse } from '~~/__tests__/helpers'
+import { createResponse } from 'keq-test'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 
 
@@ -21,7 +21,7 @@ test('new IndexedDBStorage(100, 20, Eviction.RANDOM)', async () => {
     eviction: Eviction.RANDOM,
   })
 
-  const response = createResponse({ size: 10 })
+  const response = createResponse({ body: { size: 10 } })
   const entry = await CacheEntry.build({
     key: 'key',
     response,

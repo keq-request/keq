@@ -5,7 +5,7 @@ import { openDB } from 'idb'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 import { TTLIndexedDBStorage } from './ttl-indexed-db-storage'
 import { CacheEntry } from '~/cache-entry'
-import { createResponse } from '~~/__tests__/helpers'
+import { createResponse } from 'keq-test'
 
 
 beforeEach(async () => {
@@ -18,7 +18,7 @@ test.only('new TTLIndexedDBStorage({ size: 100 })', async () => {
   const storage = new TTLIndexedDBStorage({ size: 100 })
 
   for (const i of R.range(0, 10)) {
-    const response = createResponse({ size: 10 })
+    const response = createResponse({ body: { size: 10 } })
     const entry = await CacheEntry.build({
       key: `temp_${i}`,
       response,
@@ -33,7 +33,7 @@ test.only('new TTLIndexedDBStorage({ size: 100 })', async () => {
 
   const entry1 = await CacheEntry.build({
     key: 'entry_1',
-    response: createResponse({ size: 10 }),
+    response: createResponse({ body: { size: 10 } }),
   })
 
   await storage.set(entry1)

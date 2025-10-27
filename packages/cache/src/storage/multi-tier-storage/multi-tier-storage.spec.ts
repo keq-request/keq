@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { MemoryStorage } from '../memory-storage/memory-storage.js'
 import { MultiTierStorage } from './multi-tier-storage.js'
-import { createResponse } from '~~/__tests__/helpers.js'
+import { createResponse } from 'keq-test'
 
 
 test('new MultiTierStorage()', async () => {
@@ -13,7 +13,7 @@ test('new MultiTierStorage()', async () => {
     tiers: [memoryStorage1, memoryStorage2],
   })
 
-  const response = createResponse({ size: 10 })
+  const response = createResponse({ body: { size: 10 } })
   const entry = await CacheEntry.build({
     key: 'key',
     response,

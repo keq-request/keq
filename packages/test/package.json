@@ -1,0 +1,21 @@
+{
+  "name": "keq-test",
+  "version": "5.0.0-alpha.6",
+  "description": "Test utils for keq",
+  "private": true,
+  "keywords": [
+    "keq",
+    "jest",
+    "test",
+    "utils"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json",
+    "dev": "tsc -w -p tsconfig.lib.json"
+  },
+  "dependencies": {
+    "keq": "workspace:*"
+  }
+}

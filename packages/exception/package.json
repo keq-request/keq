@@ -39,7 +39,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
-    "keq": "workspace:*"
+    "keq": "workspace:*",
+    "keq-test": "workspace:*"
   },
   "peerDependencies": {
     "keq": "^2"

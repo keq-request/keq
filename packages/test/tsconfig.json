@@ -3,8 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "paths": {
-      "~/*": ["./*"],
-      "@keq/test": ["../keq/__tests__/helpers/index.ts"]
+      "~/*": ["./*"]
     }
   }
 }
