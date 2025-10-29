@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import { createRequest } from '~/index.js'
 
-import type { KeqBaseOperation, KeqOperations } from '~/request/types/keq-operation.js'
+import type { KeqDefaultOperation, KeqApiSchema } from '~/request/types/api-schema/index.js'
 
 
-interface TestModule extends KeqOperations {
+interface TestModule extends KeqApiSchema {
   'http://test.com': {
     get: {
       requestParams: {}
       requestQuery: {
         q: string
       }
-      requestHeaders: KeqBaseOperation['requestHeaders']
+      requestHeaders: KeqDefaultOperation['requestHeaders']
       requestBody: {}
       responseBody: {
         data: 'test get'
@@ -39,7 +39,7 @@ interface TestModule extends KeqOperations {
     get: {
       requestParams: {}
       requestQuery: {}
-      requestHeaders: KeqBaseOperation['requestHeaders']
+      requestHeaders: KeqDefaultOperation['requestHeaders']
       requestBody: {}
       responseBody: {
         data: 'example get'

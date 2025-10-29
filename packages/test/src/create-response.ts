@@ -2,23 +2,23 @@ export interface CreateResponseOptions {
   status?: number
   statusText?: string
   headers?: HeadersInit
-  body?: string | { size: number }
+  body?: BodyInit | { size: number }
 }
 
 
 export function createResponse(options: CreateResponseOptions): Response {
   const headers = new Headers(options.headers)
 
-  let body: string = ''
+  let body: BodyInit = ''
 
-  if (typeof options.body === 'string') {
-    body = options.body
-  } else if (options.body) {
+  if (options.body && options.body instanceof Object && 'size' in options.body) {
     body = new Array(options.body.size)
       .fill('a')
       .join('')
 
     headers.set('content-length', String(options.body.size))
+  } else if (options.body) {
+    body = options.body
   }
 
   return new Response(body, {

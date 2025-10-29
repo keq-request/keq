@@ -1,24 +1,25 @@
 import { expect, jest, test } from '@jest/globals'
 import { Mock } from 'jest-mock'
-import { createRequest } from 'keq'
+import { KeqRequest } from 'keq'
 import { cache } from './cache'
 import { Strategy } from './constants/strategy.enum'
 import { MemoryStorage } from './storage'
+import { MockFetchResponse } from '~~/__tests__/helpers'
 
 
 test('Strategies.NETWORK_ONLY', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
-  const request = createRequest()
+  const request = new KeqRequest()
 
   request.use(cache({ storage: new MemoryStorage() }))
 
   const body1 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
 
   expect(body1.code).toBe('200')
 
   const body2 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
 
   expect(body2.code).toBe('200')
 
@@ -27,7 +28,7 @@ test('Strategies.NETWORK_ONLY', async () => {
 
 test('Strategies.CATCH_FIRST', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
-  const request = createRequest()
+  const request = new KeqRequest()
 
   request.use(cache({
     storage: new MemoryStorage(),
@@ -40,15 +41,15 @@ test('Strategies.CATCH_FIRST', async () => {
   }))
 
   const body1 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
   expect(body1.code).toBe('200')
 
   const body2 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
   expect(body2.code).toBe('200')
 
   const body3 = await request
-    .get('/dog')
+    .get<MockFetchResponse>('/dog')
   expect(body3.code).toBe('200')
 
   expect(mockedFetch).toBeCalledTimes(2)
@@ -56,7 +57,7 @@ test('Strategies.CATCH_FIRST', async () => {
 
 test('Strategies.NETWORK_FIRST', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
-  const request = createRequest()
+  const request = new KeqRequest()
 
 
   request.use(cache({
@@ -70,19 +71,19 @@ test('Strategies.NETWORK_FIRST', async () => {
   }))
 
   const body1 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
   expect(body1.code).toBe('200')
 
   const body2 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
   expect(body2.code).toBe('200')
 
   expect(mockedFetch).toBeCalledTimes(2)
 })
 
-test.only('Strategies.STALE_WHILE_REVALIDATE', async () => {
+test('Strategies.STALE_WHILE_REVALIDATE', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
-  const request = createRequest()
+  const request = new KeqRequest()
 
   request.use(cache({
     keyFactory: (ctx) => ctx.request.__url__.href,
@@ -95,11 +96,14 @@ test.only('Strategies.STALE_WHILE_REVALIDATE', async () => {
   }))
 
   const body1 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
+    .option('debug')
+
+  expect(mockedFetch).toBeCalledTimes(1)
   expect(body1.code).toBe('200')
 
   const body2 = await request
-    .get('/cat')
+    .get<MockFetchResponse>('/cat')
   expect(body2.code).toBe('200')
 
   await new Promise((resolve) => setTimeout(resolve, 1000))

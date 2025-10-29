@@ -1,4 +1,4 @@
-import { KeqEvents, KeqListeners } from '~/context/index.js'
+import { KeqEvents, KeqGlobal, KeqListeners, KeqMiddlewareOptionsParameter, KeqMiddlewareOptionsReturnType } from '~/context/index.js'
 import { Exception, RequestException } from '~/exception/index.js'
 import { sleep } from '~/utils/index.js'
 import { KeqRequestInit } from '~/request-init/index.js'
@@ -6,19 +6,27 @@ import { KeqSharedContext, KeqContextOptions } from '~/context/index.js'
 import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 import { intelligentParseResponse } from './utils/index.js'
-import { KeqInit } from './types/index.js'
+import { KeqDefaultOperation, KeqOperation } from './types/index.js'
 
+
+export type KeqOptions = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signal' | 'abort' | 'clone'>> & {
+  locationId?: string
+  global?: KeqGlobal
+}
 
 /**
- * @description Keq 核心 API，发送请求必要的原子化的API
+ * Core class that provides the foundational structure for managing middlewares, events, and request execution.
  */
-export class Core<OUTPUT> {
+export class Core<
+  OP extends KeqOperation = KeqDefaultOperation,
+  RES_BODY extends KeqOperation['responseBody'] = OP['responseBody'],
+> {
   /**
    * The unique identifier of the request's location in the code
    */
   __locationId__?: string
 
-  private requestPromise?: Promise<OUTPUT>
+  private requestPromise?: Promise<RES_BODY>
 
   protected requestInit: KeqRequestInit
 
@@ -37,16 +45,16 @@ export class Core<OUTPUT> {
     resolveWith: 'intelligent',
   }
 
-  public constructor(url: URL, init: KeqInit) {
-    this.__global__ = init.global || {}
-    this.__locationId__ = init.locationId
+  public constructor(url: URL, options: KeqOptions) {
+    this.__global__ = options.global || {}
+    this.__locationId__ = options.locationId
 
     this.requestInit = new KeqRequestInit({
       method: 'get',
       headers: new Headers(),
       routeParams: {},
       body: undefined,
-      ...init,
+      ...options,
       url: new URL(url.href),
     })
   }
@@ -61,11 +69,30 @@ export class Core<OUTPUT> {
     return this
   }
 
+  use(...middlewares: KeqMiddleware[]): this {
+    return this.prependMiddlewares(...middlewares)
+  }
+
   on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {
     this.__listeners__[event] = this.__listeners__[event] || []
     this.__listeners__[event]!.push(listener)
     return this
   }
+
+  option<K extends keyof KeqMiddlewareOptionsReturnType<OP>>(key: K, value?: KeqMiddlewareOptionsParameter[K]): KeqMiddlewareOptionsReturnType<OP>[K]
+  option(key: string, value?: any): this
+  option(key: string, value: any = true): this {
+    this.__options__[key] = value
+    return this
+  }
+
+  options(opts: KeqContextOptions): this {
+    for (const [key, value] of Object.entries(opts)) {
+      this.__options__[key] = value
+    }
+    return this
+  }
+
 
   private buildSharedContext(): KeqSharedContext {
     const coreContext = new KeqSharedContext({
@@ -120,11 +147,12 @@ export class Core<OUTPUT> {
       }
 
       if (
-        attemptWithDefault >= retryTimes ||
-        (await retryOn(attemptWithDefault, error, sharedContext)) === false
+        attemptWithDefault >= retryTimes
+        || (await retryOn(attemptWithDefault, error, sharedContext)) === false
       ) {
         if (error) {
           sharedContext.emitter.emit('error', { context: sharedContext })
+          // eslint-disable-next-line @typescript-eslint/only-throw-error
           throw error
         }
         return sharedContext
@@ -139,12 +167,12 @@ export class Core<OUTPUT> {
     }
   }
 
-  async end(): Promise<OUTPUT> {
+  async end(): Promise<RES_BODY> {
     const coreContext = await this.run()
 
 
     if (coreContext.options.resolveWith === 'response') {
-      return coreContext.response as OUTPUT
+      return coreContext.response as RES_BODY
     }
 
     const response = coreContext.response
@@ -158,23 +186,23 @@ export class Core<OUTPUT> {
     }
 
     if (coreContext.options.resolveWith === 'text') {
-      return await response!.text() as OUTPUT
+      return await response!.text() as RES_BODY
     } else if (coreContext.options.resolveWith === 'json') {
-      return await response!.json() as OUTPUT
+      return await response!.json() as RES_BODY
     } else if (coreContext.options.resolveWith === 'form-data') {
-      return await response!.formData() as OUTPUT
+      return await response!.formData() as RES_BODY
     } else if (coreContext.options.resolveWith === 'blob') {
-      return await response!.blob() as OUTPUT
+      return await response!.blob() as RES_BODY
     } else if (coreContext.options.resolveWith === 'array-buffer') {
-      return await response!.arrayBuffer() as OUTPUT
+      return await response!.arrayBuffer() as RES_BODY
     }
 
     const output: any = coreContext.output
     if (output !== undefined) {
-      return output as OUTPUT
+      return output as RES_BODY
     }
 
-    return intelligentParseResponse<OUTPUT>(response)
+    return intelligentParseResponse<RES_BODY>(response)
   }
 
   /**
@@ -183,16 +211,16 @@ export class Core<OUTPUT> {
    * @param onrejected The callback to execute when the Promise is rejected.
    * @returns A Promise for the completion of which ever callback is executed.
    */
-  then<TResult1 = OUTPUT, TResult2 = never>(onfulfilled?: ((value: OUTPUT) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): Promise<TResult1 | TResult2> {
+  then<TResult1 = RES_BODY, TResult2 = never>(onfulfilled?: ((value: RES_BODY) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null): Promise<TResult1 | TResult2> {
     if (!this.requestPromise) this.requestPromise = this.end()
     return this.requestPromise.then(onfulfilled, onrejected)
   }
 
-  catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): Promise<OUTPUT | TResult> {
+  catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null): Promise<RES_BODY | TResult> {
     return this.end().catch(onrejected)
   }
 
-  finally(onfinally?: (() => void) | undefined | null): Promise<OUTPUT> {
+  finally(onfinally?: (() => void) | null): Promise<RES_BODY> {
     return this.end().finally(onfinally)
   }
 }

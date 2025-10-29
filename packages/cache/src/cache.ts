@@ -8,11 +8,11 @@ import { Exception } from 'keq'
 
 
 declare module 'keq' {
-  export interface KeqOptions<T> {
+  export interface KeqMiddlewareOptions<OP> {
     /**
      * [keq-cache](https://github.com/keq-request/keq-cache)
      */
-    cache(option: KeqCacheOption): Keq<T>
+    cache(option: KeqCacheOption): Keq<OP>
   }
 
   export interface KeqEvents {

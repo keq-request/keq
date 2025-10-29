@@ -1,48 +1,11 @@
 import { expect, jest, test } from '@jest/globals'
 import { request } from './request.js'
 import { AbortException } from '~/exception/index.js'
+import { createMockFetch, sleep } from 'keq-test'
 
 
-function createMockedFetch(millisecond: number = 0): typeof fetch {
-  return jest.fn<typeof fetch>((input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((resolve, reject) => {
-    let finished = false
-
-    if (init?.signal) {
-      if (init.signal.aborted) {
-        console.log(`mockedFetch(${input.toString()}): already aborted`)
-        reject(init.signal.reason || new DOMException('AbortError', 'AbortError'))
-        return
-      }
-
-      const signal = init.signal
-      signal.onabort = () => {
-        if (finished) return
-        finished = true
-        reject(init.signal?.reason || new DOMException('AbortError', 'AbortError'))
-      }
-    }
-
-    setTimeout(
-      () => {
-        if (finished) return
-        finished = true
-
-        resolve(new Response(
-          JSON.stringify({ code: '200' }),
-          {
-            headers: {
-              'content-type': 'application/json',
-            },
-          },
-        ))
-      },
-      millisecond,
-    )
-  }))
-}
-
-test.only('abort flowController request', async () => {
-  const mockedFetch = createMockedFetch(500)
+test('abort flowController request', async () => {
+  const mockedFetch = createMockFetch({ delay: 500 })
   const abortListener = jest.fn()
 
   async function sendRequest(url: string): Promise<void> {
@@ -54,21 +17,25 @@ test.only('abort flowController request', async () => {
       .end()
   }
 
-  let error: unknown = null
+  let error: unknown = undefined
   void sendRequest('http://test.com/1')
-    .catch((err) => error = err)
+    .catch((err) => {
+      error = err
+    })
 
+  await sleep(50)
   await new Promise((resolve) => setTimeout(resolve, 50))
+
   await sendRequest('http://test.com/2')
 
-  expect(error).toBeInstanceOf(AbortException)
-  expect(error).toBeInstanceOf(DOMException)
   expect(mockedFetch).toBeCalledTimes(2)
   expect(abortListener).toBeCalledTimes(1)
+  expect(error).toBeInstanceOf(AbortException)
+  expect(error).toBeInstanceOf(DOMException)
 })
 
 test('serial flowController request', async () => {
-  const mockedFetch = createMockedFetch(500)
+  const mockedFetch = createMockFetch({ delay: 500 })
 
   async function sendRequest(): Promise<void> {
     await request
@@ -78,10 +45,13 @@ test('serial flowController request', async () => {
       .end()
   }
 
-  const r1 = sendRequest()
-  await new Promise((resolve) => setTimeout(resolve, 50))
+  const catchFn = jest.fn()
+  void sendRequest()
+    .catch(catchFn)
+
+  await sleep(50)
   await sendRequest()
 
   expect(mockedFetch).toBeCalledTimes(2)
-  await expect(r1).rejects.not.toThrow()
+  expect(catchFn).not.toBeCalled()
 })

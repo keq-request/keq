@@ -1,6 +1,6 @@
-import { KeqOptionsParameter } from './keq-options'
+import { KeqMiddlewareOptionsParameter } from './keq-middleware-options'
 
 
-export interface KeqContextOptions extends KeqOptionsParameter {
+export interface KeqContextOptions extends KeqMiddlewareOptionsParameter {
   [key: string]: any
 }

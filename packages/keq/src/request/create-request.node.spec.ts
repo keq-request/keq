@@ -6,7 +6,6 @@ import { KeqMiddleware } from '~/middleware/index.js'
 test('add middleware to request on specified host', async () => {
   const request = createRequest()
 
-
   const m1 = jest.fn<KeqMiddleware>(async (ctx, next) => {
     await next()
   })
@@ -51,12 +50,12 @@ test('add middleware to request on specified host', async () => {
   await request
     .post('http://other.com/api')
 
-  expect(m1.mock.calls).toHaveLength(2)
-  expect(m2.mock.calls).toHaveLength(0)
-  expect(m3.mock.calls).toHaveLength(1)
-  expect(m4.mock.calls).toHaveLength(1)
-  expect(m5.mock.calls).toHaveLength(0)
-  expect(m6.mock.calls).toHaveLength(0)
-  expect(m7.mock.calls).toHaveLength(2)
-  expect(m8.mock.calls).toHaveLength(1)
+  expect(m1).toBeCalledTimes(2)
+  expect(m2).toBeCalledTimes(0)
+  expect(m3).toBeCalledTimes(1)
+  expect(m4).toBeCalledTimes(1)
+  expect(m5).toBeCalledTimes(0)
+  expect(m6).toBeCalledTimes(0)
+  expect(m7).toBeCalledTimes(2)
+  expect(m8).toBeCalledTimes(1)
 })
