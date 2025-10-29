@@ -2,11 +2,11 @@ export {
   createRequest,
   Keq,
   request,
-  type KeqRequest,
-  type KeqInit,
-  type KeqOperations,
+  KeqRequest,
+  type KeqOptions,
+  type KeqApiSchema,
   type KeqOperation,
-  type KeqBaseOperation,
+  type KeqDefaultOperation,
 } from './request'
 
 
@@ -36,7 +36,7 @@ export {
   type KeqContextEmitter,
   type KeqGlobal,
   type KeqContextOptions,
-  type KeqOptions,
+  type KeqMiddlewareOptions,
   type KeqEvents,
   type KeqRetryDelay,
   type KeqRetryOn,

@@ -9,50 +9,34 @@ import { mergeKeqRequestBody, fixContentType } from './utils/index.js'
 import { base64Encode } from '~/utils/index.js'
 import { KeqRequestBody } from '~/request-init/index.js'
 
-import type { KeqMiddleware } from '~/middleware/index.js'
-import type { KeqRetryOn, KeqRetryDelay, KeqOptionsParameter, KeqOptionsReturnType, KeqResolveWithMode, KeqContextOptions } from '~/context/index.js'
-import type { KeqQueryObject, KeqQueryValue, CommonContentType, ShorthandContentType, ExtractFields, ExtractFiles, KeqBaseOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
+import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
+import type { KeqQueryObject, KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
+import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 
 
 /**
- * @description Keq 扩展 API，人性化的常用的API
+ * extends Core to provide a fluent API for building HTTP requests
  */
 export class Keq<
-  OUTPUT,
-  OPERATION extends Omit<KeqOperation, 'responseBody'> = KeqBaseOperation,
-> extends Core<OUTPUT> {
-  use(...middlewares: KeqMiddleware[]): this {
-    return this.prependMiddlewares(...middlewares)
-  }
-
-
-  option<K extends keyof KeqOptionsReturnType<OUTPUT>>(key: K, value?: KeqOptionsParameter[K]): KeqOptionsReturnType<OUTPUT>[K]
-  option(key: string, value?: any): this
-  option(key: string, value: any = true): Keq<any> {
-    this.__options__[key] = value
-    return this
-  }
-
-  options(opts: KeqContextOptions): this {
-    for (const [key, value] of Object.entries(opts)) {
-      this.__options__[key] = value
-    }
-    return this
-  }
-
+  OP extends KeqOperation = KeqDefaultOperation,
+  RES_BODY extends KeqOperation['responseBody'] = OP['responseBody'],
+  REQ_PARAMS extends KeqOperation['requestParams'] = OP['requestParams'],
+  REQ_QUERY extends KeqOperation['requestQuery'] = OP['requestQuery'],
+  REQ_HEADERS extends KeqOperation['requestHeaders'] = OP['requestHeaders'],
+  REQ_BODY extends KeqOperation['requestBody'] = OP['requestBody'],
+> extends Core<OP> {
   /**
    * Set request header
    *
    * @description 设置请求头
    */
-  set<K extends 'strict'>(headers: OPERATION['requestHeaders']): this
-  set<K extends 'strict', T extends keyof OPERATION['requestHeaders']>(name: T, value: OPERATION['requestHeaders'][T]): this
-  set<T extends keyof KeqBaseOperation['requestHeaders']>(name: T, value: KeqBaseOperation['requestHeaders'][T]): this
+  set<K extends 'strict'>(headers: REQ_HEADERS): this
+  set<K extends 'strict', T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
   set(headers: Headers): this
   set(headers: Record<string, string>): this
   set(name: string, value: string | number): this
   set(
-    headersOrName: OPERATION['requestHeaders'] | KeqOperation['requestHeaders'] | string | Record<string, string> | Headers,
+    headersOrName: REQ_HEADERS | string | Record<string, string> | Headers,
     value?: string | number,
   ): this {
     if (Validator.isHeaders(headersOrName)) {
@@ -68,7 +52,7 @@ export class Keq<
     } else if (typeof headersOrName === 'object') {
       for (const [key, value] of Object.entries(headersOrName)) {
         if (!Validator.isHeaderValue(value)) {
-          throw new Exception(`[Invalid header] Key: ${key} Value: ${value}`)
+          throw new Exception(`[Invalid header] Key: ${key} Value: ${String(value)}`)
         }
 
         this.requestInit.headers.set(key, String(value))
@@ -81,11 +65,11 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query<K extends 'strict'>(key: OPERATION['requestQuery']): this
-  query<K extends 'strict', T extends keyof OPERATION['requestQuery']>(key: T, value: OPERATION['requestQuery'][T]): this
+  query<K extends 'strict'>(key: REQ_QUERY): this
+  query<K extends 'strict', T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T]): this
   query(key: KeqQueryObject): this
   query(key: string, value: KeqQueryValue): this
-  query(key: string | OPERATION['requestQuery'] | KeqQueryObject, value?: KeqQueryValue): this {
+  query(key: string | REQ_QUERY | KeqQueryObject, value?: KeqQueryValue): this {
     if (Validator.isObject(key)) {
       const obj = qs.parse(
         qs.stringify(key, { encode: false, arrayFormat: 'brackets' }),
@@ -112,11 +96,11 @@ export class Keq<
   /**
    * Set request route params
    */
-  params<K extends 'strict'>(key: OPERATION['requestParams']): this
-  params<K extends 'strict', T extends keyof OPERATION['requestParams']>(key: T, value: OPERATION['requestParams'][T]): this
+  params<K extends 'strict'>(key: REQ_PARAMS): this
+  params<K extends 'strict', T extends keyof REQ_PARAMS>(key: T, value: REQ_PARAMS[T]): this
   params(key: Record<string, string | number>): this
   params(key: string, value: string | number): this
-  params(key: string | OPERATION['requestParams'] | Record<string, string | number>, value?: string | number): this {
+  params(key: string | REQ_PARAMS | Record<string, string | number>, value?: string | number): this {
     if (typeof key === 'string') {
       this.requestInit.routeParams[key] = String(value)
     } else if (typeof key === 'object') {
@@ -170,7 +154,7 @@ export class Keq<
   /**
    * set request body
    */
-  send<K extends 'strict'>(value: OPERATION['requestBody']): this
+  send<K extends 'strict'>(value: REQ_BODY): this
   send(value: object): this
   send(value: FormData): this
   send(value: URLSearchParams): this
@@ -193,11 +177,11 @@ export class Keq<
   }
 
 
-  field<T extends keyof ExtractFields<OPERATION>>(arg1: T, value: ExtractFields<OPERATION>[T]): this
-  field(arg1: ExtractFields<OPERATION>): this
+  field<T extends ConditionalPick<RES_BODY, Primitive>, K extends keyof T>(arg1: K, value: T[K]): this
+  field(arg1: ConditionalPick<RES_BODY, Primitive>): this
   field(arg1: string, value: string | string[]): this
   field(arg1: Record<string, string>): this
-  field(arg1: ExtractFields<OPERATION> | string | Record<string, string>, arg2?: any): this {
+  field(arg1: string | Record<string, string>, arg2?: any): this {
     if (typeof arg1 === 'object') {
       this.requestInit.body = mergeKeqRequestBody(this.requestInit.body, arg1)
     } else if (arg2) {
@@ -211,8 +195,8 @@ export class Keq<
   }
 
 
-  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: KeqAttachableFile, filename: string): this
-  attach<T extends keyof ExtractFiles<OPERATION>>(key: T, value: KeqAttachableFile | KeqAttachableFile[]): this
+  attach<T extends keyof ConditionalPick<REQ_BODY, KeqAttachableFile>>(key: T, value: KeqAttachableFile, filename: string): this
+  attach<T extends keyof ConditionalPick<REQ_BODY, KeqAttachableFile>>(key: T, value: KeqAttachableFile | KeqAttachableFile[]): this
   attach(key: string, value: KeqAttachableFile, filename: string): this
   attach(key: string, value: KeqAttachableFile | KeqAttachableFile[]): this
   attach(key: string, value: KeqAttachableFile | KeqAttachableFile[], arg3 = 'file'): this {
@@ -261,7 +245,7 @@ export class Keq<
    * @param retryDelay Initial value used to calculate the retry in milliseconds (This is still randomized following the randomization factor)
    * @param retryCallback Will be called after request failed
    */
-  retry(retryTimes: number, retryDelay: KeqRetryDelay = 0, retryOn: KeqRetryOn = (attempt, error) => !!error): Keq<OUTPUT> {
+  retry(retryTimes: number, retryDelay: KeqRetryDelay = 0, retryOn: KeqRetryOn = (attempt, error) => !!error): this {
     this.option('retry', {
       times: retryTimes,
       delay: retryDelay,
@@ -308,12 +292,12 @@ export class Keq<
     return this
   }
 
-  resolveWith(m: 'response'): Keq<Response>
-  resolveWith(m: 'array-buffer'): Keq<ArrayBuffer>
-  resolveWith(m: 'blob'): Keq<Blob>
-  resolveWith(m: 'text'): Keq<string>
-  resolveWith<U = any>(m: 'json' | 'form-data'): Keq<U>
-  resolveWith<U = any>(m: KeqResolveWithMode): Keq<U> | Keq<string> | Keq<Blob> | Keq<ArrayBuffer> | Keq<Response> {
+  resolveWith(m: 'response'): Keq<Merge<OP, { responseBody: Response }>>
+  resolveWith(m: 'array-buffer'): Keq<Merge<OP, { responseBody: ArrayBuffer }>>
+  resolveWith(m: 'blob'): Keq<Merge<OP, { responseBody: Blob }>>
+  resolveWith(m: 'text'): Keq<Merge<OP, { responseBody: string }>>
+  resolveWith<T = any>(m: 'json' | 'form-data'): Keq<Merge<OP, { responseBody: T }>>
+  resolveWith<T = any>(m: KeqResolveWithMode): Keq<Merge<OP, { responseBody: T }>> | Keq<Merge<OP, { responseBody: string }>> | Keq<Merge<OP, { responseBody: Blob }>> | Keq<Merge<OP, { responseBody: ArrayBuffer }>> | Keq<Merge<OP, { responseBody: Response }>> {
     this.option('resolveWith', m)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

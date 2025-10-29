@@ -39,8 +39,35 @@ export const createMockFetch = (options: MockFetchOptions = {}): Mock<typeof fet
     Object.assign(createResponseOptions, options.response)
   }
 
-  return jest.fn<typeof fetch>(async () => {
-    if (delay > 0) await sleep(delay)
-    return createResponse(createResponseOptions)
-  })
+  return jest.fn<typeof fetch>((input: RequestInfo | URL, init?: RequestInit) => new Promise<Response>((resolve, reject) => {
+    let finished = false
+    let handler: NodeJS.Timeout | undefined = undefined
+
+    if (init?.signal) {
+      if (init.signal.aborted) {
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+        reject(init.signal.reason || new DOMException('AbortError', 'AbortError'))
+        return
+      }
+
+      const signal = init.signal
+      signal.onabort = () => {
+        if (finished) return
+        finished = true
+        handler && clearTimeout(handler)
+        // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+        reject(init.signal?.reason || new DOMException('AbortError', 'AbortError'))
+      }
+    }
+
+
+    handler = setTimeout(
+      () => {
+        if (finished) return
+        finished = true
+        resolve(createResponse(createResponseOptions))
+      },
+      delay,
+    )
+  }))
 }

@@ -1,8 +1,8 @@
-import { KeqRequestInit } from "~/request-init"
-import { KeqContextEmitter } from "./keq-context-emitter"
-import { KeqContextOptions } from "./keq-context-options"
-import { KeqGlobal } from "./keq-global"
-import { KeqContextData } from "./keq-context-data"
+import { KeqRequestInit } from '~/request-init'
+import { KeqContextEmitter } from './keq-context-emitter'
+import { KeqContextOptions } from './keq-context-options'
+import { KeqGlobal } from './keq-global'
+import { KeqContextData } from './keq-context-data'
 
 
 export interface KeqContext {
