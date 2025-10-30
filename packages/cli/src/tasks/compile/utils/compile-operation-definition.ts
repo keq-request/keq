@@ -9,6 +9,7 @@ import { isArtifactCompiledBy } from './compile-schema-definition.js'
 
 interface CompileProcessorOptions {
   rc: RuntimeConfig
+  requestArtifact: Artifact
   schemaArtifacts: Artifact[]
   operationDefinitions: OperationDefinition[]
 }
@@ -44,7 +45,7 @@ function genEntrypointFilepath(moduleName: string): string {
 }
 
 export async function compileOperationDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
-  const { rc, schemaArtifacts, operationDefinitions } = options
+  const { requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
 
 
   async function createTypeArtifact(operationDefinition: OperationDefinition): Promise<Artifact> {
@@ -88,7 +89,8 @@ export async function compileOperationDefinition(options: CompileProcessorOption
     })
 
     artifact.addDependence('keq', ['Keq'])
-    artifact.addDependence(rc.request || 'keq', ['request'])
+    // artifact.addDependence(rc.request || 'keq', ['request'])
+    artifact.addDependence(requestArtifact, ['request'])
     artifact.addDependence(
       typeArtifact,
       [

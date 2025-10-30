@@ -1,5 +1,5 @@
 import * as path from 'path'
-import * as fs from 'fs-extra'
+import fs from 'fs-extra'
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
 

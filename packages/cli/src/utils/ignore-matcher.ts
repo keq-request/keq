@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import * as fs from 'fs-extra'
+import fs from 'fs-extra'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { ModuleDefinition } from '~/tasks/utils/module-definition.js'
 

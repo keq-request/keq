@@ -16,6 +16,8 @@ interface InteractiveTaskOptions {
 
 export function createInteractiveTask(options: InteractiveTaskOptions): ListrTask<TaskContext> {
   return {
+    enabled: options?.enabled,
+    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.validated) throw new Error('Please run validate task first.')

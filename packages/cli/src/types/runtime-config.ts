@@ -9,7 +9,7 @@ export const RuntimeConfig = Type.Object({
 
   outdir: Type.String({ default: `${process.cwd()}/api` }),
   fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.snakeCase }),
-  request: Type.Optional(Type.String()),
+  // request: Type.Optional(Type.String()),
   modules: Type.Record(Type.String(), Type.String()),
   operationIdFactory: Type.Optional(Type.Function([Type.Any()], Type.String())),
   debug: Type.Optional(Type.Boolean({ default: false })),

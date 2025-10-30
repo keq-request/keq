@@ -16,7 +16,7 @@ export async function operationRequestRenderer(operationDefinition: OperationDef
     `const method = "${method}"`,
     `const pathname = "${pathname}"`,
     '',
-    `export function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}>(args?: ${typeName('RequestParameters')}): Keq<${typeName('ResponseBodies')}[STATUS], Operation<STATUS>> {`,
+    `export function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}>(args?: ${typeName('RequestParameters')}): Keq<Operation<STATUS>> {`,
     `  const req = request.post<${typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
     '    .option(\'module\', {',
     `      name: "${moduleName}",`,
