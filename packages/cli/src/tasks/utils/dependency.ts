@@ -8,16 +8,30 @@ export interface DependencyOptions {
   export?: boolean
 }
 
+export class DependencyIdentifier {
+  constructor(
+    public name: string,
+    public alias?: string,
+  ) {}
+
+  toCode(): string {
+    if (this.alias) {
+      return `${this.name} as ${this.alias}`
+    }
+    return this.name
+  }
+}
+
 export class Dependency {
   readonly source: DependencySource
-  readonly identifiers: string[]
+  readonly identifiers: DependencyIdentifier[]
   readonly export: boolean
   readonly belongTo: Artifact
 
 
-  constructor(source: DependencySource, identifiers: string[], belongTo: Artifact, options?: DependencyOptions) {
+  constructor(source: DependencySource, identifiers: (string | DependencyIdentifier)[], belongTo: Artifact, options?: DependencyOptions) {
     this.source = source
-    this.identifiers = identifiers
+    this.identifiers = identifiers.map((i) => (typeof i === 'string' ? new DependencyIdentifier(i) : i))
     this.export = !!options?.export
     this.belongTo = belongTo
   }
@@ -35,7 +49,8 @@ export class Dependency {
       const fullpath = this.realSource
 
       if (this.identifiers.length > 0) {
-        return `${this.export ? 'export' : 'import'} { ${this.identifiers.join(', ')} } from '${fullpath}'`
+        const $identifiers = this.identifiers.map((i) => i.toCode()).join(', ')
+        return `${this.export ? 'export' : 'import'} { ${$identifiers} } from '${fullpath}'`
       }
 
       if (this.export) {
