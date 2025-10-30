@@ -1,6 +1,6 @@
 import * as path from 'path'
 import * as changeCase from 'change-case'
-import { Dependency, DependencyOptions, DependencySource } from './dependency.js'
+import { Dependency, DependencyIdentifier, DependencyOptions, DependencySource } from './dependency.js'
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import { toComment } from './to-comment.js'
 
@@ -64,7 +64,7 @@ export class Artifact {
     return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
   }
 
-  addDependence(source: DependencySource, identifiers: string[], options?: DependencyOptions): Dependency {
+  addDependence(source: DependencySource, identifiers: (string | DependencyIdentifier)[], options?: DependencyOptions): Dependency {
     const dependence = new Dependency(
       source,
       identifiers,

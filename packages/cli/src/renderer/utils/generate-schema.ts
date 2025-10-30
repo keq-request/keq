@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import * as R from 'ramda'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { isReferenceObject } from './is-reference-object.js'
 import { isMixedSchemaObject } from './is-mixed-schema-object.js'
 import { isArraySchemaObject } from './is-array-schema-object.js'
 import { MixedSchemaObject } from '../types/mixed-schema-object.js'
 
+export type Alias = (name: string) => string
 
 export function generateComment(schema: OpenAPIV3_1.SchemaObject): string {
   const lines = ['/**']
@@ -34,56 +36,56 @@ export function generateComment(schema: OpenAPIV3_1.SchemaObject): string {
 }
 
 
-export function generateSchema(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject): string {
+export function generateSchema(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject, alias: Alias = R.identity): string {
   if (typeof schema === 'boolean') return 'unknown'
 
-  if (isReferenceObject(schema)) return generateReference(schema)
-  if (isMixedSchemaObject(schema)) return generateMixed(schema)
-  if (isArraySchemaObject(schema)) return generateArray(schema)
+  if (isReferenceObject(schema)) return generateReference(schema, alias)
+  if (isMixedSchemaObject(schema)) return generateMixed(schema, alias)
+  if (isArraySchemaObject(schema)) return generateArray(schema, alias)
 
-  if (schema.type === 'object') return generateObject(schema)
-  if (schema.enum) return generateEnum(schema)
-  if (schema.oneOf) return generateOneOf(schema)
-  if (schema.anyOf) return generateAnyOf(schema)
-  if (schema.allOf) return generateAllOf(schema)
-  if (schema.type === 'string') return generateString(schema)
-  if (schema.type === 'number') return generateNumber(schema)
-  if (schema.type === 'boolean') return generateBoolean(schema)
-  if (schema.type === 'null') return generateNull(schema)
-  if (schema.type === 'integer') return generateInteger(schema)
+  if (schema.type === 'object') return generateObject(schema, alias)
+  if (schema.enum) return generateEnum(schema, alias)
+  if (schema.oneOf) return generateOneOf(schema, alias)
+  if (schema.anyOf) return generateAnyOf(schema, alias)
+  if (schema.allOf) return generateAllOf(schema, alias)
+  if (schema.type === 'string') return generateString(schema, alias)
+  if (schema.type === 'number') return generateNumber(schema, alias)
+  if (schema.type === 'boolean') return generateBoolean(schema, alias)
+  if (schema.type === 'null') return generateNull(schema, alias)
+  if (schema.type === 'integer') return generateInteger(schema, alias)
 
   return 'unknown'
 }
 
-function generateMixed(schema: MixedSchemaObject): string {
+function generateMixed(schema: MixedSchemaObject, alias: Alias): string {
   if (Array.isArray(schema.type)) {
     schema.type
       .map((type): (OpenAPIV3_1.ArraySchemaObject | OpenAPIV3_1.NonArraySchemaObject) => ({ ...schema, type }))
-      .map((schema) => generateSchema(schema))
+      .map((schema) => generateSchema(schema, alias))
       .join(' | ')
   }
 
   return 'unknown'
 }
 
-function generateReference(schema: OpenAPIV3_1.ReferenceObject): string {
+function generateReference(schema: OpenAPIV3_1.ReferenceObject, alias: Alias): string {
   if (!schema.$ref || !schema.$ref.startsWith('#')) return `unknown /* ${schema.$ref.replace('*/', '*\\/')} */`
 
   const parts: string[] = schema.$ref.split('/')
 
   // TODO: 检查引用是否存在
-  return parts[parts.length - 1] || 'unknown'
+  return alias(parts[parts.length - 1]) || 'unknown'
 }
 
 
-function generateArray(schema: OpenAPIV3_1.ArraySchemaObject): string {
+function generateArray(schema: OpenAPIV3_1.ArraySchemaObject, alias: Alias): string {
   if (schema.items && Array.isArray(schema.items)) {
-    const items = schema.items.map((s) => generateSchema(s)).join(', ')
+    const items = schema.items.map((s) => generateSchema(s, alias)).join(', ')
     return `[${items}]`
   }
 
   if (schema.items && typeof schema.items === 'object') {
-    return `${generateSchema(schema.items)}[]`
+    return `${generateSchema(schema.items, alias)}[]`
   }
 
   return 'any[]'
@@ -96,7 +98,7 @@ export function indent(space: number, text: string): string {
     .join('\n')
 }
 
-function generateObject(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateObject(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (!schema.properties || !Object.keys(schema.properties).length) {
     return 'object'
   }
@@ -107,13 +109,15 @@ function generateObject(schema: OpenAPIV3_1.NonArraySchemaObject): string {
       if ($comment) $comment += '\n'
 
       const $key = `"${propertyName}"${schema.required?.includes(propertyName) ? '' : '?'}`
-      const $value = generateSchema(propertySchema)
+      const $value = generateSchema(propertySchema, alias)
 
       return indent(2, `${$comment}${$key}: ${$value}`)
     })
 
   if (schema.additionalProperties) {
-    const $value = schema.additionalProperties === true ? 'any' : generateSchema(schema.additionalProperties)
+    const $value = schema.additionalProperties === true
+      ? 'any'
+      : generateSchema(schema.additionalProperties, alias)
     $properties.push(indent(2, `[key: string]: ${$value}`))
   }
 
@@ -124,46 +128,46 @@ function generateObject(schema: OpenAPIV3_1.NonArraySchemaObject): string {
   ].join('\n')
 }
 
-function generateOneOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateOneOf(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (!schema.oneOf) return 'unknown'
 
-  return schema.oneOf.map((s) => generateSchema(s)).join(' | ')
+  return schema.oneOf.map((s) => generateSchema(s, alias)).join(' | ')
 }
 
-function generateAnyOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateAnyOf(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (!schema.anyOf) return 'unknown'
 
-  return schema.anyOf.map((s) => generateSchema(s)).join(' | ')
+  return schema.anyOf.map((s) => generateSchema(s, alias)).join(' | ')
 }
 
-function generateAllOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateAllOf(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (!schema.allOf) return 'unknown'
 
-  return schema.allOf.map((s) => generateSchema(s)).join(' & ')
+  return schema.allOf.map((s) => generateSchema(s, alias)).join(' & ')
 }
 
-function generateEnum(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateEnum(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (!schema.enum) return 'unknown'
   return schema.enum.map((v) => JSON.stringify(v)).join(' | ')
 }
 
-function generateString(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateString(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   if (schema.format === 'binary') return 'Blob | Buffer'
   return 'string'
 }
 
-function generateNumber(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateNumber(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   return 'number'
 }
 
-function generateBoolean(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateBoolean(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   return 'boolean'
 }
 
-function generateNull(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateNull(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   return 'null'
 }
 
-function generateInteger(schema: OpenAPIV3_1.NonArraySchemaObject): string {
+function generateInteger(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
   return 'number'
 }

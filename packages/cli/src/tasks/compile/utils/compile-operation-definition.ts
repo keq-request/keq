@@ -5,6 +5,7 @@ import { operationRequestRenderer } from '~/renderer/operation-request/index.js'
 import { Artifact } from '~/tasks/utils/artifact.js'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { isArtifactCompiledBy } from './compile-schema-definition.js'
+import { DependencyIdentifier } from '~/tasks/utils/dependency.js'
 
 
 interface CompileProcessorOptions {
@@ -47,9 +48,10 @@ function genEntrypointFilepath(moduleName: string): string {
 export async function compileOperationDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
   const { requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
 
+  const alias = (name: string): string => `${name}Schema`
 
   async function createTypeArtifact(operationDefinition: OperationDefinition): Promise<Artifact> {
-    const content = await operationTypeRenderer(operationDefinition)
+    const content = await operationTypeRenderer(operationDefinition, alias)
     const filepath = genOperationTypeFilepath(operationDefinition)
 
     const typeArtifact = new Artifact({
@@ -69,7 +71,9 @@ export async function compileOperationDefinition(options: CompileProcessorOption
         continue
       }
 
-      typeArtifact.addDependence(dependentArtifact, [dependentSchemaDefinition.name])
+      typeArtifact.addDependence(dependentArtifact, [
+        new DependencyIdentifier(dependentSchemaDefinition.name, alias(dependentSchemaDefinition.name)),
+      ])
     }
 
     return typeArtifact

@@ -1,5 +1,6 @@
+import * as R from 'ramda'
 import { isReferenceObject } from '../utils/is-reference-object.js'
-import { generateSchema, indent } from '../utils/generate-schema.js'
+import { Alias, generateSchema, indent } from '../utils/generate-schema.js'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import * as changeCase from 'change-case'
@@ -11,7 +12,7 @@ export function typeNameFactory(operationDefinition: OperationDefinition) {
 }
 
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function operationTypeRenderer(operationDefinition: OperationDefinition): Promise<string> {
+export async function operationTypeRenderer(operationDefinition: OperationDefinition, alias: Alias = R.identity): Promise<string> {
   const { operation } = operationDefinition
 
   if (!operation.responses) return ''
@@ -25,7 +26,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
         const $value = Object.values(response.content || {})
           .map((mediaTypeObject) => mediaTypeObject.schema)
           .filter((schema) => !!schema)
-          .map((schema) => generateSchema(schema))
+          .map((schema) => generateSchema(schema, alias))
           .join(' | ')
 
         return indent(2, `${statusCode}: ${$value || 'void'}`)
@@ -39,7 +40,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     const $value = Object.values(operation.requestBody.content || {})
       .map((mediaTypeObject) => mediaTypeObject.schema)
       .filter((schema) => !!schema)
-      .map((schema) => generateSchema(schema))
+      .map((schema) => generateSchema(schema, alias))
       .join(' | ')
 
     $requestBody = `export type ${typeName('RequestBody')} = ${$value || 'unknown'}`
@@ -51,9 +52,9 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     '}',
     '',
     '',
-    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || []),
-    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || []),
-    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || []),
+    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || [], alias),
+    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || [], alias),
+    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || [], alias),
     $requestBody,
     '',
     `export type ${typeName('RequestParameters')} = ${typeName('RequestQuery')} & ${typeName('RouteParameters')} & ${typeName('RequestHeaders')} & ${typeName('RequestBody')}`,
@@ -68,11 +69,11 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
   ].join('\n')
 }
 
-function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[]): string {
+function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], alias: Alias): string {
   const $parameters = parameters.map((parameter) => {
     const parameterName = `"${parameter.name}"`
     const $key = parameter.required ? parameterName : `${parameterName}?`
-    const $value = generateSchema(parameter.schema || { type: 'any' })
+    const $value = generateSchema(parameter.schema || { type: 'any' }, alias)
 
     return indent(2, `${$key}: ${$value}`)
   })
