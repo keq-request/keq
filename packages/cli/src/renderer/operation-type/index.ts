@@ -51,10 +51,12 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     $responses,
     '}',
     '',
-    '',
     generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || [], alias),
+    '',
     generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || [], alias),
+    '',
     generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || [], alias),
+    '',
     $requestBody,
     '',
     `export type ${typeName('RequestParameters')} = ${typeName('RequestQuery')} & ${typeName('RouteParameters')} & ${typeName('RequestHeaders')} & ${typeName('RequestBody')}`,
@@ -70,6 +72,10 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
 }
 
 function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], alias: Alias): string {
+  if (parameters.length === 0) {
+    return `export type ${name} = {}`
+  }
+
   const $parameters = parameters.map((parameter) => {
     const parameterName = `"${parameter.name}"`
     const $key = parameter.required ? parameterName : `${parameterName}?`
