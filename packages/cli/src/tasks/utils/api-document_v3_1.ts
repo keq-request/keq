@@ -5,7 +5,7 @@ import { SupportedMethods } from '~/constants/supported-methods.js'
 import { OperationDefinition } from './operation-definition.js'
 import { SchemaDefinition } from './schema-definition.js'
 import { logger } from '~/utils/logger.js'
-import { openapiShakingSync } from '@opendoc/openapi-shaking'
+import OpenapiShaking from '@opendoc/openapi-shaking'
 
 
 export class ApiDocumentV3_1 {
@@ -82,7 +82,7 @@ export class ApiDocumentV3_1 {
     }
 
 
-    const sharkedSwagger = openapiShakingSync(
+    const sharkedSwagger = OpenapiShaking.openapiShakingSync(
       this.swagger as any,
       isAccepted as any,
       { tolerant: true },

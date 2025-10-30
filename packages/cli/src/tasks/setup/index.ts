@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import * as fs from 'fs-extra'
+import fs from 'fs-extra'
 import path from 'path'
 import chalk from 'chalk'
 import { CosmiconfigResult } from 'cosmiconfig'
@@ -50,10 +50,6 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
 
       if (options?.tolerant) {
         rc.tolerant = true
-      }
-
-      if (rc.request) {
-        rc.request = rc.request.replace(/\.(ts|js)$/, '')
       }
 
       let filter: IgnoreMatcher = new IgnoreMatcher([])

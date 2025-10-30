@@ -1,5 +1,5 @@
 import * as R from 'ramda'
-import { isURL } from 'validator'
+import validator from 'validator'
 
 
 export function validateModules(modules: Record<string, string>): void {
@@ -23,7 +23,7 @@ export function validateModules(modules: Record<string, string>): void {
   for (const key in modules) {
     const address = modules[key]
 
-    if (isURL(address, { require_host: true, require_protocol: true, protocols: ['http', 'https'] })) {
+    if (validator.isURL(address, { require_host: true, require_protocol: true, protocols: ['http', 'https'] })) {
       continue
     }
 

@@ -28,7 +28,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
           .map((schema) => generateSchema(schema))
           .join(' | ')
 
-        return indent(2, `${statusCode}: ${$value || 'unknown'}`)
+        return indent(2, `${statusCode}: ${$value || 'void'}`)
       }
     })
     .join('\n')
