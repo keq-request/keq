@@ -37,10 +37,20 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
   let $requestBody = `export type ${typeName('RequestBody')} = {}`
 
   if (operation.requestBody && !isReferenceObject(operation.requestBody)) {
-    const $value = Object.values(operation.requestBody.content || {})
-      .map((mediaTypeObject) => mediaTypeObject.schema)
-      .filter((schema) => !!schema)
-      .map((schema) => generateSchema(schema, alias))
+    const $value = Object.entries(operation.requestBody.content || {})
+      .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
+      .filter(([, schema]) => !!schema)
+      .map(([mediaType, schema]) => {
+        if (mediaType === 'multipart/form-data') {
+          console.log(schema)
+
+          return `FormData | ${generateSchema(schema!, alias)}`
+        } else if (mediaType === 'application/x-www-form-urlencoded') {
+          return `URLSearchParams | ${generateSchema(schema!, alias)}`
+        }
+
+        return generateSchema(schema!, alias)
+      })
       .join(' | ')
 
     $requestBody = `export type ${typeName('RequestBody')} = ${$value || 'unknown'}`
@@ -51,11 +61,11 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     $responses,
     '}',
     '',
-    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || [], alias),
+    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || [], 'KeqQueryValue', alias),
     '',
-    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || [], alias),
+    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || [], 'string | number', alias),
     '',
-    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || [], alias),
+    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || [], 'string | number', alias),
     '',
     $requestBody,
     '',
@@ -71,8 +81,9 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
   ].join('\n')
 }
 
-function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], alias: Alias): string {
+function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], additionalProperties: string, alias: Alias): string {
   if (parameters.length === 0) {
+    if (additionalProperties) return `export type ${name} = {\n  [key: string]: ${additionalProperties}\n}`
     return `export type ${name} = {}`
   }
 
@@ -89,6 +100,7 @@ function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObjec
   return [
     `export type ${name} = {`,
     $parameters,
+    additionalProperties ? `  [key: string]: ${additionalProperties}` : '',
     '}',
-  ].join('\n')
+  ].filter(Boolean).join('\n')
 }

@@ -86,16 +86,16 @@ export class Validator {
     if (object instanceof FormData) return true
 
     return (
-      Validator.isObject(object) &&
-      Validator.isFunction(object.append) &&
-      Validator.isFunction(object.delete) &&
-      Validator.isFunction(object.get) &&
-      Validator.isFunction(object.getAll) &&
-      Validator.isFunction(object.has) &&
-      Validator.isFunction(object.set) &&
-      Validator.isFunction(object.entries) &&
-      Validator.isFunction(object.keys) &&
-      Validator.isFunction(object.values)
+      Validator.isObject(object)
+      && Validator.isFunction(object.append)
+      && Validator.isFunction(object.delete)
+      && Validator.isFunction(object.get)
+      && Validator.isFunction(object.getAll)
+      && Validator.isFunction(object.has)
+      && Validator.isFunction(object.set)
+      && Validator.isFunction(object.entries)
+      && Validator.isFunction(object.keys)
+      && Validator.isFunction(object.values)
     )
   }
 
@@ -106,16 +106,16 @@ export class Validator {
     if (obj instanceof Headers) return true
 
     if (
-      Validator.isObject(obj) &&
-      Validator.isFunction(obj.forEach) &&
-      Validator.isFunction(obj.get) &&
-      Validator.isFunction(obj.has) &&
-      Validator.isFunction(obj.set) &&
-      Validator.isFunction(obj.append) &&
-      Validator.isFunction(obj.delete) &&
-      Validator.isFunction(obj.entries) &&
-      Validator.isFunction(obj.keys) &&
-      Validator.isFunction(obj.values)
+      Validator.isObject(obj)
+      && Validator.isFunction(obj.forEach)
+      && Validator.isFunction(obj.get)
+      && Validator.isFunction(obj.has)
+      && Validator.isFunction(obj.set)
+      && Validator.isFunction(obj.append)
+      && Validator.isFunction(obj.delete)
+      && Validator.isFunction(obj.entries)
+      && Validator.isFunction(obj.keys)
+      && Validator.isFunction(obj.values)
     ) {
       return true
     }
@@ -130,19 +130,19 @@ export class Validator {
     if (obj instanceof URLSearchParams) return true
 
     return (
-      Validator.isObject(obj) &&
-      Validator.isFunction(obj.append) &&
-      Validator.isFunction(obj.delete) &&
-      Validator.isFunction(obj.entries) &&
-      Validator.isFunction(obj.forEac) &&
-      Validator.isFunction(obj.get) &&
-      Validator.isFunction(obj.getAll) &&
-      Validator.isFunction(obj.has) &&
-      Validator.isFunction(obj.keys) &&
-      Validator.isFunction(obj.set) &&
-      Validator.isFunction(obj.values) &&
-      Validator.isFunction(obj.sort) &&
-      Validator.isFunction(obj.toString)
+      Validator.isObject(obj)
+      && Validator.isFunction(obj.append)
+      && Validator.isFunction(obj.delete)
+      && Validator.isFunction(obj.entries)
+      && Validator.isFunction(obj.forEac)
+      && Validator.isFunction(obj.get)
+      && Validator.isFunction(obj.getAll)
+      && Validator.isFunction(obj.has)
+      && Validator.isFunction(obj.keys)
+      && Validator.isFunction(obj.set)
+      && Validator.isFunction(obj.values)
+      && Validator.isFunction(obj.sort)
+      && Validator.isFunction(obj.toString)
     )
   }
 
@@ -164,15 +164,15 @@ export class Validator {
     if (value === null || value === undefined) return false
 
     return (
-      Validator.isString(value) ||
-      Validator.isBlob(value) ||
-      Validator.isArrayBuffer(value) ||
-      Validator.isFormData(value) ||
-      Validator.isUrlSearchParams(value) ||
-      Validator.isReadableStream(value) ||
-      Validator.isBuffer(value) ||
+      Validator.isString(value)
+      || Validator.isBlob(value)
+      || Validator.isArrayBuffer(value)
+      || Validator.isFormData(value)
+      || Validator.isUrlSearchParams(value)
+      || Validator.isReadableStream(value)
+      || Validator.isBuffer(value)
       // TypedArray or DataView
-      ArrayBuffer.isView(value)
+      || ArrayBuffer.isView(value)
     )
   }
 }

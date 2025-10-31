@@ -1,5 +1,4 @@
-import { Simplify } from 'type-fest'
-import { KeqQueryObject } from '../keq-query-value'
+import { KeqQueryValue } from '../keq-query-value'
 
 
 export interface KeqOperation {
@@ -7,7 +6,9 @@ export interface KeqOperation {
     [key: string]: string | number
   }
 
-  requestQuery: Simplify<KeqQueryObject>
+  requestQuery: {
+    [key: string]: KeqQueryValue
+  }
 
   requestHeaders: {
     [key: string]: string | number
