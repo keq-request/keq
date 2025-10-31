@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import qs from 'qs'
 import { Core } from './core.js'
@@ -10,8 +10,9 @@ import { base64Encode } from '~/utils/index.js'
 import { KeqRequestBody } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
-import type { KeqQueryObject, KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
+import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
+import { LiteralKeys } from '~/types/literal-keys.js'
 
 
 /**
@@ -30,15 +31,11 @@ export class Keq<
    *
    * @description 设置请求头
    */
-  set<K extends 'strict'>(headers: REQ_HEADERS): this
-  set<K extends 'strict', T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
+  set(headers: Partial<REQ_HEADERS>): this
   set(headers: Headers): this
-  set(headers: Record<string, string>): this
-  set(name: string, value: string | number): this
-  set(
-    headersOrName: REQ_HEADERS | string | Record<string, string> | Headers,
-    value?: string | number,
-  ): this {
+  set<T extends keyof LiteralKeys<REQ_HEADERS>>(name: T, value: LiteralKeys<REQ_HEADERS>[T]): this
+  set<T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
+  set(headersOrName: Partial<REQ_HEADERS> | string | Headers, value?: string | number): this {
     if (Validator.isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
         this.requestInit.headers.set(key, value)
@@ -65,11 +62,10 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query<K extends 'strict'>(key: REQ_QUERY): this
-  query<K extends 'strict', T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T]): this
-  query(key: KeqQueryObject): this
-  query(key: string, value: KeqQueryValue): this
-  query(key: string | REQ_QUERY | KeqQueryObject, value?: KeqQueryValue): this {
+  query(key: Partial<REQ_QUERY>): this
+  query<T extends keyof LiteralKeys<REQ_QUERY>>(key: T, value: LiteralKeys<REQ_QUERY>[T]): this
+  query<T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T]): this
+  query(key: string | Partial<REQ_QUERY>, value?: KeqQueryValue): this {
     if (Validator.isObject(key)) {
       const obj = qs.parse(
         qs.stringify(key, { encode: false, arrayFormat: 'brackets' }),
@@ -86,21 +82,20 @@ export class Keq<
     }
 
     if (typeof key === 'string') {
-      this.query({ [key]: value })
+      this.query({ [key]: value } as Partial<REQ_QUERY>)
       return this
     }
 
-    throw new TypeError('typeof key is invalid')
+    throw new TypeException('Invalid Arguments for .query()')
   }
 
   /**
    * Set request route params
    */
-  params<K extends 'strict'>(key: REQ_PARAMS): this
-  params<K extends 'strict', T extends keyof REQ_PARAMS>(key: T, value: REQ_PARAMS[T]): this
-  params(key: Record<string, string | number>): this
-  params(key: string, value: string | number): this
-  params(key: string | REQ_PARAMS | Record<string, string | number>, value?: string | number): this {
+  params(key: Partial<REQ_PARAMS>): this
+  params<T extends keyof LiteralKeys<REQ_PARAMS>>(key: T, value: LiteralKeys<REQ_PARAMS>[T]): this
+  params<T extends keyof REQ_PARAMS>(key: T, value: REQ_PARAMS[T]): this
+  params(key: string | Partial<REQ_PARAMS>, value?: string | number): this {
     if (typeof key === 'string') {
       this.requestInit.routeParams[key] = String(value)
     } else if (typeof key === 'object') {
@@ -131,7 +126,7 @@ export class Keq<
   type(contentType: string): this
   type(contentType: string): this {
     const type = fixContentType(contentType)
-    this.set('Content-Type', type)
+    this.set('content-type' as keyof REQ_HEADERS, type as any)
     return this
   }
 
@@ -140,7 +135,7 @@ export class Keq<
    * Http Basic Authentication
    */
   auth(username: string, password: string): this {
-    this.set('Authorization', `Basic ${base64Encode(`${username}:${password}`)}`)
+    this.set('Authorization' as keyof REQ_HEADERS, `Basic ${base64Encode(`${username}:${password}`)}` as any)
     return this
   }
 
@@ -154,13 +149,7 @@ export class Keq<
   /**
    * set request body
    */
-  send<K extends 'strict'>(value: REQ_BODY): this
-  send(value: object): this
-  send(value: FormData): this
-  send(value: URLSearchParams): this
-  send(value: Array<any>): this
-  send(value: string): this
-  send(value: KeqRequestBody): this {
+  send(value: REQ_BODY): this {
     this.requestInit.body = mergeKeqRequestBody(this.requestInit.body, value)
 
     if (Validator.isUrlSearchParams(value)) {

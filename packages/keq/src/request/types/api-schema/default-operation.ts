@@ -1,11 +1,16 @@
 import { KeqOperation } from './operation'
-import { KeqQueryObject } from '../keq-query-value'
-import { Merge, Simplify } from 'type-fest'
+import { KeqQueryValue } from '../keq-query-value'
+import { Merge } from 'type-fest'
 
 
 export interface DefaultOperation extends KeqOperation {
-  requestParams: { [key: string]: string }
-  requestQuery: Simplify<KeqQueryObject>
+  requestParams: {
+    [key: string]: string
+  }
+
+  requestQuery: {
+    [key: string]: KeqQueryValue
+  }
 
   requestHeaders: {
     // Content negotiation
@@ -23,6 +28,8 @@ export interface DefaultOperation extends KeqOperation {
 
     // Request metadata
     referer: string
+
+    [key: string]: string | number
   }
 
   requestBody: FormData | URLSearchParams | object | Array<any> | string

@@ -7,8 +7,8 @@ export {
   type KeqApiSchema,
   type KeqOperation,
   type KeqDefaultOperation,
+  type KeqQueryValue,
 } from './request'
-
 
 export {
   composeMiddleware,
@@ -41,7 +41,6 @@ export {
   type KeqRetryDelay,
   type KeqRetryOn,
 } from './context'
-
 
 export {
   Exception,

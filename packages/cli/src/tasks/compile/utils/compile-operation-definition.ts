@@ -61,7 +61,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
       extensionName: '.type.ts',
     })
 
-    typeArtifact.addDependence('keq', ['KeqOperation'])
+    typeArtifact.addDependence('keq', ['KeqOperation', 'KeqQueryValue'])
     const dependentSchemaDefinitions = operationDefinition.getDependencies()
 
     for (const dependentSchemaDefinition of dependentSchemaDefinitions) {

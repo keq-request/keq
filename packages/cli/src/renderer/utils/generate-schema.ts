@@ -152,6 +152,7 @@ function generateEnum(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): s
 }
 
 function generateString(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
+  if (schema.contentMediaType === 'application/octet-stream') return 'Blob | Buffer'
   if (schema.format === 'binary') return 'Blob | Buffer'
   return 'string'
 }
