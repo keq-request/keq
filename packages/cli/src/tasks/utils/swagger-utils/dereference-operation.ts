@@ -1,4 +1,5 @@
 import * as R from 'ramda'
+import jsonpointer from 'jsonpointer'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JSONPath } from 'jsonpath-plus'
 import { removeUndefinedRef } from './remove-undefined-ref.js'
@@ -6,61 +7,62 @@ import { SwaggerUtils } from './index.js'
 
 
 function dereferencePathObject(swagger: OpenAPIV3_1.Document): void {
-  JSONPath({
-    path: '$.paths.*.$ref',
+  const matches = JSONPath({
+    path: '$.paths.*.$ref^',
     json: swagger,
-    callback: (payload) => {
-      const value = SwaggerUtils.dereference(payload.value, swagger)
-      delete payload.parent.$ref
-      Object.assign(payload.parent, value)
-    },
+    resultType: 'all',
   })
+
+  for (const match of matches) {
+    const value = SwaggerUtils.dereference(match.value.$ref, swagger)
+    jsonpointer.set(swagger, match.pointer, value)
+  }
 }
 
 function dereferenceRequestBody(swagger: OpenAPIV3_1.Document): void {
-  JSONPath({
-    path: '$.paths.*.*.requestBody.$ref',
+  const matches = JSONPath({
+    path: '$.paths.*.*.requestBody.$ref^',
     json: swagger,
-    callback: (payload) => {
-      const value = SwaggerUtils.dereference(payload.value, swagger)
-      delete payload.parent.$ref
-      Object.assign(payload.parent, value)
-    },
+    resultType: 'all',
   })
+
+  for (const match of matches) {
+    const value = SwaggerUtils.dereference(match.value.$ref, swagger)
+    jsonpointer.set(swagger, match.pointer, value)
+  }
 }
 
 export function dereferenceResponses(swagger: OpenAPIV3_1.Document): void {
-  JSONPath({
-    path: '$.paths.*.*.responses.*.$ref',
-    json: swagger,
-    callback: (payload) => {
-      const value = SwaggerUtils.dereference(payload.value, swagger)
-      delete payload.parent.$ref
-      Object.assign(payload.parent, value)
-    },
-  })
+  const matches = [
+    ...JSONPath({
+      path: '$.paths.*.*.responses.*.$ref^',
+      json: swagger,
+      resultType: 'all',
+    }),
+    ...JSONPath({
+      path: '$.paths.*.*.responses.*.headers.*.$ref^',
+      json: swagger,
+      resultType: 'all',
+    }),
+  ]
 
-  JSONPath({
-    path: '$.paths.*.*.responses.*.headers.*.$ref',
-    json: swagger,
-    callback: (payload) => {
-      const value = SwaggerUtils.dereference(payload.value, swagger)
-      delete payload.parent.$ref
-      Object.assign(payload.parent, value)
-    },
-  })
+  for (const match of matches) {
+    const value = SwaggerUtils.dereference(match.value.$ref, swagger)
+    jsonpointer.set(swagger, match.pointer, value)
+  }
 }
 
 function dereferenceParameters(swagger: OpenAPIV3_1.Document): void {
-  JSONPath({
-    path: '$.paths.*.*.parameters.*.$ref',
+  const matches = JSONPath({
+    path: '$.paths.*.*.parameters.*.$ref^',
     json: swagger,
-    callback: (payload) => {
-      const value = SwaggerUtils.dereference(payload.value, swagger)
-      delete payload.parent.$ref
-      Object.assign(payload.parent, value)
-    },
+    resultType: 'all',
   })
+
+  for (const match of matches) {
+    const value = SwaggerUtils.dereference(match.value.$ref, swagger)
+    jsonpointer.set(swagger, match.pointer, value)
+  }
 }
 
 export function dereferenceOperation(swagger: OpenAPIV3_1.Document): OpenAPIV3_1.Document {
