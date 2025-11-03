@@ -26,8 +26,8 @@
   },
   "scripts": {
     "prepare": "is-ci || husky",
-    "test": "nx run-many -t test",
-    "build": "nx run-many -t build"
+    "test": "jest",
+    "build": "pnpm run build -r"
   },
   "devDependencies": {
     "@buka/eslint-config": "^3.0.0",

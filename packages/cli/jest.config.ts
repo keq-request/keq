@@ -1,12 +1,12 @@
 import type { Config } from 'jest'
 import { pathsToModuleNameMapper } from 'ts-jest'
-import { compilerOptions } from './tsconfig.json'
 
 
-export default async (): Promise<Config> => ({
-  preset: 'ts-jest',
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/', useESM: true }),
-  transform: {
-    '\\.hbs$': '<rootDir>/__tests__/jest-raw.transform.cjs',
-  },
-})
+export default async (): Promise<Config> => {
+  const tsconfig = (await import('./tsconfig.json')).default
+
+  return {
+    preset: 'ts-jest',
+    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/src', useESM: true }),
+  }
+}

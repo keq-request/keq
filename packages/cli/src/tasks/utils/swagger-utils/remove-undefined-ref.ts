@@ -1,4 +1,5 @@
 import * as R from 'ramda'
+import jsonpointer from 'jsonpointer'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JSONPath } from 'jsonpath-plus'
 import { isRefDefined } from './is-ref-defined.js'
@@ -8,15 +9,17 @@ import { isRefDefined } from './is-ref-defined.js'
 export function removeUndefinedRef(swagger: OpenAPIV3_1.Document): OpenAPIV3_1.Document {
   const shadow = R.clone(swagger)
 
-  JSONPath({
-    path: "$..*['$ref']",
+  const matches = JSONPath({
+    path: "$..*['$ref']^",
     json: swagger,
-    callback: (payload) => {
-      if (payload.value && !isRefDefined(payload.value, swagger)) {
-        delete payload.parent.$ref
-      }
-    },
+    resultType: 'all',
   })
+
+  for (const match of matches) {
+    if (match.value.$ref && !isRefDefined(match.value.$ref, swagger)) {
+      jsonpointer.set(shadow, match.pointer, R.omit(['$ref'], match.value))
+    }
+  }
 
   return shadow
 }

@@ -3,7 +3,7 @@ import type { OpenAPIV3, OpenAPIV3_1 } from '@scalar/openapi-types'
 import { dereferenceOperation } from './dereference-operation.js'
 
 
-test('dereferenceOperation', async () => {
+test('dereferenceOperation', () => {
   const RequestBody: OpenAPIV3.RequestBodyObject = {
     content: {
       'application/json': {
@@ -17,7 +17,6 @@ test('dereferenceOperation', async () => {
         },
       },
     },
-
   }
 
   const Response: OpenAPIV3.ResponseObject = {
@@ -66,9 +65,9 @@ test('dereferenceOperation', async () => {
     },
   }
 
-  dereferenceOperation(swagger)
+  const dereferencedSwagger = dereferenceOperation(swagger)
 
-  expect(swagger.paths!['/test']!.post!.requestBody).toEqual(RequestBody)
-  expect(swagger.paths!['/test']!.post!.responses![200]).toEqual(Response)
+  expect(dereferencedSwagger.paths!['/test']!.post!.requestBody).toEqual(RequestBody)
+  expect(dereferencedSwagger.paths!['/test']!.post!.responses![200]).toEqual(Response)
 })
 
