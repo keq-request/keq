@@ -31,8 +31,7 @@ export class Keq<
    *
    * @description 设置请求头
    */
-  set(headers: Partial<REQ_HEADERS>): this
-  set(headers: Headers): this
+  set(headers: Partial<REQ_HEADERS> | Headers): this
   set<T extends keyof LiteralKeys<REQ_HEADERS>>(name: T, value: LiteralKeys<REQ_HEADERS>[T]): this
   set<T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
   set(headersOrName: Partial<REQ_HEADERS> | string | Headers, value?: string | number): this {
@@ -58,6 +57,15 @@ export class Keq<
     return this
   }
 
+  /**
+   * Set request headers
+   */
+  headers(headers: Partial<REQ_HEADERS> | Headers): this
+  headers<T extends keyof LiteralKeys<REQ_HEADERS>>(name: T, value: LiteralKeys<REQ_HEADERS>[T]): this
+  headers<T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
+  headers(headersOrName: Partial<REQ_HEADERS> | string | Headers, value?: string | number): this {
+    return this.set(headersOrName as any, value as any)
+  }
 
   /**
    * Set request query/searchParams
