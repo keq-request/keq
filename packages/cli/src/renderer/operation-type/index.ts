@@ -42,8 +42,6 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
       .filter(([, schema]) => !!schema)
       .map(([mediaType, schema]) => {
         if (mediaType === 'multipart/form-data') {
-          console.log(schema)
-
           return `FormData | ${generateSchema(schema!, alias)}`
         } else if (mediaType === 'application/x-www-form-urlencoded') {
           return `URLSearchParams | ${generateSchema(schema!, alias)}`
