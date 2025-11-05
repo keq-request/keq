@@ -23,7 +23,7 @@ test('Strategies.NETWORK_ONLY', async () => {
 
   expect(body2.code).toBe('200')
 
-  expect(mockedFetch).toBeCalledTimes(2)
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
 })
 
 test('Strategies.CATCH_FIRST', async () => {
@@ -52,7 +52,7 @@ test('Strategies.CATCH_FIRST', async () => {
     .get<MockFetchResponse>('/dog')
   expect(body3.code).toBe('200')
 
-  expect(mockedFetch).toBeCalledTimes(2)
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
 })
 
 test('Strategies.NETWORK_FIRST', async () => {
@@ -78,7 +78,7 @@ test('Strategies.NETWORK_FIRST', async () => {
     .get<MockFetchResponse>('/cat')
   expect(body2.code).toBe('200')
 
-  expect(mockedFetch).toBeCalledTimes(2)
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
 })
 
 test('Strategies.STALE_WHILE_REVALIDATE', async () => {
@@ -99,7 +99,7 @@ test('Strategies.STALE_WHILE_REVALIDATE', async () => {
     .get<MockFetchResponse>('/cat')
     .option('debug')
 
-  expect(mockedFetch).toBeCalledTimes(1)
+  expect(mockedFetch).toHaveBeenCalledTimes(1)
   expect(body1.code).toBe('200')
 
   const body2 = await request
@@ -108,8 +108,8 @@ test('Strategies.STALE_WHILE_REVALIDATE', async () => {
 
   await new Promise((resolve) => setTimeout(resolve, 1000))
 
-  expect(mockedFetch).toBeCalledTimes(2)
-  // expect(onNetworkResponse).toBeCalledTimes(2)
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  // expect(onNetworkResponse).toHaveBeenCalledTimes(2)
   // expect(onNetworkResponse.mock.calls[0][1]).toBeUndefined()
   // expect(onNetworkResponse.mock.calls[1][1]).toBeInstanceOf(Response)
 })

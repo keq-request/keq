@@ -28,8 +28,8 @@ test('abort flowController request', async () => {
 
   await sendRequest('http://test.com/2')
 
-  expect(mockedFetch).toBeCalledTimes(2)
-  expect(abortListener).toBeCalledTimes(1)
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(abortListener).toHaveBeenCalledTimes(1)
   expect(error).toBeInstanceOf(AbortException)
   expect(error).toBeInstanceOf(DOMException)
 })
@@ -52,6 +52,6 @@ test('serial flowController request', async () => {
   await sleep(50)
   await sendRequest()
 
-  expect(mockedFetch).toBeCalledTimes(2)
-  expect(catchFn).not.toBeCalled()
+  expect(mockedFetch).toHaveBeenCalledTimes(2)
+  expect(catchFn).not.toHaveBeenCalled()
 })

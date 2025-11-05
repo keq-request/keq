@@ -24,7 +24,7 @@ describe('setBaseUrl', () => {
     await orchestrator.execute()
 
     expect(sharedContext.request.url.href).toBe('https://test.com/api/test')
-    expect(fetchMiddleware).toBeCalledTimes(1)
+    expect(fetchMiddleware).toHaveBeenCalledTimes(1)
   })
 
   test('Prefix pathname', async () => {
@@ -46,7 +46,7 @@ describe('setBaseUrl', () => {
     await orchestrator.execute()
 
     expect(sharedContext.request.url.href).toBe('http://example.com/api/test')
-    expect(fetchMiddleware).toBeCalledTimes(1)
+    expect(fetchMiddleware).toHaveBeenCalledTimes(1)
   })
 })
 
@@ -68,7 +68,7 @@ test('setOrigin', async () => {
   await orchestrator.execute()
 
   expect(context.request.url.href).toBe('https://test.com/test')
-  expect(fetchMiddleware).toBeCalledTimes(1)
+  expect(fetchMiddleware).toHaveBeenCalledTimes(1)
 })
 
 test('setHost', async () => {
@@ -88,5 +88,5 @@ test('setHost', async () => {
   await orchestrator.execute()
 
   expect(context.request.url.href).toBe('http://test.com/test')
-  expect(fetchMiddleware).toBeCalledTimes(1)
+  expect(fetchMiddleware).toHaveBeenCalledTimes(1)
 })

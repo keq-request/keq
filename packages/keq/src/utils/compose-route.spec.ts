@@ -9,10 +9,10 @@ test('compose two route', async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await route({} as any)
 
-  expect(route1).toBeCalled()
-  expect(route2).toBeCalled()
+  expect(route1).toHaveBeenCalled()
+  expect(route2).toHaveBeenCalled()
 })
 
 test('compose empty route', () => {
-  expect(() => composeRoute([])).toThrowError()
+  expect(() => composeRoute([])).toThrow()
 })

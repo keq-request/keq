@@ -7,7 +7,7 @@ import { KeqMiddlewareOrchestrator } from '../../orchestrator/orchestrator.js'
 
 describe('composeMiddleware', () => {
   test('should throw error when middlewares array is empty', () => {
-    expect(() => composeMiddleware([])).toThrowError('At least one middleware')
+    expect(() => composeMiddleware([])).toThrow('At least one middleware')
   })
 
   test('should execute middlewares in correct order', async () => {

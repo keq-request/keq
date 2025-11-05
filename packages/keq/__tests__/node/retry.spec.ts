@@ -14,9 +14,9 @@ test('send request retry twice', async () => {
     .option('fetchAPI', mockedFetch)
     .on('retry', mockedListener)
 
-  expect(mockedFetch).toBeCalledTimes(3)
-  expect(mockedListener).toBeCalledTimes(2)
-  expect(retryOn).toBeCalledTimes(2)
+  expect(mockedFetch).toHaveBeenCalledTimes(3)
+  expect(mockedListener).toHaveBeenCalledTimes(2)
+  expect(retryOn).toHaveBeenCalledTimes(2)
 
   expect(retryOn.mock.calls.length).toBe(2)
   expect(retryOn.mock.calls[0][0]).toBe(0)

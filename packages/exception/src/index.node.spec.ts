@@ -35,7 +35,7 @@ describe('throwException()', () => {
         }),
     ).resolves.toEqual({})
 
-    expect(fetchAPI).toBeCalledTimes(1)
+    expect(fetchAPI).toHaveBeenCalledTimes(1)
   })
 
   test('should throw RequestException for 400 status and not retry', async () => {
@@ -56,7 +56,7 @@ describe('throwException()', () => {
         }),
     ).rejects.toThrow(RequestException)
 
-    expect(fetchAPI).toBeCalledTimes(2)
+    expect(fetchAPI).toHaveBeenCalledTimes(2)
   })
 
   test('should throw Error for 500 status and retry', async () => {
@@ -77,7 +77,7 @@ describe('throwException()', () => {
         }),
     ).rejects.toThrow(Error)
 
-    expect(fetchAPI).toBeCalledTimes(2)
+    expect(fetchAPI).toHaveBeenCalledTimes(2)
   })
 
   test('should throw Error for network errors and retry', async () => {
@@ -90,6 +90,6 @@ describe('throwException()', () => {
         .retry(1, 0),
     ).rejects.toThrow(Error)
 
-    expect(fetchAPI).toBeCalledTimes(2)
+    expect(fetchAPI).toHaveBeenCalledTimes(2)
   })
 })

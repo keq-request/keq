@@ -39,7 +39,7 @@
     "test:update": "jest -u"
   },
   "devDependencies": {
-    "@types/node": "^20.11.20",
+    "@types/node": "^20.19.24",
     "keq": "workspace:*",
     "keq-test": "workspace:*"
   },

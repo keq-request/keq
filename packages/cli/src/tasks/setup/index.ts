@@ -1,7 +1,6 @@
 import * as R from 'ramda'
 import fs from 'fs-extra'
 import path from 'path'
-import chalk from 'chalk'
 import { CosmiconfigResult } from 'cosmiconfig'
 import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
@@ -36,7 +35,7 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
       if (!Value.Check(RuntimeConfig, result.config)) {
         const errors = [...Value.Errors(RuntimeConfig, result.config)]
         const message = errors.map(({ path, message }) => `${path}: ${message}`).join('\n')
-        throw new Error(chalk.red(`Invalid Config: ${message}`))
+        throw new Error(`Invalid Config: ${message}`)
       }
 
       const rc = Value.Default(RuntimeConfig, result.config) as RuntimeConfig
