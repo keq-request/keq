@@ -16,7 +16,7 @@ test('setHeader', async () => {
   await orchestrator.execute()
 
   expect(sharedContext.request.headers.get('x-test')).toBe('test')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })
 
 test('setHeaders', async () => {
@@ -35,7 +35,7 @@ test('setHeaders', async () => {
 
   expect(sharedContext.request.headers.get('x-test1')).toBe('test1')
   expect(sharedContext.request.headers.get('x-test2')).toBe('test2')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })
 
 
@@ -55,7 +55,7 @@ test('appendHeader', async () => {
   await orchestrator.execute()
 
   expect(sharedContext.request.headers.get('x-append')).toBe('initial, appended')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })
 
 test('appendHeaders', async () => {
@@ -82,7 +82,7 @@ test('appendHeaders', async () => {
 
   expect(sharedContext.request.headers.get('x-append1')).toBe('initial1, appended1')
   expect(sharedContext.request.headers.get('x-append2')).toBe('initial2, appended2')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })
 
 test('insertHeader', async () => {
@@ -105,7 +105,7 @@ test('insertHeader', async () => {
 
   expect(sharedContext.request.headers.get('x-insert')).toBe('exists')
   expect(sharedContext.request.headers.get('x-new')).toBe('inserted')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })
 
 test('insertHeaders', async () => {
@@ -130,5 +130,5 @@ test('insertHeaders', async () => {
 
   expect(sharedContext.request.headers.get('x-insert1')).toBe('exists1')
   expect(sharedContext.request.headers.get('x-insert2')).toBe('new2')
-  expect(fetchMiddleware).toBeCalled()
+  expect(fetchMiddleware).toHaveBeenCalled()
 })

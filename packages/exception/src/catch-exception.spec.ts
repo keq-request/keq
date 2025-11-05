@@ -9,7 +9,7 @@ test('catchException(handler)', async () => {
   const err = new Error('fetch failed')
   const fetchMiddleware = createMockFetchMiddleware({ error: err })
 
-  const handler = jest.fn(() => {})
+  const handler = jest.fn((err) => {})
   const orchestrator = new KeqMiddlewareOrchestrator(sharedContext, [
     catchException(handler),
     fetchMiddleware,
@@ -17,7 +17,7 @@ test('catchException(handler)', async () => {
 
   await orchestrator.execute()
 
-  expect(fetchMiddleware).toBeCalled()
-  expect(handler).toBeCalled()
-  expect(handler).toBeCalledWith(err)
+  expect(fetchMiddleware).toHaveBeenCalled()
+  expect(handler).toHaveBeenCalled()
+  expect(handler).toHaveBeenCalledWith(err)
 })

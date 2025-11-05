@@ -30,7 +30,7 @@ test('new MemoryStorage()', async () => {
 
 test('new MemoryStorage({ eviction: "xxxx" })', async () => {
   // @ts-ignore
-  expect(() => new MemoryStorage({ eviction: 'xxxx' })).toThrowError()
+  expect(() => new MemoryStorage({ eviction: 'xxxx' })).toThrow()
 })
 
 

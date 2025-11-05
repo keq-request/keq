@@ -35,10 +35,10 @@
     "test:update": "jest -u"
   },
   "dependencies": {
-    "type-fest": "^5.1.0"
+    "type-fest": "^5.2.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
+    "@types/node": "^20.19.24",
     "keq": "workspace:*",
     "keq-test": "workspace:*"
   },

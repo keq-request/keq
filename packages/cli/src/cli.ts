@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import chalk from 'chalk'
 import semver from 'semver'
 import { Argument, Command, Option } from 'commander'
 import { build, ignore } from './tasks/index.js'
 import { SupportedMethods } from './constants/supported-methods.js'
+import { logger } from './utils/logger.js'
 
 
 if (semver.lt(process.version, '18.0.0')) {
@@ -98,7 +98,7 @@ async function main(): Promise<void> {
     if (process.argv.includes('--debug')) {
       console.error(err)
     } else {
-      console.error(chalk.red(err instanceof Error ? err.message : String(err)))
+      logger.error(err instanceof Error ? err.message : String(err))
     }
   }
 }

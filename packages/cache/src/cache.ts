@@ -51,7 +51,7 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       return rule.pattern.test(ctx.request.__url__.href)
     })
 
-    if (rule) cOpt = R.mergeRight(rule, cOpt || {})
+    if (rule) cOpt = R.mergeRight(rule, cOpt || ({} as any))
 
     if (!cOpt || R.isEmpty(cOpt)) {
       await next()

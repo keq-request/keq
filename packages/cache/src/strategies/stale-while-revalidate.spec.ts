@@ -28,11 +28,11 @@ test('Strategies.StaleWhileRevalidate', async () => {
     fetchMiddleware1,
   ])
   await orchestrator1.execute()
-  expect(fetchMiddleware1).toBeCalledTimes(1)
+  expect(fetchMiddleware1).toHaveBeenCalledTimes(1)
   expect(await sharedContext1.response?.text()).toEqual('1')
-  expect(cacheUpdateHandler1).toBeCalledTimes(1)
-  expect(cacheMissHandler1).toBeCalledTimes(1)
-  expect(cacheHitHandler1).toBeCalledTimes(0)
+  expect(cacheUpdateHandler1).toHaveBeenCalledTimes(1)
+  expect(cacheMissHandler1).toHaveBeenCalledTimes(1)
+  expect(cacheHitHandler1).toHaveBeenCalledTimes(0)
 
   // Second request, cache hit, should return cached response immediately and revalidate in background
 
@@ -51,13 +51,13 @@ test('Strategies.StaleWhileRevalidate', async () => {
   await orchestrator2.execute()
 
   expect(await sharedContext2.response?.text()).toEqual('1')
-  expect(fetchMiddleware2).toBeCalledTimes(0)
+  expect(fetchMiddleware2).toHaveBeenCalledTimes(0)
   await sleep(20)
   expect(await sharedContext2.response?.text()).toEqual('1')
-  expect(fetchMiddleware2).toBeCalledTimes(1)
-  expect(cacheUpdateHandler2).toBeCalledTimes(1)
-  expect(cacheMissHandler2).toBeCalledTimes(0)
-  expect(cacheHitHandler2).toBeCalledTimes(1)
+  expect(fetchMiddleware2).toHaveBeenCalledTimes(1)
+  expect(cacheUpdateHandler2).toHaveBeenCalledTimes(1)
+  expect(cacheMissHandler2).toHaveBeenCalledTimes(0)
+  expect(cacheHitHandler2).toHaveBeenCalledTimes(1)
 
   // Third request, fetch fails, should return stale cache
 
@@ -76,11 +76,11 @@ test('Strategies.StaleWhileRevalidate', async () => {
   await orchestrator3.execute()
 
   await sleep(5)
-  expect(fetchMiddleware3).toBeCalledTimes(1)
+  expect(fetchMiddleware3).toHaveBeenCalledTimes(1)
   expect(await sharedContext3.response?.text()).toEqual('2')
-  expect(cacheUpdateHandler3).toBeCalledTimes(0)
-  expect(cacheMissHandler3).toBeCalledTimes(0)
-  expect(cacheHitHandler3).toBeCalledTimes(1)
+  expect(cacheUpdateHandler3).toHaveBeenCalledTimes(0)
+  expect(cacheMissHandler3).toHaveBeenCalledTimes(0)
+  expect(cacheHitHandler3).toHaveBeenCalledTimes(1)
 
 
   // Fourth request, fetch fails, no cache available, should throw error
@@ -98,11 +98,11 @@ test('Strategies.StaleWhileRevalidate', async () => {
     fetchMiddleware4,
   ])
 
-  await expect(orchestrator4.execute()).rejects.toThrowError()
-  expect(cacheHitHandler4).toBeCalledTimes(0)
-  expect(cacheUpdateHandler4).toBeCalledTimes(0)
-  expect(cacheMissHandler4).toBeCalledTimes(1)
+  await expect(orchestrator4.execute()).rejects.toThrow()
+  expect(cacheHitHandler4).toHaveBeenCalledTimes(0)
+  expect(cacheUpdateHandler4).toHaveBeenCalledTimes(0)
+  expect(cacheMissHandler4).toHaveBeenCalledTimes(1)
 
 
-  expect(storage.set).toBeCalledTimes(2)
+  expect(storage.set).toHaveBeenCalledTimes(2)
 })
