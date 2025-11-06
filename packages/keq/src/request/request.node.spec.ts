@@ -69,8 +69,7 @@ test('send complex request with headers', async () => {
   const mockedFetch = global.fetch as Mock<typeof global.fetch>
 
   await request
-    .get('http://test.com/:animal/{favorite}')
-    .params('animal', 'cat')
+    .get('http://test.com/animal/{favorite}')
     .params({ favorite: 'can' })
     .query('color', 'black')
     .query({ breeds: ['british_shorthair_cat', 'doll_cat'] })
@@ -95,7 +94,7 @@ test('send complex request with headers', async () => {
     .redirect('follow')
 
   const url = mockedFetch.mock.calls[0][0]
-  expect(url).toBe('http://test.com/cat/can?color=black&breeds%5B%5D=british_shorthair_cat&breeds%5B%5D=doll_cat&bigint=123&obj%5Bsub_obj%5D%5Bkey%5D%5B%5D=value')
+  expect(url).toBe('http://test.com/animal/can?color=black&breeds%5B%5D=british_shorthair_cat&breeds%5B%5D=doll_cat&bigint=123&obj%5Bsub_obj%5D%5Bkey%5D%5B%5D=value')
 
   const init = mockedFetch.mock.calls[0][1]
 

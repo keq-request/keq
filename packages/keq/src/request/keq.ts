@@ -13,6 +13,7 @@ import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/in
 import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 import { LiteralKeys } from '~/types/literal-keys.js'
+import { UriTemplateContext } from '@opendoc/uri-template'
 
 
 /**
@@ -103,12 +104,12 @@ export class Keq<
   params(key: Partial<REQ_PARAMS>): this
   params<T extends keyof LiteralKeys<REQ_PARAMS>>(key: T, value: LiteralKeys<REQ_PARAMS>[T]): this
   params<T extends keyof REQ_PARAMS>(key: T, value: REQ_PARAMS[T]): this
-  params(key: string | Partial<REQ_PARAMS>, value?: string | number): this {
-    if (typeof key === 'string') {
-      this.requestInit.routeParams[key] = String(value)
+  params(key: string | Partial<REQ_PARAMS>, value?: UriTemplateContext[string]): this {
+    if (typeof key === 'string' && value !== undefined) {
+      this.requestInit.routeParams[key] = value
     } else if (typeof key === 'object') {
       for (const [k, v] of Object.entries(key)) {
-        this.requestInit.routeParams[k] = String(v)
+        this.requestInit.routeParams[k] = v
       }
     } else {
       throw new TypeError('Invalid Arguments for .params()')

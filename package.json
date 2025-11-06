@@ -27,6 +27,7 @@
   "scripts": {
     "prepare": "is-ci || husky",
     "test": "jest",
+    "clean": "pnpm -r exec rm -rf node_modules && rm -rf node_modules",
     "build": "pnpm run build -r"
   },
   "devDependencies": {

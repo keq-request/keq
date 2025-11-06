@@ -1,11 +1,12 @@
+import { Merge } from 'type-fest'
+import { UriTemplateContext } from '@opendoc/uri-template'
 import { KeqOperation } from './operation'
 import { KeqQueryValue } from '../keq-query-value'
-import { Merge } from 'type-fest'
 
 
 export interface DefaultOperation extends KeqOperation {
   requestParams: {
-    [key: string]: string
+    [key: string]: UriTemplateContext[string]
   }
 
   requestQuery: {

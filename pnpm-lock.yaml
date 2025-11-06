@@ -227,6 +227,9 @@ importers:
 
   packages/keq:
     dependencies:
+      '@opendoc/uri-template':
+        specifier: ^1.5.4
+        version: 1.5.4
       fastq:
         specifier: ^1.19.1
         version: 1.19.1
@@ -1159,6 +1162,9 @@ packages:
 
   '@opendoc/openapi-shaking@1.5.2':
     resolution: {integrity: sha512-SOZXRV61BIKRZ3h1PITlcLDR7NVp79RE3wNbvMSf7fp9VKKYDBx20r50kZ8B0SA1B5O3Y5+/04akESv5/a4X3A==}
+
+  '@opendoc/uri-template@1.5.4':
+    resolution: {integrity: sha512-N6XzdFEdap6AVer+Y7sYYNdgqFgPJ7HqL2NQa5/ChKNOETkiNAQUxokFVSWY0dAdVklvtBmpMINXuv7X1zmYWQ==}
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -4946,6 +4952,10 @@ snapshots:
       '@opendoc/openapi-reference-parser': 1.3.8
       openapi-types: 12.1.3
       ramda: 0.30.1
+      type-fest: 4.41.0
+
+  '@opendoc/uri-template@1.5.4':
+    dependencies:
       type-fest: 4.41.0
 
   '@pkgjs/parseargs@0.11.0':
