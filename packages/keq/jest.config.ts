@@ -1,9 +1,12 @@
+import fs from 'fs'
+import path from 'path'
 import type { Config } from 'jest'
 import { pathsToModuleNameMapper } from 'ts-jest'
-import tsconfig from './tsconfig.json'
 
 
 export default (): Config => {
+  const tsconfig = JSON.parse(fs.readFileSync(path.join(__dirname, './tsconfig.json'), 'utf-8'))
+
   return {
     preset: 'ts-jest',
     setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
