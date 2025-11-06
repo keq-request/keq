@@ -53,8 +53,7 @@ Request can be initiated by:
 ```javascript
 import { request } from "keq";
 
-const body = await request({
-  url: "/search",
+const body = await request.fetch("/search", {
   method: "get",
 });
 ```
@@ -110,8 +109,8 @@ import { request } from "keq";
 
 await request
   .get("/search")
-  .set("X-Origin-Host", "https://example.com")
-  .set("Accept", "application/json");
+  .headers("X-Origin-Host", "https://example.com")
+  .headers("Accept", "application/json");
 ```
 
 You may also pass an object or `Headers` to set several fields in a single call:
@@ -121,7 +120,7 @@ import { request } from "keq";
 
 await request
   .get("/search")
-  .set({
+  .headers({
     "X-Origin-Host": "https://example.com",
     Accept: "application/json",
   });
@@ -182,7 +181,7 @@ import { request } from "keq";
 
 await request
   .post("/user")
-  .set("Content-Type", "application/json")
+  .headers("Content-Type", "application/json")
   .send({ name: "tj", pet: "tobi" });
 ```
 
@@ -249,7 +248,7 @@ import { request } from "keq";
 // prettier-ignore
 await request
   .post("/user")
-  .set("Content-Type", "application/json")
+  .headers("Content-Type", "application/json")
 ```
 
 As a short-hand the .type() method is also available,
