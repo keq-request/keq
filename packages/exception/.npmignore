@@ -1,21 +1,6 @@
-/demo
-/docs
-/templates
-/tests
+/__tests__
 /src
-node_modules
-.github
-.nyc_output
-.vscode
-
-# Dev Config File
-.commitlintrc.yml
-.czrc
-.eslintrc.yml
-.gitignore
-.huskyrc.yml
-.lintstagedrc.yml
-.travis.yml
-ava.config.js
-rollup.config.js
+jest.config.ts
 tsconfig.json
+tsconfig.*.json
+tsup.config.ts
