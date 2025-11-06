@@ -1,5 +1,5 @@
 ---
-"keq-url": minor
+"@keq-request/url": minor
 ---
 
 **Feat:** setBaseUrl could prefix pathname.

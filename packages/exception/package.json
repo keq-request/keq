@@ -1,5 +1,5 @@
 {
-  "name": "keq-exception",
+  "name": "@keq-request/exception",
   "version": "3.2.0",
   "description": "Request exception for keq",
   "keywords": [

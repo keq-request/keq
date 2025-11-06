@@ -1,5 +1,5 @@
 ---
-"keq-exception": major
+"@keq-request/exception": major
 ---
 
-**BREAKING CHANGE:** move `RequestException` form `keq-exception` to `keq`
+**BREAKING CHANGE:** move `RequestException` form `@keq-request/exception` to `keq`

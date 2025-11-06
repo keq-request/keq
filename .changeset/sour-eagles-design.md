@@ -1,5 +1,5 @@
 ---
-"keq-exception": patch
+"@keq-request/exception": patch
 ---
 
 remove override `retryOn`.

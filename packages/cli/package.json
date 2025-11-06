@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "keq-cli",
+  "name": "@keq-request/cli",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": "dist/cli.js",
