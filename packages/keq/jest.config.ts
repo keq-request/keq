@@ -5,7 +5,7 @@ import { pathsToModuleNameMapper } from 'ts-jest'
 
 
 export default (): Config => {
-  const tsconfig = JSON.parse(fs.readFileSync(path.join(__dirname, './tsconfig.json'), 'utf-8'))
+  const tsconfig = JSON.parse(fs.readFileSync(path.join(import.meta.dirname, './tsconfig.json'), 'utf-8'))
 
   return {
     preset: 'ts-jest',
