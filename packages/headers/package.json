@@ -1,5 +1,5 @@
 {
-  "name": "keq-headers",
+  "name": "@keq-request/headers",
   "version": "2.0.4",
   "description": "Set/Append headers to request.",
   "keywords": [
