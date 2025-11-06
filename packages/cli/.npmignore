@@ -1,15 +1,6 @@
-node_modules
+/__tests__
 /src
-/test
-/build
-/.github
-/.vscode
-/.coverage
-/.husky
-
-# Dev Config File
-.commitlintrc.yml
-.eslintrc.cjs
-.gitignore
 jest.config.ts
 tsconfig.json
+tsconfig.*.json
+tsup.config.ts

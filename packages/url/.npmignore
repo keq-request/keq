@@ -1,12 +1,6 @@
-/.github
-/.husky
-/build
-/coverage
-/doc
+/__tests__
 /src
-/test
-
-.commitlintrc.yml
-.eslintrc.cjs
-.gitignore
 jest.config.ts
+tsconfig.json
+tsconfig.*.json
+tsup.config.ts

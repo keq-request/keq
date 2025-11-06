@@ -1,7 +1,6 @@
 packages:
-  - packages/*
+- packages/*
 
 onlyBuiltDependencies:
-  - '@swc/core'
-  - nx
-  - unrs-resolver
+- '@swc/core'
+- unrs-resolver

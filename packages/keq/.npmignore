@@ -1,13 +1,6 @@
-/.github
-/.husky
-/.vscode
-/build
-/coverage
-/doc
-/src
 /__tests__
-
-.commitlintrc.yml
+/src
 jest.config.ts
-.node-version
-eslint.config.cjs
+tsconfig.json
+tsconfig.*.json
+tsup.config.ts
