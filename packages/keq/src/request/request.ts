@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { KeqGlobal } from '~/context'
 import { Keq } from './keq'
-import { KeqApiSchema, KeqDefaultOperation } from './types'
+import { KeqApiSchema, KeqDefaultOperation, KeqQueryOptions } from './types'
 import { getLocationId } from './utils'
 import { KeqMiddleware } from '~/middleware'
 import { Validator } from '~/validator'
@@ -15,6 +15,7 @@ export interface KeqRequestOptions {
   preMiddlewares?: KeqMiddleware[]
   postMiddlewares?: KeqMiddleware[]
   baseOrigin?: string
+  qs?: KeqQueryOptions
 }
 
 export type KeqRequestFetchOptions<M extends KeqRequestMethod = KeqRequestMethod> = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signal' | 'abort' | 'clone' | 'toFetchArguments' | 'method'>> & {
@@ -27,6 +28,7 @@ export type KeqRequestFetchOptions<M extends KeqRequestMethod = KeqRequestMethod
  */
 export class KeqRequest<SCHEMA extends KeqApiSchema> {
   baseOrigin: string
+  qs?: KeqQueryOptions
 
   /**
    * share data between requests, used to implement flowControl
@@ -43,6 +45,8 @@ export class KeqRequest<SCHEMA extends KeqApiSchema> {
     } else {
       this.baseOrigin = Validator.isBrowser() ? location.origin : 'http://127.0.0.1'
     }
+
+    this.qs = options?.qs
 
     this.postMiddlewares = options?.postMiddlewares || [
       keqFlowControlMiddleware(),
@@ -65,7 +69,7 @@ export class KeqRequest<SCHEMA extends KeqApiSchema> {
     init: KeqRequestFetchOptions,
     locationId?: string,
   ): Keq<any> {
-    const keq = new Keq(this.__formatUrl__(url), { ...init, locationId, global: this.globals })
+    const keq = new Keq(this.__formatUrl__(url), { ...init, locationId, global: this.globals, qs: this.qs })
 
     keq.appendMiddlewares(...this.postMiddlewares)
     keq.prependMiddlewares(...this.preMiddlewares)

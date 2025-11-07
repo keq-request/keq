@@ -1,16 +1,15 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import qs from 'qs'
 import { Core } from './core.js'
 import { Exception, TypeException } from '~/exception/index.js'
 import { Validator } from '~/validator/index.js'
 import { KeqFlowControlOptions, KeqFlowControlMode, KeqFlowControlSignal } from '~/middlewares/index.js'
-import { mergeKeqRequestBody, fixContentType } from './utils/index.js'
+import { mergeKeqRequestBody, fixContentType, queryStringify } from './utils/index.js'
 import { base64Encode } from '~/utils/index.js'
 import { KeqRequestBody } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
-import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile } from './types/index.js'
+import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 import { LiteralKeys } from '~/types/literal-keys.js'
 import { UriTemplateContext } from '@opendoc/uri-template'
@@ -71,17 +70,14 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query(key: Partial<REQ_QUERY>): this
-  query<T extends keyof LiteralKeys<REQ_QUERY>>(key: T, value: LiteralKeys<REQ_QUERY>[T]): this
-  query<T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T]): this
-  query(key: string | Partial<REQ_QUERY>, value?: KeqQueryValue): this {
-    if (Validator.isObject(key)) {
-      const obj = qs.parse(
-        qs.stringify(key, { encode: false, arrayFormat: 'brackets' }),
-        { depth: 0 },
-      ) as Record<string, string>
+  query(key: Partial<REQ_QUERY>, options?: KeqQueryOptions): this
+  query<T extends keyof LiteralKeys<REQ_QUERY>>(key: T, value: LiteralKeys<REQ_QUERY>[T], options?: KeqQueryOptions): this
+  query<T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T], options?: KeqQueryOptions): this
+  query(arg1: string | Partial<REQ_QUERY>, arg2?: KeqQueryValue | KeqQueryOptions, arg3?: KeqQueryOptions): this {
+    if (Validator.isObject(arg1)) {
+      const str = queryStringify(arg1, arg2 as KeqQueryOptions || this.__qs__)
 
-      for (const [k, v] of Object.entries(obj)) {
+      for (const [k, v] of new URLSearchParams(str).entries()) {
         for (const item of Array.isArray(v) ? v : [v]) {
           this.requestInit.url.searchParams.append(k, item)
         }
@@ -90,8 +86,8 @@ export class Keq<
       return this
     }
 
-    if (typeof key === 'string') {
-      this.query({ [key]: value } as Partial<REQ_QUERY>)
+    if (typeof arg1 === 'string') {
+      this.query({ [arg1]: arg2 } as Partial<REQ_QUERY>, arg3)
       return this
     }
 

@@ -2,4 +2,9 @@
 "keq": major
 ---
 
-**BREAKING CHANGE:** The `.query(key, [1,2])` method now returns `"key[]=1&key[]=2"` instead of `"key=1&key=2"`.
+**BREAKING CHANGE:** Add an options to control query serialization.
+
+- `.query({ a: [1, 2]})` => `?a[0]=1&a[1]=2`
+- `.query({ a: [1, 2]}, { arrayFormat: 'brackets' })` => `?a[]=1&a[]=2`
+- `.query({ a: [1, 2]}, { arrayFormat: 'repeat' })` => `?a=1&a=2`
+- `.query({ a: [1, 2]}, { arrayFormat: 'comma' })` => `?a=1,2`
