@@ -6,12 +6,13 @@ import { KeqSharedContext, KeqContextOptions } from '~/context/index.js'
 import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 import { intelligentParseResponse } from './utils/index.js'
-import { KeqDefaultOperation, KeqOperation } from './types/index.js'
+import { KeqDefaultOperation, KeqOperation, KeqQueryOptions } from './types/index.js'
 
 
 export type KeqOptions = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signal' | 'abort' | 'clone'>> & {
   locationId?: string
   global?: KeqGlobal
+  qs?: KeqQueryOptions
 }
 
 /**
@@ -35,6 +36,7 @@ export class Core<
   protected __global__: Record<string, any>
   protected __prepend_middlewares__: KeqMiddleware[] = []
   protected __append_middlewares__: KeqMiddleware[] = []
+  protected __qs__: KeqQueryOptions | undefined
 
   protected get __middlewares__(): KeqMiddleware[] {
     return [...this.__prepend_middlewares__, ...this.__append_middlewares__]
@@ -48,6 +50,7 @@ export class Core<
   public constructor(url: URL, options: KeqOptions) {
     this.__global__ = options.global || {}
     this.__locationId__ = options.locationId
+    this.__qs__ = options.qs
 
     this.requestInit = new KeqRequestInit({
       method: 'get',
