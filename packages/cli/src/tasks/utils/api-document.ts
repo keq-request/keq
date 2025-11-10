@@ -10,7 +10,7 @@ import { ApiDocumentV3_1 } from './api-document_v3_1.js'
 import { fixSwagger } from 'swagger-fix'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import { Debugger } from '~/utils/debugger.js'
-import { SwaggerUtils } from './swagger-utils/index.js'
+import { SwaggerUtils } from '../../utils/swagger-utils/index.js'
 
 
 export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {

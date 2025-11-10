@@ -2,10 +2,8 @@
 
 import * as R from 'ramda'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { isReferenceObject } from './is-reference-object.js'
-import { isMixedSchemaObject } from './is-mixed-schema-object.js'
-import { isArraySchemaObject } from './is-array-schema-object.js'
 import { MixedSchemaObject } from '../types/mixed-schema-object.js'
+import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 
 export type Alias = (name: string) => string
 
@@ -39,9 +37,9 @@ export function generateComment(schema: OpenAPIV3_1.SchemaObject): string {
 export function generateSchema(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject, alias: Alias = R.identity): string {
   if (typeof schema === 'boolean') return 'unknown'
 
-  if (isReferenceObject(schema)) return generateReference(schema, alias)
-  if (isMixedSchemaObject(schema)) return generateMixed(schema, alias)
-  if (isArraySchemaObject(schema)) return generateArray(schema, alias)
+  if (JsonSchemaUtils.isRef(schema)) return generateReference(schema, alias)
+  if (JsonSchemaUtils.isMixed(schema)) return generateMixed(schema, alias)
+  if (JsonSchemaUtils.isArray(schema)) return generateArray(schema, alias)
 
   if (schema.type === 'object') return generateObject(schema, alias)
   if (schema.enum) return generateEnum(schema, alias)
