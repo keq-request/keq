@@ -1,9 +1,9 @@
 import * as R from 'ramda'
-import { isReferenceObject } from '../utils/is-reference-object.js'
 import { Alias, generateSchema, indent } from '../utils/generate-schema.js'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import * as changeCase from 'change-case'
+import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 
 
 export function typeNameFactory(operationDefinition: OperationDefinition) {
@@ -22,7 +22,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
 
   const $responses = Object.entries(operation.responses)
     .map(([statusCode, response]) => {
-      if (!isReferenceObject(response)) {
+      if (!JsonSchemaUtils.isRef(response)) {
         const $value = Object.values(response.content || {})
           .map((mediaTypeObject) => mediaTypeObject.schema)
           .filter((schema) => !!schema)
@@ -36,7 +36,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
 
   let $requestBody = `export type ${typeName('RequestBody')} = {}`
 
-  if (operation.requestBody && !isReferenceObject(operation.requestBody)) {
+  if (operation.requestBody && !JsonSchemaUtils.isRef(operation.requestBody)) {
     const $value = Object.entries(operation.requestBody.content || {})
       .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
       .filter(([, schema]) => !!schema)
@@ -59,29 +59,28 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     $responses,
     '}',
     '',
-    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'query') || [], 'KeqQueryValue', alias),
+    generateParameters(`${typeName('RequestQuery')}`, operation.parameters?.filter((p) => !JsonSchemaUtils.isRef(p) && p.in === 'query') || [], alias),
     '',
-    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'path') || [], 'string | number', alias),
+    generateParameters(`${typeName('RouteParameters')}`, operation.parameters?.filter((p) => !JsonSchemaUtils.isRef(p) && p.in === 'path') || [], alias),
     '',
-    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !isReferenceObject(p) && p.in === 'header') || [], 'string | number', alias),
+    generateParameters(`${typeName('RequestHeaders')}`, operation.parameters?.filter((p) => !JsonSchemaUtils.isRef(p) && p.in === 'header') || [], alias),
     '',
     $requestBody,
     '',
     `export type ${typeName('RequestParameters')} = ${typeName('RequestQuery')} & ${typeName('RouteParameters')} & ${typeName('RequestHeaders')} & ${typeName('RequestBody')}`,
     '',
     `export interface Operation<STATUS extends keyof ${typeName('ResponseBodies')}> extends KeqOperation {`,
-    `  requestParams: ${typeName('RouteParameters')}`,
-    `  requestQuery: ${typeName('RequestQuery')}`,
-    `  requestHeaders: ${typeName('RequestHeaders')}`,
+    `  requestParams: ${typeName('RouteParameters')} & { [key: string]: string | number }`,
+    `  requestQuery: ${typeName('RequestQuery')} & { [key: string]: KeqQueryValue }`,
+    `  requestHeaders: ${typeName('RequestHeaders')} & { [key: string]: string | number }`,
     `  requestBody: ${typeName('RequestBody')}`,
     `  responseBody: ${typeName('ResponseBodies')}[STATUS]`,
     '}',
   ].join('\n')
 }
 
-function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], additionalProperties: string, alias: Alias): string {
+function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObject[], alias: Alias): string {
   if (parameters.length === 0) {
-    if (additionalProperties) return `export type ${name} = {\n  [key: string]: ${additionalProperties}\n}`
     return `export type ${name} = {}`
   }
 
@@ -98,7 +97,6 @@ function generateParameters(name: string, parameters: OpenAPIV3_1.ParameterObjec
   return [
     `export type ${name} = {`,
     $parameters,
-    additionalProperties ? `  [key: string]: ${additionalProperties}` : '',
     '}',
   ].filter(Boolean).join('\n')
 }

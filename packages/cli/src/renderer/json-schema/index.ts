@@ -1,6 +1,6 @@
 import { SchemaDefinition } from '~/tasks/utils/schema-definition.js'
-import { isNonArraySchemaObject } from '../utils/is-non-array-schema-object.js'
 import { generateComment, generateSchema } from '../utils/generate-schema.js'
+import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 
 
 // eslint-disable-next-line @typescript-eslint/require-await
@@ -12,7 +12,7 @@ export async function jsonSchemaRenderer(schemaDefinition: SchemaDefinition): Pr
     return `${$comment}type ${schemaDefinition.name} = unknown`
   }
 
-  if (isNonArraySchemaObject(schemaDefinition.schema) && schemaDefinition.schema.type === 'object') {
+  if (JsonSchemaUtils.isNonArray(schemaDefinition.schema) && schemaDefinition.schema.type === 'object') {
     return `${$comment}export interface ${schemaDefinition.name} ${generateSchema(schemaDefinition.schema)}`
   }
 
