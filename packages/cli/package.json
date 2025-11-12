@@ -1,9 +1,9 @@
 {
   "type": "module",
   "name": "@keq-request/cli",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "types": "dist/index.d.ts",
-  "bin": "dist/cli.js",
+  "bin": "dist/cli.cjs",
   "description": "Transform Swagger/OpenAPI to the function that send request by keq",
   "version": "5.0.0-alpha.6",
   "engines": {

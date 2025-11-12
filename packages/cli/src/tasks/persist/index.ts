@@ -34,7 +34,7 @@ function createPersistArtifactTask(options?: PersistTaskOptions): ListrTask<Task
       await Promise.all(artifacts.map(async (artifact) => {
         const realpath = `./${path.join(rc.outdir, artifact.filepath)}`
         await fs.ensureFile(realpath)
-        await fs.writeFile(realpath, artifact.toCode())
+        await fs.writeFile(realpath, artifact.toCode({ esm: !!rc.esm }))
 
         completed += 1
         task.output = `Persisted ${completed}/${total} files`

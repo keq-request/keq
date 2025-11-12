@@ -5,6 +5,7 @@ import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { SwaggerUtils } from '~/utils/swagger-utils/index.js'
 import { indent } from '../utils/generate-schema.js'
+import { KeqQueryOptionsFactory } from '~/types/runtime-config.js'
 
 
 function errorToComment(err: unknown, mediaType: string): string {
@@ -21,9 +22,14 @@ function errorToComment(err: unknown, mediaType: string): string {
   ].join('\n')
 }
 
+interface OperationRequestRendererOptions {
+  qs: KeqQueryOptionsFactory
+}
+
 // eslint-disable-next-line @typescript-eslint/require-await
-export async function operationRequestRenderer(operationDefinition: OperationDefinition): Promise<string> {
+export async function operationRequestRenderer(operationDefinition: OperationDefinition, options: OperationRequestRendererOptions): Promise<string> {
   const { operation, operationId, method, pathname } = operationDefinition
+  const { qs } = options
 
   if (!operation.responses) return ''
 
@@ -39,7 +45,12 @@ export async function operationRequestRenderer(operationDefinition: OperationDef
   // const cookieParameters = parameters.filter((p) => p.in === 'cookie')
 
   const $queryParameters = queryParameters
-    .map((p) => `  if (args && ${JSON.stringify(p.name)} in args) req.query(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}])`)
+    .map((p) => {
+      const option = qs(p)
+      const $option = (!option || R.isEmpty(option)) ? '' : `, ${JSON.stringify(option)}`
+
+      return `  if (args && ${JSON.stringify(p.name)} in args) req.query(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}]${$option})`
+    })
     .concat('')
     .join('\n')
 

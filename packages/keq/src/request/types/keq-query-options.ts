@@ -10,6 +10,6 @@ import { IStringifyBaseOptions } from 'qs'
 
 export interface KeqQueryOptions {
   indices?: IStringifyBaseOptions['indices']
-  arrayFormat?: IStringifyBaseOptions['arrayFormat'] | 'pipe'
+  arrayFormat?: IStringifyBaseOptions['arrayFormat'] | 'pipe' | 'space'
   allowDots?: boolean
 }

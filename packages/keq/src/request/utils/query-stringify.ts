@@ -1,13 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import qs, { IStringifyOptions } from 'qs'
-import { KeqQueryOptions, KeqQueryValue } from '../types'
+import { KeqQueryObject, KeqQueryOptions, KeqQueryValue } from '../types'
 
 function normalize(value: KeqQueryValue, options?: KeqQueryOptions): KeqQueryValue {
   if (Array.isArray(value)) {
-    if (options?.arrayFormat === 'pipe') {
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string
-      return value.join('|')
-    }
-
     return value.map((v) => normalize(v, options))
   }
 
@@ -28,12 +24,11 @@ function normalize(value: KeqQueryValue, options?: KeqQueryOptions): KeqQueryVal
   return value
 }
 
-export function queryStringify(query: KeqQueryValue, options?: KeqQueryOptions): string {
+export function queryStringify(query: KeqQueryObject, options?: KeqQueryOptions): string {
   const value = normalize(query, options)
 
-  const opts: IStringifyOptions = {
-    encode: false,
-  }
+  const opts: IStringifyOptions = {}
+
 
   if (options?.allowDots !== undefined) {
     opts.allowDots = options.allowDots
@@ -46,7 +41,17 @@ export function queryStringify(query: KeqQueryValue, options?: KeqQueryOptions):
     opts.indices = options.indices
   }
 
-  if (options?.arrayFormat && options.arrayFormat !== 'pipe') {
+  if (options?.arrayFormat === 'pipe') {
+    opts.filter = (_, val) => {
+      if (Array.isArray(val)) return val.join('|')
+      return val
+    }
+  } else if (options?.arrayFormat === 'space') {
+    opts.filter = (_, val) => {
+      if (Array.isArray(val)) return val.join(' ')
+      return val
+    }
+  } else if (options?.arrayFormat) {
     opts.arrayFormat = options.arrayFormat
   }
 

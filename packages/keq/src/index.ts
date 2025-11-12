@@ -8,6 +8,7 @@ export {
   type KeqOperation,
   type KeqDefaultOperation,
   type KeqQueryValue,
+  type KeqQueryOptions,
 } from './request'
 
 export {
