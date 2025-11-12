@@ -21,7 +21,7 @@ export class Validator {
   /**
    * 检查是否为对象
    */
-  static isObject(value: any): boolean {
+  static isObject(value: any): value is Exclude<object, null> {
     return typeof value === 'object' && value !== null
   }
 
@@ -55,9 +55,9 @@ export class Validator {
     const names = ['Blob', 'File']
 
     return Validator.isObject(value)
-      && Validator.isString(value.type)
-      && Validator.isFunction(value.arrayBuffer)
-      && Validator.isFunction(value.stream)
+      && Validator.isString(value['type'])
+      && Validator.isFunction(value['arrayBuffer'])
+      && Validator.isFunction(value['stream'])
       && Validator.isFunction(value.constructor)
       && names.includes(value.constructor.name)
       && 'size' in value
@@ -87,15 +87,15 @@ export class Validator {
 
     return (
       Validator.isObject(object)
-      && Validator.isFunction(object.append)
-      && Validator.isFunction(object.delete)
-      && Validator.isFunction(object.get)
-      && Validator.isFunction(object.getAll)
-      && Validator.isFunction(object.has)
-      && Validator.isFunction(object.set)
-      && Validator.isFunction(object.entries)
-      && Validator.isFunction(object.keys)
-      && Validator.isFunction(object.values)
+      && Validator.isFunction(object['append'])
+      && Validator.isFunction(object['delete'])
+      && Validator.isFunction(object['get'])
+      && Validator.isFunction(object['getAll'])
+      && Validator.isFunction(object['has'])
+      && Validator.isFunction(object['set'])
+      && Validator.isFunction(object['entries'])
+      && Validator.isFunction(object['keys'])
+      && Validator.isFunction(object['values'])
     )
   }
 
@@ -107,15 +107,15 @@ export class Validator {
 
     if (
       Validator.isObject(obj)
-      && Validator.isFunction(obj.forEach)
-      && Validator.isFunction(obj.get)
-      && Validator.isFunction(obj.has)
-      && Validator.isFunction(obj.set)
-      && Validator.isFunction(obj.append)
-      && Validator.isFunction(obj.delete)
-      && Validator.isFunction(obj.entries)
-      && Validator.isFunction(obj.keys)
-      && Validator.isFunction(obj.values)
+      && Validator.isFunction(obj['forEach'])
+      && Validator.isFunction(obj['get'])
+      && Validator.isFunction(obj['has'])
+      && Validator.isFunction(obj['set'])
+      && Validator.isFunction(obj['append'])
+      && Validator.isFunction(obj['delete'])
+      && Validator.isFunction(obj['entries'])
+      && Validator.isFunction(obj['keys'])
+      && Validator.isFunction(obj['values'])
     ) {
       return true
     }
@@ -131,18 +131,18 @@ export class Validator {
 
     return (
       Validator.isObject(obj)
-      && Validator.isFunction(obj.append)
-      && Validator.isFunction(obj.delete)
-      && Validator.isFunction(obj.entries)
-      && Validator.isFunction(obj.forEac)
-      && Validator.isFunction(obj.get)
-      && Validator.isFunction(obj.getAll)
-      && Validator.isFunction(obj.has)
-      && Validator.isFunction(obj.keys)
-      && Validator.isFunction(obj.set)
-      && Validator.isFunction(obj.values)
-      && Validator.isFunction(obj.sort)
-      && Validator.isFunction(obj.toString)
+      && Validator.isFunction(obj['append'])
+      && Validator.isFunction(obj['delete'])
+      && Validator.isFunction(obj['entries'])
+      && Validator.isFunction(obj['forEach'])
+      && Validator.isFunction(obj['get'])
+      && Validator.isFunction(obj['getAll'])
+      && Validator.isFunction(obj['has'])
+      && Validator.isFunction(obj['keys'])
+      && Validator.isFunction(obj['set'])
+      && Validator.isFunction(obj['values'])
+      && Validator.isFunction(obj['sort'])
+      && Validator.isFunction(obj['toString'])
     )
   }
 

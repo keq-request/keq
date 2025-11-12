@@ -6,9 +6,9 @@ import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
 import { RuntimeConfig } from '~/types/runtime-config.js'
-import { validateModules } from './utils/validate-modules.js'
 import { IgnoreMatcher } from '../../utils/ignore-matcher.js'
 import type { TaskContext } from '../types/task-context.js'
+import { validateModules, findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
 
 
 export interface SetupTaskOptions {
@@ -49,6 +49,12 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
 
       if (options?.tolerant) {
         rc.tolerant = true
+      }
+
+      const packageJsonInfo = findNearestPackageJson()
+      if (packageJsonInfo) {
+        const moduleSystem = getProjectModuleSystem(packageJsonInfo)
+        rc.esm = moduleSystem === 'esm'
       }
 
       let filter: IgnoreMatcher = new IgnoreMatcher([])

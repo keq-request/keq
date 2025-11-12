@@ -4,15 +4,15 @@ import { KeqQueryValue } from '../keq-query-value'
 
 export interface KeqOperation {
   requestParams: {
-    [key: string]: UriTemplateContext[string]
+    [key in string]: UriTemplateContext[string]
   }
 
   requestQuery: {
-    [key: string]: KeqQueryValue
+    [key in string]: KeqQueryValue
   }
 
   requestHeaders: {
-    [key: string]: string | number
+    [key in string]: string | number
   }
 
   requestBody: FormData | URLSearchParams | object | Array<any> | string

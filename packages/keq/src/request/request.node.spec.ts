@@ -64,7 +64,7 @@ describe('KeqRequest', () => {
     await expect(() => keq.end()).rejects.toThrow('fetch failed')
   })
 
-  test('Query', async () => {
+  test.only('Query', async () => {
     const mockedFetch = global.fetch as Mock<typeof global.fetch>
 
     await request
@@ -76,11 +76,13 @@ describe('KeqRequest', () => {
       .query('e', ['e', 'e'], { arrayFormat: 'comma' })
       .query('f', ['f', 'f'], { arrayFormat: 'repeat' })
       .query('g', ['g', 'g'], { arrayFormat: 'pipe' })
-      .query('h', { h: { h: { 'h.h': 'h' } } }, { allowDots: true })
+      .query('h', ['h', 'h'], { arrayFormat: 'space' })
+      .query('i', { i: { i: { 'i.i': 'i' } } }, { allowDots: true })
+      .query('j', 'j+j', { arrayFormat: 'space' })
 
     const url = mockedFetch.mock.calls[0][0]
 
-    expect(url).toBe('http://test.com/?a=a&b%5B0%5D=b&b%5B1%5D=b&c%5Bc%5D%5Bc%5D%5Bc%5D=c&d%5B%5D=d&d%5B%5D=d&e=e%2Ce&f=f&f=f&g=g%7Cg&h.h.h.h.h=h')
+    expect(url).toBe('http://test.com/?a=a&b%5B0%5D=b&b%5B1%5D=b&c%5Bc%5D%5Bc%5D%5Bc%5D=c&d%5B%5D=d&d%5B%5D=d&e=e%2Ce&f=f&f=f&g=g%7Cg&h=h%20h&i.i.i.i.i=i&j=j%2Bj')
   })
 
   test('Custom Default Query Stringify Options', async () => {

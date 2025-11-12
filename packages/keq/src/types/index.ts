@@ -1,3 +1,6 @@
 export * from './exclude-unknown-properties.js'
 export * from './literal-keys.js'
 export * from './index-keys.js'
+export * from './string-index-value-of.js'
+export * from './enabled-if-string-index.js'
+export * from './loose-nested-like.js'

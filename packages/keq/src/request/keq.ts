@@ -11,7 +11,7 @@ import { KeqRequestBody } from '~/request-init/index.js'
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
 import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
-import { LiteralKeys } from '~/types/literal-keys.js'
+import type { LiteralKeys, StringIndexValueOf, EnabledIfStringIndex, LooseNestedObject, EnableLooseNestedLike, LooseNestedLike } from '~/types/index.js'
 import { UriTemplateContext } from '@opendoc/uri-template'
 
 
@@ -33,7 +33,8 @@ export class Keq<
    */
   set(headers: Partial<REQ_HEADERS> | Headers): this
   set<T extends keyof LiteralKeys<REQ_HEADERS>>(name: T, value: LiteralKeys<REQ_HEADERS>[T]): this
-  set<T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
+  set<O extends { [K in keyof O]: StringIndexValueOf<REQ_HEADERS> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_HEADERS>): this
+  set<O extends { [K in keyof O]: StringIndexValueOf<REQ_HEADERS> }>(key: string, value: StringIndexValueOf<REQ_HEADERS> & EnabledIfStringIndex<REQ_HEADERS>): this
   set(headersOrName: Partial<REQ_HEADERS> | string | Headers, value?: string | number): this {
     if (Validator.isHeaders(headersOrName)) {
       headersOrName.forEach((value, key) => {
@@ -62,7 +63,8 @@ export class Keq<
    */
   headers(headers: Partial<REQ_HEADERS> | Headers): this
   headers<T extends keyof LiteralKeys<REQ_HEADERS>>(name: T, value: LiteralKeys<REQ_HEADERS>[T]): this
-  headers<T extends keyof REQ_HEADERS>(name: T, value: REQ_HEADERS[T]): this
+  headers<O extends { [K in keyof O]: StringIndexValueOf<REQ_HEADERS> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_HEADERS>): this
+  headers<O extends { [K in keyof O]: StringIndexValueOf<REQ_HEADERS> }>(key: string, value: StringIndexValueOf<REQ_HEADERS> & EnabledIfStringIndex<REQ_HEADERS>): this
   headers(headersOrName: Partial<REQ_HEADERS> | string | Headers, value?: string | number): this {
     return this.set(headersOrName as any, value as any)
   }
@@ -70,12 +72,27 @@ export class Keq<
   /**
    * Set request query/searchParams
    */
-  query(key: Partial<REQ_QUERY>, options?: KeqQueryOptions): this
+  query(obj: Partial<REQ_QUERY>, options?: KeqQueryOptions): this
   query<T extends keyof LiteralKeys<REQ_QUERY>>(key: T, value: LiteralKeys<REQ_QUERY>[T], options?: KeqQueryOptions): this
-  query<T extends keyof REQ_QUERY>(key: T, value: REQ_QUERY[T], options?: KeqQueryOptions): this
+  query<O extends { [K in keyof O]: StringIndexValueOf<REQ_QUERY> }>(key: string, obj: StringIndexValueOf<REQ_QUERY> & EnabledIfStringIndex<REQ_QUERY>, options?: KeqQueryOptions): this
+  query<O extends { [K in keyof O]: StringIndexValueOf<REQ_QUERY> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_QUERY>, options?: KeqQueryOptions): this
+  query<O extends object>(
+    arg: O
+      & Partial<LooseNestedObject<REQ_QUERY, O>>
+      & EnableLooseNestedLike<StringIndexValueOf<REQ_QUERY>, O>
+      & EnabledIfStringIndex<REQ_QUERY>
+  ): this
+  query<K extends keyof REQ_QUERY, O extends object>(
+    key: K,
+    arg: O
+      & LooseNestedLike<StringIndexValueOf<REQ_QUERY>, O>
+      & EnableLooseNestedLike<StringIndexValueOf<REQ_QUERY>, O>
+      & EnabledIfStringIndex<REQ_QUERY>,
+    options?: KeqQueryOptions,
+  ): this
   query(arg1: string | Partial<REQ_QUERY>, arg2?: KeqQueryValue | KeqQueryOptions, arg3?: KeqQueryOptions): this {
     if (Validator.isObject(arg1)) {
-      const str = queryStringify(arg1, arg2 as KeqQueryOptions || this.__qs__)
+      const str = queryStringify(arg1, (arg2 as KeqQueryOptions) || this.__qs__)
 
       for (const [k, v] of new URLSearchParams(str).entries()) {
         for (const item of Array.isArray(v) ? v : [v]) {
@@ -83,6 +100,7 @@ export class Keq<
         }
       }
 
+      this.requestInit.url.search = this.requestInit.url.searchParams.toString().replace(/\+/g, '%20')
       return this
     }
 
@@ -97,15 +115,16 @@ export class Keq<
   /**
    * Set request route params
    */
-  params(key: Partial<REQ_PARAMS>): this
+  params(params: Partial<REQ_PARAMS>): this
   params<T extends keyof LiteralKeys<REQ_PARAMS>>(key: T, value: LiteralKeys<REQ_PARAMS>[T]): this
-  params<T extends keyof REQ_PARAMS>(key: T, value: REQ_PARAMS[T]): this
-  params(key: string | Partial<REQ_PARAMS>, value?: UriTemplateContext[string]): this {
-    if (typeof key === 'string' && value !== undefined) {
-      this.requestInit.routeParams[key] = value
-    } else if (typeof key === 'object') {
-      for (const [k, v] of Object.entries(key)) {
-        this.requestInit.routeParams[k] = v
+  params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_PARAMS>): this
+  params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(key: string, value: StringIndexValueOf<REQ_PARAMS> & EnabledIfStringIndex<REQ_PARAMS>): this
+  params(arg1: string | Partial<REQ_PARAMS>, arg2?: UriTemplateContext[string]): this {
+    if (typeof arg1 === 'string' && arg2 !== undefined) {
+      this.requestInit.routeParams[arg1] = arg2
+    } else if (typeof arg1 === 'object' && arg1 !== null) {
+      for (const k of Object.keys(arg1)) {
+        if (arg1[k]) this.requestInit.routeParams[k] = arg1[k]
       }
     } else {
       throw new TypeError('Invalid Arguments for .params()')
@@ -131,7 +150,7 @@ export class Keq<
   type(contentType: string): this
   type(contentType: string): this {
     const type = fixContentType(contentType)
-    this.set('content-type' as keyof REQ_HEADERS, type as any)
+    this.set('content-type', type as any)
     return this
   }
 
@@ -140,7 +159,7 @@ export class Keq<
    * Http Basic Authentication
    */
   auth(username: string, password: string): this {
-    this.set('Authorization' as keyof REQ_HEADERS, `Basic ${base64Encode(`${username}:${password}`)}` as any)
+    this.set('Authorization', `Basic ${base64Encode(`${username}:${password}`)}` as any)
     return this
   }
 
@@ -291,7 +310,7 @@ export class Keq<
   resolveWith(m: 'blob'): Keq<Merge<OP, { responseBody: Blob }>>
   resolveWith(m: 'text'): Keq<Merge<OP, { responseBody: string }>>
   resolveWith<T = any>(m: 'json' | 'form-data'): Keq<Merge<OP, { responseBody: T }>>
-  resolveWith<T = any>(m: KeqResolveWithMode): Keq<Merge<OP, { responseBody: T }>> | Keq<Merge<OP, { responseBody: string }>> | Keq<Merge<OP, { responseBody: Blob }>> | Keq<Merge<OP, { responseBody: ArrayBuffer }>> | Keq<Merge<OP, { responseBody: Response }>> {
+  resolveWith(m: KeqResolveWithMode | any): any {
     this.option('resolveWith', m)
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return

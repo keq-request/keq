@@ -1,10 +1,12 @@
 import * as R from 'ramda'
+import { KeqQueryOptions } from 'keq'
+import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { operationTypeRenderer, typeNameFactory } from '~/renderer/operation-type/index.js'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import { operationRequestRenderer } from '~/renderer/operation-request/index.js'
 import { Artifact } from '~/tasks/utils/artifact.js'
-import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { isArtifactCompiledBy } from './compile-schema-definition.js'
+import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { DependencyIdentifier } from '~/tasks/utils/dependency.js'
 
 
@@ -46,9 +48,35 @@ function genEntrypointFilepath(moduleName: string): string {
 }
 
 export async function compileOperationDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
-  const { requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
+  const { rc, requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
 
   const alias = (name: string): string => `${name}Schema`
+  const qs = (parameter: OpenAPIV3_1.ParameterObject): KeqQueryOptions | undefined => {
+    if (typeof rc.qs === 'function') {
+      return rc.qs(parameter)
+    } else if (typeof rc.qs === 'object') {
+      return rc.qs
+    }
+
+    const style = parameter.style || 'form'
+    const explode = parameter.explode ?? true
+
+    if (style === 'deepObject') {
+      return { arrayFormat: 'brackets' }
+    } else if (explode) {
+      return { arrayFormat: 'repeat' }
+    } else {
+      if (style === 'form') {
+        return { arrayFormat: 'comma' }
+      } else if (style === 'spaceDelimited') {
+        return { arrayFormat: 'space' }
+      } else if (style === 'pipeDelimited') {
+        return { arrayFormat: 'pipe' }
+      }
+    }
+
+    return {}
+  }
 
   async function createTypeArtifact(operationDefinition: OperationDefinition): Promise<Artifact> {
     const content = await operationTypeRenderer(operationDefinition, alias)
@@ -82,7 +110,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
   async function createRequestArtifact(operationDefinition: OperationDefinition, typeArtifact: Artifact): Promise<Artifact> {
     const typeName = typeNameFactory(operationDefinition)
 
-    const content = await operationRequestRenderer(operationDefinition)
+    const content = await operationRequestRenderer(operationDefinition, { qs })
     const filepath = genOperationRequestFilepath(operationDefinition)
 
     const artifact = new Artifact({

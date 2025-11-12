@@ -3,6 +3,7 @@ import * as changeCase from 'change-case'
 import { Dependency, DependencyIdentifier, DependencyOptions, DependencySource } from './dependency.js'
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import { toComment } from './to-comment.js'
+import { ToCodeOptions } from '~/types/to-code-options.js'
 
 
 const HeaderComment = [
@@ -80,9 +81,9 @@ export class Artifact {
     this.warns.push(message)
   }
 
-  toCode(): string {
+  toCode(options: ToCodeOptions): string {
     let $dependencies = this.dependencies
-      .map((dependency) => dependency.toCode())
+      .map((dependency) => dependency.toCode(options))
       .filter((line) => line.trim() !== '')
       .join('\n')
 
