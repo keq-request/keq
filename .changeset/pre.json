@@ -1,0 +1,38 @@
+{
+  "mode": "pre",
+  "tag": "alpha",
+  "initialVersions": {
+    "@keq-request/cache": "2.1.1",
+    "@keq-request/cli": "5.0.0-alpha.6",
+    "@keq-request/exception": "3.2.0",
+    "@keq-request/headers": "2.0.4",
+    "keq": "5.0.0-alpha.6",
+    "@keq-request/test": "5.0.0-alpha.6",
+    "@keq-request/url": "2.0.4"
+  },
+  "changesets": [
+    "brave-garlics-trade",
+    "chatty-wombats-beg",
+    "chubby-lamps-relax",
+    "cuddly-teams-enjoy",
+    "cyan-heads-poke",
+    "fair-pumas-win",
+    "giant-buttons-pump",
+    "giant-doodles-fail",
+    "hip-bananas-run",
+    "hungry-cases-relax",
+    "lucky-ducks-jam",
+    "nice-groups-cross",
+    "nine-grapes-rescue",
+    "nine-views-attend",
+    "olive-gifts-win",
+    "rare-socks-report",
+    "rich-showers-cry",
+    "sharp-chairs-shake",
+    "sixty-onions-notice",
+    "sour-eagles-design",
+    "swift-pumas-notice",
+    "thick-aliens-obey",
+    "yellow-llamas-post"
+  ]
+}
