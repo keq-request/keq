@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/cache",
-  "version": "2.1.1",
+  "version": "5.0.0-alpha.7",
   "description": "Adds request caching capabilities similar to service workers",
   "keywords": [
     "keq",
@@ -48,7 +48,7 @@
     "node": ">=18.0.0"
   },
   "peerDependencies": {
-    "keq": "^2.8.2"
+    "keq": "^5.0.0-alpha.7"
   },
   "dependencies": {
     "dayjs": "^1.11.19",
