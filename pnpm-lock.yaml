@@ -81,6 +81,9 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
     devDependencies:
+      '@keq-request/test':
+        specifier: workspace:*
+        version: link:../test
       '@types/node':
         specifier: ^20.19.24
         version: 20.19.24
@@ -96,9 +99,6 @@ importers:
       keq:
         specifier: workspace:*
         version: link:../keq
-      keq-test:
-        specifier: workspace:*
-        version: link:../test
 
   packages/cli:
     dependencies:
@@ -203,27 +203,27 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
     devDependencies:
+      '@keq-request/test':
+        specifier: workspace:*
+        version: link:../test
       '@types/node':
         specifier: ^20.19.24
         version: 20.19.24
       keq:
         specifier: workspace:*
         version: link:../keq
-      keq-test:
-        specifier: workspace:*
-        version: link:../test
 
   packages/headers:
     devDependencies:
+      '@keq-request/test':
+        specifier: workspace:*
+        version: link:../test
       '@types/node':
         specifier: ^20.19.24
         version: 20.19.24
       keq:
         specifier: workspace:*
         version: link:../keq
-      keq-test:
-        specifier: workspace:*
-        version: link:../test
 
   packages/keq:
     dependencies:
@@ -252,6 +252,9 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
     devDependencies:
+      '@keq-request/test':
+        specifier: workspace:*
+        version: link:../test
       '@types/clone':
         specifier: ^2.1.4
         version: 2.1.4
@@ -261,9 +264,6 @@ importers:
       '@types/qs':
         specifier: ^6.14.0
         version: 6.14.0
-      keq-test:
-        specifier: workspace:*
-        version: link:../test
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -276,15 +276,15 @@ importers:
 
   packages/url:
     devDependencies:
+      '@keq-request/test':
+        specifier: workspace:*
+        version: link:../test
       '@types/node':
         specifier: ^20.19.24
         version: 20.19.24
       keq:
         specifier: workspace:*
         version: link:../keq
-      keq-test:
-        specifier: workspace:*
-        version: link:../test
 
 packages:
 

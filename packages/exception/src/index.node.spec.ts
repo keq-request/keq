@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { throwException } from './index.js'
 import { createRequest, RequestException } from 'keq'
-import { createMockFetch } from 'keq-test'
+import { createMockFetch } from '@keq-request/test'
 
 
 describe('throwException()', () => {

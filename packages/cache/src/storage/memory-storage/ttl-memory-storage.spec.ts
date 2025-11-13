@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 import { CacheEntry } from '~/cache-entry'
 import { TTLMemoryStorage } from './ttl-memory-storage'
 

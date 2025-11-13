@@ -2,7 +2,7 @@ import { expect, test } from '@jest/globals'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { MemoryStorage } from '../memory-storage/memory-storage.js'
 import { MultiTierStorage } from './multi-tier-storage.js'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 
 
 test('new MultiTierStorage()', async () => {

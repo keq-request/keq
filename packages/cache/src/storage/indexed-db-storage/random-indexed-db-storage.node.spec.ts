@@ -4,7 +4,7 @@ import { beforeEach } from 'node:test'
 import { openDB } from 'idb'
 import { IndexedDBSchema } from './types/indexed-db-schema'
 import { RandomIndexedDBStorage } from './random-indexed-db-storage'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 import { CacheEntry } from '~/cache-entry'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 

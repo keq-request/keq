@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 import { RandomMemoryStorage } from './random-memory-storage'
 import { CacheEntry } from '~/cache-entry'
 

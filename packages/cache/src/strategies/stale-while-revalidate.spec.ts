@@ -3,7 +3,7 @@ import { expect, jest, test } from '@jest/globals'
 import { MemoryStorage } from '~/storage'
 import { Eviction } from '~/constants/eviction.enum'
 import { spyOn } from 'jest-mock'
-import { sleep, createMockFetchMiddleware, createSharedContext } from 'keq-test'
+import { sleep, createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 import { staleWhileRevalidate } from './stale-while-revalidate'
 import { KeqMiddlewareOrchestrator } from 'keq'
 
