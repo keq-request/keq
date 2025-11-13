@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import 'fake-indexeddb/auto'
 import { afterAll, beforeAll, beforeEach, jest } from '@jest/globals'
-import { createMockFetch } from 'keq-test'
+import { createMockFetch } from '@keq-request/test'
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

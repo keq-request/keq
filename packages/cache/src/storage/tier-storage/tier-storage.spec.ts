@@ -4,7 +4,7 @@ import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { Eviction } from '~/constants/eviction.enum.js'
 import { MemoryStorage } from '~/storage/memory-storage/memory-storage.js'
 import { IndexedDBStorage } from '~/storage/indexed-db-storage/indexed-db-storage.js'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 
 test('TierStorage should create with default options', () => {
   const storage = new TierStorage()

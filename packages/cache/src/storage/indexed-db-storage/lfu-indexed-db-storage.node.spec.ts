@@ -2,7 +2,7 @@ import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
 import { beforeEach } from 'node:test'
 import { openDB } from 'idb'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 import { CacheEntry } from '~/cache-entry'
 import { LFUIndexedDBStorage } from './lfu-indexed-db-storage'
 

@@ -1,7 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 import { request } from './request.js'
 import { AbortException } from '~/exception/index.js'
-import { createMockFetch, sleep } from 'keq-test'
+import { createMockFetch, sleep } from '@keq-request/test'
 
 
 test('abort flowController request', async () => {

@@ -1,7 +1,7 @@
 import { describe, expect, test } from '@jest/globals'
 import { setBaseUrl, setOrigin, setHost } from './index.js'
 import { KeqMiddlewareOrchestrator } from 'keq'
-import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
+import { createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 
 
 describe('setBaseUrl', () => {

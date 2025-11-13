@@ -1,7 +1,7 @@
 import { expect, test } from '@jest/globals'
 import { MemoryStorage } from './memory-storage'
 import { Eviction } from '~/constants/eviction.enum'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 import { CacheEntry } from '~/cache-entry'
 
 

@@ -1,7 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 import { catchException } from './catch-exception'
 import { KeqMiddlewareOrchestrator } from 'keq'
-import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
+import { createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 
 
 test('catchException(handler)', async () => {

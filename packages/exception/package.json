@@ -40,7 +40,7 @@
   "devDependencies": {
     "@types/node": "^20.19.24",
     "keq": "workspace:*",
-    "keq-test": "workspace:*"
+    "@keq-request/test": "workspace:*"
   },
   "peerDependencies": {
     "keq": "^2"

@@ -5,7 +5,7 @@ import { openDB } from 'idb'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 import { TTLIndexedDBStorage } from './ttl-indexed-db-storage'
 import { CacheEntry } from '~/cache-entry'
-import { createResponse } from 'keq-test'
+import { createResponse } from '@keq-request/test'
 
 
 beforeEach(async () => {

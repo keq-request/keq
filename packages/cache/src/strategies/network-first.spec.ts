@@ -4,7 +4,7 @@ import { networkFirst } from './network-first'
 import { MemoryStorage } from '~/storage'
 import { Eviction } from '~/constants/eviction.enum'
 import { spyOn } from 'jest-mock'
-import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
+import { createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 import { KeqMiddlewareOrchestrator } from 'keq'
 
 

@@ -1,7 +1,7 @@
 import { expect, test } from '@jest/globals'
 import { KeqMiddlewareOrchestrator } from 'keq'
 import { setHeader, setHeaders, appendHeader, appendHeaders, insertHeader, insertHeaders } from './index'
-import { createMockFetchMiddleware, createSharedContext } from 'keq-test'
+import { createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 
 
 test('setHeader', async () => {
