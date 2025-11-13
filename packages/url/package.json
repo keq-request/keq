@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/url",
-  "version": "2.0.4",
+  "version": "5.0.0",
   "description": "Set request url",
   "keywords": [
     "request",
@@ -44,6 +44,6 @@
     "@keq-request/test": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^2.3.2"
+    "keq": "^5.0.0"
   }
 }
