@@ -49,10 +49,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - if: env.NPM_CONFIG_TAG != 'latest'
+      - if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') != ''
         run: pnpm changeset pre enter ${{ env.NPM_CONFIG_TAG }}
 
-      - if: ${{ hashFiles('.changeset/pre.json') != '' && env.NPM_CONFIG_TAG == 'latest' }}
+      - if: env.NPM_CONFIG_TAG == 'latest' && hashFiles('.changeset/pre.json') != ''
         run: pnpm changeset pre exit
 
       - id: changesets
