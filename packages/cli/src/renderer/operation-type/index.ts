@@ -70,7 +70,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     `export type ${typeName('RequestParameters')} = ${typeName('RequestQuery')} & ${typeName('RouteParameters')} & ${typeName('RequestHeaders')} & ${typeName('RequestBody')}`,
     '',
     `export interface Operation<STATUS extends keyof ${typeName('ResponseBodies')}> extends KeqOperation {`,
-    `  requestParams: ${typeName('RouteParameters')} & { [key: string]: string | number }`,
+    `  requestParams: ${typeName('RouteParameters')} & { [key: string]: KeqParamValue }`,
     `  requestQuery: ${typeName('RequestQuery')} & { [key: string]: KeqQueryValue }`,
     `  requestHeaders: ${typeName('RequestHeaders')} & { [key: string]: string | number }`,
     `  requestBody: ${typeName('RequestBody')}`,

@@ -1,10 +1,10 @@
-import { UriTemplateContext } from '@opendoc/uri-template'
 import { KeqQueryValue } from '../keq-query-value'
+import { KeqParamValue } from '../keq-param-value'
 
 
 export interface KeqOperation {
   requestParams: {
-    [key in string]: UriTemplateContext[string]
+    [key in string]: KeqParamValue
   }
 
   requestQuery: {

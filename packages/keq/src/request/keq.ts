@@ -9,10 +9,9 @@ import { base64Encode } from '~/utils/index.js'
 import { KeqRequestBody } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
-import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions } from './types/index.js'
+import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqParamValue } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 import type { LiteralKeys, StringIndexValueOf, EnabledIfStringIndex, LooseNestedObject, EnableLooseNestedLike, LooseNestedLike } from '~/types/index.js'
-import { UriTemplateContext } from '@opendoc/uri-template'
 
 
 /**
@@ -119,7 +118,7 @@ export class Keq<
   params<T extends keyof LiteralKeys<REQ_PARAMS>>(key: T, value: LiteralKeys<REQ_PARAMS>[T]): this
   params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_PARAMS>): this
   params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(key: string, value: StringIndexValueOf<REQ_PARAMS> & EnabledIfStringIndex<REQ_PARAMS>): this
-  params(arg1: string | Partial<REQ_PARAMS>, arg2?: UriTemplateContext[string]): this {
+  params(arg1: string | Partial<REQ_PARAMS>, arg2?: KeqParamValue): this {
     if (typeof arg1 === 'string' && arg2 !== undefined) {
       this.requestInit.routeParams[arg1] = arg2
     } else if (typeof arg1 === 'object' && arg1 !== null) {
