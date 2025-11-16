@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/keq-request/keq#readme",
   "scripts": {
+    "prepublishOnly": "tsup",
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "jest",

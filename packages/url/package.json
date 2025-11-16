@@ -33,6 +33,7 @@
     }
   },
   "scripts": {
+    "prepublishOnly": "tsup",
     "build": "tsup",
     "dev": "tsup --watch",
     "test": "jest",
