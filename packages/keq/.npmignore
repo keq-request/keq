@@ -2,6 +2,7 @@
 /src
 .turbo
 jest.config.cts
+jest.browser.config.cts
 tsconfig.json
 tsconfig.*.json
 tsup.config.ts
