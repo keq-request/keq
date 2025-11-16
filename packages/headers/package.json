@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/headers",
-  "version": "5.0.0-alpha.8",
+  "version": "5.0.0-alpha.9",
   "description": "Set/Append headers to request.",
   "keywords": [
     "keq",
@@ -41,6 +41,6 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0-alpha.8"
+    "keq": "^5.0.0-alpha.9"
   }
 }
