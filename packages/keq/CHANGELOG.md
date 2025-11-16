@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.8
+
+### Patch Changes
+
+- 0873c7e: Incorrect build before release.
+
 ## 5.0.0-alpha.7
 
 ### Major Changes
