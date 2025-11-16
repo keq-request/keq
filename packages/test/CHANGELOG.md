@@ -1,5 +1,15 @@
 # @keq-request/test
 
+## 5.0.0-alpha.9
+
+### Patch Changes
+
+- 8a0a0ff: build with burbo
+- 8a0a0ff: remove private dependencies
+- Updated dependencies [8a0a0ff]
+- Updated dependencies [8a0a0ff]
+  - keq@5.0.0-alpha.9
+
 ## 5.0.0-alpha.8
 
 ### Patch Changes

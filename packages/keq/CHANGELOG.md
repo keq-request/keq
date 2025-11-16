@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.9
+
+### Patch Changes
+
+- 8a0a0ff: build with burbo
+- 8a0a0ff: remove private dependencies
+
 ## 5.0.0-alpha.8
 
 ### Patch Changes
