@@ -1,7 +1,8 @@
 /__tests__
 /docs
 /src
-jest.config.ts
+.turbo
+jest.config.cts
 tsconfig.json
 tsconfig.*.json
 tsup.config.ts
