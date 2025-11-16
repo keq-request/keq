@@ -4,7 +4,8 @@
     "baseUrl": "./src",
     "paths": {
       "~/*": ["./*"],
-      "@keq/test": ["../keq/__tests__/helpers/index.ts"]
+      "~~/*": ["../*"],
+      "@keq-request/test": ["../../test/src/index.ts"]
     }
   }
 }

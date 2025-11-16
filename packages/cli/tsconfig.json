@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "baseUrl": "./src",
     "paths": {
-      "~/*": ["./*"]
+      "~/*": ["./*"],
+      "~~/*": ["../*"],
+      "@keq-request/test": ["../../test/src/index.ts"]
     }
   }
 }

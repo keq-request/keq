@@ -54,7 +54,6 @@
     "@types/clone": "^2.1.4",
     "@types/node": "^20.19.24",
     "@types/qs": "^6.14.0",
-    "@keq-request/test": "workspace:*",
     "typescript": "^5.9.3"
   },
   "engines": {
