@@ -42,8 +42,7 @@
     "@types/ramda": "^0.31.1",
     "fake-indexeddb": "^6.2.4",
     "isomorphic-fetch": "^3.0.0",
-    "keq": "workspace:*",
-    "@keq-request/test": "workspace:*"
+    "keq": "workspace:*"
   },
   "engines": {
     "node": ">=18.0.0"
