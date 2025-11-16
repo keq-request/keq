@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.0.0-alpha.10
+
+### Patch Changes
+
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 7343445: Incorrect build before release
+- Updated dependencies [e7eb9dc]
+- Updated dependencies [7343445]
+  - keq@5.0.0-alpha.10
+
 ## 5.0.0-alpha.9
 
 ### Patch Changes

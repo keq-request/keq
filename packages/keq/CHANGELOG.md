@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.10
+
+### Patch Changes
+
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 7343445: Incorrect build before release
+
 ## 5.0.0-alpha.9
 
 ### Patch Changes
