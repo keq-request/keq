@@ -43,9 +43,6 @@
     "isomorphic-fetch": "^3.0.0",
     "keq": "workspace:*"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "peerDependencies": {
     "keq": "^5.0.0-alpha.10"
   },
