@@ -12,7 +12,7 @@ declare module 'keq' {
     /**
      * [keq-cache](https://github.com/keq-request/keq-cache)
      */
-    cache(option: KeqCacheOption): Keq<OP>
+    cache(option: KeqCacheOption | false): Keq<OP>
   }
 
   export interface KeqEvents {
@@ -43,6 +43,11 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
   const rules: KeqCacheRule[] = opts?.rules || []
 
   return async function cache(ctx, next) {
+    if (ctx.options.cache === false) {
+      await next()
+      return
+    }
+
     let cOpt: KeqCacheOption | undefined = ctx.options.cache
 
     const rule = rules.find((rule) => {
