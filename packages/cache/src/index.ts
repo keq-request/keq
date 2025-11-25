@@ -1,6 +1,7 @@
 export * from './cache.js'
 export * from './constants/strategy.enum.js'
 export * from './constants/eviction.enum.js'
+export * from './constants/size.enum.js'
 
 export {
   KeqCacheStorage as CacheStorage,
