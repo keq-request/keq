@@ -8,4 +8,5 @@ test('compile-pathname-template', () => {
   expect(compileUrl('http://example.com/api/%7Bid%7D', { id: '1' }).href).toBe('http://example.com/api/1')
   expect(compileUrl('http://example.com/api/{id}', {}).href).toBe('http://example.com/api/')
   expect(compileUrl('http://example.com/api/%7Bid%7D', {}).href).toBe('http://example.com/api/')
+  expect(compileUrl('http://example.com/api/{id}', { id: '1.com#mm' }).href).toBe('http://example.com/api/1.com%23mm')
 })
