@@ -15,7 +15,7 @@ export function composeMiddleware(middlewares: KeqMiddleware[], options?: Compos
     .reverse()
     .reduce(function (prev, curr): KeqMiddleware {
       return async (ctx, next) => {
-        await curr(ctx, () => prev(ctx, next))
+        await curr(ctx, async () => prev(ctx, next))
       }
     })
 

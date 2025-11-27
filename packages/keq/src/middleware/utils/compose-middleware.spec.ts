@@ -3,6 +3,7 @@ import { composeMiddleware } from './compose-middleware.js'
 import type { KeqMiddleware } from '../types/keq-middleware.js'
 import { KeqSharedContext } from '../../context/shared-context.js'
 import { KeqMiddlewareOrchestrator } from '../../orchestrator/orchestrator.js'
+import { sleep } from '@keq-request/test'
 
 
 describe('composeMiddleware', () => {
@@ -29,7 +30,9 @@ describe('composeMiddleware', () => {
 
     const next = jest.fn<KeqMiddleware>(async () => {
       executionOrder.push(3)
+      await sleep(1)
     })
+
     const sharedContext = new KeqSharedContext({
       global: {},
       request: {
@@ -59,6 +62,7 @@ describe('composeMiddleware', () => {
 
     const middleware2: KeqMiddleware = async () => {
       executionOrder.push(2)
+      await sleep(1)
       throw new Error('Test error')
     }
 
@@ -71,6 +75,7 @@ describe('composeMiddleware', () => {
     const composedMiddleware = composeMiddleware([middleware1, middleware2, middleware3])
     const next = jest.fn<KeqMiddleware>(async () => {
       executionOrder.push(4)
+      await sleep(1)
     })
     const sharedContext = new KeqSharedContext({
       global: {},
@@ -90,7 +95,7 @@ describe('composeMiddleware', () => {
   })
 
 
-  test('should set custom name when name option is provided', async () => {
+  test('should set custom name when name option is provided', () => {
     const middleware1: KeqMiddleware = async (ctx, next) => {
       await next()
     }
@@ -105,7 +110,7 @@ describe('composeMiddleware', () => {
     expect(composedMiddleware.__keqMiddlewareName__).toBe(customName)
   })
 
-  test('should not have name when name option is not provided', async () => {
+  test('should not have name when name option is not provided', () => {
     const middleware1: KeqMiddleware = async (ctx, next) => {
       await next()
     }

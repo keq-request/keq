@@ -1,4 +1,4 @@
-import { AbortException } from './abort.exception'
+import { AbortException } from './abort.exception.js'
 
 
 export class TimeoutException extends AbortException {

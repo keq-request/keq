@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable */
 import { Exception } from '../../exception/exception.js'
 import { KeqRoute } from '../types/keq-route.js'
 

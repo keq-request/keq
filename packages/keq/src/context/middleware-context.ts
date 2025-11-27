@@ -1,4 +1,4 @@
-import { KeqMiddlewareExecutor } from '../orchestrator/executor'
+import { KeqMiddlewareExecutor } from '../orchestrator/executor.js'
 
 export class KeqMiddlewareContext {
   private readonly __executor__: KeqMiddlewareExecutor

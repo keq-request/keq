@@ -1,4 +1,4 @@
-import { KeqSharedContext } from '~/context'
+import { KeqSharedContext } from '~/context/index.js'
 
 
 export type KeqRetryOn = (attempt: number, error: unknown | null, ctx: KeqSharedContext) => (boolean | Promise<boolean>)

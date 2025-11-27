@@ -1,9 +1,9 @@
+import { ConditionalExcept } from 'type-fest'
 import type { Keq } from '~/request/keq.js'
 import type { KeqTimeoutOptions, KeqFlowControlOptions } from '~/middlewares/index.js'
 import type { KeqResolveWithMode } from './keq-resolve-with-mode.js'
 import type { KeqRetryOptions } from './keq-retry-options.js'
 import { KeqModuleOptions } from './keq-module-options.js'
-import { ConditionalExcept } from 'type-fest'
 import { KeqOperation } from '~/request/index.js'
 
 

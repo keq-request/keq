@@ -1,5 +1,5 @@
 import type { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
-import { KeqMiddlewareContext } from './middleware-context'
+import { KeqMiddlewareContext } from './middleware-context.js'
 
 
 export class KeqOrchestratorContext {

@@ -5,7 +5,7 @@ import {
   KeqRequestInitOptions,
 } from '~/request-init/index.js'
 import { shallowClone } from '~/utils/shallow-clone.js'
-import { watchObject } from './utils'
+import { watchObject } from './utils/index.js'
 import type {
   KeqContext,
   KeqContextOptions,

@@ -1,1 +1,1 @@
-export type KeqNext = () => Promise<void> | void
+export type KeqNext = () => Promise<void>

@@ -1,6 +1,6 @@
 import type { Emitter } from 'mitt'
-import { KeqExecutionContext } from '../execution-context'
-import { KeqSharedContext } from '../shared-context'
+import { KeqExecutionContext } from '../execution-context.js'
+import { KeqSharedContext } from '../shared-context.js'
 
 
 export interface KeqEvents {

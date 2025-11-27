@@ -1,5 +1,5 @@
 import { AbortException } from '~/exception/index.js'
-import { KeqMiddleware } from '~/middleware/types'
+import { KeqMiddleware } from '~/middleware/types/index.js'
 
 
 export function keqAbortFlowControlMiddleware(): KeqMiddleware {

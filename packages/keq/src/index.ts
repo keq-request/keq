@@ -19,7 +19,7 @@ export {
 } from './middleware'
 
 export {
-  type KeqRoute,
+  type KeqRoute as KeqRoute,
   composeRoute,
   keqHostRoute,
   keqLocationRoute,

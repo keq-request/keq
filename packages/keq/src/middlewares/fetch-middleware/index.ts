@@ -1,5 +1,5 @@
 import { KeqExecutionContext } from '~/context/execution-context.js'
-import { KeqMiddleware } from '~/middleware/types'
+import { KeqMiddleware } from '~/middleware/types/index.js'
 
 /**
  * Send Request
