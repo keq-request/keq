@@ -1,17 +1,12 @@
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
 import { Debugger } from '~/utils/debugger.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '~/compiler.js'
 
-interface ValidateTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-}
 
-export function createValidateTask(options?: ValidateTaskOptions): ListrTask<TaskContext> {
+function main(): ListrTask<TaskContext> {
   return {
-    title: 'Validate',
-    enabled: options?.enabled,
-    skip: options?.skip,
     task: (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.downloaded) throw new Error('Please run download task first.')
@@ -51,5 +46,25 @@ export function createValidateTask(options?: ValidateTaskOptions): ListrTask<Tas
         },
       )
     },
+  }
+}
+
+export function createValidateTask(compiler: Compiler, options?: BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Validate',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (context, task) => task.newListr(
+      [
+        main(),
+        {
+          task: (context, task) => compiler.hooks.afterValidate
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
+      },
+    ),
   }
 }

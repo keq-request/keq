@@ -2,19 +2,22 @@ import { ListrTask } from 'listr2'
 import { TaskContext } from '../types/task-context.js'
 import { selectOperationDefinitions } from './utils/select-operation-definitions.js'
 import { IgnoreMode } from '../types/ignore-mode.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
 
-interface InteractiveTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-
+export interface InteractiveTaskOptions {
   mode: IgnoreMode
 
-  // Whether to override existing ignore rules
-  override?: boolean
+  persist?: boolean
+
+  /**
+   * Remove all previously matcher rules.
+   * This means that all rules form `.keqignore` file will be removed.
+   */
+  clear?: boolean
 }
 
 
-export function createInteractiveTask(options: InteractiveTaskOptions): ListrTask<TaskContext> {
+export function createInteractiveTask(options: InteractiveTaskOptions & BaseTaskOptions): ListrTask<TaskContext> {
   return {
     enabled: options?.enabled,
     skip: options?.skip,
@@ -27,7 +30,7 @@ export function createInteractiveTask(options: InteractiveTaskOptions): ListrTas
       const operationDefinitions = documents.flatMap((document) => document.operations)
       const selectedOperationDefinitions = await selectOperationDefinitions(task, operationDefinitions)
 
-      if (options.override) {
+      if (options.clear) {
         matcher.append({
           persist: false,
           ignore: true,
@@ -39,7 +42,7 @@ export function createInteractiveTask(options: InteractiveTaskOptions): ListrTas
 
       for (const op of selectedOperationDefinitions) {
         matcher.append({
-          persist: true,
+          persist: !!options.persist,
           ignore: options.mode === 'add',
           moduleName: op.module.name,
           operationMethod: op.method,

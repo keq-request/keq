@@ -2,21 +2,13 @@ import * as path from 'path'
 import fs from 'fs-extra'
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '~/compiler.js'
 
 
-interface PersistTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-
-  persistIgnore?: boolean
-  persistArtifacts?: boolean
-}
-
-function createPersistArtifactTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
+function createPersistArtifactTask(): ListrTask<TaskContext> {
   return {
     title: 'Write files',
-    enabled: options?.persistArtifacts,
-    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.compiled) throw new Error('Please run compile task first.')
@@ -43,11 +35,9 @@ function createPersistArtifactTask(options?: PersistTaskOptions): ListrTask<Task
   }
 }
 
-function createPersistIgnoreTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
+function createPersistIgnoreTask(): ListrTask<TaskContext> {
   return {
     title: 'Update .keqignore',
-    enabled: options?.persistIgnore,
-    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
 
@@ -58,21 +48,38 @@ function createPersistIgnoreTask(options?: PersistTaskOptions): ListrTask<TaskCo
 }
 
 
-export function createPersistTask(options?: PersistTaskOptions): ListrTask<TaskContext> {
+function main(): ListrTask<TaskContext> {
   return {
-    title: 'Persist',
-    enabled: options?.enabled,
-    skip: options?.skip,
     task: (context, task) => task.newListr(
       [
-        createPersistArtifactTask(options),
-        createPersistIgnoreTask(options),
+        createPersistArtifactTask(),
+        createPersistIgnoreTask(),
       ],
       {
         concurrent: true,
         rendererOptions: {
           collapseSubtasks: true,
         },
+      },
+    ),
+  }
+}
+
+export function createPersistTask(compiler: Compiler, options?: BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Persist',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (context, task) => task.newListr(
+      [
+        main(),
+        {
+          task: (context, task) => compiler.hooks.afterPersist
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
       },
     ),
   }

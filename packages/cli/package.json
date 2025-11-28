@@ -68,6 +68,7 @@
     "ramda": "^0.32.0",
     "semver": "^7.7.3",
     "swagger-fix": "^1.0.5",
+    "tapable": "^2.3.0",
     "ts-custom-error": "^3.3.1",
     "type-fest": "^5.2.0",
     "valid-url": "^1.0.9",

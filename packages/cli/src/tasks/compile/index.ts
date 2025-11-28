@@ -4,18 +4,12 @@ import { compileSchemaDefinition } from './utils/compile-schema-definition.js'
 import { compileOperationDefinition } from './utils/compile-operation-definition.js'
 import { Artifact } from '../utils/artifact.js'
 import { requestRenderer } from '~/renderer/request/index.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '~/compiler.js'
 
 
-export interface CompileTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-}
-
-export function createCompileTask(options?: CompileTaskOptions): ListrTask<TaskContext> {
+function main(compiler: Compiler): ListrTask<TaskContext> {
   return {
-    title: 'Compile',
-    enabled: options?.enabled,
-    skip: options?.skip,
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.shaken) throw new Error('Please run shaking task first.')
@@ -25,18 +19,21 @@ export function createCompileTask(options?: CompileTaskOptions): ListrTask<TaskC
       const documents = context.shaken.documents
         .filter((document) => !matcher.isModuleIgnored(document.module))
 
-      const requestArtifact = new Artifact({
-        id: 'request',
-        filepath: 'request',
-        content: await requestRenderer(),
-        extensionName: '.ts',
-      })
+      const requestArtifact = await compiler.hooks.afterCompileKeqRequest
+        .promise(
+          new Artifact({
+            id: 'request',
+            filepath: 'request',
+            content: await requestRenderer(),
+            extensionName: '.ts',
+          }),
+        )
 
       const schemaDefinitions = documents.flatMap((document) => document.schemas)
       const operationDefinitions = documents.flatMap((document) => document.operations)
 
-      const schemaArtifacts = await compileSchemaDefinition({ schemaDefinitions })
-      const operationArtifacts = await compileOperationDefinition({ rc, operationDefinitions, schemaArtifacts, requestArtifact: requestArtifact })
+      const schemaArtifacts = await compileSchemaDefinition(compiler, { schemaDefinitions })
+      const operationArtifacts = await compileOperationDefinition(compiler, { rc, operationDefinitions, schemaArtifacts, requestArtifact })
 
       const artifacts = [requestArtifact, ...schemaArtifacts, ...operationArtifacts]
 
@@ -44,5 +41,25 @@ export function createCompileTask(options?: CompileTaskOptions): ListrTask<TaskC
         artifacts,
       }
     },
+  }
+}
+
+export function createCompileTask(compiler: Compiler, options?: BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Compile',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (context, task) => task.newListr(
+      [
+        main(compiler),
+        {
+          task: (context, task) => compiler.hooks.afterCompile
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
+      },
+    ),
   }
 }

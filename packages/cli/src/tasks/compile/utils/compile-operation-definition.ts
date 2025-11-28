@@ -8,6 +8,7 @@ import { Artifact } from '~/tasks/utils/artifact.js'
 import { isArtifactCompiledBy } from './compile-schema-definition.js'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { DependencyIdentifier } from '~/tasks/utils/dependency.js'
+import { Compiler } from '~/compiler.js'
 
 
 interface CompileProcessorOptions {
@@ -47,7 +48,7 @@ function genEntrypointFilepath(moduleName: string): string {
   ].join('/')
 }
 
-export async function compileOperationDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
+export async function compileOperationDefinition(compiler: Compiler, options: CompileProcessorOptions): Promise<Artifact[]> {
   const { rc, requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
 
   const alias = (name: string): string => `${name}Schema`
@@ -104,7 +105,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
       ])
     }
 
-    return typeArtifact
+    return await compiler.hooks.afterCompileOperationType.promise(typeArtifact, operationDefinition)
   }
 
   async function createRequestArtifact(operationDefinition: OperationDefinition, typeArtifact: Artifact): Promise<Artifact> {
@@ -140,8 +141,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
       ],
       { export: true },
     )
-
-    return artifact
+    return await compiler.hooks.afterCompileOperationRequest.promise(artifact, operationDefinition)
   }
 
 

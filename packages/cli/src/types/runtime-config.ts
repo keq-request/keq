@@ -4,6 +4,7 @@ import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { OperationIdFactory } from './operation-id-factory.js'
 import { FileNamingStyle } from '../constants/file-naming-style.js'
 import { Qs } from './qs.js'
+import { Plugin } from './plugin.js'
 
 
 export const RuntimeConfig = Type.Object({
@@ -40,12 +41,15 @@ export const RuntimeConfig = Type.Object({
    * Whether to tolerate wrong swagger structure
    */
   tolerant: Type.Optional(Type.Boolean({ default: false })),
+
+  plugins: Type.Optional(Type.Array(Type.Any(), { default: [] })),
 })
 
 
 export type KeqQueryOptionsFactory = (parameter: OpenAPIV3_1.ParameterObject) => KeqQueryOptions | undefined
 
-export interface RuntimeConfig extends Omit<Static<typeof RuntimeConfig>, 'operationId' | 'qs'> {
+export interface RuntimeConfig extends Omit<Static<typeof RuntimeConfig>, 'operationId' | 'qs' | 'plugins'> {
   operationIdFactory?: OperationIdFactory
   qs?: KeqQueryOptions | KeqQueryOptionsFactory
+  plugins?: Plugin[]
 }

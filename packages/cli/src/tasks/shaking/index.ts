@@ -1,21 +1,16 @@
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '~/compiler.js'
 
 
-interface ShakingTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-
+export interface ShakingTaskOptions {
   skipIgnoredModules?: boolean
   skipEmptyDocuments?: boolean
 }
 
-
-export function createShakingTask(options?: ShakingTaskOptions): ListrTask<TaskContext> {
+function main(compiler: Compiler, options?: ShakingTaskOptions): ListrTask<TaskContext> {
   return {
-    title: 'Shaking',
-    enabled: options?.enabled,
-    skip: options?.skip,
     task: (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
       if (!context.validated) throw new Error('Please run validate task first.')
@@ -57,5 +52,26 @@ export function createShakingTask(options?: ShakingTaskOptions): ListrTask<TaskC
         },
       )
     },
+  }
+}
+
+
+export function createShakingTask(compiler: Compiler, options?: ShakingTaskOptions & BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Shaking',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (context, task) => task.newListr(
+      [
+        main(compiler, options),
+        {
+          task: (context, task) => compiler.hooks.afterShaking
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
+      },
+    ),
   }
 }

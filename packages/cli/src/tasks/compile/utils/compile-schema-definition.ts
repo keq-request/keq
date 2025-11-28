@@ -1,4 +1,5 @@
 import * as R from 'ramda'
+import { Compiler } from '~/compiler.js'
 import { jsonSchemaRenderer } from '~/renderer/json-schema/index.js'
 import { Artifact } from '~/tasks/utils/artifact.js'
 import { SchemaDefinition } from '~/tasks/utils/schema-definition.js'
@@ -34,7 +35,7 @@ export const isArtifactCompiledBy = function (schemaDefinition: SchemaDefinition
   return (artifact: Artifact): boolean => artifact.id === genSchemaDefinitionFilepath(schemaDefinition)
 }
 
-export async function compileSchemaDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
+export async function compileSchemaDefinition(compiler: Compiler, options: CompileProcessorOptions): Promise<Artifact[]> {
   const { schemaDefinitions } = options
 
   const artifacts = await Promise.all(
@@ -43,12 +44,14 @@ export async function compileSchemaDefinition(options: CompileProcessorOptions):
         const content = await jsonSchemaRenderer(schemaDefinition)
         const filepath = genSchemaDefinitionFilepath(schemaDefinition)
 
-        return new Artifact({
+        const artifact = new Artifact({
           id: filepath,
           filepath,
           content,
           extensionName: '.schema.ts',
         })
+
+        return await compiler.hooks.afterCompileSchema.promise(artifact, schemaDefinition)
       }),
   )
 

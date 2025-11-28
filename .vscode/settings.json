@@ -2,5 +2,6 @@
   "[markdown]": {
     "editor.formatOnSave": false
   },
-  "javascript.preferences.importModuleSpecifierEnding": "js"
+  "javascript.preferences.importModuleSpecifierEnding": "js",
+  "cSpell.words": ["keqignore"]
 }

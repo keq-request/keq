@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import semver from 'semver'
 import { Argument, Command, Option } from 'commander'
-import { build, ignore } from './tasks/index.js'
 import { SupportedMethods } from './constants/supported-methods.js'
 import { logger } from './utils/logger.js'
+import { Compiler } from './compiler.js'
 
 
 if (semver.lt(process.version, '18.0.0')) {
@@ -21,13 +21,21 @@ program
   .option('--tolerant', 'Tolerate wrong swagger structure')
   .option('-i --interactive', 'Interactive select the scope of generation')
   .action(async (options) => {
-    await build({
+    const compiler = new Compiler({
+      build: {
+        shaking: {
+          skipIgnoredModules: true,
+          skipEmptyDocuments: true,
+        },
+      },
       config: options.config,
       modules: options.module,
-      debug: options.debug,
-      tolerant: options.tolerant,
-      interactive: options.interactive,
+      debug: !!options.debug,
+      tolerant: !!options.tolerant,
+      interactive: !!options.interactive,
     })
+
+    await compiler.run()
   })
 
 
@@ -35,7 +43,7 @@ program
   .command('ignore')
   .addArgument(
     new Argument('<mode>', 'The ignore mode')
-      .choices(['add', 'except'])
+      .choices(['all', 'add', 'except'])
       .argRequired(),
   )
   .option('-c --config <config>', 'The keq-cli config file')
@@ -52,39 +60,80 @@ program
   .option('--pathname <pathnames>', 'Only generate files of the specified operation pathname')
   .option('-i --interactive', 'Interactive select the scope of generation')
   .action(async (mode, options) => {
-    if (options.interactive) {
+    let compiler: Compiler
+
+    if (mode === 'all') {
+      if (options.build) throw new Error("'--build' cannot be used with 'all' mode")
+
+      compiler = new Compiler({
+        build: false,
+        config: options.config,
+        modules: options.module,
+        debug: !!options.debug,
+        interactive: false,
+        ignore: {
+          rules: [{
+            persist: true,
+            ignore: true,
+            moduleName: '*',
+            operationMethod: '*',
+            operationPathname: '*',
+          }],
+        },
+      })
+    } else if (options.interactive) {
       if (options.interactive) {
         if (options.method) throw new Error("'--method' cannot be used with '--interactive'")
         if (options.pathname) throw new Error("'--pathname' cannot be used with '--interactive'")
       }
 
-      await ignore({
-        mode,
-        interactive: options.interactive,
+      compiler = new Compiler({
+        build: !!options.build && {
+          shaking: {
+            skipIgnoredModules: true,
+            skipEmptyDocuments: true,
+          },
+        },
         config: options.config,
-        debug: options.debug,
         modules: options.module,
-        rules: [],
-        build: options.build,
+        debug: !!options.debug,
+
+        interactive: {
+          mode,
+          persist: true,
+        },
       })
     } else {
-      if (!options.module) throw new Error("required option '--module <module>' not specified")
-      if (!options.method) throw new Error("required option '--method <method>' not specified")
-      if (!options.pathname) throw new Error("required option '--pathname <pathnames>' not specified")
+      if (!options.module && !options.method && !options.pathname) {
+        throw new Error("at least one of '--module', '--method' or '--pathname' must be specified")
+      }
 
-      await ignore({
-        mode,
+      const moduleNames = options.module || ['*']
+
+      compiler = new Compiler({
+        build: !!options.build && {
+          shaking: {
+            skipIgnoredModules: true,
+            skipEmptyDocuments: true,
+          },
+        },
         config: options.config,
-        debug: options.debug,
+        debug: !!options.debug,
         modules: options.module,
-        rules: options.module.map((moduleName) => ({
-          moduleName,
-          operationMethod: options.method,
-          operationPathname: options.pathname,
-        })),
-        build: options.build,
+        ignore: {
+          rules: moduleNames.map((moduleNames) => ({
+            persist: true,
+            ignore: mode === 'add',
+            moduleName: moduleNames,
+            operationMethod: options.method,
+            operationPathname: options.pathname,
+          })),
+        },
+        interactive: false,
       })
     }
+
+    await compiler.run()
   })
 
 async function main(): Promise<void> {

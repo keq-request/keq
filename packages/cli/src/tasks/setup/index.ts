@@ -6,9 +6,11 @@ import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
 import { RuntimeConfig } from '~/types/runtime-config.js'
-import { IgnoreMatcher } from '../../utils/ignore-matcher.js'
-import type { TaskContext } from '../types/task-context.js'
+import { IgnoreMatcher, IgnoreMatcherRule } from '../../utils/ignore-matcher.js'
 import { validateModules, findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
+import type { TaskContext } from '../types/task-context.js'
+import type { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '../../compiler.js'
 
 
 export interface SetupTaskOptions {
@@ -16,13 +18,16 @@ export interface SetupTaskOptions {
   debug?: boolean
   tolerant?: boolean
   modules?: string[]
+
+  ignore?: false | {
+    rules: IgnoreMatcherRule[]
+  }
 }
 
 const explore = cosmiconfig('keq')
 
-export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContext> {
+function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<TaskContext> {
   return {
-    title: 'Setup',
     task: async (context, task) => {
       const result: CosmiconfigResult = options?.config
         ? await explore.load(options.config)
@@ -57,12 +62,23 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
         rc.esm = moduleSystem === 'esm'
       }
 
-      let filter: IgnoreMatcher = new IgnoreMatcher([])
+      let matcher: IgnoreMatcher = new IgnoreMatcher([])
       if (result.filepath) {
         const ignoreFilepath = path.resolve(path.dirname(result.filepath), '.keqignore')
         if (await fs.exists(ignoreFilepath)) {
-          filter = await IgnoreMatcher.read(ignoreFilepath)
+          matcher = await IgnoreMatcher.read(ignoreFilepath)
         }
+      }
+
+      const ignoreRules = options.ignore === false ? [] : options.ignore?.rules || []
+      for (const rule of ignoreRules) {
+        matcher.append({
+          persist: !!rule.persist,
+          ignore: rule.ignore,
+          moduleName: rule.moduleName,
+          operationMethod: rule.operationMethod,
+          operationPathname: rule.operationPathname,
+        })
       }
 
       if (options?.modules && options.modules.length) {
@@ -73,7 +89,7 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
 
         const ignoredModules = R.difference(R.keys(rc.modules), options.modules)
         for (const moduleName of ignoredModules) {
-          filter.append({
+          matcher.append({
             persist: false,
             ignore: true,
             moduleName,
@@ -83,8 +99,33 @@ export function createSetupTask(options: SetupTaskOptions): ListrTask<TaskContex
         }
       }
 
-      context.setup = { rc, matcher: filter }
-      // return rc
+      context.setup = { rc, matcher: matcher }
+
+      if (rc.plugins && rc.plugins.length) {
+        for (const plugin of rc.plugins) {
+          plugin.apply(compiler)
+        }
+      }
     },
+  }
+}
+
+export function createSetupTask(compiler: Compiler, options: SetupTaskOptions & BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Setup',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (context, task) => task.newListr(
+      [
+        main(compiler, options),
+        {
+          task: (context, task) => compiler.hooks.afterSetup
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
+      },
+    ),
   }
 }

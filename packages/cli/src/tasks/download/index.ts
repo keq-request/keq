@@ -2,20 +2,16 @@ import { ListrTask, PRESET_TIMER } from 'listr2'
 import { ModuleDefinition } from '../utils/module-definition.js'
 import { ApiDocument } from '../utils/api-document.js'
 import { TaskContext } from '../types/task-context.js'
+import { BaseTaskOptions } from '../types/base-task-options.js'
+import type { Compiler } from '~/compiler.js'
 
 
 interface DownloadTaskOptions {
-  enabled?: boolean | ((ctx: TaskContext) => boolean | Promise<boolean>)
-  skip?: boolean | string | ((ctx: TaskContext) => boolean | string | Promise<boolean | string>)
-
   skipIgnoredModules?: boolean
 }
 
-export function createDownloadTask(options?: DownloadTaskOptions): ListrTask<TaskContext> {
+function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<TaskContext> {
   return {
-    title: 'Download',
-    enabled: options?.enabled,
-    skip: options?.skip,
     task: (context, task) => {
       if (!context.setup) {
         throw new Error('Please run setup task first.')
@@ -57,5 +53,25 @@ export function createDownloadTask(options?: DownloadTaskOptions): ListrTask<Tas
         },
       )
     },
+  }
+}
+
+export function createDownloadTask(compiler: Compiler, options?: DownloadTaskOptions & BaseTaskOptions): ListrTask<TaskContext> {
+  return {
+    title: 'Download',
+    enabled: options?.enabled,
+    skip: options?.skip,
+    task: (_, task) => task.newListr(
+      [
+        main(compiler, options),
+        {
+          task: (context, task) => compiler.hooks.afterDownload
+            .promise(),
+        },
+      ],
+      {
+        concurrent: false,
+      },
+    ),
   }
 }
