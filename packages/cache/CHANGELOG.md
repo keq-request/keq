@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.0.0-alpha.11
+
+### Minor Changes
+
+- 54520a9: **Feat:** using `.option('cache', false)` can disable caching for request that are cached by default
+- 89274bd: **Feat:** add a Size enum make it easier to set the size
+
+### Patch Changes
+
+- Updated dependencies [c7ffd1f]
+  - keq@5.0.0-alpha.11
+
 ## 5.0.0-alpha.10
 
 ### Patch Changes
