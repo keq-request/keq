@@ -4,6 +4,7 @@ import { Dependency, DependencyIdentifier, DependencyOptions, DependencySource }
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import { toComment } from './to-comment.js'
 import { ToCodeOptions } from '~/types/to-code-options.js'
+import { Anchor } from './anchor.js'
 
 
 const HeaderComment = [
@@ -21,7 +22,7 @@ export class Artifact {
   warns: string[] = []
   content: string
   extensionName
-
+  anchor = new Anchor(this)
 
   constructor(options: {
     id: string

@@ -3,7 +3,7 @@ import { ModuleDefinition } from '../utils/module-definition.js'
 import { ApiDocument } from '../utils/api-document.js'
 import { TaskContext } from '../types/task-context.js'
 import { BaseTaskOptions } from '../types/base-task-options.js'
-import type { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
 
 
 interface DownloadTaskOptions {
@@ -66,7 +66,7 @@ export function createDownloadTask(compiler: Compiler, options?: DownloadTaskOpt
         main(compiler, options),
         {
           task: (context, task) => compiler.hooks.afterDownload
-            .promise(),
+            .promise(task),
         },
       ],
       {

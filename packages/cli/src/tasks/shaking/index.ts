@@ -1,7 +1,7 @@
 import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
 import { BaseTaskOptions } from '../types/base-task-options.js'
-import type { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
 
 
 export interface ShakingTaskOptions {
@@ -66,7 +66,7 @@ export function createShakingTask(compiler: Compiler, options?: ShakingTaskOptio
         main(compiler, options),
         {
           task: (context, task) => compiler.hooks.afterShaking
-            .promise(),
+            .promise(task),
         },
       ],
       {

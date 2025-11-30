@@ -3,6 +3,7 @@ import { ApiDocumentV3_1 } from '~/tasks/utils/api-document_v3_1.js'
 import { Artifact } from '~/tasks/utils/artifact.js'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import { IgnoreMatcher } from '~/utils/ignore-matcher.js'
+import { File } from './file.js'
 
 export interface TaskContext {
   setup?: {
@@ -24,5 +25,9 @@ export interface TaskContext {
 
   compiled?: {
     artifacts: Artifact[]
+  }
+
+  persisted?: {
+    files: File[]
   }
 }

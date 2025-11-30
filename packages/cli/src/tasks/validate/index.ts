@@ -2,7 +2,7 @@ import { ListrTask } from 'listr2'
 import { TaskContext } from '~/tasks/types/task-context.js'
 import { Debugger } from '~/utils/debugger.js'
 import { BaseTaskOptions } from '../types/base-task-options.js'
-import type { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
 
 
 function main(): ListrTask<TaskContext> {
@@ -59,7 +59,7 @@ export function createValidateTask(compiler: Compiler, options?: BaseTaskOptions
         main(),
         {
           task: (context, task) => compiler.hooks.afterValidate
-            .promise(),
+            .promise(task),
         },
       ],
       {

@@ -2,7 +2,7 @@ import { UriTemplateContext } from '@opendoc/uri-template'
 import { shallowClone } from '~/utils/shallow-clone.js'
 import { Validator } from '~/validator/index.js'
 import { Exception } from '~/exception/exception.js'
-import { KeqRequestMethod, KeqRequestBody } from './types/index.js'
+import { KeqRequestMethod, KeqBodyInit } from './types/index.js'
 import {
   toUrlSearchParams,
   toFormData,
@@ -16,7 +16,7 @@ export interface KeqRequestInitOptions {
   routeParams: UriTemplateContext
   method: KeqRequestMethod
   headers: Headers
-  body: KeqRequestBody
+  body: KeqBodyInit
   cache?: RequestCache
   credentials?: RequestCredentials
   integrity?: string
@@ -33,7 +33,7 @@ export class KeqRequestInit {
 
   method: KeqRequestMethod
   headers: Headers
-  body: KeqRequestBody
+  body: KeqBodyInit
   cache?: RequestCache
   credentials?: RequestCredentials
   integrity?: string

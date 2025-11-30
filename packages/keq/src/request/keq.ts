@@ -6,10 +6,10 @@ import { Validator } from '~/validator/index.js'
 import { KeqFlowControlOptions, KeqFlowControlMode, KeqFlowControlSignal } from '~/middlewares/index.js'
 import { mergeKeqRequestBody, fixContentType, queryStringify } from './utils/index.js'
 import { base64Encode } from '~/utils/index.js'
-import { KeqRequestBody } from '~/request-init/index.js'
+import { KeqBodyInit } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
-import type { KeqQueryValue, CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqParamValue } from './types/index.js'
+import type { CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqPathParameterInit, KeqQueryInit } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 import type { LiteralKeys, StringIndexValueOf, EnabledIfStringIndex, LooseNestedObject, EnableLooseNestedLike, LooseNestedLike } from '~/types/index.js'
 
@@ -89,7 +89,7 @@ export class Keq<
       & EnabledIfStringIndex<REQ_QUERY>,
     options?: KeqQueryOptions,
   ): this
-  query(arg1: string | Partial<REQ_QUERY>, arg2?: KeqQueryValue | KeqQueryOptions, arg3?: KeqQueryOptions): this {
+  query(arg1: string | Partial<REQ_QUERY>, arg2?: KeqQueryInit | KeqQueryOptions, arg3?: KeqQueryOptions): this {
     if (Validator.isObject(arg1)) {
       const str = queryStringify(arg1, (arg2 as KeqQueryOptions) || this.__qs__)
 
@@ -118,7 +118,7 @@ export class Keq<
   params<T extends keyof LiteralKeys<REQ_PARAMS>>(key: T, value: LiteralKeys<REQ_PARAMS>[T]): this
   params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_PARAMS>): this
   params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(key: string, value: StringIndexValueOf<REQ_PARAMS> & EnabledIfStringIndex<REQ_PARAMS>): this
-  params(arg1: string | Partial<REQ_PARAMS>, arg2?: KeqParamValue): this {
+  params(arg1: string | Partial<REQ_PARAMS>, arg2?: KeqPathParameterInit): this {
     if (typeof arg1 === 'string' && arg2 !== undefined) {
       this.requestInit.routeParams[arg1] = arg2
     } else if (typeof arg1 === 'object' && arg1 !== null) {
@@ -135,7 +135,7 @@ export class Keq<
   /**
    * Set request body
    */
-  body(value: KeqRequestBody): this {
+  body(value: KeqBodyInit): this {
     this.requestInit.body = value
     return this
   }
@@ -172,7 +172,8 @@ export class Keq<
   /**
    * set request body
    */
-  send(value: REQ_BODY): this {
+  send(value: Partial<REQ_BODY>): this
+  send(value: KeqBodyInit): this {
     this.requestInit.body = mergeKeqRequestBody(this.requestInit.body, value)
 
     if (Validator.isUrlSearchParams(value)) {

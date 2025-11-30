@@ -1,21 +1,22 @@
-import { KeqQueryValue } from '../keq-query-value'
-import { KeqParamValue } from '../keq-param-value'
+import { KeqQueryInit } from '../keq-query-value'
+import { KeqPathParameterInit } from '../keq-param-value'
+import { KeqBodyInit } from '~/request-init'
 
 
 export interface KeqOperation {
   requestParams: {
-    [key in string]: KeqParamValue
+    [key in string]: KeqPathParameterInit
   }
 
   requestQuery: {
-    [key in string]: KeqQueryValue
+    [key in string]: KeqQueryInit
   }
 
   requestHeaders: {
     [key in string]: string | number
   }
 
-  requestBody: FormData | URLSearchParams | object | Array<any> | string
+  requestBody: KeqBodyInit
 
   responseBody: any
 }

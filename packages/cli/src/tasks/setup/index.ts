@@ -10,7 +10,7 @@ import { IgnoreMatcher, IgnoreMatcherRule } from '../../utils/ignore-matcher.js'
 import { validateModules, findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
 import type { TaskContext } from '../types/task-context.js'
 import type { BaseTaskOptions } from '../types/base-task-options.js'
-import type { Compiler } from '../../compiler.js'
+import type { Compiler } from '../../compiler/compiler.js'
 
 
 export interface SetupTaskOptions {
@@ -120,7 +120,7 @@ export function createSetupTask(compiler: Compiler, options: SetupTaskOptions & 
         main(compiler, options),
         {
           task: (context, task) => compiler.hooks.afterSetup
-            .promise(),
+            .promise(task),
         },
       ],
       {

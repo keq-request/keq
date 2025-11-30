@@ -1,4 +1,12 @@
 export { defineKeqConfig } from './define-keq-config.js'
+export { RuntimeConfig } from './types/runtime-config.js'
 export { FileNamingStyle } from './constants/file-naming-style.js'
-export { Compiler } from './compiler.js'
+
+export { Compiler } from './compiler/compiler.js'
 export { Plugin } from './types/plugin.js'
+export { Artifact } from './tasks/utils/artifact.js'
+export { ModuleDefinition } from './tasks/utils/module-definition.js'
+export { SchemaDefinition } from './tasks/utils/schema-definition.js'
+export { OperationDefinition } from './tasks/utils/operation-definition.js'
+export { ApiDocument } from './tasks/utils/api-document.js'
+export { ApiDocumentV3_1 } from './tasks/utils/api-document_v3_1.js'

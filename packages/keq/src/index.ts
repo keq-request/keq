@@ -7,10 +7,14 @@ export {
   type KeqApiSchema,
   type KeqOperation,
   type KeqDefaultOperation,
-  type KeqQueryValue,
-  type KeqParamValue,
+  type KeqQueryInit,
+  type KeqPathParameterInit,
   type KeqQueryOptions,
 } from './request'
+
+export {
+  type KeqBodyInit,
+} from './request-init'
 
 export {
   composeMiddleware,

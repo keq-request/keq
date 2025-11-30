@@ -1,10 +1,10 @@
 
 import { Validator } from '~/validator/index.js'
 import { Exception } from '~/exception/index.js'
-import { KeqRequestBody } from '~/request-init/index.js'
+import { KeqBodyInit } from '~/request-init/index.js'
 
 
-export function mergeKeqRequestBody(left: KeqRequestBody, right: KeqRequestBody): KeqRequestBody {
+export function mergeKeqRequestBody(left: KeqBodyInit, right: KeqBodyInit): KeqBodyInit {
   if (right === undefined) return left
 
   if (typeof right === 'number') {

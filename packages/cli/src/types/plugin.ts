@@ -1,4 +1,4 @@
-import type { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
 
 
 export interface Plugin {

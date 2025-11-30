@@ -1,4 +1,4 @@
 import { UriTemplateContext } from '@opendoc/uri-template'
 
 
-export type KeqParamValue = UriTemplateContext[string]
+export type KeqPathParameterInit = UriTemplateContext[string]

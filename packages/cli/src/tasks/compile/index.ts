@@ -5,7 +5,7 @@ import { compileOperationDefinition } from './utils/compile-operation-definition
 import { Artifact } from '../utils/artifact.js'
 import { requestRenderer } from '~/renderer/request/index.js'
 import { BaseTaskOptions } from '../types/base-task-options.js'
-import type { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
 
 
 function main(compiler: Compiler): ListrTask<TaskContext> {
@@ -27,13 +27,15 @@ function main(compiler: Compiler): ListrTask<TaskContext> {
             content: await requestRenderer(),
             extensionName: '.ts',
           }),
+
+          task,
         )
 
       const schemaDefinitions = documents.flatMap((document) => document.schemas)
       const operationDefinitions = documents.flatMap((document) => document.operations)
 
-      const schemaArtifacts = await compileSchemaDefinition(compiler, { schemaDefinitions })
-      const operationArtifacts = await compileOperationDefinition(compiler, { rc, operationDefinitions, schemaArtifacts, requestArtifact })
+      const schemaArtifacts = await compileSchemaDefinition({ compiler, task, schemaDefinitions })
+      const operationArtifacts = await compileOperationDefinition({ compiler, task, rc, operationDefinitions, schemaArtifacts, requestArtifact })
 
       const artifacts = [requestArtifact, ...schemaArtifacts, ...operationArtifacts]
 
@@ -54,7 +56,7 @@ export function createCompileTask(compiler: Compiler, options?: BaseTaskOptions)
         main(compiler),
         {
           task: (context, task) => compiler.hooks.afterCompile
-            .promise(),
+            .promise(task),
         },
       ],
       {

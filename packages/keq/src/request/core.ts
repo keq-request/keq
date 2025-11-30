@@ -67,6 +67,11 @@ export class Core<
     return this
   }
 
+  /**
+   * Appends middlewares to the end of the middleware chain.
+   * Using this method indiscriminately is discouraged;
+   * prefer using `.use` to maintain predictable execution order.
+   */
   appendMiddlewares(...middlewares: KeqMiddleware[]): this {
     this.__append_middlewares__.unshift(...middlewares)
     return this
@@ -116,9 +121,6 @@ export class Core<
   }
 
   private async run(): Promise<KeqSharedContext> {
-    // const middleware = composeMiddleware([...this.__prepend_middlewares__, ...this.__append_middlewares__], { name: 'root' })
-
-
     let attempt: number | undefined
 
     while (true) {

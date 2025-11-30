@@ -3,7 +3,7 @@ import semver from 'semver'
 import { Argument, Command, Option } from 'commander'
 import { SupportedMethods } from './constants/supported-methods.js'
 import { logger } from './utils/logger.js'
-import { Compiler } from './compiler.js'
+import { Compiler } from './compiler/compiler.js'
 
 
 if (semver.lt(process.version, '18.0.0')) {

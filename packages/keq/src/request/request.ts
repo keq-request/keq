@@ -13,7 +13,13 @@ import { keqFetchMiddleware, keqFlowControlMiddleware, keqTimeoutMiddleware } fr
 
 export interface KeqRequestOptions {
   preMiddlewares?: KeqMiddleware[]
+
+  /**
+   * Append middlewares to the end of the middleware chain.
+   * Using this option indiscriminately is discouraged.
+   */
   postMiddlewares?: KeqMiddleware[]
+
   baseOrigin?: string
   qs?: KeqQueryOptions
 }

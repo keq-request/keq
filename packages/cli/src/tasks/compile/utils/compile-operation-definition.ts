@@ -4,14 +4,15 @@ import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { operationTypeRenderer, typeNameFactory } from '~/renderer/operation-type/index.js'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import { operationRequestRenderer } from '~/renderer/operation-request/index.js'
-import { Artifact } from '~/tasks/utils/artifact.js'
 import { isArtifactCompiledBy } from './compile-schema-definition.js'
-import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
-import { DependencyIdentifier } from '~/tasks/utils/dependency.js'
-import { Compiler } from '~/compiler.js'
+import type { Compiler } from '~/compiler/compiler.js'
+import { DependencyIdentifier, OperationDefinition, Artifact } from '~/tasks/utils/index.js'
+import { TaskWrapper } from '~/tasks/types/index.js'
 
 
 interface CompileProcessorOptions {
+  compiler: Compiler
+  task: TaskWrapper
   rc: RuntimeConfig
   requestArtifact: Artifact
   schemaArtifacts: Artifact[]
@@ -48,8 +49,8 @@ function genEntrypointFilepath(moduleName: string): string {
   ].join('/')
 }
 
-export async function compileOperationDefinition(compiler: Compiler, options: CompileProcessorOptions): Promise<Artifact[]> {
-  const { rc, requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
+export async function compileOperationDefinition(options: CompileProcessorOptions): Promise<Artifact[]> {
+  const { compiler, task, rc, requestArtifact: requestArtifact, schemaArtifacts, operationDefinitions } = options
 
   const alias = (name: string): string => `${name}Schema`
   const qs = (parameter: OpenAPIV3_1.ParameterObject): KeqQueryOptions | undefined => {
@@ -90,7 +91,7 @@ export async function compileOperationDefinition(compiler: Compiler, options: Co
       extensionName: '.type.ts',
     })
 
-    typeArtifact.addDependence('keq', ['KeqOperation', 'KeqQueryValue', 'KeqParamValue'])
+    typeArtifact.addDependence('keq', ['KeqOperation', 'KeqQueryInit', 'KeqPathParameterInit'])
     const dependentSchemaDefinitions = operationDefinition.getDependencies()
 
     for (const dependentSchemaDefinition of dependentSchemaDefinitions) {
@@ -105,7 +106,7 @@ export async function compileOperationDefinition(compiler: Compiler, options: Co
       ])
     }
 
-    return await compiler.hooks.afterCompileOperationType.promise(typeArtifact, operationDefinition)
+    return await compiler.hooks.afterCompileOperationType.promise(typeArtifact, operationDefinition, task)
   }
 
   async function createRequestArtifact(operationDefinition: OperationDefinition, typeArtifact: Artifact): Promise<Artifact> {
@@ -137,11 +138,11 @@ export async function compileOperationDefinition(compiler: Compiler, options: Co
       [
         `${typeName('RequestQuery')}`,
         `${typeName('RequestHeaders')}`,
-        `${typeName('RequestBody')}`,
+        `${typeName('RequestBodies')}`,
       ],
       { export: true },
     )
-    return await compiler.hooks.afterCompileOperationRequest.promise(artifact, operationDefinition)
+    return await compiler.hooks.afterCompileOperationRequest.promise(artifact, operationDefinition, task)
   }
 
 

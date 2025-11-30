@@ -33,6 +33,18 @@
     "url": "https://github.com/keq-request/keq/issues"
   },
   "homepage": "https://github.com/keq-request/keq#readme",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "import": "./dist/plugins.js",
+      "require": "./dist/plugins.cjs"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
@@ -77,5 +89,8 @@
   },
   "peerDependencies": {
     "keq": "workspace:*"
+  },
+  "optionalDependencies": {
+    "eslint": "^9"
   }
 }
