@@ -19,15 +19,18 @@ function main(compiler: Compiler): ListrTask<TaskContext> {
       const documents = context.shaken.documents
         .filter((document) => !matcher.isModuleIgnored(document.module))
 
-      const requestArtifact = await compiler.hooks.afterCompileKeqRequest
-        .promise(
-          new Artifact({
-            id: 'request',
-            filepath: 'request',
-            content: await requestRenderer(),
-            extensionName: '.ts',
-          }),
+      let requestArtifact = new Artifact({
+        id: 'request',
+        filepath: 'request',
+        content: await requestRenderer(),
+        extensionName: '.ts',
+      })
 
+      requestArtifact.addDependence('keq', ['KeqRequest'])
+
+      requestArtifact = await compiler.hooks.afterCompileKeqRequest
+        .promise(
+          requestArtifact,
           task,
         )
 

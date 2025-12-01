@@ -169,7 +169,10 @@ export async function compileOperationDefinition(options: CompileProcessorOption
       const artifact = new Artifact({
         id: filepath,
         filepath,
-        content: '',
+        content: [
+          '/* @anchor:file:start */',
+          '/* @anchor:file:end */',
+        ].join('\n'),
       })
 
       for (const operationDefinition of (operationDefinitions || [])) {

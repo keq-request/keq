@@ -15,6 +15,20 @@ export class EslintPlugin implements Plugin {
 
 
   apply(compiler: Compiler): void {
+    if (this.options.disable && this.options.disable.length > 0) {
+      const $rules = [
+        ...this.options.disable.map((rule) => `/* eslint-disable ${rule} */`),
+      ].join('\n')
+
+      compiler.hooks.afterCompile.tap(EslintPlugin.name, () => {
+        const artifacts = compiler.context.compiled?.artifacts || []
+
+        for (const artifact of artifacts) {
+          artifact.anchor.append('file:start', $rules)
+        }
+      })
+    }
+
     compiler.hooks.afterPersist.tapPromise(EslintPlugin.name, async (task) => {
       const files = compiler.context.persisted?.files || []
       if (files.length === 0) return
@@ -23,31 +37,5 @@ export class EslintPlugin implements Plugin {
       const results = await eslint.lintFiles(files.map((file) => file.path))
       await ESLint.outputFixes(results)
     })
-
-    if (this.options.disable && this.options.disable.length > 0) {
-      const $rules = [
-        ...this.options.disable.map((rule) => `/* eslint-disable ${rule} */`),
-      ].join('\n')
-
-      compiler.hooks.afterCompileKeqRequest.tap(EslintPlugin.name, (artifact) => {
-        artifact.anchor.append('file:start', $rules)
-        return artifact
-      })
-
-      compiler.hooks.afterCompileOperationRequest.tap(EslintPlugin.name, (artifact) => {
-        artifact.anchor.append('file:start', $rules)
-        return artifact
-      })
-
-      compiler.hooks.afterCompileOperationType.tap(EslintPlugin.name, (artifact) => {
-        artifact.anchor.append('file:start', $rules)
-        return artifact
-      })
-
-      compiler.hooks.afterCompileSchema.tap(EslintPlugin.name, (artifact) => {
-        artifact.anchor.append('file:start', $rules)
-        return artifact
-      })
-    }
   }
 }

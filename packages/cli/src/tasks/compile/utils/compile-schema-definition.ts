@@ -89,7 +89,10 @@ export async function compileSchemaDefinition(options: CompileProcessorOptions):
       const artifact = new Artifact({
         id: filepath,
         filepath,
-        content: '',
+        content: [
+          '/* @anchor:file:start */',
+          '/* @anchor:file:end */',
+        ].join('\n'),
       })
 
       for (const schemaDefinition of (schemaDefinitions || [])) {
