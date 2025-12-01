@@ -159,7 +159,7 @@ export async function operationTypeRenderer(operationDefinition: OperationDefini
     $parameterBodies || undefined,
     $requestParameters,
     '',
-    `export interface Operation<STATUS extends keyof ${typeName('ResponseBodies')}, CONTENT_TYPE extends keyof ${typeName('ParameterBodies')}> extends KeqOperation {`,
+    `export interface Operation<STATUS extends keyof ${typeName('ResponseBodies')}, CONTENT_TYPE extends ${$parameterBodies ? `keyof ${typeName('ParameterBodies')}` : 'string'} > extends KeqOperation {`,
     `  requestParams: ${typeName('RouteParameters')} & { [key: string]: KeqPathParameterInit }`,
     `  requestQuery: ${typeName('RequestQuery')} & { [key: string]: KeqQueryInit }`,
     `  requestHeaders: ${typeName('RequestHeaders')} & { [key: string]: string | number }`,
