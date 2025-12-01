@@ -11,7 +11,7 @@ export function createSharedContext(options?: CreateSharedContextOptions): KeqSh
       url: new URL('http://example.com'),
       method: 'get',
       headers: new Headers(),
-      routeParams: {},
+      pathParameters: {},
       body: {},
       ...options?.request,
     },

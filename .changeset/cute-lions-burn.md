@@ -3,3 +3,7 @@
 ---
 
 **Feat:** support plugin
+
+- add `EslintPlugin`
+- add `PrettierPlugin`
+- add `BodyFallbackPlugin`

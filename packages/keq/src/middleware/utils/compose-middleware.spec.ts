@@ -37,7 +37,7 @@ describe('composeMiddleware', () => {
       global: {},
       request: {
         url: new URL('http://example.com'),
-        routeParams: {},
+        pathParameters: {},
         method: 'get',
         headers: new Headers(),
         body: undefined,
@@ -81,7 +81,7 @@ describe('composeMiddleware', () => {
       global: {},
       request: {
         url: new URL('http://example.com'),
-        routeParams: {},
+        pathParameters: {},
         method: 'get',
         headers: new Headers(),
         body: undefined,
@@ -136,7 +136,7 @@ describe('composeMiddleware', () => {
     const sharedContext = new KeqSharedContext({
       request: {
         url: new URL('http://example.com'),
-        routeParams: {},
+        pathParameters: {},
         method: 'get',
         headers: new Headers(),
         body: undefined,
@@ -165,7 +165,7 @@ describe('composeMiddleware', () => {
       global: {},
       request: {
         url: new URL('http://example.com'),
-        routeParams: {},
+        pathParameters: {},
         method: 'get',
         headers: new Headers(),
         body: undefined,

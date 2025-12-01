@@ -13,7 +13,7 @@ import {
 
 export interface KeqRequestInitOptions {
   url: URL
-  routeParams: UriTemplateContext
+  pathParameters: UriTemplateContext
   method: KeqRequestMethod
   headers: Headers
   body: KeqBodyInit
@@ -29,7 +29,7 @@ export interface KeqRequestInitOptions {
 
 export class KeqRequestInit {
   url: URL
-  routeParams: UriTemplateContext
+  pathParameters: UriTemplateContext
 
   method: KeqRequestMethod
   headers: Headers
@@ -47,7 +47,7 @@ export class KeqRequestInit {
 
   constructor(options: KeqRequestInitOptions) {
     this.url = new URL(options.url.href)
-    this.routeParams = shallowClone(options.routeParams)
+    this.pathParameters = shallowClone(options.pathParameters)
     this.method = options.method
     this.headers = cloneHeaders(options.headers)
     this.body = cloneBody(options.body)
@@ -61,9 +61,9 @@ export class KeqRequestInit {
     this.referrerPolicy = options.referrerPolicy
   }
 
-  // the url merged routeParams
+  // the url merged pathParameters
   get __url__(): Readonly<URL> {
-    return compileUrl(this.url, this.routeParams)
+    return compileUrl(this.url, this.pathParameters)
   }
 
   get signal(): AbortSignal {
@@ -79,7 +79,7 @@ export class KeqRequestInit {
   clone(): KeqRequestInit {
     return new KeqRequestInit({
       url: this.url,
-      routeParams: this.routeParams,
+      pathParameters: this.pathParameters,
       method: this.method,
       headers: this.headers,
       body: this.body,

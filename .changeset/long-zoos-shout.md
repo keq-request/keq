@@ -8,4 +8,4 @@
 "@keq-request/url": patch
 ---
 
-build with burbo
+build with turbo

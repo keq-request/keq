@@ -120,10 +120,10 @@ export class Keq<
   params<O extends { [K in keyof O]: StringIndexValueOf<REQ_PARAMS> }>(key: string, value: StringIndexValueOf<REQ_PARAMS> & EnabledIfStringIndex<REQ_PARAMS>): this
   params(arg1: string | Partial<REQ_PARAMS>, arg2?: KeqPathParameterInit): this {
     if (typeof arg1 === 'string' && arg2 !== undefined) {
-      this.requestInit.routeParams[arg1] = arg2
+      this.requestInit.pathParameters[arg1] = arg2
     } else if (typeof arg1 === 'object' && arg1 !== null) {
       for (const k of Object.keys(arg1)) {
-        if (arg1[k]) this.requestInit.routeParams[k] = arg1[k]
+        if (arg1[k]) this.requestInit.pathParameters[k] = arg1[k]
       }
     } else {
       throw new TypeError('Invalid Arguments for .params()')

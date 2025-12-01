@@ -55,7 +55,7 @@ export class Core<
     this.requestInit = new KeqRequestInit({
       method: 'get',
       headers: new Headers(),
-      routeParams: {},
+      pathParameters: {},
       body: undefined,
       ...options,
       url: new URL(url.href),

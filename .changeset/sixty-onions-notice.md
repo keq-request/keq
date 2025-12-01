@@ -12,3 +12,4 @@
 - `.option("resolveWithResponse")` had be removed, please use `.resolveWith('response')` instead.
 - `next` cannot be run multi-times now.
 - Some typescript type names have changed.
+- `ctx.request.routeParams` is renamed to `ctx.request.pathParameters`
