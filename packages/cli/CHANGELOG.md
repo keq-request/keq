@@ -1,5 +1,13 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.13
+
+### Patch Changes
+
+- 9d481d8: Generation will no longer be skipped when the object schema contains only the `additionalProperties` key.
+- 5150d57: The generated type file has an error when no requestBody definition in swagger.
+  - keq@5.0.0-alpha.13
+
 ## 5.0.0-alpha.12
 
 ### Patch Changes
