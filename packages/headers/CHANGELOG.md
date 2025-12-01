@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.0-alpha.12
+
+### Patch Changes
+
+- 581815a: ensure compatibility
+- Updated dependencies [581815a]
+  - keq@5.0.0-alpha.12
+
 ## 5.0.0-alpha.11
 
 ### Patch Changes
