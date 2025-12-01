@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-alpha.11
+
+### Patch Changes
+
+- Updated dependencies [c7ffd1f]
+  - keq@5.0.0-alpha.11
+
 ## 5.0.0-alpha.10
 
 ### Patch Changes

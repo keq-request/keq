@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.11
+
+### Minor Changes
+
+- c7ffd1f: **Feat:** synchronous middleware can be written
+
 ## 5.0.0-alpha.10
 
 ### Patch Changes
