@@ -1,6 +1,7 @@
 export { defineKeqConfig } from './define-keq-config.js'
 export { RuntimeConfig } from './types/runtime-config.js'
 export { FileNamingStyle } from './constants/file-naming-style.js'
+export { QsArrayFormat } from './constants/qs-array-format.js'
 
 export { Compiler } from './compiler/compiler.js'
 export { Plugin } from './types/plugin.js'
