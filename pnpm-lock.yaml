@@ -199,6 +199,10 @@ importers:
       keq:
         specifier: workspace:*
         version: link:../keq
+    optionalDependencies:
+      eslint:
+        specifier: ^9
+        version: 9.39.1(jiti@2.6.1)
 
   packages/exception:
     dependencies:
