@@ -97,7 +97,10 @@ export function indent(space: number, text: string): string {
 }
 
 function generateObject(schema: OpenAPIV3_1.NonArraySchemaObject, alias: Alias): string {
-  if (!schema.properties || !Object.keys(schema.properties).length) {
+  if (
+    (!schema.properties || R.isEmpty(schema.properties))
+    && (!schema.additionalProperties || R.isEmpty(schema.additionalProperties))
+  ) {
     return 'object'
   }
 
