@@ -132,6 +132,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
         typeName('ResponseBodies'),
         typeName('RequestParameters'),
       ],
+      { type: true },
     )
     artifact.addDependence(
       typeArtifact,
@@ -140,7 +141,7 @@ export async function compileOperationDefinition(options: CompileProcessorOption
         `${typeName('RequestHeaders')}`,
         `${typeName('RequestBodies')}`,
       ],
-      { export: true },
+      { export: true, type: true },
     )
     return await compiler.hooks.afterCompileOperationRequest.promise(artifact, operationDefinition, task)
   }

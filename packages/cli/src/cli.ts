@@ -104,8 +104,8 @@ program
         },
       })
     } else {
-      if (!options.module && !options.method && !options.pathname) {
-        throw new Error("at least one of '--module', '--method' or '--pathname' must be specified")
+      if (!options.method && !options.pathname) {
+        throw new Error("at least one of '-i --interactive', '--method' or '--pathname' must be specified")
       }
 
       const moduleNames = options.module || ['*']

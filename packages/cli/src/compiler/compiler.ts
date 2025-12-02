@@ -71,11 +71,11 @@ export class Compiler {
       [
         createSetupTask(this, options),
         createDownloadTask(this, { skipIgnoredModules: !options.interactive }),
-        createValidateTask(this, { enabled: !!options.build }),
+        createValidateTask(this),
         createInteractiveTask({ enabled: !!options.interactive, ...(typeof options.interactive === 'object' ? options.interactive : { mode: 'except' }) }),
         createShakingTask(this, { enabled: !!options.build, ...(typeof options.build === 'object' ? options.build.shaking : undefined) }),
         createCompileTask(this, { enabled: !!options.build }),
-        createPersistTask(this, { enabled: !!options.build }),
+        createPersistTask(this),
       ],
       {
         concurrent: false,

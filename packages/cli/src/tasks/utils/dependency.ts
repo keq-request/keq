@@ -6,6 +6,7 @@ import { ToCodeOptions } from '~/types/to-code-options.js'
 export type DependencySource = string | Artifact
 
 export interface DependencyOptions {
+  type?: boolean
   export?: boolean
 }
 
@@ -13,13 +14,15 @@ export class DependencyIdentifier {
   constructor(
     public name: string,
     public alias?: string,
+    public type: boolean = false,
   ) {}
 
   toCode(): string {
+    const $type = this.type ? 'type ' : ''
     if (this.alias) {
-      return `${this.name} as ${this.alias}`
+      return `${$type}${this.name} as ${this.alias}`
     }
-    return this.name
+    return `${$type}${this.name}`
   }
 }
 
@@ -32,7 +35,14 @@ export class Dependency {
 
   constructor(source: DependencySource, identifiers: (string | DependencyIdentifier)[], belongTo: Artifact, options?: DependencyOptions) {
     this.source = source
+
     this.identifiers = identifiers.map((i) => (typeof i === 'string' ? new DependencyIdentifier(i) : i))
+    if (options?.type) {
+      for (const identifier of this.identifiers) {
+        identifier.type = true
+      }
+    }
+
     this.export = !!options?.export
     this.belongTo = belongTo
   }

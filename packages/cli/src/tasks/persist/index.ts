@@ -12,7 +12,10 @@ function createPersistArtifactTask(): ListrTask<TaskContext> {
     title: 'Write files',
     task: async (context, task) => {
       if (!context.setup) throw new Error('Please run setup task first.')
-      if (!context.compiled) throw new Error('Please run compile task first.')
+      if (!context.compiled) {
+        task.skip('No compiled artifacts to persist.')
+        return
+      }
 
       const rc = context.setup.rc
       const artifacts = context.compiled.artifacts

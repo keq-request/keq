@@ -3,80 +3,14 @@ import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { typeNameFactory, TypeNameFn } from '../operation-type/index.js'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
-import { SwaggerUtils } from '~/utils/swagger-utils/index.js'
-import { indent } from '../utils/generate-schema.js'
 import { KeqQueryOptionsFactory } from '~/types/runtime-config.js'
+import { requestBodyRenderer } from './request-body.js'
 
-
-function errorToComment(err: unknown, mediaType: string): string {
-  const $err = String(err)
-    .split('\n')
-    .map(((line) => ` * ${line}`))
-    .join('\n')
-
-  return [
-    '/**',
-    ` * Unable to dereference schema for media type ${mediaType}`,
-    $err,
-    ' */',
-  ].join('\n')
-}
 
 interface OperationRequestRendererOptions {
   qs: KeqQueryOptionsFactory
 }
 
-function requestBodyRenderer(operationDefinition: OperationDefinition, typeName: TypeNameFn): string {
-  const { operation } = operationDefinition
-  const requestBodyContent = (operation.requestBody?.content || {}) as Record<string, OpenAPIV3_1.MediaTypeObject>
-
-  const $requestBody = Object.entries(requestBodyContent)
-    .map(([mediaType, mediaTypeObject]): string | undefined => {
-      if (!mediaTypeObject.schema) return
-
-      try {
-        const schema = JsonSchemaUtils.isRef(mediaTypeObject.schema)
-          ? SwaggerUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(mediaTypeObject.schema.$ref, operationDefinition.document.swagger)
-          : mediaTypeObject.schema
-
-        if (schema.type !== 'object') return
-
-        const properties = (schema.properties || {}) as OpenAPIV3_1.ReferenceObject | OpenAPIV3_1.SchemaObject
-
-        return Object.entries(properties)
-          .map(([propertyName, propertySchema]) => {
-            const $propertyName = JSON.stringify(propertyName)
-
-            if (mediaType === 'application/json') {
-              return `  if (args && ${$propertyName} in args) req.send({ ${$propertyName}: args[${$propertyName}] })`
-            } else if (mediaType === 'multipart/form-data') {
-              try {
-                const schema = JsonSchemaUtils.isRef(propertySchema)
-                  ? SwaggerUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(propertySchema.$ref, operationDefinition.document.swagger)
-                  : propertySchema
-
-                if (schema.type === 'string' && schema.format === 'binary' || schema.contentMediaType === 'application/octet-stream') {
-                  return `  if (args && ${$propertyName} in args && args[${$propertyName}]) req.attach(${$propertyName}, args[${$propertyName}])`
-                }
-
-                return `  if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) req.field(${$propertyName}, args[${$propertyName}])`
-              } catch (err) {
-                return indent(2, errorToComment(err, mediaType))
-              }
-            } else {
-              throw new Error(`Unsupported media type: ${mediaType}`)
-            }
-          })
-          .join('\n')
-      } catch (err) {
-        return indent(2, errorToComment(err, mediaType))
-      }
-    })
-    .filter(R.isNotNil)
-    .join('\n')
-
-  return $requestBody
-}
 
 function requestHeadersRenderer(operationDefinition: OperationDefinition, typeName: TypeNameFn): string {
   const { operation } = operationDefinition
@@ -150,9 +84,9 @@ function operationDeclarationRenderer(operationDefinition: OperationDefinition, 
   const mediaTypes = getRequestMediaTypes(operationDefinition)
 
   if (mediaTypes.length === 0) {
-    return `function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}>(args?: ${typeName('RequestParameters')}): Keq<Operation<STATUS, never>>`
+    return `function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}, CONTENT_TYPE extends never = never>(args?: ${typeName('RequestParameters')}): Keq<Operation<STATUS, CONTENT_TYPE>>`
   } else if (mediaTypes.length === 1) {
-    return `function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}>(args?: ${typeName('RequestParameters')}): Keq<Operation<STATUS, ${JSON.stringify(mediaTypes[0])}>>`
+    return `function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}, CONTENT_TYPE extends ${JSON.stringify(mediaTypes[0])} = ${JSON.stringify(mediaTypes[0])}>(args?: ${typeName('RequestParameters')}): Keq<Operation<STATUS, CONTENT_TYPE>>`
   } else if (mediaTypes.length > 1) {
     return `function ${operationId}<STATUS extends keyof ${typeName('ResponseBodies')}, CONTENT_TYPE extends ${typeName('RequestParameters')}["content-type"]>(args?: Extract<${typeName('RequestParameters')}, { "content-type": CONTENT_TYPE }>): Keq<Operation<STATUS, CONTENT_TYPE>>`
   }
@@ -170,6 +104,7 @@ export async function operationRequestRenderer(operationDefinition: OperationDef
   const typeName = typeNameFactory(operationDefinition)
   const moduleName = operationDefinition.module.name
 
+  const $method = method.toLowerCase()
   const $queryParameters = requestQueryRenderer(operationDefinition, qs, typeName)
   const $headerParameters = requestHeadersRenderer(operationDefinition, typeName)
   const $pathParameters = requestPathParametersRenderer(operationDefinition, typeName)
@@ -189,7 +124,7 @@ export async function operationRequestRenderer(operationDefinition: OperationDef
     '',
     '/* @anchor:operation-declaration */',
     `export ${$operationDeclaration} {`,
-    `  const req = request.post<${typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
+    `  const req = request.${$method}<${typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
     '    .option(\'module\', { name: moduleName, pathname, method })',
     '',
     $mediaType || undefined,
@@ -210,7 +145,7 @@ export async function operationRequestRenderer(operationDefinition: OperationDef
     '  /* @anchor:body:end */',
     '',
     '  /* @anchor:operation-return */',
-    `  return req as ReturnType<typeof ${operationId}>`,
+    `  return req as ReturnType<typeof ${operationId}<STATUS${$operationDeclaration.includes('CONTENT_TYPE') ? ', CONTENT_TYPE' : ''}>>`,
     '}',
     '',
     `${operationId}.pathname = pathname`,

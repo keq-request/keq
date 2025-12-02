@@ -8,6 +8,8 @@ const execAsync = promisify(exec)
 
 export class PrettierPlugin implements Plugin {
   apply(compiler: Compiler): void {
+    if (!compiler.options.build) return
+
     compiler.hooks.afterPersist.tapPromise(PrettierPlugin.name, async () => {
       const files = compiler.context.persisted?.files || []
       if (files.length === 0) return

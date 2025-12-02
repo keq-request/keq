@@ -15,6 +15,8 @@ export class EslintPlugin implements Plugin {
 
 
   apply(compiler: Compiler): void {
+    if (!compiler.options.build) return
+
     if (this.options.disable && this.options.disable.length > 0) {
       const $rules = [
         ...this.options.disable.map((rule) => `/* eslint-disable ${rule} */`),
