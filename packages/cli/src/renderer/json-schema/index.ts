@@ -21,13 +21,17 @@ export async function jsonSchemaRenderer(schemaDefinition: SchemaDefinition): Pr
   }
 
   if (JsonSchemaUtils.isNonArray(schemaDefinition.schema) && schemaDefinition.schema.type === 'object') {
-    // return `${$comment}export interface ${schemaDefinition.name} ${generateSchema(schemaDefinition.schema)}`
+    const $schema = generateSchema(schemaDefinition.schema)
+
+    const $declaration = $schema.startsWith('{')
+      ? `export interface ${schemaDefinition.name} ${$schema}`
+      : `export type ${schemaDefinition.name} = ${$schema}`
 
     return [
       '/* @anchor:file:start */',
       '',
       $comment || undefined,
-      `export interface ${schemaDefinition.name} ${generateSchema(schemaDefinition.schema)}`,
+      $declaration,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')
