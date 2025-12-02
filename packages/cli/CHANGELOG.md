@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.15
+
+### Patch Changes
+
+- 9ca7672: Empty schema objects caused code generation errors.
+  - keq@5.0.0-alpha.15
+
 ## 5.0.0-alpha.14
 
 ### Patch Changes
