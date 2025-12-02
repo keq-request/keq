@@ -11,6 +11,7 @@
     "@keq-request/url": "2.0.4"
   },
   "changesets": [
+    "big-doors-know",
     "brave-garlics-trade",
     "brave-waves-bow",
     "chatty-wombats-beg",
