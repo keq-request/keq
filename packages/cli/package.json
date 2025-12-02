@@ -32,7 +32,7 @@
   "bugs": {
     "url": "https://github.com/keq-request/keq/issues"
   },
-  "homepage": "https://github.com/keq-request/keq#readme",
+  "homepage": "https://keq-request.github.io",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
