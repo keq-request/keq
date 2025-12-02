@@ -1,5 +1,14 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.14
+
+### Patch Changes
+
+- 0459484: the type exported add type prefix
+- 0459484: unabled add ignore rule by cli
+- 0459484: triggers type coercion when form-data requestBody filed is not string or file
+  - keq@5.0.0-alpha.14
+
 ## 5.0.0-alpha.13
 
 ### Patch Changes
