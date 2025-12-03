@@ -29,10 +29,4 @@ export class KeqMiddlewareExecutor {
       throw error
     }
   }
-
-  fork(): KeqMiddlewareExecutor {
-    const executor = new KeqMiddlewareExecutor(this.middleware)
-    executor.status = this.status
-    return executor
-  }
 }

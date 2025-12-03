@@ -27,6 +27,8 @@ export interface KeqRequestInitOptions {
   referrerPolicy?: ReferrerPolicy
 }
 
+export const AbortControllerProperty = Symbol('context.request.abortController')
+
 export class KeqRequestInit {
   url: URL
   pathParameters: UriTemplateContext
@@ -43,7 +45,7 @@ export class KeqRequestInit {
   referrer?: string
   referrerPolicy?: ReferrerPolicy
 
-  private readonly __abortController__: AbortController = new AbortController()
+  [AbortControllerProperty]: AbortController = new AbortController()
 
   constructor(options: KeqRequestInitOptions) {
     this.url = new URL(options.url.href)
@@ -67,33 +69,14 @@ export class KeqRequestInit {
   }
 
   get signal(): AbortSignal {
-    return this.__abortController__.signal
+    return this[AbortControllerProperty].signal
   }
 
   abort(reason: any): void {
-    if (!this.__abortController__.signal.aborted) {
-      this.__abortController__.abort(reason)
+    if (!this[AbortControllerProperty].signal.aborted) {
+      this[AbortControllerProperty].abort(reason)
     }
   }
-
-  clone(): KeqRequestInit {
-    return new KeqRequestInit({
-      url: this.url,
-      pathParameters: this.pathParameters,
-      method: this.method,
-      headers: this.headers,
-      body: this.body,
-      cache: this.cache,
-      credentials: this.credentials,
-      integrity: this.integrity,
-      keepalive: this.keepalive,
-      mode: this.mode,
-      redirect: this.redirect,
-      referrer: this.referrer,
-      referrerPolicy: this.referrerPolicy,
-    })
-  }
-
 
   private getContentType(): string | undefined {
     const contentType = this.headers.get('Content-Type')

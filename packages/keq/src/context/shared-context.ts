@@ -1,4 +1,3 @@
-import { klona } from 'klona/full'
 import mitt from 'mitt'
 import {
   KeqRequestInit,
@@ -24,14 +23,19 @@ export interface KeqSharedContextOptions {
   emitter?: KeqContextEmitter
 }
 
+export const ContextLocationIdProperty = Symbol('context.locationId')
+export const ContextRequestProperty = Symbol('context.request')
+export const ContextGlobalProperty = Symbol('context.global')
+export const ContextEmitterProperty = Symbol('context.emitter')
+export const ContextOptionsProperty = Symbol('context.options')
+export const ContextDataProperty = Symbol('context.data')
 
 export class KeqSharedContext implements KeqContext {
-  private readonly __locationId__?: string
-
-  private readonly __request__: KeqRequestInit
-  private readonly __global__: Record<string, any>
-  private readonly __emitter__: KeqContextEmitter
-  private readonly __options__: KeqContextOptions
+  readonly [ContextLocationIdProperty]?: string
+  [ContextRequestProperty]: KeqRequestInit
+  [ContextGlobalProperty]: Record<string, any>
+  [ContextEmitterProperty]: KeqContextEmitter
+  [ContextOptionsProperty]: KeqContextOptions
 
   // The properties extends by middleware
   private readonly __data__: KeqContextData = {}
@@ -44,49 +48,45 @@ export class KeqSharedContext implements KeqContext {
   res?: Response
 
   constructor(options: KeqSharedContextOptions) {
-    this.__locationId__ = options.locationId
+    this[ContextLocationIdProperty] = options.locationId
 
-    this.__request__ = watchObject(new KeqRequestInit(options.request), {
+    this[ContextRequestProperty] = watchObject(new KeqRequestInit(options.request), {
       abort: (target, thisArg, argArray) => {
-        this.__emitter__.emit('abort', { context: this, reason: argArray[0] })
+        this[ContextEmitterProperty].emit('abort', { context: this, reason: argArray[0] })
       },
     })
 
-    this.__emitter__ = options.emitter || mitt<Omit<KeqEvents, never>>()
-    this.__global__ = options.global
-    this.__options__ = options.options ? shallowClone(options.options) : {}
-    this.__data__ = options.data || {}
+    this[ContextEmitterProperty] = options.emitter || mitt<Omit<KeqEvents, never>>()
+    this[ContextGlobalProperty] = options.global
+    this[ContextOptionsProperty] = options.options ? shallowClone(options.options) : {}
+    this[ContextDataProperty] = options.data || {}
   }
 
   /**
    * The unique identifier of the request's location in the code
    */
   get locationId(): string | undefined {
-    return this.__locationId__
+    return this[ContextLocationIdProperty]
   }
 
   get request(): KeqRequestInit {
-    return this.__request__
+    return this[ContextRequestProperty]
   }
 
   get global(): KeqGlobal {
-    return this.__global__
+    return this[ContextGlobalProperty]
   }
 
   get emitter(): KeqContextEmitter {
-    return this.__emitter__
+    return this[ContextEmitterProperty]
   }
 
   get options(): KeqContextOptions {
-    return this.__options__
+    return this[ContextOptionsProperty]
   }
 
   set output(value: any) {
     this.__output__ = value
-  }
-
-  get output(): any {
-    return this.__output__ as unknown
   }
 
   get response(): Response | undefined {
@@ -125,23 +125,6 @@ export class KeqSharedContext implements KeqContext {
 
   get data(): KeqContextData {
     return this.__data__
-  }
-
-  clone(): KeqSharedContext {
-    const context = new KeqSharedContext({
-      locationId: this.__locationId__,
-      request: this.__request__.clone(),
-      global: this.__global__,
-      options: klona(this.__options__),
-      data: klona(this.__data__),
-      emitter: this.__emitter__,
-    })
-
-    this.__emitter__.all.forEach((handler, type) => {
-      context.emitter.on(type as any, handler as any)
-    })
-
-    return context
   }
 }
 

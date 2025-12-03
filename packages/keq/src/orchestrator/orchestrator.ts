@@ -1,10 +1,17 @@
-import { Exception } from '~/exception/index.js'
+import { Exception, TypeException } from '~/exception/index.js'
 import { KeqExecutionContext, KeqSharedContext } from '~/context/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 import { KeqMiddlewareExecutor } from './executor.js'
+import { cloneSharedContext } from '~/context/utils/clone-shared-context.js'
+import { assignSharedContext } from '~/context/utils/assign-shared-context.js'
 
 
 export class KeqMiddlewareOrchestrator {
+  main?: {
+    orchestrator: KeqMiddlewareOrchestrator
+    index: number
+  }
+
   status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
   context: KeqSharedContext
   executors: KeqMiddlewareExecutor[] = []
@@ -55,12 +62,33 @@ export class KeqMiddlewareOrchestrator {
   }
 
   fork(): KeqMiddlewareOrchestrator {
-    const context = this.context.clone()
-    const middlewares = this.executors
-      .filter((executor) => executor.status === 'idle')
+    const context = cloneSharedContext(this.context)
+    const next = this.current + 1
+    const middlewares = this.executors.slice(next)
       .map((executor) => executor.middleware)
 
     const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares)
+    forkedOrchestrator.main = {
+      orchestrator: this.main ? this.main.orchestrator : this,
+      index: this.main ? this.main.index + next : next + 1,
+    }
+
     return forkedOrchestrator
+  }
+
+  rebase(source: KeqMiddlewareOrchestrator): void {
+    if (!source.main) throw new TypeException('Source orchestrator is not a forked orchestrator.')
+
+    const target = this.main ? this.main.orchestrator : this
+    if (source.main.orchestrator !== target) throw new TypeException('Cannot rebase to unrelated orchestrator.')
+    if (source.main.index !== this.current + 1) throw new TypeException('Cannot rebase from unrelated execution point.')
+
+    // copy context
+    assignSharedContext(this.context, source.context)
+
+    // copy executors status
+    for (const [i, executor] of this.executors.slice(source.main.index).entries()) {
+      executor.status = source.executors[i].status
+    }
   }
 }
