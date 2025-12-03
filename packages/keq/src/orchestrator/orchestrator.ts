@@ -9,6 +9,8 @@ export class KeqMiddlewareOrchestrator {
   context: KeqSharedContext
   executors: KeqMiddlewareExecutor[] = []
 
+  current: number = -1
+
   constructor(
     context: KeqSharedContext,
     middlewares: KeqMiddleware[] = [],
@@ -18,20 +20,22 @@ export class KeqMiddlewareOrchestrator {
   }
 
   private async run(): Promise<void> {
+    if (this.executors.length === 0) return
+
     const context = new KeqExecutionContext(this)
+    const next = async (): Promise<void> => {
+      const last = this.current
 
-    const dispatch = async (i: number): Promise<void> => {
-      if (i >= this.executors.length) {
-        return
+      const current = last + 1
+      if (current < this.executors.length) {
+        this.current = current
+        const executor = this.executors[current]
+        await executor.execute(context, () => next.call(this))
+        this.current = last
       }
-
-      const executor = this.executors[i]
-      await executor.execute(context, function next() {
-        return dispatch(i + 1)
-      })
     }
 
-    await dispatch(0)
+    await next.call(this)
   }
 
   async execute(): Promise<void> {
