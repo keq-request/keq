@@ -9,42 +9,44 @@ import type {
   KeqGlobal,
 } from './types/index.js'
 
+export const ContextOrchestratorProperty = Symbol('context.orchestrator')
+export const ContextOrchestrationProperty = Symbol('context.orchestration')
+
 
 export class KeqExecutionContext implements KeqContext {
-  private readonly __orchestrator__: KeqMiddlewareOrchestrator
-  private readonly __orchestrator_context__: KeqOrchestratorContext
-
+  private [ContextOrchestratorProperty]: KeqMiddlewareOrchestrator
+  private [ContextOrchestrationProperty]: KeqOrchestratorContext
 
   constructor(orchestrator: KeqMiddlewareOrchestrator) {
-    this.__orchestrator__ = orchestrator
-    this.__orchestrator_context__ = new KeqOrchestratorContext(orchestrator)
+    this[ContextOrchestratorProperty] = orchestrator
+    this[ContextOrchestrationProperty] = new KeqOrchestratorContext(orchestrator)
   }
 
   get orchestration(): KeqOrchestratorContext {
-    return this.__orchestrator_context__
+    return this[ContextOrchestrationProperty]
   }
 
   /**
    * The unique identifier of the request's location in the code
    */
   get locationId(): string | undefined {
-    return this.__orchestrator__.context.locationId
+    return this[ContextOrchestratorProperty].context.locationId
   }
 
   get request(): KeqRequestInit {
-    return this.__orchestrator__.context.request
+    return this[ContextOrchestratorProperty].context.request
   }
 
   get global(): KeqGlobal {
-    return this.__orchestrator__.context.global
+    return this[ContextOrchestratorProperty].context.global
   }
 
   get emitter(): KeqContextEmitter {
-    return this.__orchestrator__.context.emitter
+    return this[ContextOrchestratorProperty].context.emitter
   }
 
   get options(): KeqContextOptions {
-    return this.__orchestrator__.context.options
+    return this[ContextOrchestratorProperty].context.options
   }
 
   // The result get by user if resolveWith is set to 'intelligent' or not set
@@ -52,26 +54,26 @@ export class KeqExecutionContext implements KeqContext {
     if (this.options.resolveWith && this.options.resolveWith !== 'intelligent') {
       console.warn(`The request is configured to resolve with ${this.options.resolveWith}, so setting context.output maybe no effect.`)
     }
-    this.__orchestrator__.context.output = value
+    this[ContextOrchestratorProperty].context.output = value
   }
 
   // The original response
   get res(): Response | undefined {
-    return this.__orchestrator__.context.res
+    return this[ContextOrchestratorProperty].context.res
   }
 
   // The original response
   set res(value: Response | undefined) {
-    this.__orchestrator__.context.res = value
+    this[ContextOrchestratorProperty].context.res = value
   }
 
   // The request response
   get response(): Response | undefined {
-    return this.__orchestrator__.context.response
+    return this[ContextOrchestratorProperty].context.response
   }
 
   // The properties extends by middleware
   get data(): KeqContextData {
-    return this.__orchestrator__.context.data
+    return this[ContextOrchestratorProperty].context.data
   }
 }

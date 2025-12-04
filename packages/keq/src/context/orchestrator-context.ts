@@ -18,4 +18,8 @@ export class KeqOrchestratorContext {
   fork(): KeqMiddlewareOrchestrator {
     return this.__orchestrator__.fork()
   }
+
+  merge(source: KeqMiddlewareOrchestrator): void {
+    this.__orchestrator__.merge(source)
+  }
 }

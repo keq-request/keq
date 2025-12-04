@@ -14,7 +14,6 @@ import { klona } from 'klona'
 export function cloneSharedContext(context: KeqSharedContext): KeqSharedContext {
   const cloned = new KeqSharedContext({
     locationId: context[ContextLocationIdProperty],
-    // request: context[ContextRequestProperty].clone(),
     request: cloneRequestInit(context[ContextRequestProperty]),
     global: context[ContextGlobalProperty],
     options: klona(context[ContextOptionsProperty]),

@@ -8,7 +8,7 @@ export default defineConfig([
     ignores: ["**/node_modules/**", "**/dist/**"],
   },
   {
-    files: ["**/*.ts"],
+    files: ["**/*.ts", "**/*.cts", "**/*.mts"],
     extends: [buka.typescript.recommended],
   },
   {

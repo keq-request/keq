@@ -70,13 +70,13 @@ export class KeqMiddlewareOrchestrator {
     const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares)
     forkedOrchestrator.main = {
       orchestrator: this.main ? this.main.orchestrator : this,
-      index: this.main ? this.main.index + next : next + 1,
+      index: this.main ? this.main.index + next : next,
     }
 
     return forkedOrchestrator
   }
 
-  rebase(source: KeqMiddlewareOrchestrator): void {
+  merge(source: KeqMiddlewareOrchestrator): void {
     if (!source.main) throw new TypeException('Source orchestrator is not a forked orchestrator.')
 
     const target = this.main ? this.main.orchestrator : this

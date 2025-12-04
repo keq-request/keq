@@ -29,6 +29,7 @@ export const ContextGlobalProperty = Symbol('context.global')
 export const ContextEmitterProperty = Symbol('context.emitter')
 export const ContextOptionsProperty = Symbol('context.options')
 export const ContextDataProperty = Symbol('context.data')
+export const ContextOutputProperty = Symbol('context.output')
 
 export class KeqSharedContext implements KeqContext {
   readonly [ContextLocationIdProperty]?: string
@@ -36,11 +37,11 @@ export class KeqSharedContext implements KeqContext {
   [ContextGlobalProperty]: Record<string, any>
   [ContextEmitterProperty]: KeqContextEmitter
   [ContextOptionsProperty]: KeqContextOptions
+  [ContextOutputProperty]?: any
 
   // The properties extends by middleware
   private readonly __data__: KeqContextData = {}
 
-  private __output__?: any
 
   /**
    * original response
@@ -86,7 +87,7 @@ export class KeqSharedContext implements KeqContext {
   }
 
   set output(value: any) {
-    this.__output__ = value
+    this[ContextOutputProperty] = value
   }
 
   get response(): Response | undefined {
