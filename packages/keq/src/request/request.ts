@@ -32,7 +32,7 @@ export type KeqRequestFetchOptions<M extends KeqRequestMethod = KeqRequestMethod
  * Keq instance factory class,
  * and shares global data and middlewares across requests
  */
-export class KeqRequest<SCHEMA extends KeqApiSchema> {
+export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
   baseOrigin: string
   qs?: KeqQueryOptions
 
@@ -40,7 +40,7 @@ export class KeqRequest<SCHEMA extends KeqApiSchema> {
    * share data between requests, used to implement flowControl
    * @description 跨请求共享数据，用于实现 flowControl的功能
    */
-  readonly globals: KeqGlobal = {}
+  readonly global: KeqGlobal = {}
 
   readonly preMiddlewares: KeqMiddleware[] = []
   readonly postMiddlewares: KeqMiddleware[] = []
@@ -75,7 +75,7 @@ export class KeqRequest<SCHEMA extends KeqApiSchema> {
     init: KeqRequestFetchOptions,
     locationId?: string,
   ): Keq<any> {
-    const keq = new Keq(this.__formatUrl__(url), { ...init, locationId, global: this.globals, qs: this.qs })
+    const keq = new Keq(this.__formatUrl__(url), { ...init, locationId, global: this.global, qs: this.qs })
 
     keq.appendMiddlewares(...this.postMiddlewares)
     keq.prependMiddlewares(...this.preMiddlewares)
@@ -112,7 +112,7 @@ export class KeqRequest<SCHEMA extends KeqApiSchema> {
       {
         method: 'put',
         locationId,
-        global: this.globals,
+        global: this.global,
       },
     )
 
