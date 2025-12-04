@@ -53,7 +53,19 @@ export {
   TypeException,
   TimeoutException,
   AbortException,
+
   RequestException,
+  BadRequestException,
+  UnauthorizedException,
+  ForbiddenException,
+  NotFoundedException,
+  NotAcceptableException,
+  ConflictException,
+  GatewayTimeoutException,
+  InternalServerErrorException,
+  BadGatewayException,
+  ServiceUnavailableException,
+  PreconditionFailedException,
 } from './exception'
 
 export {
