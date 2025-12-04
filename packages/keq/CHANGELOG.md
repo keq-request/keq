@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.16
+
+### Minor Changes
+
+- ca6c879: The forked orchestrator can be merged into original orchestrator.
+
 ## 5.0.0-alpha.15
 
 ## 5.0.0-alpha.14
