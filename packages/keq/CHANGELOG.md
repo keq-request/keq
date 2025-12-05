@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.18
+
+### Patch Changes
+
+- cbc5d17: ensure the monotonicity of middleware execution
+
 ## 5.0.0-alpha.17
 
 ### Minor Changes
