@@ -6,7 +6,7 @@ import { KeqMiddlewareContext } from '~/context/middleware-context'
 
 export class KeqMiddlewareExecutor {
   readonly name: string
-  status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
+  status: 'idle' | 'pending' | 'canceled' | 'fulfilled' | 'rejected' = 'idle'
   context: KeqMiddlewareContext
 
   constructor(
@@ -26,9 +26,14 @@ export class KeqMiddlewareExecutor {
       context.emitter.emit('middleware:before', { context })
       await this.middleware(context, next)
       context.emitter.emit('middleware:after', { context })
-      this.status = 'fulfilled'
+
+      if (this.status === 'pending') {
+        this.status = 'fulfilled'
+      }
     } catch (error) {
-      this.status = 'rejected'
+      if (this.status === 'pending') {
+        this.status = 'rejected'
+      }
       throw error
     }
   }

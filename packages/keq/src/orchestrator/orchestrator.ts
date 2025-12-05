@@ -26,23 +26,55 @@ export class KeqMiddlewareOrchestrator {
     this.executors = middlewares.map((mw) => new KeqMiddlewareExecutor(mw))
   }
 
+  private cancelNotFinished(): void {
+    const current = this.current
+
+    for (let i = current + 1; i < this.executors.length; i++) {
+      const executor = this.executors[i]
+      if (executor.status === 'pending') {
+        executor.status = 'canceled'
+      }
+    }
+  }
+
   private async run(): Promise<void> {
     if (this.executors.length === 0) return
 
-    const next = async (): Promise<void> => {
-      const last = this.current
+    // clone executors array to avoid mutation during execution
+    const executors = [...this.executors]
 
-      const current = last + 1
-      if (current < this.executors.length) {
-        this.current = current
-        const executor = this.executors[current]
-        const context = new KeqExecutionContext(this, executor)
-        await executor.execute(context, () => next.call(this))
+    const next = async (nextIndex: number): Promise<void> => {
+      if (nextIndex >= executors.length) return
+
+      const nextExecutor = executors[nextIndex]
+      if (nextExecutor.status !== 'idle') {
+        const msg = `Cannot call next() because the next Middleware(${nextExecutor.name}) status is ${nextExecutor.status}. If you want to re-execute it, please fork a new orchestrator.`
+        throw new Exception(msg)
+      }
+
+      if (this.current + 1 !== nextIndex) {
+        const parentExecutor = executors[nextIndex - 1]
+        const msg = parentExecutor
+          ? `Cannot call next() outside Middleware(${parentExecutor.name}) runtime. You can fork a new orchestration and execute the forked one anywhere.`
+          : 'Cannot jump to non-sequential middleware. Please call next() in order.'
+
+        throw new Exception(msg)
+      }
+
+      const last = this.current
+      this.current = nextIndex
+      const context = new KeqExecutionContext(this, nextExecutor)
+      await nextExecutor.execute(context, () => next.call(this, nextIndex + 1))
+
+      if (this.current === last + 1) {
+        this.current = last
+      } else if (this.current > last) {
+        this.cancelNotFinished()
         this.current = last
       }
     }
 
-    await next.call(this)
+    await next.call(this, 0)
   }
 
   async execute(): Promise<void> {
