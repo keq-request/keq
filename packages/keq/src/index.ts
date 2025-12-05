@@ -66,6 +66,7 @@ export {
   BadGatewayException,
   ServiceUnavailableException,
   PreconditionFailedException,
+  ImATeapotException,
 } from './exception'
 
 export {

@@ -210,12 +210,19 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
     devDependencies:
+      '@scalar/openapi-types':
+        specifier: ^0.5.1
+        version: 0.5.1
       '@types/node':
         specifier: ^20.19.24
         version: 20.19.24
       keq:
         specifier: workspace:*
         version: link:../keq
+    optionalDependencies:
+      '@keq-request/cli':
+        specifier: workspace:*
+        version: link:../cli
 
   packages/headers:
     devDependencies:
