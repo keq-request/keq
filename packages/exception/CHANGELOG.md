@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0-alpha.18
+
+### Minor Changes
+
+- 241a2ca: **Feat:** add a validateResponse middleware and plugin use to validate http response and throw standard exception
+
+### Patch Changes
+
+- Updated dependencies [cbc5d17]
+  - keq@5.0.0-alpha.18
+
 ## 5.0.0-alpha.17
 
 ### Patch Changes

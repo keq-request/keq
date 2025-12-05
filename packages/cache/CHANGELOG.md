@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-alpha.18
+
+### Patch Changes
+
+- Updated dependencies [cbc5d17]
+  - keq@5.0.0-alpha.18
+
 ## 5.0.0-alpha.17
 
 ### Patch Changes
