@@ -1,17 +1,21 @@
-import { KeqMiddlewareExecutor } from '../orchestrator/executor.js'
+import { type KeqMiddlewareExecutor } from '../orchestrator/executor.js'
+
+
+const ExecutorProperty = Symbol('protected context.orchestration.middlewares')
 
 export class KeqMiddlewareContext {
-  private readonly __executor__: KeqMiddlewareExecutor
+  readonly [ExecutorProperty]: KeqMiddlewareExecutor
+
   constructor(executor: KeqMiddlewareExecutor) {
-    this.__executor__ = executor
+    this[ExecutorProperty] = executor
   }
 
   get name(): string {
-    return this.__executor__.name
+    return this[ExecutorProperty].name
   }
 
   get status(): KeqMiddlewareExecutor['status'] {
-    return this.__executor__.status
+    return this[ExecutorProperty].status
   }
 
   get finished(): boolean {

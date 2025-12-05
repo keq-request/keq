@@ -22,7 +22,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   sharedContext1.emitter.on('cache:update', cacheUpdateHandler1)
   sharedContext1.emitter.on('cache:miss', cacheMissHandler1)
   sharedContext1.emitter.on('cache:hit', cacheHitHandler1)
-  const fetchMiddleware1 = createMockFetchMiddleware({ response: { body: '1' }})
+  const fetchMiddleware1 = createMockFetchMiddleware({ response: { body: '1' } })
   const orchestrator1 = new KeqMiddlewareOrchestrator(sharedContext1, [
     staleWhileRevalidate({ key: 'key1', storage }),
     fetchMiddleware1,

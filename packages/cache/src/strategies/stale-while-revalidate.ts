@@ -15,6 +15,7 @@ export const staleWhileRevalidate: KeqCacheStrategy = function (opts: StrategyOp
 
       context.res = cache.response
 
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       setTimeout(async () => {
         try {
           await orchestrator.execute()

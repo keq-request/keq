@@ -23,13 +23,13 @@ export interface KeqSharedContextOptions {
   emitter?: KeqContextEmitter
 }
 
-export const ContextLocationIdProperty = Symbol('context.locationId')
-export const ContextRequestProperty = Symbol('context.request')
-export const ContextGlobalProperty = Symbol('context.global')
-export const ContextEmitterProperty = Symbol('context.emitter')
-export const ContextOptionsProperty = Symbol('context.options')
-export const ContextDataProperty = Symbol('context.data')
-export const ContextOutputProperty = Symbol('context.output')
+export const ContextLocationIdProperty = Symbol('protected context.locationId')
+export const ContextRequestProperty = Symbol('protected context.request')
+export const ContextGlobalProperty = Symbol('protected context.global')
+export const ContextEmitterProperty = Symbol('protected context.emitter')
+export const ContextOptionsProperty = Symbol('protected context.options')
+export const ContextDataProperty = Symbol('protected context.data')
+export const ContextOutputProperty = Symbol('protected context.output')
 
 export class KeqSharedContext implements KeqContext {
   readonly [ContextLocationIdProperty]?: string

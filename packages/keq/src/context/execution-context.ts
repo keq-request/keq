@@ -1,4 +1,4 @@
-import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
+import { KeqMiddlewareExecutor, KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqRequestInit } from '~/request-init/index.js'
 import { KeqOrchestratorContext } from './orchestrator-context.js'
 import type {
@@ -9,17 +9,17 @@ import type {
   KeqGlobal,
 } from './types/index.js'
 
-export const ContextOrchestratorProperty = Symbol('context.orchestrator')
-export const ContextOrchestrationProperty = Symbol('context.orchestration')
+export const ContextOrchestratorProperty = Symbol('protected context.orchestrator')
+export const ContextOrchestrationProperty = Symbol('protected context.orchestration')
 
 
 export class KeqExecutionContext implements KeqContext {
   private [ContextOrchestratorProperty]: KeqMiddlewareOrchestrator
   private [ContextOrchestrationProperty]: KeqOrchestratorContext
 
-  constructor(orchestrator: KeqMiddlewareOrchestrator) {
+  constructor(orchestrator: KeqMiddlewareOrchestrator, executor: KeqMiddlewareExecutor) {
     this[ContextOrchestratorProperty] = orchestrator
-    this[ContextOrchestrationProperty] = new KeqOrchestratorContext(orchestrator)
+    this[ContextOrchestrationProperty] = new KeqOrchestratorContext(orchestrator, executor)
   }
 
   get orchestration(): KeqOrchestratorContext {

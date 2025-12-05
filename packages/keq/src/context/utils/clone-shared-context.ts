@@ -20,8 +20,10 @@ export function cloneSharedContext(context: KeqSharedContext): KeqSharedContext 
     data: klona(context[ContextDataProperty]),
   })
 
-  context[ContextEmitterProperty].all.forEach((handler, type) => {
-    context.emitter.on(type as any, handler as any)
+  context[ContextEmitterProperty].all.forEach((handlers, type) => {
+    for (const handler of handlers) {
+      cloned.emitter.on(type as any, handler as any)
+    }
   })
 
   return cloned

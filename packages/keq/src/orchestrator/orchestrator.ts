@@ -29,7 +29,6 @@ export class KeqMiddlewareOrchestrator {
   private async run(): Promise<void> {
     if (this.executors.length === 0) return
 
-    const context = new KeqExecutionContext(this)
     const next = async (): Promise<void> => {
       const last = this.current
 
@@ -37,6 +36,7 @@ export class KeqMiddlewareOrchestrator {
       if (current < this.executors.length) {
         this.current = current
         const executor = this.executors[current]
+        const context = new KeqExecutionContext(this, executor)
         await executor.execute(context, () => next.call(this))
         this.current = last
       }
