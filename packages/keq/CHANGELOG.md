@@ -1,5 +1,24 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.17
+
+### Minor Changes
+
+- d472648: context.orhestration.middleware can get current middleware status
+- eed26f9: **Feat:** add build-in http exceptions.
+
+  - `BadRequestException`
+  - `UnauthorizedException`
+  - `ForbiddenException`
+  - `NotFoundedException`
+  - `NotAcceptableException`
+  - `ConflictException`
+  - `GatewayTimeoutException`
+  - `InternalServerErrorException`
+  - `BadGatewayException`
+  - `ServiceUnavailableException`
+  - `PreconditionFailedException`
+
 ## 5.0.0-alpha.16
 
 ### Minor Changes
