@@ -15,7 +15,7 @@ export interface BuildCliOptions {
   debug?: boolean
 
   /**
-   * Tolerate wrong swagger structure
+   * Tolerate wrong openapi/swagger structure
    */
   tolerant?: boolean
 }

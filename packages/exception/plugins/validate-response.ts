@@ -23,12 +23,12 @@ export class ValidateResponsePlugin implements Plugin {
           return document
         }
 
-        const swagger: OpenAPIV3_1.Document = document.swagger
+        const spec: OpenAPIV3_1.Document = document.specification
 
-        if (!swagger.paths || typeof swagger.paths !== 'object' || swagger.paths === null) return document
+        if (!spec.paths || typeof spec.paths !== 'object' || spec.paths === null) return document
 
         const paths = Object.fromEntries(
-          Object.entries(swagger.paths)
+          Object.entries(spec.paths)
             .map(([path, pathItem]) => {
               if (!pathItem || typeof pathItem !== 'object' || pathItem === null) return [path, pathItem]
 
@@ -59,7 +59,7 @@ export class ValidateResponsePlugin implements Plugin {
             }),
         )
 
-        return new ApiDocumentV3_1({ ...swagger, paths }, document.module)
+        return new ApiDocumentV3_1({ ...spec, paths }, document.module)
       })
     })
 

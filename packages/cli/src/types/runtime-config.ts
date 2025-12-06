@@ -38,7 +38,7 @@ export const RuntimeConfig = Type.Object({
   debug: Type.Optional(Type.Boolean({ default: false })),
 
   /**
-   * Whether to tolerate wrong swagger structure
+   * Whether to tolerate wrong openapi/swagger structure
    */
   tolerant: Type.Optional(Type.Boolean({ default: false })),
 

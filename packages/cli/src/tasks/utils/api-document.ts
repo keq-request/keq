@@ -10,16 +10,16 @@ import { ApiDocumentV3_1 } from './api-document_v3_1.js'
 import { fixSwagger } from 'swagger-fix'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import { Debugger } from '~/utils/debugger.js'
-import { SwaggerUtils } from '../../utils/swagger-utils/index.js'
+import { OpenapiUtils } from '../../utils/openapi-utils/index.js'
 
 
 export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
   readonly module: ModuleDefinition
-  readonly swagger: T
+  readonly specification: T
 
-  constructor(swagger: T, module: ModuleDefinition) {
+  constructor(specification: T, module: ModuleDefinition) {
     this.module = module
-    this.swagger = swagger
+    this.specification = specification
   }
 
   static cache: Map<string, ApiDocument> = new Map()
@@ -36,7 +36,7 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
       content = await res.text()
     } catch (e) {
       if (e instanceof Error) {
-        e.message = `Unable get the swagger file from ${url}: ${e.message}`
+        e.message = `Unable get the openapi/swagger file from ${url}: ${e.message}`
       }
 
       throw e
@@ -46,7 +46,7 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
     try {
       return JSON.parse(content) as OpenAPI.Document
     } catch (e) {
-      throw new Error(`The swagger file get from url isn't json: ${url}`)
+      throw new Error(`The openapi/swagger file get from url isn't json: ${url}`)
     }
   }
 
@@ -70,23 +70,23 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
       return this.cache.get(moduleDefinition.address)!
     }
 
-    const swagger = validUrl.isUri(address)
+    const openapi = validUrl.isUri(address)
       ? await this.download(address)
       : await this.read(address)
 
-    return new ApiDocument(swagger, moduleDefinition)
+    return new ApiDocument(openapi, moduleDefinition)
   }
 
   async validate(): ReturnType<typeof validate> {
-    return await validate(this.swagger)
+    return await validate(this.specification)
   }
 
   // remove chinese and special symbols
   fix(): ApiDocument {
-    const swagger: T = fixSwagger(this.swagger as any)
+    const openapi: T = fixSwagger(this.specification as any)
 
     return new ApiDocument(
-      swagger,
+      openapi,
       new ModuleDefinition(
         this.module.name,
         `file://${this.module.name}.fixed.json`,
@@ -97,26 +97,26 @@ export class ApiDocument<T extends OpenAPI.Document = OpenAPI.Document> {
   // eslint-disable-next-line @typescript-eslint/require-await
   async toV3_1(rc?: RuntimeConfig): Promise<ApiDocumentV3_1> {
     const debug = new Debugger(rc)
-    let swagger: any = this.swagger
+    let spec: any = this.specification
 
-    const { specification } = upgrade(swagger)
-    swagger = specification
-    debug.writeSwagger(`.keq/${this.module.name}.3_1.json`, swagger)
+    const { specification } = upgrade(spec)
+    spec = specification
+    debug.writeOpenapi(`.keq/${this.module.name}.3_1.json`, spec)
 
-    swagger = SwaggerUtils.dereferenceOperation(swagger)
-    debug.writeSwagger(`.keq/${this.module.name}.3_1.sharked.json`, swagger)
+    spec = OpenapiUtils.dereferenceOperation(spec)
+    debug.writeOpenapi(`.keq/${this.module.name}.3_1.sharked.json`, spec)
 
     if (rc?.operationIdFactory) {
       const operationIdFactory = rc.operationIdFactory
-      swagger = SwaggerUtils.updateOperationId(
-        swagger,
+      spec = OpenapiUtils.updateOperationId(
+        spec,
         (method, pathname, operation) => operationIdFactory({ method, pathname, operation, module: this.module }),
       )
-      debug.writeSwagger(`.keq/${this.module.name}.3_1.formatted.json`, swagger)
+      debug.writeOpenapi(`.keq/${this.module.name}.3_1.formatted.json`, spec)
     }
 
     return new ApiDocumentV3_1(
-      swagger,
+      spec,
       new ModuleDefinition(
         this.module.name,
         `file://${this.module.name}.v3_1.json`,

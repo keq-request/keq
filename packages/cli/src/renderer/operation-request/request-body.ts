@@ -3,7 +3,7 @@ import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import { TypeNameFn } from '../operation-type/index.js'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
-import { SwaggerUtils } from '~/utils/swagger-utils/index.js'
+import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 import { indent } from '../utils/generate-schema.js'
 import { errorToComment } from './error-to-comment.js'
 
@@ -18,7 +18,7 @@ function requestBodyFormDataPropertyRenderer(
     const $propertyName = JSON.stringify(propertyName)
 
     const schema = JsonSchemaUtils.isRef(propertySchema)
-      ? SwaggerUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(propertySchema.$ref, operationDefinition.document.swagger)
+      ? OpenapiUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(propertySchema.$ref, operationDefinition.document.specification)
       : propertySchema
 
     if (
@@ -66,7 +66,7 @@ export function requestBodyRenderer(operationDefinition: OperationDefinition, ty
 
       try {
         const schema = JsonSchemaUtils.isRef(mediaTypeObject.schema)
-          ? SwaggerUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(mediaTypeObject.schema.$ref, operationDefinition.document.swagger)
+          ? OpenapiUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(mediaTypeObject.schema.$ref, operationDefinition.document.specification)
           : mediaTypeObject.schema
 
         if (schema.type !== 'object') return

@@ -6,7 +6,7 @@ import { updateOperationId } from './update-operation-id.js'
 import { dereferenceDeep } from './dereference-deep.js'
 
 
-export class SwaggerUtils {
+export class OpenapiUtils {
   static isRefDefined = isRefDefined
   static dereference = dereference
   static dereferenceDeep = dereferenceDeep

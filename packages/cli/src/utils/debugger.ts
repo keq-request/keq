@@ -6,9 +6,9 @@ export class Debugger {
   constructor(private rc?: RuntimeConfig) {
   }
 
-  writeSwagger(fullpath: string, swagger: any): void {
+  writeOpenapi(fullpath: string, openapi: any): void {
     if (this.rc?.debug) {
-      void fs.writeJSON(fullpath, swagger, { spaces: 2 })
+      void fs.writeJSON(fullpath, openapi, { spaces: 2 })
     }
   }
 }

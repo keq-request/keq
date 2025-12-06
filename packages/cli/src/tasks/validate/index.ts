@@ -26,12 +26,12 @@ function main(): ListrTask<TaskContext> {
             const { valid, errors } = await document.validate()
 
             if (!valid) {
-              const message = `${document.module.name} module swagger file does not conform to the openapi@3.1 standard specifications or have grammatical errors, which may cause unexpected errors: \n${errors?.map((e) => `  - ${e.message}`).join('\n')}`
+              const message = `${document.module.name} module openapi/swagger file does not conform to the openapi@3.1 standard specifications or have grammatical errors, which may cause unexpected errors: \n${errors?.map((e) => `  - ${e.message}`).join('\n')}`
               task.output = message
             }
 
             const fixedDocument = document.fix()
-            debug.writeSwagger(`.keq/${document.module.name}.fixed.json`, fixedDocument.swagger)
+            debug.writeOpenapi(`.keq/${document.module.name}.fixed.json`, fixedDocument.specification)
 
             const v3_1Document = await fixedDocument.toV3_1(rc)
             ctx.validated!.documents.push(v3_1Document)

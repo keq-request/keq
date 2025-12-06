@@ -4,7 +4,7 @@ import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
 import * as changeCase from 'change-case'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
-import { SwaggerUtils } from '~/utils/swagger-utils/index.js'
+import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
 export type TypeNameFn = (name: string) => string
@@ -82,7 +82,7 @@ function parameterBodies(operationDefinition: OperationDefinition, alias: Alias 
         if (!schemaOrRef) return `${JSON.stringify(mediaType)}: unknown`
 
         const schema = JsonSchemaUtils.isRef(schemaOrRef)
-          ? SwaggerUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(schemaOrRef.$ref, operationDefinition.document.swagger)
+          ? OpenapiUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(schemaOrRef.$ref, operationDefinition.document.specification)
           : schemaOrRef
 
         if (schema.type === 'object' || schema.properties) {

@@ -18,7 +18,7 @@ program
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--module <modules...>', 'Filter module(s) to generate')
   .option('--debug', 'Print debug information')
-  .option('--tolerant', 'Tolerate wrong swagger structure')
+  .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
   .option('-i --interactive', 'Interactive select the scope of generation')
   .action(async (options) => {
     const compiler = new Compiler({

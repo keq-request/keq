@@ -10,17 +10,17 @@ import { openapiShakingSync } from '@opendoc/openapi-shaking'
 
 export class ApiDocumentV3_1 {
   readonly module: ModuleDefinition
-  readonly swagger: OpenAPIV3_1.Document
+  readonly specification: OpenAPIV3_1.Document
 
-  constructor(swagger: OpenAPIV3_1.Document, module: ModuleDefinition) {
+  constructor(specification: OpenAPIV3_1.Document, module: ModuleDefinition) {
     this.module = module
-    this.swagger = swagger
+    this.specification = specification
   }
 
   get schemas(): SchemaDefinition[] {
     const module = this.module
 
-    return Object.entries(this.swagger.components?.schemas || {})
+    return Object.entries(this.specification.components?.schemas || {})
       .map(([name, schema]) => new SchemaDefinition({
         id: `#/components/schemas/${name}`,
         name,
@@ -33,7 +33,7 @@ export class ApiDocumentV3_1 {
   get operations(): OperationDefinition[] {
     const module = this.module
 
-    return Object.entries(this.swagger.paths || {})
+    return Object.entries(this.specification.paths || {})
       .flatMap(([pathname, pathItem]) => Object.entries(pathItem || {})
         .filter(([method]) => SupportedMethods.includes(method.toLowerCase()))
         .map(([method, operation]) => new OperationDefinition({
@@ -46,7 +46,7 @@ export class ApiDocumentV3_1 {
   }
 
   isEmpty(): boolean {
-    return R.isEmpty(this.swagger.paths)
+    return R.isEmpty(this.specification.paths)
   }
 
   dereference($ref: string): SchemaDefinition | undefined {
@@ -54,13 +54,13 @@ export class ApiDocumentV3_1 {
       return this.schemas.find((schema) => schema.id === $ref)
     }
 
-    logger.warn(`The $ref(${$ref}) is not defined in ${this.module.name} swagger.`)
+    logger.warn(`The $ref(${$ref}) is not defined in ${this.module.name} openapi/swagger.`)
   }
 
   isRefDefined($ref: string): boolean {
     if ($ref.startsWith('#/')) {
       const path = $ref.replace('#/', '').split('/')
-      return R.path(path, this.swagger) !== undefined
+      return R.path(path, this.specification) !== undefined
     }
 
     return false
@@ -83,7 +83,7 @@ export class ApiDocumentV3_1 {
 
 
     const sharkedSwagger = openapiShakingSync(
-      this.swagger as any,
+      this.specification as any,
       isAccepted as any,
       { tolerant: true },
     ) as OpenAPIV3_1.Document
