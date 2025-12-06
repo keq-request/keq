@@ -55,18 +55,28 @@ export {
   AbortException,
 
   RequestException,
+
   BadRequestException,
   UnauthorizedException,
   ForbiddenException,
   NotFoundedException,
+  MethodNotAllowedException,
   NotAcceptableException,
+  ProxyAuthenticationRequiredException,
+  RequestTimeoutException,
   ConflictException,
-  GatewayTimeoutException,
+  PreconditionFailedException,
+  ContentTooLargeException,
+  UriTooLongException,
+  ImATeapotException,
+  TooManyRequestsException,
+  UnsupportedMediaTypeException,
+
   InternalServerErrorException,
+  NotImplementedException,
   BadGatewayException,
   ServiceUnavailableException,
-  PreconditionFailedException,
-  ImATeapotException,
+  GatewayTimeoutException,
 } from './exception'
 
 export {

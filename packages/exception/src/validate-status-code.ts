@@ -13,6 +13,14 @@ import {
   ServiceUnavailableException,
   UnauthorizedException,
   ImATeapotException,
+  MethodNotAllowedException,
+  UriTooLongException,
+  ContentTooLargeException,
+  ProxyAuthenticationRequiredException,
+  RequestTimeoutException,
+  TooManyRequestsException,
+  NotImplementedException,
+  UnsupportedMediaTypeException,
 } from 'keq'
 
 export function validateStatusCode(): KeqMiddleware {
@@ -41,14 +49,28 @@ export function validateStatusCode(): KeqMiddleware {
         throw new ForbiddenException(statusText)
       case 404:
         throw new NotFoundedException(statusText)
+      case 405:
+        throw new MethodNotAllowedException(statusText)
       case 406:
         throw new NotAcceptableException(statusText)
+      case 407:
+        throw new ProxyAuthenticationRequiredException(statusText)
+      case 408:
+        throw new RequestTimeoutException(statusText)
       case 409:
         throw new ConflictException(statusText)
       case 412:
         throw new PreconditionFailedException(statusText)
+      case 413:
+        throw new ContentTooLargeException(statusText)
+      case 414:
+        throw new UriTooLongException(statusText)
+      case 415:
+        throw new UnsupportedMediaTypeException(statusText)
       case 418:
         throw new ImATeapotException(statusText)
+      case 429:
+        throw new TooManyRequestsException(statusText)
       default:
         // Other 4xx errors, don't retry by default
         throw new RequestException(status, statusText, false)
@@ -60,6 +82,8 @@ export function validateStatusCode(): KeqMiddleware {
       switch (status) {
       case 500:
         throw new InternalServerErrorException(statusText)
+      case 501:
+        throw new NotImplementedException(statusText)
       case 502:
         throw new BadGatewayException(statusText)
       case 503:
