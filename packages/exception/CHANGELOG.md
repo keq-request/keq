@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-alpha.19
+
+### Patch Changes
+
+- 30b0848: rename validateResponse to validateStatusCode
+  - keq@5.0.0-alpha.19
+
 ## 5.0.0-alpha.18
 
 ### Minor Changes

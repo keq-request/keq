@@ -1,5 +1,7 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.19
+
 ## 5.0.0-alpha.18
 
 ### Patch Changes
