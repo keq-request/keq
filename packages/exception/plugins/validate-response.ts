@@ -6,14 +6,14 @@ interface Options {
   modules?: string[]
 }
 
-export class ValidateResponsePlugin implements Plugin {
+export class ValidateStatusCodePlugin implements Plugin {
   constructor(private options: Options = {}) {}
 
   apply(compiler: Compiler): void {
     if (this.options.modules && this.options.modules.length === 0) return
 
     // remove 4xx and 5xx responses from OpenAPI documents
-    compiler.hooks.afterShaking.tap(ValidateResponsePlugin.name, () => {
+    compiler.hooks.afterShaking.tap(ValidateStatusCodePlugin.name, () => {
       if (!compiler.context.shaken) return
 
       const documents = compiler.context.shaken.documents
@@ -64,7 +64,7 @@ export class ValidateResponsePlugin implements Plugin {
     })
 
     // inject validateResponse middleware into generated code
-    compiler.hooks.afterCompileKeqRequest.tap(ValidateResponsePlugin.name, (artifact: Artifact) => {
+    compiler.hooks.afterCompileKeqRequest.tap(ValidateStatusCodePlugin.name, (artifact: Artifact) => {
       artifact.addDependence('@keq-request/exception', ['validateResponse'])
 
       if (!this.options.modules) {

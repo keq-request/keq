@@ -15,7 +15,7 @@ import {
   ImATeapotException,
 } from 'keq'
 
-export function validateResponse(): KeqMiddleware {
+export function validateStatusCode(): KeqMiddleware {
   return async (context, next) => {
     await next()
 
