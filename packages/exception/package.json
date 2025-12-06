@@ -40,12 +40,12 @@
     "test:update": "jest -u"
   },
   "dependencies": {
-    "type-fest": "^5.2.0"
+    "type-fest": "^5.3.0"
   },
   "devDependencies": {
-    "@scalar/openapi-types": "^0.5.1",
     "@keq-request/cli": "workspace:*",
-    "@types/node": "^20.19.24",
+    "@scalar/openapi-types": "^0.5.2",
+    "@types/node": "^20.19.25",
     "keq": "workspace:*"
   },
   "peerDependencies": {

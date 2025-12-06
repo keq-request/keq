@@ -47,11 +47,11 @@
     "mitt": "^3.0.1",
     "qs": "^6.14.0",
     "ts-custom-error": "^3.3.1",
-    "type-fest": "^5.2.0"
+    "type-fest": "^5.3.0"
   },
   "devDependencies": {
     "@types/clone": "^2.1.4",
-    "@types/node": "^20.19.24",
+    "@types/node": "^20.19.25",
     "@types/qs": "^6.14.0",
     "typescript": "^5.9.3"
   },

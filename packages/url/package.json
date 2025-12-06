@@ -39,7 +39,7 @@
     "test:update": "jest -u"
   },
   "devDependencies": {
-    "@types/node": "^20.19.24",
+    "@types/node": "^20.19.25",
     "keq": "workspace:*"
   },
   "peerDependencies": {
