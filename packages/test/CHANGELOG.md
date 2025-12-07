@@ -1,5 +1,12 @@
 # @keq-request/test
 
+## 5.0.0-alpha.20
+
+### Patch Changes
+
+- Updated dependencies [1f367c0]
+  - keq@5.0.0-alpha.20
+
 ## 5.0.0-alpha.19
 
 ### Patch Changes
