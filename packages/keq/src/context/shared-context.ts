@@ -40,7 +40,7 @@ export class KeqSharedContext implements KeqContext {
   [ContextOutputProperty]?: any
 
   // The properties extends by middleware
-  private readonly __data__: KeqContextData = {}
+  [ContextDataProperty]: KeqContextData = {}
 
 
   /**
@@ -125,7 +125,7 @@ export class KeqSharedContext implements KeqContext {
   }
 
   get data(): KeqContextData {
-    return this.__data__
+    return this[ContextDataProperty]
   }
 }
 

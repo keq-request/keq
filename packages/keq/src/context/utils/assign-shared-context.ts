@@ -1,5 +1,5 @@
 import { assignRequestInit } from '~/request-init/utils/assign-request-init'
-import { ContextEmitterProperty, KeqSharedContext } from '../shared-context'
+import { ContextEmitterProperty, ContextOutputProperty, KeqSharedContext } from '../shared-context'
 
 export function assignSharedContext(
   target: KeqSharedContext,
@@ -12,4 +12,7 @@ export function assignSharedContext(
   Object.assign(target.data, source.data)
 
   target[ContextEmitterProperty] = source[ContextEmitterProperty]
+  target[ContextOutputProperty] = source[ContextOutputProperty]
+
+  target.res = source.res
 }
