@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.22
+
+### Patch Changes
+
+- df114d1: Fixed the issue of missing res after merging forked orchestrator.
+
 ## 5.0.0-alpha.21
 
 ### Patch Changes

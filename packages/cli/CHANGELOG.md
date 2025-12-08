@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.22
+
+### Patch Changes
+
+- Updated dependencies [df114d1]
+  - keq@5.0.0-alpha.22
+
 ## 5.0.0-alpha.21
 
 ### Patch Changes
