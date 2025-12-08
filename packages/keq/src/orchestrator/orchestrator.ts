@@ -64,13 +64,16 @@ export class KeqMiddlewareOrchestrator {
       const last = this.current
       this.current = nextIndex
       const context = new KeqExecutionContext(this, nextExecutor)
-      await nextExecutor.execute(context, () => next.call(this, nextIndex + 1))
 
-      if (this.current === last + 1) {
-        this.current = last
-      } else if (this.current > last) {
-        this.cancelNotFinished()
-        this.current = last
+      try {
+        await nextExecutor.execute(context, () => next.call(this, nextIndex + 1))
+      } finally {
+        if (this.current === last + 1) {
+          this.current = last
+        } else if (this.current > last) {
+          this.cancelNotFinished()
+          this.current = last
+        }
       }
     }
 
@@ -112,8 +115,8 @@ export class KeqMiddlewareOrchestrator {
     if (!source.main) throw new TypeException('Source orchestrator is not a forked orchestrator.')
 
     const target = this.main ? this.main.orchestrator : this
-    if (source.main.orchestrator !== target) throw new TypeException('Cannot rebase to unrelated orchestrator.')
-    if (source.main.index !== this.current + 1) throw new TypeException('Cannot rebase from unrelated execution point.')
+    if (source.main.orchestrator !== target) throw new TypeException('Cannot rebase to unrelated orchestrator')
+    if (source.main.index !== this.current + 1) throw new TypeException(`Cannot merge from non-current(expected: ${this.current + 1}, actual: ${source.main.index}) forked orchestrator`)
 
     // copy context
     assignSharedContext(this.context, source.context)
