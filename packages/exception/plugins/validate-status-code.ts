@@ -63,19 +63,19 @@ export class ValidateStatusCodePlugin implements Plugin {
       })
     })
 
-    // inject validateResponse middleware into generated code
+    // inject validateStatusCode middleware into generated code
     compiler.hooks.afterCompileKeqRequest.tap(ValidateStatusCodePlugin.name, (artifact: Artifact) => {
-      artifact.addDependence('@keq-request/exception', ['validateResponse'])
+      artifact.addDependence('@keq-request/exception', ['validateStatusCode'])
 
       if (!this.options.modules) {
-        artifact.anchor.prepend('file:end', 'request.use(validateResponse())\n')
+        artifact.anchor.prepend('file:end', 'request.use(validateStatusCode())\n')
       } else {
         artifact.anchor.prepend(
           'file:end',
           [
             'request',
             '  .useRouter()',
-            ...this.options.modules.map((moduleName) => `  .module(${JSON.stringify(moduleName)}, validateResponse())`),
+            ...this.options.modules.map((moduleName) => `  .module(${JSON.stringify(moduleName)}, validateStatusCode())`),
             '',
           ].join('\n'),
         )

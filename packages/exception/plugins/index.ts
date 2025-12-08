@@ -1,1 +1,1 @@
-export * from './validate-response.js'
+export * from './validate-status-code.js'
