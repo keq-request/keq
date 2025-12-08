@@ -66,6 +66,24 @@ export abstract class BaseMemoryStorage extends InternalStorage {
     this.__remove__([key])
   }
 
+  /**
+   * Print all cache entries
+   */
+  print(): void {
+    const entries = Array.from(this.storage.entries()).map(([key, entry]) => ({
+      key,
+      size: entry.size,
+      expiredAt: entry.expiredAt ? dayjs(entry.expiredAt).format('YYYY-MM-DD HH:mm:ss') : 'N/A',
+      visitCount: this.visitCountRecords.get(key) ?? 0,
+      lastVisit: this.visitTimeRecords.get(key)
+        ? dayjs(this.visitTimeRecords.get(key)).format('YYYY-MM-DD HH:mm:ss')
+        : 'N/A',
+    }))
+
+    console.table(entries)
+    console.log(`Total: ${entries.length} entries, Used: ${this.size.used}, Free: ${this.size.free}`)
+  }
+
   private lastEvictExpiredTime = dayjs()
 
   /**
