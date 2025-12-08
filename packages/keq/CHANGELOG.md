@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.21
+
+### Patch Changes
+
+- 90311b3: Fix the error in recording the execution sequence number of orc caused by a middleware error.
+
 ## 5.0.0-alpha.20
 
 ### Patch Changes

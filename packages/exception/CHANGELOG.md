@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.0-alpha.21
+
+### Patch Changes
+
+- b36df33: ValidateStatusCode plugin generate wrong code
+- Updated dependencies [90311b3]
+  - keq@5.0.0-alpha.21
+
 ## 5.0.0-alpha.20
 
 ### Patch Changes

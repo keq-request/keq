@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0-alpha.21
+
+### Minor Changes
+
+- 25414cb: add print method to display MemoryStorage entries
+
+### Patch Changes
+
+- Updated dependencies [90311b3]
+  - keq@5.0.0-alpha.21
+
 ## 5.0.0-alpha.20
 
 ### Patch Changes
