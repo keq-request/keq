@@ -56,13 +56,13 @@ export class TTLIndexedDBStorage extends BaseIndexedDBStorage {
 
     if (deficitSize > 0) {
       this.debug((log) => log(`Storage Size Not Enough, deficit size: ${deficitSize}`))
-      await tx.abort()
+      tx.abort()
       return false
     }
 
     await this.__remove__(tx, keys)
     await tx.done
-    await this.__onCacheEvict__?.({ keys })
+    this.__onCacheEvict__?.({ keys })
     return true
   }
 }

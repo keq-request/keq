@@ -1,4 +1,10 @@
-import { OnCacheEvictEvent, OnCacheExpiredEvent, OnCacheGetEvent, OnCacheRemoveEvent, OnCacheSetEvent } from "./events"
+import {
+  OnCacheEvictEvent,
+  OnCacheExpiredEvent,
+  OnCacheGetEvent,
+  OnCacheRemoveEvent,
+  OnCacheSetEvent,
+} from './events'
 
 export interface InternalStorageOptions {
   /**

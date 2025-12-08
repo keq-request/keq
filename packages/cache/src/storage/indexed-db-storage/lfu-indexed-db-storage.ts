@@ -59,7 +59,7 @@ export class LFUIndexedDBStorage extends BaseIndexedDBStorage {
 
     if (deficitSize > 0) {
       this.debug((log) => log(`Storage Size Not Enough, deficit size: ${deficitSize}`))
-      await tx.abort
+      tx.abort()
       return false
     }
 

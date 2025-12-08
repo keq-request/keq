@@ -1,19 +1,19 @@
 export interface OnCacheGetEvent {
-  key: string
+  readonly key: string
 }
 
 export interface OnCacheSetEvent {
-  key: string
+  readonly key: string
 }
 
 export interface OnCacheRemoveEvent {
-  key: string
+  readonly key: string
 }
 
 export interface OnCacheEvictEvent {
-  keys: string[]
+  readonly keys: string[]
 }
 
 export interface OnCacheExpiredEvent {
-  keys: string[]
+  readonly keys: string[]
 }

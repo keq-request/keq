@@ -135,9 +135,9 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
 
       const db = await this.openDB()
       const tx = db.transaction(['metadata', 'response', 'visits'], 'readwrite')
-      const metadataStore = await tx.objectStore('metadata')
-      const responseStore = await tx.objectStore('response')
-      const visitsStore = await tx.objectStore('visits')
+      const metadataStore = tx.objectStore('metadata')
+      const responseStore = tx.objectStore('response')
+      const visitsStore = tx.objectStore('visits')
 
       const dbVisits = (await visitsStore.get(entry.key)) || {
         key: entry.key,

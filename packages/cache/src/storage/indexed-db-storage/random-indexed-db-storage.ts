@@ -45,7 +45,7 @@ export class RandomIndexedDBStorage extends BaseIndexedDBStorage {
 
     if (totalSize < deficitSize) {
       this.debug((log) => log(`Storage Size Not Enough, deficit size: ${deficitSize - totalSize}`))
-      await tx.abort()
+      tx.abort()
       return false
     }
 
@@ -62,7 +62,7 @@ export class RandomIndexedDBStorage extends BaseIndexedDBStorage {
     await this.__remove__(tx, keys)
     await tx.done
 
-    await this.__onCacheEvict__?.({ keys })
+    this.__onCacheEvict__?.({ keys })
     return true
   }
 }

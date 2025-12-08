@@ -37,7 +37,7 @@ export class RandomMemoryStorage extends BaseMemoryStorage {
 
     const entries = [...this.storage.values()]
 
-    const keys : string[] = []
+    const keys: string[] = []
     while (deficitSize > 0 && entries.length) {
       const index = random(0, entries.length - 1)
       const entry = entries[index]
