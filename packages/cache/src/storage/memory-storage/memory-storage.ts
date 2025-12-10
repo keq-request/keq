@@ -1,6 +1,5 @@
 import { Promisable } from 'type-fest'
 import { Eviction } from '~/constants/eviction.enum.js'
-import { InternalStorage } from '../internal-storage/internal-storage.js'
 import { TTLMemoryStorage } from './ttl-memory-storage.js'
 import { RandomMemoryStorage } from './random-memory-storage.js'
 import { LRUMemoryStorage } from './lru-memory-storage.js'
@@ -8,9 +7,10 @@ import { LFUMemoryStorage } from './lfu-memory-storage.js'
 import { MemoryStorageOptions } from './types/memory-storage-options.js'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { KeqCacheStorage } from '../keq-cache-storage.js'
+import { BaseMemoryStorage } from './base-memory-storage.js'
 
 export class MemoryStorage extends KeqCacheStorage {
-  private storage: InternalStorage
+  private storage: BaseMemoryStorage
 
   constructor(options?: MemoryStorageOptions) {
     super()
@@ -40,5 +40,9 @@ export class MemoryStorage extends KeqCacheStorage {
 
   remove(key: string): Promisable<void> {
     return this.storage.remove(key)
+  }
+
+  async print(): Promise<void> {
+    return this.storage.print()
   }
 }

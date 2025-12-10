@@ -3,6 +3,7 @@ import * as R from 'ramda'
 import { InternalStorage } from '../internal-storage/internal-storage.js'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { MemoryStorageSize } from './types/memory-storage-size.js'
+import { humanizeSize, serializeResponseBody } from './utils/index.js'
 
 
 export abstract class BaseMemoryStorage extends InternalStorage {
@@ -66,23 +67,6 @@ export abstract class BaseMemoryStorage extends InternalStorage {
     this.__remove__([key])
   }
 
-  /**
-   * Print all cache entries
-   */
-  print(): void {
-    const entries = Array.from(this.storage.entries()).map(([key, entry]) => ({
-      key,
-      size: entry.size,
-      expiredAt: entry.expiredAt ? dayjs(entry.expiredAt).format('YYYY-MM-DD HH:mm:ss') : 'N/A',
-      visitCount: this.visitCountRecords.get(key) ?? 0,
-      lastVisit: this.visitTimeRecords.get(key)
-        ? dayjs(this.visitTimeRecords.get(key)).format('YYYY-MM-DD HH:mm:ss')
-        : 'N/A',
-    }))
-
-    console.table(entries)
-    console.log(`Total: ${entries.length} entries, Used: ${this.size.used}, Free: ${this.size.free}`)
-  }
 
   private lastEvictExpiredTime = dayjs()
 
@@ -116,6 +100,37 @@ export abstract class BaseMemoryStorage extends InternalStorage {
     const size = this.size
 
     return size.free >= expectSize
+  }
+
+
+  /**
+   * @en Print all cached data using console.table for debugging
+   * @zh 使用 console.table 打印所有缓存数据，用于调试
+   */
+  async print(): Promise<void> {
+    if (this.storage.size === 0) {
+      console.log('MemoryStorage is empty')
+      return
+    }
+
+    const entries = await Promise.all(
+      [...this.storage.entries()].map(async ([key, entry]) => {
+        const body = await serializeResponseBody(entry.response.clone())
+
+        return {
+          key,
+          size: humanizeSize(entry.size),
+          'Expired Time': entry.expiredAt.getTime() >= 8640000000000000 ? '-' : entry.expiredAt.toISOString(),
+          'Visit Count': this.visitCountRecords.get(key) ?? 0,
+          'Last Visit Time': this.visitTimeRecords.get(key)?.toISOString() ?? '-',
+          'Response Status': entry.response.status,
+          'Response URL': entry.response.url,
+          'Response Body': body,
+        }
+      }),
+    )
+
+    console.table(entries)
   }
 }
 

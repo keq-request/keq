@@ -23,7 +23,7 @@ export {
 } from './middleware'
 
 export {
-  type KeqRoute as KeqRoute,
+  type KeqRoute,
   composeRoute,
   keqHostRoute,
   keqLocationRoute,
