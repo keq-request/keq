@@ -1,14 +1,12 @@
 import * as R from 'ramda'
-import { InternalStorage } from '../internal-storage/internal-storage.js'
-import { IDBPDatabase, IDBPTransaction, openDB } from 'idb'
 import dayjs from 'dayjs'
-import { IndexedDBSchema } from '~/storage/indexed-db-storage/types/indexed-db-schema.js'
-import { IndexedDBEntryResponse } from '~/storage/indexed-db-storage/types/indexed-db-entry-response.js'
-import { IndexedDBEntryMetadata } from '~/storage/indexed-db-storage/types/indexed-db-entry-metadata.js'
-import { DEFAULT_TABLE_NAME } from './constants/default-table-name.js'
+import { IDBPDatabase, IDBPTransaction, openDB } from 'idb'
 import { CacheEntry } from '~/cache-entry/index.js'
-import { IndexedDBStorageSize } from './types/indexed-db-storage-size.js'
-import { IndexedDbStorageOptions } from './types/indexed-db-storage-options.js'
+import { CacheException } from '~/exceptions/index.js'
+import { Logger } from '~/utils/index.js'
+import { InternalStorage } from '../internal-storage/internal-storage.js'
+import { DEFAULT_TABLE_NAME } from './constants/default-table-name.js'
+import { IndexedDBStorageSize, IndexedDbStorageOptions, IndexedDBSchema, IndexedDBEntryResponse, IndexedDBEntryMetadata } from './types/index.js'
 
 
 export abstract class BaseIndexedDBStorage extends InternalStorage {
@@ -18,7 +16,7 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
   constructor(options?: IndexedDbStorageOptions) {
     super(options)
     if (options?.tableName === DEFAULT_TABLE_NAME) {
-      throw new TypeError(`[keq-cache] IndexedDBStorage name cannot be "${DEFAULT_TABLE_NAME}"`)
+      throw new CacheException(`IndexedDBStorage name cannot be "${DEFAULT_TABLE_NAME}"`)
     }
 
     this.tableName = options?.tableName || DEFAULT_TABLE_NAME
@@ -49,15 +47,15 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
       },
 
       blocked() {
-        console.error(`IndexedDB Table ${tableName} is blocked`)
+        Logger.error(`[@keq-request/cache] IndexedDB Table ${tableName} is blocked`)
       },
 
       blocking() {
-        console.error(`IndexedDB Table ${tableName} is blocking`)
+        Logger.error(`[@keq-request/cache] IndexedDB Table ${tableName} is blocking`)
       },
 
       terminated() {
-        console.error(`IndexedDB Table ${tableName} is terminated`)
+        Logger.error(`[@keq-request/cache] IndexedDB Table ${tableName} is terminated`)
       },
     })
 

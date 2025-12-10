@@ -1,5 +1,5 @@
 import { Promisable } from 'type-fest'
-import { Eviction } from '~/constants/eviction.enum.js'
+import { Eviction } from '~/constants/index.js'
 import { TTLMemoryStorage } from './ttl-memory-storage.js'
 import { RandomMemoryStorage } from './random-memory-storage.js'
 import { LRUMemoryStorage } from './lru-memory-storage.js'

@@ -1,34 +1,28 @@
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
-import { StrategyOptions } from '~/types/strategies-options.js'
-import { cacheContext } from './utils'
 
 
-export const networkFirst: KeqCacheStrategy = function (opts: StrategyOptions) {
-  const { key, storage } = opts
+export const networkFirst: KeqCacheStrategy = async function networkFirst(handler, context, next) {
+  try {
+    await next()
 
-  return async function (context, next): Promise<void> {
-    try {
-      await next()
-
-      const cache = await storage.get(key)
-      const entry = await cacheContext(opts, context)
-      if (entry) {
-        context.emitter.emit('cache:update', {
-          key,
-          oldResponse: cache?.response,
-          newResponse: entry.response,
-          context,
-        })
-      }
-    } catch (err) {
-      const cache = await storage.get(key)
-      if (!cache) {
-        context.emitter.emit('cache:miss', { key, context })
-        throw err
-      }
-
-      context.emitter.emit('cache:hit', { key, response: cache.response, context })
-      context.res = cache.response
+    const [,cache] = await handler.getCache(context)
+    const [,entry] = await handler.setCache(context)
+    if (entry) {
+      context.emitter.emit('cache:update', {
+        key: entry.key,
+        oldResponse: cache?.response,
+        newResponse: entry.response,
+        context,
+      })
     }
+  } catch (err) {
+    const [key, cache] = await handler.getCache(context)
+    if (!cache) {
+      context.emitter.emit('cache:miss', { key, context })
+      throw err
+    }
+
+    context.emitter.emit('cache:hit', { key, response: cache.response, context })
+    context.res = cache.response
   }
 }

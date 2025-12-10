@@ -1,4 +1,4 @@
 import { KeqContext } from 'keq'
 
-
-export type KeqCacheKey = string | ((context: KeqContext) => string)
+export type KeqCacheKeyFactory = ((context: KeqContext) => string)
+export type KeqCacheKey = string | KeqCacheKeyFactory

@@ -6,6 +6,7 @@ import { Eviction } from '~/constants/eviction.enum'
 import { spyOn } from 'jest-mock'
 import { createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 import { KeqMiddlewareOrchestrator } from 'keq'
+import { RequestCacheHandler } from '~/request-cache-handler'
 
 
 test('Strategies.NETWORK_FIRST', async () => {
@@ -16,6 +17,11 @@ test('Strategies.NETWORK_FIRST', async () => {
     onCacheSet,
   })
 
+  function createRequestHandler(key: string): RequestCacheHandler {
+    return new RequestCacheHandler(storage, { key })
+  }
+
+
   spyOn(storage, 'set')
 
   // First request goes to network
@@ -24,7 +30,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   sharedContext1.emitter.on('cache:update', cacheUpdateHandler1)
   const fetchMiddleware1 = createMockFetchMiddleware({ response: { body: '1' } })
   const orchestrator1 = new KeqMiddlewareOrchestrator(sharedContext1, [
-    networkFirst({ key: 'key1', storage }),
+    (context, next) => networkFirst(createRequestHandler('key1'), context, next),
     fetchMiddleware1,
   ])
   await orchestrator1.execute()
@@ -39,7 +45,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   sharedContext2.emitter.on('cache:update', cacheUpdateHandler2)
   const fetchMiddleware2 = createMockFetchMiddleware({ response: { body: '2' } })
   const orchestrator2 = new KeqMiddlewareOrchestrator(sharedContext2, [
-    networkFirst({ key: 'key1', storage }),
+    (context, next) => networkFirst(createRequestHandler('key1'), context, next),
     fetchMiddleware2,
   ])
   await orchestrator2.execute()
@@ -57,7 +63,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   sharedContext3.emitter.on('cache:hit', cacheHitHandler3)
   const fetchMiddleware3 = createMockFetchMiddleware({ error: new Error('fetch failed') })
   const orchestrator3 = new KeqMiddlewareOrchestrator(sharedContext3, [
-    networkFirst({ key: 'key1', storage }),
+    (context, next) => networkFirst(createRequestHandler('key1'), context, next),
     fetchMiddleware3,
   ])
   await orchestrator3.execute()
@@ -74,7 +80,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   sharedContext.emitter.on('cache:miss', cacheMissHandler)
   const fetchMiddleware4 = createMockFetchMiddleware({ error: new Error('fetch failed') })
   const orchestrator4 = new KeqMiddlewareOrchestrator(sharedContext, [
-    networkFirst({ key: 'key2', storage }),
+    (context, next) => networkFirst(createRequestHandler('key2'), context, next),
     fetchMiddleware4,
   ])
 

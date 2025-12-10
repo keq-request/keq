@@ -1,5 +1,5 @@
 import { Promisable } from 'type-fest'
-import { Eviction } from '~/constants/eviction.enum.js'
+import { Eviction } from '~/constants/index.js'
 import { InternalStorage } from '../internal-storage/internal-storage.js'
 import { RandomIndexedDBStorage } from './random-indexed-db-storage.js'
 import { LFUIndexedDBStorage } from './lfu-indexed-db-storage.js'
@@ -8,6 +8,7 @@ import { TTLIndexedDBStorage } from './ttl-indexed-db-storage.js'
 import { IndexedDbStorageOptions } from './types/indexed-db-storage-options.js'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { KeqCacheStorage } from '../keq-cache-storage.js'
+import { CacheException } from '~/exceptions/index.js'
 
 
 export class IndexedDBStorage extends KeqCacheStorage {
@@ -27,7 +28,7 @@ export class IndexedDBStorage extends KeqCacheStorage {
     } else if (eviction === Eviction.TTL) {
       this.storage = new TTLIndexedDBStorage(options)
     } else {
-      throw TypeError(`Not Supported Eviction: ${String(options?.eviction)}`)
+      throw new CacheException(`Not Supported Eviction: ${String(options?.eviction)}`)
     }
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 
 import { expect, jest, test } from '@jest/globals'
 import { MemoryStorage } from '~/storage'
@@ -6,10 +7,14 @@ import { spyOn } from 'jest-mock'
 import { sleep, createMockFetchMiddleware, createSharedContext } from '@keq-request/test'
 import { staleWhileRevalidate } from './stale-while-revalidate'
 import { KeqMiddlewareOrchestrator } from 'keq'
-
+import { RequestCacheHandler } from '~/request-cache-handler'
 
 test('Strategies.StaleWhileRevalidate', async () => {
   const storage = new MemoryStorage({ size: 100, eviction: Eviction.TTL })
+
+  function createRequestHandler(key: string): RequestCacheHandler {
+    return new RequestCacheHandler(storage, { key })
+  }
 
   spyOn(storage, 'set')
 
@@ -24,7 +29,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   sharedContext1.emitter.on('cache:hit', cacheHitHandler1)
   const fetchMiddleware1 = createMockFetchMiddleware({ response: { body: '1' } })
   const orchestrator1 = new KeqMiddlewareOrchestrator(sharedContext1, [
-    staleWhileRevalidate({ key: 'key1', storage }),
+    (context, next) => staleWhileRevalidate(createRequestHandler('key1'), context, next),
     fetchMiddleware1,
   ])
   await orchestrator1.execute()
@@ -45,7 +50,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   sharedContext2.emitter.on('cache:hit', cacheHitHandler2)
   const fetchMiddleware2 = createMockFetchMiddleware({ response: { body: '2' }, delay: 10 })
   const orchestrator2 = new KeqMiddlewareOrchestrator(sharedContext2, [
-    staleWhileRevalidate({ key: 'key1', storage }),
+    (context, next) => staleWhileRevalidate(createRequestHandler('key1'), context, next),
     fetchMiddleware2,
   ])
   await orchestrator2.execute()
@@ -70,7 +75,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   sharedContext3.emitter.on('cache:hit', cacheHitHandler3)
   const fetchMiddleware3 = createMockFetchMiddleware({ error: new Error('fetch failed') })
   const orchestrator3 = new KeqMiddlewareOrchestrator(sharedContext3, [
-    staleWhileRevalidate({ key: 'key1', storage }),
+    (context, next) => staleWhileRevalidate(createRequestHandler('key1'), context, next),
     fetchMiddleware3,
   ])
   await orchestrator3.execute()
@@ -94,7 +99,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   sharedContext4.emitter.on('cache:hit', cacheHitHandler4)
   const fetchMiddleware4 = createMockFetchMiddleware({ error: new Error('fetch failed') })
   const orchestrator4 = new KeqMiddlewareOrchestrator(sharedContext4, [
-    staleWhileRevalidate({ key: 'key2', storage }),
+    (context, next) => staleWhileRevalidate(createRequestHandler('key2'), context, next),
     fetchMiddleware4,
   ])
 

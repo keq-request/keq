@@ -1,4 +1,4 @@
-import { Eviction } from '~/constants/eviction.enum.js'
+import { Eviction } from '~/constants/index.js'
 import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options.js'
 
 

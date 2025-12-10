@@ -1,10 +1,20 @@
 import * as R from 'ramda'
 import type { Keq, KeqMiddleware, KeqContext } from 'keq'
-import { KeqCacheOption } from './types/keq-cache-option.js'
-import { KeqCacheParameters } from './types/keq-cache-parameters.js'
-import { KeqCacheRule } from './types/keq-cache-rule.js'
-import { StrategyOptions } from './types/strategies-options.js'
-import { Exception } from 'keq'
+import { KeqCacheStorage } from './storage/keq-cache-storage.js'
+import { RequestCacheOptions, RequestCacheHandler } from './request-cache-handler/index.js'
+import { KeqCacheKeyFactory, KeqCacheRule } from './types/index.js'
+
+
+export interface KeqCacheOptions {
+  storage: KeqCacheStorage
+
+  /**
+   * Cache Key Factory
+   */
+  keyFactory?: KeqCacheKeyFactory
+
+  rules?: KeqCacheRule[]
+}
 
 
 declare module 'keq' {
@@ -12,7 +22,7 @@ declare module 'keq' {
     /**
      * [keq-cache](https://github.com/keq-request/keq-cache)
      */
-    cache(option: KeqCacheOption | false): Keq<OP>
+    cache(option: RequestCacheOptions | false): Keq<OP>
   }
 
   export interface KeqEvents {
@@ -37,10 +47,10 @@ declare module 'keq' {
 }
 
 
-export function cache(opts: KeqCacheParameters): KeqMiddleware {
-  const storage = opts.storage
+export function cache(options: KeqCacheOptions): KeqMiddleware {
+  const storage = options.storage
 
-  const rules: KeqCacheRule[] = opts?.rules || []
+  const rules: KeqCacheRule[] = options?.rules || []
 
   return async function cache(ctx, next) {
     if (ctx.options.cache === false) {
@@ -48,7 +58,8 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       return
     }
 
-    let cOpt: KeqCacheOption | undefined = ctx.options.cache
+    let requestCacheOptions: RequestCacheOptions | undefined = ctx.options.cache
+    // let requestOptions: KeqCacheRequestOptions | undefined = ctx.options.cache
 
     const rule = rules.find((rule) => {
       if (rule.pattern === undefined || rule.pattern === true) return true
@@ -56,32 +67,23 @@ export function cache(opts: KeqCacheParameters): KeqMiddleware {
       return rule.pattern.test(ctx.request.__url__.href)
     })
 
-    if (rule) cOpt = R.mergeRight(rule, cOpt || ({} as any))
+    if (rule) requestCacheOptions = R.mergeRight(rule, requestCacheOptions || ({} as any))
 
-    if (!cOpt || R.isEmpty(cOpt)) {
+    if (!requestCacheOptions || R.isEmpty(requestCacheOptions)) {
       await next()
       return
     }
 
-    let key = ctx.locationId
-    if (cOpt.key) {
-      if (typeof cOpt.key === 'function') key = cOpt.key(ctx)
-      else key = cOpt.key
-    } else if (opts?.keyFactory) {
-      key = opts.keyFactory(ctx)
+    if (!requestCacheOptions.key) requestCacheOptions.key = options.keyFactory
+
+    if (!ctx.locationId && !requestCacheOptions.key) {
+      console.warn('[@keq/cache] Warning: Cannot resolve Cache Key. Cache is skipped.')
+      await next()
+      return
     }
 
-    if (!key) throw new Exception('Cache key is required')
-
-    const strategy = cOpt.strategy
-
-    const opt: StrategyOptions = {
-      key,
-      storage,
-      ttl: cOpt.ttl,
-      exclude: cOpt.exclude,
-    }
-
-    await strategy(opt)(ctx, next)
+    const handler = new RequestCacheHandler(storage, requestCacheOptions)
+    const strategy = requestCacheOptions.strategy
+    await strategy(handler, ctx, next)
   }
 }

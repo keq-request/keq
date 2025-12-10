@@ -10,9 +10,9 @@ import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 
 beforeEach(async () => {
   const db = await openDB(DEFAULT_TABLE_NAME)
-  await db.deleteObjectStore('metadata')
-  await db.deleteObjectStore('response')
-  await db.deleteObjectStore('visits')
+  db.deleteObjectStore('metadata')
+  db.deleteObjectStore('response')
+  db.deleteObjectStore('visits')
 })
 
 test('new IndexedDBStorage(100, 20, Eviction.RANDOM)', async () => {

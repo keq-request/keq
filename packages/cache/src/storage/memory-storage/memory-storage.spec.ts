@@ -28,7 +28,7 @@ test('new MemoryStorage()', async () => {
   expect(storage.get('key')).toBeUndefined()
 })
 
-test('new MemoryStorage({ eviction: "xxxx" })', async () => {
+test('new MemoryStorage({ eviction: "xxxx" })', () => {
   // @ts-ignore
   expect(() => new MemoryStorage({ eviction: 'xxxx' })).toThrow()
 })

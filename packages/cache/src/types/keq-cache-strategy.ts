@@ -1,7 +1,7 @@
 import { KeqExecutionContext, KeqNext } from 'keq'
-import { StrategyOptions } from './strategies-options.js'
+import { RequestCacheHandler } from '~/request-cache-handler'
 
 
 export interface KeqCacheStrategy {
-  (options: StrategyOptions): (context: KeqExecutionContext, next: KeqNext) => Promise<void>
+  (handler: RequestCacheHandler, context: KeqExecutionContext, next: KeqNext): Promise<void>
 }

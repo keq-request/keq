@@ -1,7 +1,8 @@
-import { InternalStorageOptions } from '~/storage/internal-storage/types/storage-options.js'
-import { debug } from '~/utils/debug.js'
+import { InternalStorageOptions } from './types/storage-options.js'
 import { KeqCacheStorage } from '../keq-cache-storage.js'
 import { OnCacheEvictEvent, OnCacheExpiredEvent, OnCacheGetEvent, OnCacheRemoveEvent, OnCacheSetEvent } from './types/events.js'
+import { CacheException } from '~/exceptions/index.js'
+import { Logger } from '~/utils/index.js'
 
 
 export abstract class InternalStorage extends KeqCacheStorage {
@@ -22,7 +23,7 @@ export abstract class InternalStorage extends KeqCacheStorage {
     super()
 
     if (options?.size && (typeof options?.size !== 'number' || options.size <= 0)) {
-      throw TypeError(`Invalid size: ${String(options?.size)}`)
+      throw new CacheException(`Invalid size: ${String(options?.size)}`)
     }
 
     this.__size__ = options?.size ?? Infinity
@@ -39,7 +40,7 @@ export abstract class InternalStorage extends KeqCacheStorage {
   protected debug(fn: (log: (...args: unknown[]) => void) => void): void {
     if (this.__debug__) {
       fn((...args: unknown[]) => {
-        debug(`[Storage(${this.__id__})]`, ...args)
+        Logger.debug(`[Storage(${this.__id__})]`, ...args)
       })
     }
   }

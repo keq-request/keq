@@ -1,2 +1,2 @@
-export { TierStorage } from './tier-storage.js'
-export type { TierStorageOptions } from './types/tier-storage-options.js'
+export * from './tier-storage.js'
+export { TierStorageOptions } from './types/index.js'

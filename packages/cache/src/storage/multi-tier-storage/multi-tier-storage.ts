@@ -51,7 +51,7 @@ export class MultiTierStorage extends KeqCacheStorage {
    */
   async set(entry: CacheEntry): Promise<void> {
     // 并发写入所有存储层
-    const promises = this.storages.map((storage) => storage.set(entry))
+    const promises = this.storages.map(async (storage) => storage.set(entry))
     await Promise.all(promises)
   }
 
@@ -61,7 +61,7 @@ export class MultiTierStorage extends KeqCacheStorage {
    */
   async remove(key: string): Promise<void> {
     // 并发删除所有存储层
-    const promises = this.storages.map((storage) => storage.remove(key))
+    const promises = this.storages.map(async (storage) => storage.remove(key))
     await Promise.all(promises)
   }
 
@@ -79,7 +79,7 @@ export class MultiTierStorage extends KeqCacheStorage {
 
     // 并发写入所有低层存储
     // 使用克隆避免并发修改问题
-    const promises = lowerTierStorages.map((storage) => storage.set(entry.clone()))
+    const promises = lowerTierStorages.map(async (storage) => storage.set(entry.clone()))
 
     // 同步写入失败不应该影响主要的get操作，所以我们捕获错误但不抛出
     try {

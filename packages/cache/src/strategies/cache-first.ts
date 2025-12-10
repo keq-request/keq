@@ -1,31 +1,28 @@
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
-import { cacheContext } from './utils'
 
 
-export const cacheFirst: KeqCacheStrategy = function (opts) {
-  const { storage, key } = opts
+export const cacheFirst: KeqCacheStrategy = async function cacheFirst(handler, context, next): Promise<void> {
+  // return async function (context, next): Promise<void> {
+  const [cacheKey, cacheValue] = await handler.getCache(context)
 
-  return async function (context, next): Promise<void> {
-    const cache = await storage.get(key)
+  if (cacheValue) {
+    // hit cache
+    context.emitter.emit('cache:hit', { key: cacheKey, response: cacheValue.response, context })
+    context.res = cacheValue.response
+    return
+  }
 
-    if (cache) {
-      // hit cache
-      context.emitter.emit('cache:hit', { key, response: cache.response, context })
-      context.res = cache.response
-      return
-    }
+  context.emitter.emit('cache:miss', { key: cacheKey, context })
 
-    context.emitter.emit('cache:miss', { key, context })
+  await next()
 
-    await next()
-    const entry = await cacheContext(opts, context)
-    if (entry) {
-      context.emitter.emit('cache:update', {
-        key,
-        oldResponse: undefined,
-        newResponse: entry.response,
-        context,
-      })
-    }
+  const [, entry] = await handler.setCache(context)
+  if (entry) {
+    context.emitter.emit('cache:update', {
+      key: entry.key,
+      oldResponse: undefined,
+      newResponse: entry.response,
+      context,
+    })
   }
 }

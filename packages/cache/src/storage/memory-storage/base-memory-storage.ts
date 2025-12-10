@@ -4,6 +4,7 @@ import { InternalStorage } from '../internal-storage/internal-storage.js'
 import { CacheEntry } from '~/cache-entry/cache-entry.js'
 import { MemoryStorageSize } from './types/memory-storage-size.js'
 import { humanizeSize, serializeResponseBody } from './utils/index.js'
+import { MAX_EXPIRED_AT } from '~/constants/index.js'
 
 
 export abstract class BaseMemoryStorage extends InternalStorage {
@@ -120,7 +121,7 @@ export abstract class BaseMemoryStorage extends InternalStorage {
         return {
           key,
           size: humanizeSize(entry.size),
-          'Expired Time': entry.expiredAt.getTime() >= 8640000000000000 ? '-' : entry.expiredAt.toISOString(),
+          'Expired Time': entry.expiredAt.getTime() >= MAX_EXPIRED_AT.getTime() ? '-' : entry.expiredAt.toISOString(),
           'Visit Count': this.visitCountRecords.get(key) ?? 0,
           'Last Visit Time': this.visitTimeRecords.get(key)?.toISOString() ?? '-',
           'Response Status': entry.response.status,

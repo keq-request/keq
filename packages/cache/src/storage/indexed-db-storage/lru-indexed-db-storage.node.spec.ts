@@ -11,9 +11,9 @@ import { LRUIndexedDBStorage } from './lru-indexed-db-storage'
 
 beforeEach(async () => {
   const db = await openDB<IndexedDBSchema>(DEFAULT_TABLE_NAME)
-  await db.deleteObjectStore('metadata')
-  await db.deleteObjectStore('response')
-  await db.deleteObjectStore('visits')
+  db.deleteObjectStore('metadata')
+  db.deleteObjectStore('response')
+  db.deleteObjectStore('visits')
 })
 
 test('new IndexedDBStorage(100, 20, Eviction.LRU)', async () => {

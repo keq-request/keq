@@ -9,8 +9,8 @@ import { LFUIndexedDBStorage } from './lfu-indexed-db-storage'
 
 beforeEach(async () => {
   const db = await openDB('keq_cache_indexed_db_storage')
-  await db.deleteObjectStore('entries')
-  await db.deleteObjectStore('responses')
+  db.deleteObjectStore('entries')
+  db.deleteObjectStore('responses')
 })
 
 test('new LFUIndexedDBStorage({ size: 100 })', async () => {

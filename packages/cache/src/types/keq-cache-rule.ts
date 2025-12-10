@@ -1,7 +1,8 @@
-import { KeqContext } from 'keq'
-import { KeqCacheOption } from './keq-cache-option.js'
+// import { KeqCacheRequestOptions } from './keq-cache-request-options.js'
+import { RequestCacheOptions } from '~/request-cache-handler/index.js'
+import { KeqCachePattern } from './keq-cache-pattern.js'
 
 
-export interface KeqCacheRule extends KeqCacheOption {
-  pattern?: RegExp | ((ctx: KeqContext) => boolean) | true
+export interface KeqCacheRule extends RequestCacheOptions {
+  pattern?: KeqCachePattern
 }

@@ -1,8 +1,10 @@
-import { KeqCacheStrategy } from './keq-cache-strategy.js'
-import { KeqCacheKey } from './keq-cache-key.js'
+import { KeqCacheStrategy, KeqCacheKey } from '~/types/index.js'
 
 
-export interface KeqCacheOption {
+/**
+ * The options for a cacheable request.
+ */
+export interface RequestCacheOptions {
   /**
    * Cache Key
    */

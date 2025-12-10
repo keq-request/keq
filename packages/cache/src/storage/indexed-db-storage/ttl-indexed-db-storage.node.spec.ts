@@ -10,8 +10,8 @@ import { createResponse } from '@keq-request/test'
 
 beforeEach(async () => {
   const db = await openDB(DEFAULT_TABLE_NAME)
-  await db.deleteObjectStore('entries')
-  await db.deleteObjectStore('responses')
+  db.deleteObjectStore('entries')
+  db.deleteObjectStore('responses')
 })
 
 test.only('new TTLIndexedDBStorage({ size: 100 })', async () => {
