@@ -200,7 +200,7 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
 
       let cursor = await metadataStore
         .index('expiredAt')
-        .openCursor(IDBKeyRange.upperBound(now.valueOf()))
+        .openCursor(IDBKeyRange.upperBound(now.toDate()))
 
       const expiredKeys: string[] = []
       while (cursor) {
