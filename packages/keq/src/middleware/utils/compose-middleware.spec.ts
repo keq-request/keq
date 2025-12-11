@@ -114,10 +114,11 @@ describe('composeMiddleware', () => {
     const middleware1: KeqMiddleware = async (ctx, next) => {
       await next()
     }
+    middleware1.__keqMiddlewareName__ = 'middleware1'
 
     const composedMiddleware = composeMiddleware([middleware1])
 
-    expect(composedMiddleware.__keqMiddlewareName__).toBeUndefined()
+    expect(composedMiddleware.__keqMiddlewareName__).toBe('composeMiddleware(middleware1)')
   })
 
   test('should pass context correctly through middleware chain', async () => {

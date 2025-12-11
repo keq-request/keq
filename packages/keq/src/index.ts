@@ -30,7 +30,6 @@ export {
   keqMethodRoute,
   keqModuleRoute,
   keqPathnameRoute,
-  KeqRouter,
 } from './router'
 
 export {

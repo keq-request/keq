@@ -24,7 +24,7 @@ import {
 } from 'keq'
 
 export function validateStatusCode(): KeqMiddleware {
-  return async (context, next) => {
+  return async function validateStatusCode(context, next) {
     await next()
 
     const response = context.response
