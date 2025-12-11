@@ -179,7 +179,7 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
   }
 
 
-  private lastEvictExpiredTime = dayjs()
+  private lastEvictExpiredTime = dayjs(0)
 
   /**
    * @zh 清除过期的缓存
@@ -187,6 +187,7 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
   protected async evictExpired(): Promise<void> {
     const now = dayjs()
     if (now.diff(this.lastEvictExpiredTime, 'second') < 1) return
+    this.lastEvictExpiredTime = now
 
     try {
       const now = dayjs()
