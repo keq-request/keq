@@ -190,8 +190,6 @@ export abstract class BaseIndexedDBStorage extends InternalStorage {
     this.lastEvictExpiredTime = now
 
     try {
-      const now = dayjs()
-
       const db = await this.openDB()
       const tx = db.transaction(['metadata', 'response', 'visits'], 'readwrite')
       const metadataStore = tx.objectStore('metadata')
