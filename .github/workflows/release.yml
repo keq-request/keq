@@ -1,8 +1,7 @@
 on:
   push:
     branches:
-      - master
-      - main
+      - 2.x
 name: Release
 permissions:
   id-token: write
@@ -18,14 +17,12 @@ jobs:
           package-name: "keq"
       - uses: actions/checkout@v4
         if: ${{ steps.release.outputs.release_created }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v6
         with:
-          node-version: 18
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
         if: ${{ steps.release.outputs.release_created }}
       - run: corepack pnpm install
         if: ${{ steps.release.outputs.release_created }}
       - run: npm publish --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
         if: ${{ steps.release.outputs.release_created }}

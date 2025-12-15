@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "fastq": "^1.17.1",
+    "klona": "^2.0.6",
     "minimatch": "^9.0.4",
     "mitt": "^3.0.1",
     "ts-custom-error": "^3.3.1"

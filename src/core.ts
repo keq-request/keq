@@ -12,6 +12,7 @@ import type { KeqMiddleware } from './types/keq-middleware.js'
 import type { KeqInit } from './types/keq-init.js'
 import type { KeqEvents, KeqListeners } from './types/keq-events.js'
 import type { KeqContextRequest } from './types/keq-context-request.js'
+import { unwrap } from './util/fork.js'
 
 
 /**
@@ -149,7 +150,7 @@ export class Core<OUTPUT> {
     const output: any = ctx[OUTPUT_PROPERTY]
 
     if (ctx.options.resolveWithFullResponse || ctx.options.resolveWith === 'response') {
-      return ctx.response as OUTPUT
+      return ctx.response?.clone() as OUTPUT
     }
 
     const response = ctx.response
@@ -160,7 +161,7 @@ export class Core<OUTPUT> {
     if (ctx.options.resolveWith === 'text') {
       return await response.text() as OUTPUT
     } else if (ctx.options.resolveWith === 'json') {
-      return await response.json() as OUTPUT
+      return unwrap(await response.json()) as OUTPUT
     } else if (ctx.options.resolveWith === 'form-data') {
       return await response.formData() as OUTPUT
     } else if (ctx.options.resolveWith === 'blob') {
@@ -181,7 +182,7 @@ export class Core<OUTPUT> {
     const contentType = response.headers.get('content-type') || ''
     try {
       if (contentType.includes('application/json')) {
-        return await response.json() as OUTPUT
+        return unwrap(await response.json()) as OUTPUT
       } else if (contentType.includes('multipart/form-data')) {
         return await response.formData() as OUTPUT
       } else if (contentType.includes('plain/text')) {
