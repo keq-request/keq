@@ -1,3 +1,5 @@
+import { unwrap } from '~/context'
+
 export async function intelligentParseResponse<T>(response?: Response): Promise<T> {
   if (!response) return undefined as T
 
@@ -9,7 +11,7 @@ export async function intelligentParseResponse<T>(response?: Response): Promise<
   const contentType = response.headers.get('content-type') || ''
   try {
     if (contentType.includes('application/json')) {
-      return await response.json() as T
+      return unwrap(await response.json()) as T
     } else if (contentType.includes('multipart/form-data')) {
       return await response.formData() as T
     } else if (contentType.includes('plain/text')) {

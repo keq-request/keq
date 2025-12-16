@@ -4,7 +4,10 @@ import {
   KeqRequestInitOptions,
 } from '~/request-init/index.js'
 import { shallowClone } from '~/utils/shallow-clone.js'
-import { watchObject } from './utils/index.js'
+import {
+  watchObject,
+  createProxyResponse,
+} from './utils/index.js'
 import type {
   KeqContext,
   KeqContextOptions,
@@ -93,35 +96,7 @@ export class KeqSharedContext implements KeqContext {
   get response(): Response | undefined {
     if (!this.res) return undefined
 
-    return new Proxy(this.res, {
-      get(res, prop) {
-        if (typeof prop === 'string') {
-          if (['json', 'text', 'arrayBuffer', 'blob', 'buffer', 'formData'].includes(prop)) {
-          /**
-           * clone when invoking body, json, text, arrayBuffer, blob, buffer, formData
-           * to avoid time-consuming cloning
-           */
-            return new Proxy(res[prop], {
-              apply(target, thisArg, argArray) {
-                const mirror = res.clone()
-                return mirror[prop](...argArray) as unknown
-              },
-            }) as unknown
-          }
-
-          if (prop === 'body') {
-            const mirror = res.clone()
-            return mirror.body
-          }
-        }
-
-        if (typeof res[prop] === 'function') {
-          return res[prop].bind(res) as unknown
-        }
-
-        return res[prop] as unknown
-      },
-    })
+    return createProxyResponse(this.res)
   }
 
   get data(): KeqContextData {

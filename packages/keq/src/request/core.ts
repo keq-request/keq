@@ -1,4 +1,4 @@
-import { KeqEvents, KeqGlobal, KeqListeners, KeqMiddlewareOptionsParameter, KeqMiddlewareOptionsReturnType } from '~/context/index.js'
+import { KeqEvents, KeqGlobal, KeqListeners, KeqMiddlewareOptionsParameter, KeqMiddlewareOptionsReturnType, unwrap } from '~/context/index.js'
 import { Exception, RequestException } from '~/exception/index.js'
 import { sleep } from '~/utils/index.js'
 import { KeqRequestInit } from '~/request-init/index.js'
@@ -175,9 +175,9 @@ export class Core<
   async end(): Promise<RES_BODY> {
     const coreContext = await this.run()
 
-
     if (coreContext.options.resolveWith === 'response') {
-      return coreContext.response as RES_BODY
+      // NOTE: return a clone of the response rather than the proxy response
+      return coreContext.response?.clone() as RES_BODY
     }
 
     const response = coreContext.response
@@ -193,7 +193,7 @@ export class Core<
     if (coreContext.options.resolveWith === 'text') {
       return await response!.text() as RES_BODY
     } else if (coreContext.options.resolveWith === 'json') {
-      return await response!.json() as RES_BODY
+      return unwrap(await response!.json()) as RES_BODY
     } else if (coreContext.options.resolveWith === 'form-data') {
       return await response!.formData() as RES_BODY
     } else if (coreContext.options.resolveWith === 'blob') {
@@ -207,7 +207,7 @@ export class Core<
       return output as RES_BODY
     }
 
-    return intelligentParseResponse<RES_BODY>(response)
+    return await intelligentParseResponse<RES_BODY>(response)
   }
 
   /**
