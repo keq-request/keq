@@ -2,6 +2,7 @@ on: workflow_dispatch
 name: Release
 permissions:
   id-token: write
+  contents: read
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -14,5 +15,7 @@ jobs:
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
+      - name: Update npm
+        run: npm install -g npm@latest
       - run: pnpm install
-      - run: npm publish --provenance
+      - run: pnpm publish --publish-branch "2.x"
