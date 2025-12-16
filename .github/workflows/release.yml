@@ -1,7 +1,4 @@
-on:
-  push:
-    branches:
-      - 2.x
+on: workflow_dispatch
 name: Release
 permissions:
   id-token: write
@@ -9,20 +6,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: GoogleCloudPlatform/release-please-action@v3
-        id: release
-        with:
-          token: ${{secrets.RELEASE_TOKEN}}
-          release-type: node
-          package-name: "keq"
       - uses: actions/checkout@v4
-        if: ${{ steps.release.outputs.release_created }}
+      - uses: pnpm/action-setup@v4
+        with:
+          run_install: false
       - uses: actions/setup-node@v6
         with:
           node-version: "24"
           registry-url: "https://registry.npmjs.org"
-        if: ${{ steps.release.outputs.release_created }}
-      - run: corepack pnpm install
-        if: ${{ steps.release.outputs.release_created }}
+      - run: pnpm install
       - run: npm publish --provenance
-        if: ${{ steps.release.outputs.release_created }}
