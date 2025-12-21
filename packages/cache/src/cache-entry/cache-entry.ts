@@ -1,3 +1,4 @@
+import { createProxyResponse } from 'keq'
 import { getResponseBytes } from '~/utils/get-response-bytes.js'
 import { CacheEntryOptions } from './types/cache-entry-options.js'
 import { CacheEntryBuildOptions } from './types/cache-entry-build-options.js'
@@ -18,7 +19,7 @@ export class CacheEntry {
 
   constructor(options: CacheEntryOptions) {
     this.key = options.key
-    this.response = options.response
+    this.response = createProxyResponse(options.response)
     this.size = options.size
     this.expiredAt = options.expiredAt ?? MAX_EXPIRED_AT
   }

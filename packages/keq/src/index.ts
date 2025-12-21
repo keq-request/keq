@@ -33,6 +33,7 @@ export {
 } from './router'
 
 export {
+  createProxyResponse,
   KeqExecutionContext,
   KeqSharedContext,
   type KeqSharedContextOptions,

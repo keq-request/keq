@@ -13,12 +13,10 @@ export class ValidateStatusCodePlugin implements Plugin {
     if (this.options.modules && this.options.modules.length === 0) return
 
     // remove 4xx and 5xx responses from OpenAPI documents
-    compiler.hooks.afterShaking.tap(ValidateStatusCodePlugin.name, () => {
-      if (!compiler.context.shaken) return
+    compiler.hooks.afterDownload.tap(ValidateStatusCodePlugin.name, () => {
+      const documents = compiler.context.documents!
 
-      const documents = compiler.context.shaken.documents
-
-      compiler.context.shaken.documents = documents.map((document: ApiDocumentV3_1): ApiDocumentV3_1 => {
+      compiler.context.documents = documents.map((document: ApiDocumentV3_1): ApiDocumentV3_1 => {
         if (this.options.modules && !this.options.modules.includes(document.module.name)) {
           return document
         }
@@ -64,12 +62,15 @@ export class ValidateStatusCodePlugin implements Plugin {
     })
 
     // inject validateStatusCode middleware into generated code
-    compiler.hooks.afterCompileKeqRequest.tap(ValidateStatusCodePlugin.name, (artifact: Artifact) => {
-      artifact.addDependence('@keq-request/exception', ['validateStatusCode'])
+    compiler.hooks.afterCompile.tap(ValidateStatusCodePlugin.name, () => {
+      const artifact = compiler.context.artifacts!.find((artifact) => artifact.id === 'request')
+      if (!artifact) return
 
       if (!this.options.modules) {
+        artifact.anchor.append('file:start', "import { validateStatusCode } from '@keq-request/exception'\n")
         artifact.anchor.prepend('file:end', 'request.use(validateStatusCode())\n')
       } else {
+        artifact.anchor.append('file:start', "import { validateStatusCode } from '@keq-request/exception'\n")
         artifact.anchor.prepend(
           'file:end',
           [
