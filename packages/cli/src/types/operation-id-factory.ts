@@ -1,5 +1,5 @@
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { ModuleDefinition } from '~/tasks/utils/module-definition.js'
+import { ModuleDefinition } from '~/models/index.js'
 
 
 export interface OperationIdFactoryOptions {

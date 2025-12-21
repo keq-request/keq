@@ -1,0 +1,164 @@
+import * as R from 'ramda'
+import { Compiler, TaskWrapper } from '~/compiler/index.js'
+import { Generator } from '~/types/index.js'
+import { Artifact, ModuleDefinition, OperationDefinition } from '~/models/index.js'
+import { OperationDeclarationGenerator } from '~/plugins/generate-declaration/index.js'
+import { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { KeqQueryOptions } from 'keq'
+import { OperationDefinitionTransformer } from '~/transformers/index.js'
+import { EntrypointTransformer } from '~/transformers/index.js'
+import { FileNamingStyle } from '~/constants/file-naming-style.js'
+import * as changeCase from 'change-case'
+import { RuntimeConfig } from '~/types/runtime-config.js'
+import path from 'path'
+import { metadataStorage } from '../../constants/metadata-storage.js'
+
+
+export const MICRO_FUNCTION_GENERATOR = 'microFunctionGenerator'
+
+export class MicroFunctionGenerator implements Generator {
+  async compile(compiler: Compiler, task: TaskWrapper): Promise<Artifact[]> {
+    const metadata = metadataStorage.get(compiler)!
+    const context = compiler.context
+    const rc = context.rc!
+    // const matcher = context.matcher!
+    const documents = context.documents!
+    // .filter((document) => !matcher.isModuleIgnored(document.module))
+
+    const operationDefinitions = documents.flatMap((document) => document.operations)
+
+    const artifactMap = new Map<OperationDefinition, Artifact>(
+      await Promise.all(
+        operationDefinitions.map(async (operationDefinition) => (<const>[
+          operationDefinition,
+          await metadata.hooks.afterMicroFunctionGenerated.promise(
+            this.generateOperationDefinitionArtifact(operationDefinition, rc),
+            operationDefinition,
+            task,
+          ),
+        ])),
+      ),
+    )
+
+
+    const entrypoints = await Promise.all(
+      R.collectBy(
+        (operationDefinition: OperationDefinition) => operationDefinition.module.name,
+        operationDefinitions,
+      )
+        .map((operationDefinitions) => (<const>[
+          operationDefinitions[0].module,
+          operationDefinitions
+            .map((operationDefinition) => artifactMap.get(operationDefinition))
+            .filter((artifact): artifact is Artifact => Boolean(artifact)),
+        ]))
+        .map(async ([moduleDefinition, artifacts]) => await metadata.hooks.afterEntrypointGenerated.promise(
+          this.generateEntrypointArtifact(
+            moduleDefinition,
+            artifacts,
+            rc,
+          ),
+          task,
+        )),
+    )
+
+    return [...entrypoints, ...artifactMap.values()]
+  }
+
+
+  private generateOperationDefinitionArtifact(operationDefinition: OperationDefinition, rc: RuntimeConfig): Artifact {
+    const qs = (parameter: OpenAPIV3_1.ParameterObject): KeqQueryOptions | undefined => {
+      if (typeof rc.qs === 'function') {
+        return rc.qs(parameter)
+      } else if (typeof rc.qs === 'object') {
+        return rc.qs
+      }
+
+      const style = parameter.style || 'form'
+      const explode = parameter.explode ?? true
+
+      if (style === 'deepObject') {
+        return { arrayFormat: 'brackets' }
+      } else if (explode) {
+        return { arrayFormat: 'repeat' }
+      } else {
+        if (style === 'form') {
+          return { arrayFormat: 'comma' }
+        } else if (style === 'spaceDelimited') {
+          return { arrayFormat: 'space' }
+        } else if (style === 'pipeDelimited') {
+          return { arrayFormat: 'pipe' }
+        }
+      }
+
+      return {}
+    }
+
+
+    const filepath = MicroFunctionGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle)
+    const dirpath = path.dirname(filepath)
+
+    const artifact = new Artifact({
+      id: MicroFunctionGenerator.getOperationDefinitionArtifactId(operationDefinition),
+      filepath,
+      content: OperationDefinitionTransformer.toTypescript(operationDefinition, {
+        qs,
+        esm: rc.esm,
+        getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string {
+          const relativePath = path.relative(
+            dirpath,
+            OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle),
+          )
+
+          return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+        },
+      }),
+      extensionName: '.type.ts',
+    })
+
+    return artifact
+  }
+
+  private generateEntrypointArtifact(moduleDefinition: ModuleDefinition, exports: Artifact[], rc: RuntimeConfig): Artifact {
+    const filepath = MicroFunctionGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.fileNamingStyle)
+    const dirpath = filepath.substring(0, filepath.lastIndexOf('/'))
+
+    const artifact = new Artifact({
+      id: MicroFunctionGenerator.getEntrypointArtifactId(moduleDefinition),
+      filepath,
+      content: EntrypointTransformer.toTypescript(exports, { dirpath }),
+    })
+
+    return artifact
+  }
+
+
+  static getOperationDefinitionArtifactFilepath(operationDefinition: OperationDefinition, fileNamingStyle: FileNamingStyle): string {
+    const filename = `${changeCase[fileNamingStyle](operationDefinition.operationId)}.request.ts`
+    const filepath = [
+      '.',
+      changeCase[fileNamingStyle](operationDefinition.module.name),
+      'operations',
+      filename,
+    ].join('/')
+
+    return filepath
+  }
+
+  static getOperationDefinitionArtifactId(operationDefinition: OperationDefinition): string {
+    return `${operationDefinition.id}?generator=${MICRO_FUNCTION_GENERATOR}`
+  }
+
+  static getEntrypointArtifactFilepath(moduleDefinition: ModuleDefinition, fileNamingStyle: FileNamingStyle): string {
+    return [
+      '.',
+      changeCase[fileNamingStyle](moduleDefinition.name),
+      'operations',
+      'index.ts',
+    ].join('/')
+  }
+
+  static getEntrypointArtifactId(moduleDefinition: ModuleDefinition): string {
+    return `${moduleDefinition.address}/paths/entrypoint?generator=${MICRO_FUNCTION_GENERATOR}`
+  }
+}

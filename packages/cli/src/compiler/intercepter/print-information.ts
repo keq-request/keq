@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { FullTap, HookInterceptor } from 'tapable'
-import { TaskWrapper } from '~/tasks/index.js'
+import { TaskWrapper } from '../tasks/index.js'
 
 
 export function proxyTaskWrapper(pluginName: string, task: TaskWrapper): TaskWrapper {

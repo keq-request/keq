@@ -1,13 +1,26 @@
 export { defineKeqConfig } from './define-keq-config.js'
-export { RuntimeConfig } from './types/runtime-config.js'
-export { FileNamingStyle } from './constants/file-naming-style.js'
-export { QsArrayFormat } from './constants/qs-array-format.js'
 
-export { Compiler } from './compiler/compiler.js'
+export {
+  RuntimeConfig,
+} from './types/index.js'
+
+export {
+  FileNamingStyle,
+  QsArrayFormat,
+} from './constants/index.js'
+
+export {
+  Compiler,
+  CompilerContext,
+  TaskWrapper,
+} from './compiler/index.js'
 export { Plugin } from './types/plugin.js'
-export { Artifact } from './tasks/utils/artifact.js'
-export { ModuleDefinition } from './tasks/utils/module-definition.js'
-export { SchemaDefinition } from './tasks/utils/schema-definition.js'
-export { OperationDefinition } from './tasks/utils/operation-definition.js'
-export { ApiDocument } from './tasks/utils/api-document.js'
-export { ApiDocumentV3_1 } from './tasks/utils/api-document_v3_1.js'
+
+export {
+  Artifact,
+  ModuleDefinition,
+  SchemaDefinition,
+  OperationDefinition,
+  ApiDocumentV3_1,
+  Asset,
+} from './models/index.js'

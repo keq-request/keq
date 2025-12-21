@@ -6,8 +6,8 @@ import { logger } from './utils/logger.js'
 import { Compiler } from './compiler/compiler.js'
 
 
-if (semver.lt(process.version, '18.0.0')) {
-  throw new Error('Node.js version must be greater than 18')
+if (semver.lt(process.version, '20.0.0')) {
+  throw new Error('Node.js version must be greater than 20')
 }
 
 const program = new Command()
@@ -22,17 +22,15 @@ program
   .option('-i --interactive', 'Interactive select the scope of generation')
   .action(async (options) => {
     const compiler = new Compiler({
-      build: {
-        shaking: {
-          skipIgnoredModules: true,
-          skipEmptyDocuments: true,
-        },
-      },
+      build: true,
       config: options.config,
       modules: options.module,
       debug: !!options.debug,
       tolerant: !!options.tolerant,
-      interactive: !!options.interactive,
+      interactive: !!options.interactive && {
+        mode: 'except',
+        clear: true,
+      },
     })
 
     await compiler.run()
@@ -88,12 +86,7 @@ program
       }
 
       compiler = new Compiler({
-        build: !!options.build && {
-          shaking: {
-            skipIgnoredModules: true,
-            skipEmptyDocuments: true,
-          },
-        },
+        build: !!options.build,
         config: options.config,
         modules: options.module,
         debug: !!options.debug,
@@ -111,12 +104,7 @@ program
       const moduleNames = options.module || ['*']
 
       compiler = new Compiler({
-        build: !!options.build && {
-          shaking: {
-            skipIgnoredModules: true,
-            skipEmptyDocuments: true,
-          },
-        },
+        build: !!options.build,
         config: options.config,
         debug: !!options.debug,
         modules: options.module,

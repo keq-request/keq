@@ -1,7 +1,6 @@
 import * as R from 'ramda'
 import fs from 'fs-extra'
-import { OperationDefinition } from '~/tasks/utils/operation-definition.js'
-import { ModuleDefinition } from '~/tasks/utils/module-definition.js'
+import { OperationDefinition, ModuleDefinition } from '~/models/index.js'
 
 
 export interface IgnoreMatcherRule {

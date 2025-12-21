@@ -1,6 +1,6 @@
 import { CustomError } from 'ts-custom-error'
 import wrap from 'word-wrap'
-import { ModuleDefinition } from './tasks/utils/module-definition.js'
+import { ModuleDefinition } from '~/models/index.js'
 
 
 export class Exception extends CustomError {

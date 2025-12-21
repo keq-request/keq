@@ -23,7 +23,7 @@ export class EslintPlugin implements Plugin {
       ].join('\n')
 
       compiler.hooks.afterCompile.tap(EslintPlugin.name, () => {
-        const artifacts = compiler.context.compiled?.artifacts || []
+        const artifacts = compiler.context.artifacts || []
 
         for (const artifact of artifacts) {
           artifact.anchor.append('file:start', $rules)
@@ -32,7 +32,7 @@ export class EslintPlugin implements Plugin {
     }
 
     compiler.hooks.afterPersist.tapPromise(EslintPlugin.name, async (task) => {
-      const files = compiler.context.persisted?.files || []
+      const files = compiler.context.assets || []
       if (files.length === 0) return
 
       const eslint = new ESLint({ fix: true })

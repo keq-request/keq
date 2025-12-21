@@ -1,56 +1,64 @@
 
 
-import * as R from 'ramda'
-import { AsyncSeriesHook, AsyncSeriesWaterfallHook, FullTap, Hook, HookInterceptor, InnerCallback, SyncHook } from 'tapable'
 import { Listr } from 'listr2'
+import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook } from 'tapable'
+import { CompilerHooks, CompilerContext } from './types/index.js'
+import {
+  ModuleDefinition,
+} from '~/models/index.js'
 import {
   createCompileTask,
   createDownloadTask,
-  createInteractiveTask,
   createPersistTask,
   createSetupTask,
-  createShakingTask,
-  createValidateTask,
-  InteractiveTaskOptions,
   SetupTaskOptions,
-  ShakingTaskOptions,
-  type TaskWrapper,
-  type TaskContext,
-  Artifact,
-  OperationDefinition,
-  SchemaDefinition,
-} from '../tasks/index.js'
-import { perfectErrorMessage } from './intercepter/perfect-error-message.js'
-import { printInformation } from './intercepter/print-information.js'
+  TaskWrapper,
+} from './tasks/index.js'
+import {
+  perfectErrorMessage,
+  printInformation,
+} from './intercepter/index.js'
+import {
+  ModuleFilterPlugin,
+  DownloadHttpFilePlugin,
+  DownloadLocalFilePlugin,
+  ShakingPlugin,
+  TransformToOpenAPIv3_1Plugin,
+  GenerateDeclarationPlugin,
+  GenerateMicroFunctionPlugin,
+  TerminalSelectPlugin,
+  TerminalSelectPluginOptions,
+} from '~/plugins/index.js'
 
 
 interface Options extends SetupTaskOptions {
-  build: boolean | {
-    shaking?: ShakingTaskOptions
-  }
-
-  interactive?: boolean | InteractiveTaskOptions
+  modules: string[]
+  build: boolean
+  interactive?: boolean | TerminalSelectPluginOptions
 }
 
 
 export class Compiler {
-  context: TaskContext = {}
+  context: CompilerContext = {}
 
-  hooks = {
-    // core
+  hooks: CompilerHooks = {
+    setup: new AsyncParallelHook<[TaskWrapper]>(['task']),
     afterSetup: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    afterValidate: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    afterShaking: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    afterCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    afterPersist: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    done: new SyncHook<[]>(),
 
-    // compile
-    afterCompileKeqRequest: new AsyncSeriesWaterfallHook<[Artifact, TaskWrapper], Artifact>(['artifact', 'task']),
-    afterCompileSchema: new AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper], Artifact>(['artifact', 'schema', 'task']),
-    afterCompileOperationType: new AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper], Artifact>(['artifact', 'operation', 'task']),
-    afterCompileOperationRequest: new AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper], Artifact>(['artifact', 'operation', 'task']),
+    beforeDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+    download: new AsyncSeriesBailHook<[string, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
+    openapiTransform: new AsyncSeriesWaterfallHook<[object, ModuleDefinition, TaskWrapper], object>(['openapi', 'moduleDefinition', 'task']),
+    afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+
+    beforeCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+    compile: new AsyncParallelHook<[TaskWrapper]>(['task']),
+    afterCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+
+    beforePersist: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+    persist: new AsyncParallelHook<[TaskWrapper]>(['task']),
+    afterPersist: new AsyncSeriesHook<[TaskWrapper]>(['task']),
+
+    done: new SyncHook<[]>(),
   }
 
   constructor(
@@ -62,18 +70,36 @@ export class Compiler {
 
     this.hooks.afterSetup.intercept(printInformation(0))
     this.hooks.afterPersist.intercept(printInformation(0))
+
+    new DownloadHttpFilePlugin().apply(this)
+    new DownloadLocalFilePlugin().apply(this)
+    new TransformToOpenAPIv3_1Plugin().apply(this)
+
+    new GenerateDeclarationPlugin().apply(this)
+    new GenerateMicroFunctionPlugin().apply(this)
+
+    if (options.modules && options.modules.length) {
+      new ModuleFilterPlugin({
+        includes: options.modules,
+      }).apply(this)
+    }
+
+    if (this.options.build) {
+      new ShakingPlugin().apply(this)
+    }
+
+    if (this.options.interactive) {
+      new TerminalSelectPlugin(typeof options.interactive === 'object' ? options.interactive : { mode: 'except' }).apply(this)
+    }
   }
 
   async run(): Promise<void> {
     const options = this.options
 
-    const tasks = new Listr<TaskContext>(
+    const tasks = new Listr<CompilerContext>(
       [
         createSetupTask(this, options),
         createDownloadTask(this, { skipIgnoredModules: !options.interactive }),
-        createValidateTask(this),
-        createInteractiveTask({ enabled: !!options.interactive, ...(typeof options.interactive === 'object' ? options.interactive : { mode: 'except' }) }),
-        createShakingTask(this, { enabled: !!options.build, ...(typeof options.build === 'object' ? options.build.shaking : undefined) }),
         createCompileTask(this, { enabled: !!options.build }),
         createPersistTask(this),
       ],

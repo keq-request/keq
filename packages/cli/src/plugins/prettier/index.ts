@@ -11,7 +11,7 @@ export class PrettierPlugin implements Plugin {
     if (!compiler.options.build) return
 
     compiler.hooks.afterPersist.tapPromise(PrettierPlugin.name, async () => {
-      const files = compiler.context.persisted?.files || []
+      const files = compiler.context.assets || []
       if (files.length === 0) return
 
       const filePaths = files.map((file) => file.path).join(' ')
