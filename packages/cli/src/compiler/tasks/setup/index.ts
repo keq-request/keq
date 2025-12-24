@@ -1,4 +1,3 @@
-import * as R from 'ramda'
 import fs from 'fs-extra'
 import path from 'path'
 import { CosmiconfigResult } from 'cosmiconfig'
@@ -64,13 +63,6 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
       context.rc = rc
 
       // Apply Plugins
-
-      // if (options.plugins) {
-      //   for (const plugin of options.plugins) {
-      //     plugin.apply(compiler)
-      //   }
-      // }
-
       if (rc.plugins && rc.plugins.length) {
         for (const plugin of rc.plugins) {
           plugin.apply(compiler)
@@ -98,25 +90,6 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
           operationPathname: rule.operationPathname,
         })
       }
-
-      // // TODO: 更改成 IncludeModulePlugin
-      // if (options?.modules && options.modules.length) {
-      //   const notExistModules = options.modules.filter((moduleName) => !(moduleName in rc.modules))
-      //   if (notExistModules.length) {
-      //     throw new Error(`Cannot find module(s) ${notExistModules.join(', ')} in config file.`)
-      //   }
-
-      //   const ignoredModules = R.difference(R.keys(rc.modules), options.modules)
-      //   for (const moduleName of ignoredModules) {
-      //     matcher.append({
-      //       persist: false,
-      //       ignore: true,
-      //       moduleName,
-      //       operationMethod: '*',
-      //       operationPathname: '*',
-      //     })
-      //   }
-      // }
 
       context.matcher = matcher
 

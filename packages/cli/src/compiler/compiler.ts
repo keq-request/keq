@@ -19,20 +19,13 @@ import {
   printInformation,
 } from './intercepter/index.js'
 import {
-  ModuleFilterPlugin,
-  DownloadHttpFilePlugin,
-  DownloadLocalFilePlugin,
-  ShakingPlugin,
-  TransformToOpenAPIv3_1Plugin,
-  GenerateDeclarationPlugin,
-  GenerateMicroFunctionPlugin,
-  TerminalSelectPlugin,
+  InitializePlugin,
   TerminalSelectPluginOptions,
 } from '~/plugins/index.js'
 
 
 interface Options extends SetupTaskOptions {
-  modules: string[]
+  includes: string[]
   build: boolean
   interactive?: boolean | TerminalSelectPluginOptions
 }
@@ -71,26 +64,11 @@ export class Compiler {
     this.hooks.afterSetup.intercept(printInformation(0))
     this.hooks.afterPersist.intercept(printInformation(0))
 
-    new DownloadHttpFilePlugin().apply(this)
-    new DownloadLocalFilePlugin().apply(this)
-    new TransformToOpenAPIv3_1Plugin().apply(this)
-
-    new GenerateDeclarationPlugin().apply(this)
-    new GenerateMicroFunctionPlugin().apply(this)
-
-    if (options.modules && options.modules.length) {
-      new ModuleFilterPlugin({
-        includes: options.modules,
-      }).apply(this)
-    }
-
-    if (this.options.build) {
-      new ShakingPlugin().apply(this)
-    }
-
-    if (this.options.interactive) {
-      new TerminalSelectPlugin(typeof options.interactive === 'object' ? options.interactive : { mode: 'except' }).apply(this)
-    }
+    new InitializePlugin({
+      build: options.build,
+      interactive: options.interactive,
+      includes: options.includes,
+    }).apply(this)
   }
 
   async run(): Promise<void> {

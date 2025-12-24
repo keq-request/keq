@@ -3,6 +3,6 @@ export function indent(space: number, text: string): string {
 
   const indentation = ' '.repeat(space)
   return text.split('\n')
-    .map((line) => `${indentation}${line}`)
+    .map((line) => (line ? `${indentation}${line}` : line))
     .join('\n')
 }

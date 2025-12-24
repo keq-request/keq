@@ -28,7 +28,7 @@ export class SchemaDeclarationGenerator implements Generator {
       await Promise.all(
         schemaDefinitions.map(async (schemaDefinition) => (<const>[
           schemaDefinition,
-          await metadata.hooks.afterSchemaDeclarationGenerated.promise(
+          await metadata.hooks.afterSchemaDeclarationArtifactGenerated.promise(
             this.generateSchemaDefinitionsArtifact(schemaDefinition, rc),
             schemaDefinition,
             task,
@@ -102,6 +102,7 @@ export class SchemaDeclarationGenerator implements Generator {
     return [
       '.',
       changeCase[fileNamingStyle](moduleDefinition.name),
+      'types',
       'components',
       'schemas',
       'index.ts',
@@ -117,6 +118,7 @@ export class SchemaDeclarationGenerator implements Generator {
     return [
       '.',
       changeCase[fileNamingStyle](schemaDefinition.module.name),
+      'types',
       'components',
       'schemas',
       filename,

@@ -11,14 +11,14 @@ import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import * as changeCase from 'change-case'
 import { RuntimeConfig } from '~/types/runtime-config.js'
 import path from 'path'
-import { metadataStorage } from '../../constants/metadata-storage.js'
+import { MetadataStorage } from '../../constants/metadata-storage.js'
 
 
 export const MICRO_FUNCTION_GENERATOR = 'microFunctionGenerator'
 
 export class MicroFunctionGenerator implements Generator {
   async compile(compiler: Compiler, task: TaskWrapper): Promise<Artifact[]> {
-    const metadata = metadataStorage.get(compiler)!
+    const metadata = MetadataStorage.get(compiler)!
     const context = compiler.context
     const rc = context.rc!
     // const matcher = context.matcher!
@@ -31,7 +31,7 @@ export class MicroFunctionGenerator implements Generator {
       await Promise.all(
         operationDefinitions.map(async (operationDefinition) => (<const>[
           operationDefinition,
-          await metadata.hooks.afterMicroFunctionGenerated.promise(
+          await metadata.hooks.afterMicroFunctionArtifactGenerated.promise(
             this.generateOperationDefinitionArtifact(operationDefinition, rc),
             operationDefinition,
             task,
@@ -52,7 +52,7 @@ export class MicroFunctionGenerator implements Generator {
             .map((operationDefinition) => artifactMap.get(operationDefinition))
             .filter((artifact): artifact is Artifact => Boolean(artifact)),
         ]))
-        .map(async ([moduleDefinition, artifacts]) => await metadata.hooks.afterEntrypointGenerated.promise(
+        .map(async ([moduleDefinition, artifacts]) => await metadata.hooks.afterEntrypointArtifactGenerated.promise(
           this.generateEntrypointArtifact(
             moduleDefinition,
             artifacts,
@@ -67,42 +67,14 @@ export class MicroFunctionGenerator implements Generator {
 
 
   private generateOperationDefinitionArtifact(operationDefinition: OperationDefinition, rc: RuntimeConfig): Artifact {
-    const qs = (parameter: OpenAPIV3_1.ParameterObject): KeqQueryOptions | undefined => {
-      if (typeof rc.qs === 'function') {
-        return rc.qs(parameter)
-      } else if (typeof rc.qs === 'object') {
-        return rc.qs
-      }
-
-      const style = parameter.style || 'form'
-      const explode = parameter.explode ?? true
-
-      if (style === 'deepObject') {
-        return { arrayFormat: 'brackets' }
-      } else if (explode) {
-        return { arrayFormat: 'repeat' }
-      } else {
-        if (style === 'form') {
-          return { arrayFormat: 'comma' }
-        } else if (style === 'spaceDelimited') {
-          return { arrayFormat: 'space' }
-        } else if (style === 'pipeDelimited') {
-          return { arrayFormat: 'pipe' }
-        }
-      }
-
-      return {}
-    }
-
-
     const filepath = MicroFunctionGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({
       id: MicroFunctionGenerator.getOperationDefinitionArtifactId(operationDefinition),
       filepath,
-      content: OperationDefinitionTransformer.toTypescript(operationDefinition, {
-        qs,
+      content: OperationDefinitionTransformer.toMicroFunction(operationDefinition, {
+        qs: rc.qs,
         esm: rc.esm,
         getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string {
           const relativePath = path.relative(
@@ -134,7 +106,7 @@ export class MicroFunctionGenerator implements Generator {
 
 
   static getOperationDefinitionArtifactFilepath(operationDefinition: OperationDefinition, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](operationDefinition.operationId)}.request.ts`
+    const filename = `${changeCase[fileNamingStyle](operationDefinition.operationId)}.fn.ts`
     const filepath = [
       '.',
       changeCase[fileNamingStyle](operationDefinition.module.name),

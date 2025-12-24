@@ -2,6 +2,7 @@ export { defineKeqConfig } from './define-keq-config.js'
 
 export {
   RuntimeConfig,
+  Plugin,
 } from './types/index.js'
 
 export {
@@ -14,7 +15,6 @@ export {
   CompilerContext,
   TaskWrapper,
 } from './compiler/index.js'
-export { Plugin } from './types/plugin.js'
 
 export {
   Artifact,

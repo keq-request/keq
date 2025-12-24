@@ -8,6 +8,14 @@ import { Plugin } from './plugin.js'
 
 
 export const RuntimeConfig = Type.Object({
+  mode: Type.Optional(
+    Type.Union([
+      Type.Literal('micro-function'),
+      Type.Literal('nestjs-module'),
+      Type.Literal('none'),
+    ], { default: 'micro-function' }),
+  ),
+
   /**
    * Whether to generate ES Module code
    *

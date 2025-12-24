@@ -1,0 +1,56 @@
+{
+  "name": "@keq-request/nestjs",
+  "version": "5.0.0-alpha.22",
+  "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
+  "keywords": [
+    "request",
+    "superagent",
+    "fetch",
+    "node",
+    "nodejs",
+    "browser",
+    "middleware",
+    "middlewares",
+    "axios",
+    "got"
+  ],
+  "license": "MIT",
+  "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "homepage": "https://keq-request.github.io",
+  "bugs": {
+    "url": "https://github.com/keq-request/keq/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keq-request/keq.git"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "jest",
+    "test:update": "jest -u"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.19.25",
+    "@nestjs/common": "^11.0.0",
+    "keq": "workspace:*",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "keq": "^5.0.0-alpha.22",
+    "@nestjs/common": "^11.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

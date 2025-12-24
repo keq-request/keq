@@ -1,8 +1,8 @@
 import { AsyncSeriesWaterfallHook } from 'tapable'
-import { Compiler, TaskWrapper } from '~/compiler/index.js'
-import { OperationDeclarationGenerator, SchemaDeclarationGenerator } from './generators/index.js'
-import { Artifact, OperationDefinition, SchemaDefinition } from '~/models/index.js'
 import { Plugin } from '~/types/plugin.js'
+import { Compiler, TaskWrapper } from '~/compiler/index.js'
+import { Artifact, OperationDefinition, SchemaDefinition } from '~/models/index.js'
+import { OperationDeclarationGenerator, SchemaDeclarationGenerator } from './generators/index.js'
 import { GenerateDeclarationPluginMetadata, MetadataStorage } from './constants/index.js'
 
 
@@ -17,7 +17,7 @@ export class GenerateDeclarationPlugin implements Plugin {
   constructor() {}
 
   apply(compiler: Compiler): void {
-    GenerateDeclarationPlugin.createMetadata(compiler)
+    GenerateDeclarationPlugin.register(compiler)
 
     compiler.hooks.compile.tapPromise(GenerateDeclarationPlugin.name, async (task: TaskWrapper) => {
       compiler.context.artifacts?.push(
@@ -27,13 +27,13 @@ export class GenerateDeclarationPlugin implements Plugin {
     })
   }
 
-  static createMetadata(compiler: Compiler): GenerateDeclarationPluginMetadata {
+  static register(compiler: Compiler): GenerateDeclarationPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
         hooks: {
-          afterEntrypointGenerated: new AsyncSeriesWaterfallHook<[Artifact, TaskWrapper], Artifact>(['artifact', 'task']),
-          afterSchemaDeclarationGenerated: new AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper], Artifact>(['artifact', 'schemaDefinition', 'task']),
-          afterOperationDeclarationGenerated: new AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper], Artifact>(['artifact', 'operationDefinition', 'task']),
+          afterEntrypointArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, TaskWrapper], Artifact>(['artifact', 'task']),
+          afterSchemaDeclarationArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper], Artifact>(['artifact', 'schemaDefinition', 'task']),
+          afterOperationDeclarationArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper], Artifact>(['artifact', 'operationDefinition', 'task']),
         },
       })
     }
@@ -41,6 +41,6 @@ export class GenerateDeclarationPlugin implements Plugin {
   }
 
   static of(compiler: Compiler): GenerateDeclarationPluginMetadata | undefined {
-    return MetadataStorage.get(compiler)
+    return this.register(compiler)
   }
 }

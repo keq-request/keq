@@ -27,7 +27,7 @@ export class OperationDeclarationGenerator implements Generator {
       await Promise.all(
         operationDefinitions.map(async (operationDefinition) => (<const>[
           operationDefinition,
-          await metadata.hooks.afterOperationDeclarationGenerated.promise(
+          await metadata.hooks.afterOperationDeclarationArtifactGenerated.promise(
             this.generateOperationDefinitionArtifact(operationDefinition, rc),
             operationDefinition,
             task,
@@ -86,6 +86,7 @@ export class OperationDeclarationGenerator implements Generator {
       '.',
       changeCase[fileNamingStyle](operationDefinition.module.name),
       'types',
+      'operations',
       filename,
     ].join('/')
 
@@ -101,6 +102,7 @@ export class OperationDeclarationGenerator implements Generator {
       '.',
       changeCase[fileNamingStyle](moduleDefinition.name),
       'types',
+      'operations',
       'index.ts',
     ].join('/')
   }

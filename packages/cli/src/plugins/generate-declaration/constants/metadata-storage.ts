@@ -5,9 +5,9 @@ import { Artifact, OperationDefinition, SchemaDefinition } from '~/models/index.
 
 export interface GenerateDeclarationPluginMetadata {
   hooks: {
-    afterEntrypointGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
-    afterSchemaDeclarationGenerated: AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper]>
-    afterOperationDeclarationGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>
+    afterEntrypointArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
+    afterSchemaDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper]>
+    afterOperationDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>
   }
 }
 

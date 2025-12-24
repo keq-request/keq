@@ -24,7 +24,7 @@ program
     const compiler = new Compiler({
       build: true,
       config: options.config,
-      modules: options.module,
+      includes: options.module,
       debug: !!options.debug,
       tolerant: !!options.tolerant,
       interactive: !!options.interactive && {
@@ -66,7 +66,7 @@ program
       compiler = new Compiler({
         build: false,
         config: options.config,
-        modules: options.module,
+        includes: options.module,
         debug: !!options.debug,
         interactive: false,
         ignore: {
@@ -88,7 +88,7 @@ program
       compiler = new Compiler({
         build: !!options.build,
         config: options.config,
-        modules: options.module,
+        includes: options.module,
         debug: !!options.debug,
 
         interactive: {
@@ -107,7 +107,7 @@ program
         build: !!options.build,
         config: options.config,
         debug: !!options.debug,
-        modules: options.module,
+        includes: options.module,
         ignore: {
           rules: moduleNames.map((moduleNames) => ({
             persist: true,

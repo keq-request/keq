@@ -4,9 +4,9 @@ import { Artifact, OperationDefinition } from '~/models/index.js'
 
 export interface GenerateMicroFunctionPluginMetadata {
   hooks: {
-    afterEntrypointGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
-    afterMicroFunctionGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>
+    afterEntrypointArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
+    afterMicroFunctionArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>
   }
 }
 
-export const metadataStorage = new WeakMap<Compiler, GenerateMicroFunctionPluginMetadata>()
+export const MetadataStorage = new WeakMap<Compiler, GenerateMicroFunctionPluginMetadata>()

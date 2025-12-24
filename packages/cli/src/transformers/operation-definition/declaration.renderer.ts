@@ -232,7 +232,7 @@ export class DeclarationRenderer implements Renderer {
       $parameterBodies || undefined,
       $requestParameters,
       '',
-      `export interface Operation<STATUS extends keyof ${this.typeName('ResponseBodies')}, CONTENT_TYPE extends ${$parameterBodies ? `keyof ${this.typeName('ParameterBodies')}` : 'string'} > extends KeqOperation {`,
+      `export interface ${this.typeName('Operation')}<STATUS extends keyof ${this.typeName('ResponseBodies')}, CONTENT_TYPE extends ${$parameterBodies ? `keyof ${this.typeName('ParameterBodies')}` : 'string'} > extends KeqOperation {`,
       `  requestParams: ${this.typeName('RouteParameters')} & { [key: string]: KeqPathParameterInit }`,
       `  requestQuery: ${this.typeName('RequestQuery')} & { [key: string]: KeqQueryInit }`,
       `  requestHeaders: ${this.typeName('RequestHeaders')} & { [key: string]: string | number }`,
