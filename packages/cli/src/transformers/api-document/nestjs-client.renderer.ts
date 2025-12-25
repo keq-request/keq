@@ -50,7 +50,6 @@ export class NestjsClientRenderer implements Renderer {
       .map((operation) => OperationDefinitionTransformer.toNestjsMethod(operation, {
         esm: this.options.esm,
         qs: this.options.qs,
-        getOperationDefinitionDeclarationFilepath: this.options.getOperationDefinitionDeclarationFilepath,
       }))
       .join('\n\n')
 

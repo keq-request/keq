@@ -5,15 +5,15 @@ import { typeNameFactory, TypeNameFn } from './utils/index.js'
 import { indent } from '~/utils/indent.js'
 import { Exception } from '~/exception.js'
 import { CommentRenderer } from './comment.renderer.js'
-import { OperationDefinitionTypescriptHelper, OperationDefinitionTypescriptHelperOptions } from './typescript-helper.js'
+import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-helper.js'
 
 
-export interface OperationDefinitionMicroFunctionRendererOptions extends OperationDefinitionTypescriptHelperOptions {
+export interface OperationDefinitionMicroFunctionRendererOptions extends OperationDefinitionSnippetOptions {
   getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string
 }
 
 export class OperationDefinitionMicroFunctionRenderer implements Renderer {
-  helper: OperationDefinitionTypescriptHelper
+  helper: OperationDefinitionSnippet
   typeName: TypeNameFn
 
   constructor(
@@ -21,7 +21,7 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
     private readonly options: OperationDefinitionMicroFunctionRendererOptions,
   ) {
     this.typeName = typeNameFactory(operationDefinition)
-    this.helper = new OperationDefinitionTypescriptHelper(operationDefinition, options)
+    this.helper = new OperationDefinitionSnippet(operationDefinition, options)
   }
 
   render(): string {

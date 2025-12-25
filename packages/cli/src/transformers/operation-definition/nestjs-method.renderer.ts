@@ -1,25 +1,17 @@
 import * as R from 'ramda'
-import * as changeCase from 'change-case'
-import { KeqQueryOptions } from 'keq'
 import { TypeNameFn, typeNameFactory } from './utils/index.js'
 import { OperationDefinition } from '~/models/index.js'
-import { KeqQueryOptionsFactory } from '~/types/index.js'
-import { OperationDefinitionTypescriptHelper, OperationDefinitionTypescriptHelperOptions } from './typescript-helper.js'
+import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-helper.js'
 import { CommentRenderer } from './comment.renderer.js'
 import { indent } from '~/utils/indent.js'
 import { Renderer } from '../types/renderer.js'
 import { Exception } from '~/exception.js'
 
 
-export interface OperationDefinitionNestjsMethodRendererOptions extends OperationDefinitionTypescriptHelperOptions {
-  esm?: boolean
-  qs?: KeqQueryOptions | KeqQueryOptionsFactory
-
-  getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string
-}
+export type OperationDefinitionNestjsMethodRendererOptions = OperationDefinitionSnippetOptions
 
 export class OperationDefinitionNestjsMethodRenderer implements Renderer {
-  helper: OperationDefinitionTypescriptHelper
+  helper: OperationDefinitionSnippet
   typeName: TypeNameFn
 
   constructor(
@@ -27,7 +19,7 @@ export class OperationDefinitionNestjsMethodRenderer implements Renderer {
     private readonly options: OperationDefinitionNestjsMethodRendererOptions,
   ) {
     this.typeName = typeNameFactory(operationDefinition)
-    this.helper = new OperationDefinitionTypescriptHelper(operationDefinition, options)
+    this.helper = new OperationDefinitionSnippet(operationDefinition, options)
   }
 
 

@@ -8,17 +8,17 @@ import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
-export interface OperationDefinitionTypescriptHelperOptions {
+export interface OperationDefinitionSnippetOptions {
   esm?: boolean
   qs?: KeqQueryOptions | KeqQueryOptionsFactory
 }
 
-export class OperationDefinitionTypescriptHelper {
+export class OperationDefinitionSnippet {
   typeName: TypeNameFn
 
   constructor(
     private readonly operationDefinition: OperationDefinition,
-    private readonly options: OperationDefinitionTypescriptHelperOptions,
+    private readonly options: OperationDefinitionSnippetOptions,
   ) {
     this.typeName = typeNameFactory(operationDefinition)
   }
