@@ -3,6 +3,7 @@ import * as fs from 'fs/promises'
 import * as yaml from 'js-yaml'
 import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/index.js'
+import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
 export class DownloadLocalFilePlugin implements Plugin {
@@ -14,9 +15,10 @@ export class DownloadLocalFilePlugin implements Plugin {
       const content = await fs.readFile(address, 'utf8')
 
       if (['.yml', '.yaml'].includes(fileExt)) {
-        return JSON.stringify(yaml.load(content))
+        const value = yaml.load(content)
+        return JSON.stringify(OpenapiUtils.to3_1(value))
       } else if (fileExt === '.json') {
-        return content
+        return JSON.stringify(OpenapiUtils.to3_1(JSON.parse(content)))
       }
     })
   }

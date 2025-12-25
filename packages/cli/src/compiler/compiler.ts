@@ -40,7 +40,6 @@ export class Compiler {
 
     beforeDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
     download: new AsyncSeriesBailHook<[string, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
-    openapiTransform: new AsyncSeriesWaterfallHook<[object, ModuleDefinition, TaskWrapper], object>(['openapi', 'moduleDefinition', 'task']),
     afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
     beforeCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),

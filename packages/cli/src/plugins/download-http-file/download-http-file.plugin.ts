@@ -1,13 +1,16 @@
 import * as validUrl from 'valid-url'
 import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/plugin.js'
+import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
 export class DownloadHttpFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
     compiler.hooks.download.tapPromise(DownloadHttpFilePlugin.name, async (address, task) => {
       if (!validUrl.isUri(address)) return undefined
-      return this.download(address)
+      const content = await this.download(address)
+      const spec = this.deserialize(content)
+      return JSON.stringify(spec)
     })
   }
 
@@ -24,5 +27,11 @@ export class DownloadHttpFilePlugin implements Plugin {
 
       throw e
     }
+  }
+
+  deserialize(content: string): object {
+    const json = JSON.parse(content)
+    const spec = OpenapiUtils.to3_1(json)
+    return spec
   }
 }

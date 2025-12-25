@@ -5,6 +5,7 @@ import { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '~/compiler/compiler.js'
 import { CompilerContext } from '~/compiler/index.js'
 import { Exception } from '~/exception.js'
+import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
 interface DownloadTaskOptions {
@@ -42,14 +43,22 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
                 throw new Exception(moduleDefinition, `Cannot download document from ${moduleDefinition.address}`)
               }
 
-              const json = JSON.parse(content)
+              let spec = JSON.parse(content)
 
-              const spec = await compiler.hooks.openapiTransform.promise(json, moduleDefinition, task)
-
-              const { valid, errors } = await validate(json)
+              const { valid, errors } = await validate(spec)
               if (!valid) {
                 const message = `${moduleDefinition.name} module openapi/swagger file does not conform to the openapi specifications or have grammatical errors, which may cause unexpected errors: \n${errors?.map((e) => `  - ${e.message}`).join('\n')}`
                 task.output = message
+              }
+
+              OpenapiUtils.dereferenceOperation(spec)
+              const rc = context.rc
+              if (rc?.operationIdFactory) {
+                const operationIdFactory = rc.operationIdFactory
+                spec = OpenapiUtils.updateOperationId(
+                  spec,
+                  (method, pathname, operation) => operationIdFactory({ method, pathname, operation, module: moduleDefinition }),
+                )
               }
 
               const document = new ApiDocumentV3_1(

@@ -1,4 +1,4 @@
-import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook } from 'tapable'
+import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, SyncHook } from 'tapable'
 import { TaskWrapper } from '../tasks/index.js'
 import { ModuleDefinition } from '~/models/index.js'
 
@@ -9,11 +9,7 @@ export interface CompilerHooks {
 
   beforeDownload: AsyncSeriesHook<[TaskWrapper]>
   download: AsyncSeriesBailHook<[string, ModuleDefinition, TaskWrapper], string | undefined> /* Return Json String */
-  openapiTransform: AsyncSeriesWaterfallHook<[object, ModuleDefinition, TaskWrapper], object>
   afterDownload: AsyncSeriesHook<[TaskWrapper]>
-
-  // afterValidate: AsyncSeriesHook<[TaskWrapper]>
-  // afterShaking: AsyncSeriesHook<[TaskWrapper]>
 
   beforeCompile: AsyncSeriesHook<[TaskWrapper]>
   compile: AsyncParallelHook<[TaskWrapper]>

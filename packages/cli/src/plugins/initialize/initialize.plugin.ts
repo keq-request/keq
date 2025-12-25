@@ -3,7 +3,6 @@ import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/plugin.js'
 import { DownloadHttpFilePlugin } from '../download-http-file/index.js'
 import { DownloadLocalFilePlugin } from '../download-local-file/index.js'
-import { TransformToOpenAPIv3_1Plugin } from '../transform-to-openapi-v3_1/index.js'
 import { GenerateDeclarationPlugin } from '../generate-declaration/index.js'
 import { ShakingPlugin } from '../shaking/index.js'
 import { TerminalSelectPlugin, TerminalSelectPluginOptions } from '../terminal-select/index.js'
@@ -27,7 +26,6 @@ export class InitializePlugin implements Plugin {
       new DownloadHttpFilePlugin().apply(compiler)
       new DownloadLocalFilePlugin().apply(compiler)
 
-      new TransformToOpenAPIv3_1Plugin().apply(compiler)
       new GenerateDeclarationPlugin().apply(compiler)
 
       if (this.options.build) {
