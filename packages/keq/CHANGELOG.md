@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.23
+
+### Patch Changes
+
+- 842e555: **Perf:** avoid unnecessary deserialization.
+- 7873a0a: Optimize middleware name generation
+
 ## 5.0.0-alpha.22
 
 ### Patch Changes
