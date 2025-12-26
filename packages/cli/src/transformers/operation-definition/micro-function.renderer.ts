@@ -5,7 +5,7 @@ import { typeNameFactory, TypeNameFn } from './utils/index.js'
 import { indent } from '~/utils/indent.js'
 import { Exception } from '~/exception.js'
 import { CommentRenderer } from './comment.renderer.js'
-import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-helper.js'
+import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-snippet.js'
 
 
 export interface OperationDefinitionMicroFunctionRendererOptions extends OperationDefinitionSnippetOptions {

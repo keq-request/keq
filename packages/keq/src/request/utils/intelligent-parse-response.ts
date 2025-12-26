@@ -1,4 +1,5 @@
-import { unwrap } from '~/context'
+import { resolveWith } from './resolve-with'
+
 
 export async function intelligentParseResponse<T>(response?: Response): Promise<T> {
   if (!response) return undefined as T
@@ -10,15 +11,18 @@ export async function intelligentParseResponse<T>(response?: Response): Promise<
 
   const contentType = response.headers.get('content-type') || ''
   try {
-    if (contentType.includes('application/json')) {
-      return unwrap(await response.json()) as T
+    if (contentType.match(/^application\/(.+\+)?json/)) {
+      return resolveWith<T>(response, 'json')
     } else if (contentType.includes('multipart/form-data')) {
-      return await response.formData() as T
+      return resolveWith<T>(response, 'form-data')
     } else if (contentType.includes('plain/text')) {
-      return await response.text() as T
+      return resolveWith<T>(response, 'text')
+    } else if (contentType.includes('text/event-stream')) {
+      return resolveWith<T>(response, 'sse')
     }
-  } catch (e) {
-    console.warn('Failed to auto parse response body', e)
+  } catch (err) {
+    console.warn(`Failed to intelligent parse response body: ${response.url}`, err)
+    throw err
   }
 
   /**

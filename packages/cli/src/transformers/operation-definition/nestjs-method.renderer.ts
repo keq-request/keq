@@ -1,7 +1,7 @@
 import * as R from 'ramda'
 import { TypeNameFn, typeNameFactory } from './utils/index.js'
 import { OperationDefinition } from '~/models/index.js'
-import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-helper.js'
+import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-snippet.js'
 import { CommentRenderer } from './comment.renderer.js'
 import { indent } from '~/utils/indent.js'
 import { Renderer } from '../types/renderer.js'

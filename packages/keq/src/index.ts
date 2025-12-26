@@ -10,6 +10,7 @@ export {
   type KeqQueryInit,
   type KeqPathParameterInit,
   type KeqQueryOptions,
+  type ServerSentEvent,
 } from './request'
 
 export {

@@ -5,7 +5,7 @@ import { KeqRequestInit } from '~/request-init/index.js'
 import { KeqSharedContext, KeqContextOptions } from '~/context/index.js'
 import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
-import { intelligentParseResponse } from './utils/index.js'
+import { intelligentParseResponse, resolveWith } from './utils/index.js'
 import { KeqDefaultOperation, KeqOperation, KeqQueryOptions } from './types/index.js'
 
 
@@ -174,40 +174,33 @@ export class Core<
 
   async end(): Promise<RES_BODY> {
     const coreContext = await this.run()
+    const resolveWithMode = coreContext.options.resolveWith
 
-    if (coreContext.options.resolveWith === 'response') {
+    if (resolveWithMode === 'response') {
       // NOTE: return a clone of the response rather than the proxy response
       return coreContext.response?.clone() as RES_BODY
     }
 
     const response = coreContext.response
 
-    if (coreContext.options.resolveWith && coreContext.options.resolveWith !== 'intelligent' && !response) {
+    if (!resolveWithMode || resolveWithMode === 'intelligent') {
+      const output: any = coreContext.output
+      if (output !== undefined) {
+        return output as RES_BODY
+      }
+
+      return await intelligentParseResponse<RES_BODY>(response)
+    }
+
+    if (!response) {
       throw new Exception([
-        `Unable to process the response with '${coreContext.options.resolveWith}'. Possible causes:`,
+        `Unable to process the response with '${resolveWithMode}'. Possible causes:`,
         '1. The request was never initiated or sent',
         '2. The request failed before a response was received.',
       ].join('\n'))
     }
 
-    if (coreContext.options.resolveWith === 'text') {
-      return await response!.text() as RES_BODY
-    } else if (coreContext.options.resolveWith === 'json') {
-      return unwrap(await response!.json()) as RES_BODY
-    } else if (coreContext.options.resolveWith === 'form-data') {
-      return await response!.formData() as RES_BODY
-    } else if (coreContext.options.resolveWith === 'blob') {
-      return await response!.blob() as RES_BODY
-    } else if (coreContext.options.resolveWith === 'array-buffer') {
-      return await response!.arrayBuffer() as RES_BODY
-    }
-
-    const output: any = coreContext.output
-    if (output !== undefined) {
-      return output as RES_BODY
-    }
-
-    return await intelligentParseResponse<RES_BODY>(response)
+    return await resolveWith(response, resolveWithMode)
   }
 
   /**

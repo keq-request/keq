@@ -35,10 +35,15 @@ export class DeclarationRenderer implements Renderer {
     const $responses = Object.entries(operation.responses)
       .map(([statusCode, response]) => {
         if (!JsonSchemaUtils.isRef(response)) {
-          const $value = Object.values(response.content || {})
-            .map((mediaTypeObject) => mediaTypeObject.schema)
-            .filter((schema) => !!schema)
-            .map((schema) => JsonSchemaTransformer.toDeclaration(schema, options))
+          const $value = Object.entries(response.content || {})
+            .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
+            .map(([mediaType, schema]) => {
+              if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
+              if (mediaType.includes('multipart/form-data')) return 'FormData'
+              if (!schema) return 'unknown'
+
+              return JsonSchemaTransformer.toDeclaration(schema, options)
+            })
             .join(' | ')
 
           return indent(2, `${statusCode}: ${$value || 'void'}`)
@@ -176,7 +181,7 @@ export class DeclarationRenderer implements Renderer {
       .map((str) => (str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, this.options.esm ? ' from "$1.js"' : ' from "$1"')))
 
     return [
-      'import type { KeqOperation, KeqPathParameterInit, KeqQueryInit } from "keq"',
+      'import type { KeqOperation, KeqPathParameterInit, KeqQueryInit, ServerSentEvent } from "keq"',
       ...$schemaDefinitions,
     ].join('\n')
   }

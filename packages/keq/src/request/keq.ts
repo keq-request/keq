@@ -9,7 +9,7 @@ import { base64Encode } from '~/utils/index.js'
 import { KeqBodyInit } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
-import type { CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqPathParameterInit, KeqQueryInit } from './types/index.js'
+import type { CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqPathParameterInit, KeqQueryInit, ServerSentEvent } from './types/index.js'
 import type { ConditionalPick, Merge, Primitive } from 'type-fest'
 import type { LiteralKeys, StringIndexValueOf, EnabledIfStringIndex, LooseNestedObject, EnableLooseNestedLike, LooseNestedLike } from '~/types/index.js'
 
@@ -309,6 +309,7 @@ export class Keq<
   resolveWith(m: 'array-buffer'): Keq<Merge<OP, { responseBody: ArrayBuffer }>>
   resolveWith(m: 'blob'): Keq<Merge<OP, { responseBody: Blob }>>
   resolveWith(m: 'text'): Keq<Merge<OP, { responseBody: string }>>
+  resolveWith(m: 'sse'): Keq<Merge<OP, { responseBody: ReadableStream<ServerSentEvent> }>>
   resolveWith<T = any>(m: 'json' | 'form-data'): Keq<Merge<OP, { responseBody: T }>>
   resolveWith(m: KeqResolveWithMode | any): any {
     this.option('resolveWith', m)
