@@ -1,5 +1,24 @@
 # Changelog
 
+## 5.0.0-alpha.23
+
+### Major Changes
+
+- 5f5bdd9: **BREAKING CHANGE:** Simplified KeqCacheStrategy interface.
+
+### Minor Changes
+
+- 9ab2c64: Convert non-essential cli tasks into plugins.
+
+### Patch Changes
+
+- b8d68c7: **Fix:** IndexedDBStorage cannot evict ttl cache
+- 20c7067: **Fix:** Failed to automatically clean up expired cache data when get immediately after initialization.
+- 9a9caa4: Cannot call CacheEntry.response.json multiple times.
+- Updated dependencies [842e555]
+- Updated dependencies [7873a0a]
+  - keq@5.0.0-alpha.23
+
 ## 5.0.0-alpha.22
 
 ### Patch Changes
