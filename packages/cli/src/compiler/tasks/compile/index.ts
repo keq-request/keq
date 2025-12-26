@@ -2,7 +2,7 @@ import { ListrTask } from 'listr2'
 import { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '~/compiler/compiler.js'
 import { CompilerContext } from '~/compiler/index.js'
-import { RequestGenerator } from '~/generators/index.js'
+// import { RequestGenerator } from '~/generators/index.js'
 
 
 function main(compiler: Compiler): ListrTask<CompilerContext> {
@@ -11,10 +11,7 @@ function main(compiler: Compiler): ListrTask<CompilerContext> {
       if (!context.rc) throw new Error('Please run setup task first.')
       if (!context.documents) throw new Error('Please run shaking task first.')
 
-      const requestGenerator = new RequestGenerator()
-      context.artifacts = [
-        ...requestGenerator.compile(),
-      ]
+      context.artifacts = []
 
       await compiler.hooks.compile.promise(task)
     },

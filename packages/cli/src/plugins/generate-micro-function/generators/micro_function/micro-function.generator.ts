@@ -1,17 +1,15 @@
 import * as R from 'ramda'
+import * as path from 'path'
+import * as changeCase from 'change-case'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
-import { Generator } from '~/types/index.js'
+import { Generator, RuntimeConfig } from '~/types/index.js'
 import { Artifact, ModuleDefinition, OperationDefinition } from '~/models/index.js'
 import { OperationDeclarationGenerator } from '~/plugins/generate-declaration/index.js'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { KeqQueryOptions } from 'keq'
 import { OperationDefinitionTransformer } from '~/transformers/index.js'
 import { EntrypointTransformer } from '~/transformers/index.js'
-import { FileNamingStyle } from '~/constants/file-naming-style.js'
-import * as changeCase from 'change-case'
-import { RuntimeConfig } from '~/types/runtime-config.js'
-import path from 'path'
+import { FileNamingStyle } from '~/constants/index.js'
 import { MetadataStorage } from '../../constants/metadata-storage.js'
+import { RequestGenerator } from '../request/index.js'
 
 
 export const MICRO_FUNCTION_GENERATOR = 'microFunctionGenerator'
@@ -21,9 +19,7 @@ export class MicroFunctionGenerator implements Generator {
     const metadata = MetadataStorage.get(compiler)!
     const context = compiler.context
     const rc = context.rc!
-    // const matcher = context.matcher!
     const documents = context.documents!
-    // .filter((document) => !matcher.isModuleIgnored(document.module))
 
     const operationDefinitions = documents.flatMap((document) => document.operations)
 
@@ -80,6 +76,14 @@ export class MicroFunctionGenerator implements Generator {
           const relativePath = path.relative(
             dirpath,
             OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle),
+          )
+
+          return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+        },
+        getRequestFilepath(): string {
+          const relativePath = path.relative(
+            dirpath,
+            RequestGenerator.getRequestArtifactFilepath(),
           )
 
           return relativePath.startsWith('.') ? relativePath : `./${relativePath}`

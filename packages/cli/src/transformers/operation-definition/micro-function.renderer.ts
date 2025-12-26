@@ -10,6 +10,7 @@ import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from '.
 
 export interface OperationDefinitionMicroFunctionRendererOptions extends OperationDefinitionSnippetOptions {
   getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string
+  getRequestFilepath(): string
 }
 
 export class OperationDefinitionMicroFunctionRenderer implements Renderer {
@@ -87,10 +88,12 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
 
   private renderDependencies(): string {
     const declarationFilepath = this.options.getOperationDefinitionDeclarationFilepath(this.operationDefinition)
+    const requestFilepath = this.options.getRequestFilepath()
+
     return [
       'import { Keq } from "keq"',
-      'import { request } from "../../request"',
-      `import type { Operation, ${this.typeName('ResponseBodies')}, ${this.typeName('RequestParameters')} } from "${declarationFilepath}"`,
+      `import { request } from "${requestFilepath}"`,
+      `import type { ${this.typeName('Operation')}, ${this.typeName('ResponseBodies')}, ${this.typeName('RequestParameters')} } from "${declarationFilepath}"`,
       `export type { ${this.typeName('RequestQuery')}, ${this.typeName('RequestHeaders')}, ${this.typeName('RequestBodies')} } from "${declarationFilepath}"`,
     ]
       .map((str) => (str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, this.options.esm ? ' from "$1.js"' : ' from "$1"')))

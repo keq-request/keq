@@ -3,17 +3,22 @@ import { Plugin } from '~/types/index.js'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { Artifact, OperationDefinition } from '~/models/index.js'
 import { GenerateMicroFunctionPluginMetadata, MetadataStorage } from './constants/index.js'
-import { MicroFunctionGenerator } from './generators/index.js'
+import { MicroFunctionGenerator, RequestGenerator } from './generators/index.js'
 
 
 export class GenerateMicroFunctionPlugin implements Plugin {
   private readonly microFunctionGenerator = new MicroFunctionGenerator()
+  private readonly requestGenerator = new RequestGenerator()
 
   apply(compiler: Compiler): void {
     GenerateMicroFunctionPlugin.register(compiler)
 
     compiler.hooks.compile.tapPromise(GenerateMicroFunctionPlugin.name, async (task: TaskWrapper) => {
-      const artifacts = await this.microFunctionGenerator.compile(compiler, task)
+      const artifacts = [
+        ...(await this.requestGenerator.compile(compiler, task)),
+        ...(await this.microFunctionGenerator.compile(compiler, task)),
+      ]
+
       compiler.context.artifacts!.push(...artifacts)
     })
   }
