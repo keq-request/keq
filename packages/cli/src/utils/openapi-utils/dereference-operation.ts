@@ -3,7 +3,7 @@ import jsonpointer from 'jsonpointer'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { JSONPath } from 'jsonpath-plus'
 import { removeUndefinedRef } from './remove-undefined-ref.js'
-import { OpenapiUtils } from './index.js'
+import { dereference } from './dereference.js'
 
 
 function dereferencePathObject(swagger: OpenAPIV3_1.Document): void {
@@ -14,7 +14,7 @@ function dereferencePathObject(swagger: OpenAPIV3_1.Document): void {
   })
 
   for (const match of matches) {
-    const value = OpenapiUtils.dereference(match.value.$ref, swagger)
+    const value = dereference(match.value.$ref, swagger)
     jsonpointer.set(swagger, match.pointer, value)
   }
 }
@@ -27,7 +27,7 @@ function dereferenceRequestBody(swagger: OpenAPIV3_1.Document): void {
   })
 
   for (const match of matches) {
-    const value = OpenapiUtils.dereference(match.value.$ref, swagger)
+    const value = dereference(match.value.$ref, swagger)
     jsonpointer.set(swagger, match.pointer, value)
   }
 }
@@ -47,7 +47,7 @@ export function dereferenceResponses(swagger: OpenAPIV3_1.Document): void {
   ]
 
   for (const match of matches) {
-    const value = OpenapiUtils.dereference(match.value.$ref, swagger)
+    const value = dereference(match.value.$ref, swagger)
     jsonpointer.set(swagger, match.pointer, value)
   }
 }
@@ -60,7 +60,7 @@ function dereferenceParameters(swagger: OpenAPIV3_1.Document): void {
   })
 
   for (const match of matches) {
-    const value = OpenapiUtils.dereference(match.value.$ref, swagger)
+    const value = dereference(match.value.$ref, swagger)
     jsonpointer.set(swagger, match.pointer, value)
   }
 }
