@@ -4,14 +4,13 @@ import { afterAll, beforeAll, beforeEach, jest } from '@jest/globals'
 import { createMockFetch } from '@keq-request/test'
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const mockedFetch = createMockFetch({
   response: {
     body: JSON.stringify({ code: '200' }),
     headers: {
       'content-type': 'application/json',
     },
-  }
+  },
 })
 
 const unMockedFetch = global.fetch

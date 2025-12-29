@@ -19,6 +19,7 @@ export class ShakingPlugin implements Plugin {
   }
 
   shaking(compiler: Compiler, document: ApiDocumentV3_1): ApiDocumentV3_1 {
+    const rc = compiler.context.rc!
     const matcher = compiler.context.matcher!
 
     const isAccepted = (pathname: string, method: string, operation: OpenAPIV3_1.Document): boolean => {
@@ -37,7 +38,7 @@ export class ShakingPlugin implements Plugin {
     const sharkedSwagger = openapiShakingSync(
       document.specification as any,
       isAccepted as any,
-      { tolerant: true },
+      { tolerant: rc.tolerant },
     ) as OpenAPIV3_1.Document
 
     return new ApiDocumentV3_1(

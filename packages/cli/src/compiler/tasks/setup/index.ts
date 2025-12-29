@@ -50,9 +50,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
         rc.debug = true
       }
 
-      if (options?.tolerant) {
-        rc.tolerant = true
-      }
+      rc.tolerant = Boolean(rc.tolerant)
 
       const packageJsonInfo = findNearestPackageJson()
       if (packageJsonInfo) {

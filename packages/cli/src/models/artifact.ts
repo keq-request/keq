@@ -1,5 +1,4 @@
 import * as path from 'path'
-import { toComment } from './utils/to-comment.js'
 import { Anchor } from './anchor.js'
 
 
@@ -14,7 +13,6 @@ const HeaderComment = [
 export class Artifact {
   id: string
   filepath: string
-  warns: string[] = []
   content: string
   extensionName
   anchor = new Anchor(this)
@@ -35,22 +33,7 @@ export class Artifact {
     return path.dirname(this.filepath)
   }
 
-  addWarn(message: string): void {
-    this.warns.push(message)
-  }
-
   renderer(): string {
-    let $warns = ''
-
-    if (this.warns.length) {
-      $warns = toComment([
-        '!!! Here is some Problems !!!',
-        '',
-        this.warns,
-      ].join('\n'))
-      $warns += '\n\n'
-    }
-
-    return `${HeaderComment}${$warns}${this.content}`
+    return `${HeaderComment}${this.content}`
   }
 }
