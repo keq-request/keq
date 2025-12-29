@@ -1,8 +1,6 @@
 import { KeqQueryOptions } from 'keq'
 import { Static, Type } from '@sinclair/typebox'
-import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { FileNamingStyle } from '../constants/file-naming-style.js'
-import { Qs } from './qs.js'
 import { Plugin } from './plugin.js'
 
 
@@ -35,11 +33,6 @@ export const RuntimeConfig = Type.Object({
 
   modules: Type.Record(Type.String(), Type.String()),
 
-  qs: Type.Optional(Type.Union([
-    Qs,
-    Type.Function([Type.Any()], Qs),
-  ])),
-
   debug: Type.Optional(Type.Boolean({ default: false })),
 
   /**
@@ -51,9 +44,6 @@ export const RuntimeConfig = Type.Object({
 })
 
 
-export type KeqQueryOptionsFactory = (parameter: OpenAPIV3_1.ParameterObject) => KeqQueryOptions | undefined
-
-export interface RuntimeConfig extends Omit<Static<typeof RuntimeConfig>, 'operationId' | 'qs' | 'plugins'> {
-  qs?: KeqQueryOptions | KeqQueryOptionsFactory
+export interface RuntimeConfig extends Omit<Static<typeof RuntimeConfig>, 'operationId' | 'plugins'> {
   plugins?: Plugin[]
 }

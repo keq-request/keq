@@ -1,16 +1,15 @@
 import * as R from 'ramda'
 import { KeqQueryOptions } from 'keq'
-import { OperationDefinition } from '~/models/index.js'
-import { KeqQueryOptionsFactory } from '~/types/index.js'
-import { typeNameFactory, TypeNameFn } from './utils/index.js'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
+import { OperationDefinition } from '~/models/index.js'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
+import { QsArrayFormat } from '~/constants/index.js'
+import { typeNameFactory, TypeNameFn } from './utils/index.js'
 
 
 export interface OperationDefinitionSnippetOptions {
   esm?: boolean
-  qs?: KeqQueryOptions | KeqQueryOptionsFactory
 }
 
 export class OperationDefinitionSnippet {
@@ -25,30 +24,49 @@ export class OperationDefinitionSnippet {
 
 
   private getQsParameters(parameter: OpenAPIV3_1.ParameterObject): KeqQueryOptions | undefined {
-    if (typeof this.options.qs === 'function') {
-      return this.options.qs(parameter)
-    } else if (typeof this.options.qs === 'object') {
-      return this.options.qs
-    }
+    let arrayFormat: QsArrayFormat | undefined
+    let allowDots: boolean | undefined
+    let indices: boolean | undefined
 
     const style = parameter.style || 'form'
     const explode = parameter.explode ?? true
 
-    if (style === 'deepObject') {
-      return { arrayFormat: 'brackets' }
-    } else if (explode) {
-      return { arrayFormat: 'repeat' }
+    if ('x-qs-array-format' in parameter) {
+      arrayFormat = parameter['x-qs-array-format'] as QsArrayFormat
     } else {
-      if (style === 'form') {
-        return { arrayFormat: 'comma' }
-      } else if (style === 'spaceDelimited') {
-        return { arrayFormat: 'space' }
-      } else if (style === 'pipeDelimited') {
-        return { arrayFormat: 'pipe' }
+      if (style === 'deepObject') {
+        arrayFormat = QsArrayFormat.brackets
+      } else if (explode) {
+        arrayFormat = QsArrayFormat.repeat
+      } else {
+        if (style === 'form') {
+          arrayFormat = QsArrayFormat.comma
+        } else if (style === 'spaceDelimited') {
+          arrayFormat = QsArrayFormat.space
+        } else if (style === 'pipeDelimited') {
+          arrayFormat = QsArrayFormat.pipe
+        }
       }
     }
 
-    return {}
+    if ('x-qs-allow-dots' in parameter) {
+      allowDots = Boolean(parameter['x-qs-allow-dots'])
+    }
+
+    if ('x-qs-indices' in parameter) {
+      indices = Boolean(parameter['x-qs-indices'])
+    }
+
+
+    if (arrayFormat || allowDots !== undefined || indices !== undefined) {
+      return {
+        ...(arrayFormat ? { arrayFormat } : {}),
+        ...(allowDots !== undefined ? { allowDots } : {}),
+        ...(indices !== undefined ? { indices } : {}),
+      }
+    }
+
+    return undefined
   }
 
 

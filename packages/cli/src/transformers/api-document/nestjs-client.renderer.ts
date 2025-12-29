@@ -3,14 +3,11 @@ import * as changeCase from 'change-case'
 import { ApiDocumentV3_1, OperationDefinition } from '~/models/index.js'
 import { Renderer } from '../types/renderer.js'
 import { OperationDefinitionTransformer, typeNameFactory } from '../operation-definition/index.js'
-import { KeqQueryOptionsFactory } from '~/types/index.js'
-import { KeqQueryOptions } from 'keq'
 import { indent } from '~/utils/indent.js'
 
 
 export interface ApiDocumentNestjsClientRendererOptions {
   esm?: boolean
-  qs?: KeqQueryOptions | KeqQueryOptionsFactory
 
   getOperationDefinitionDeclarationFilepath(this: void, operationDefinition: OperationDefinition): string
 }
@@ -49,7 +46,6 @@ export class NestjsClientRenderer implements Renderer {
     const $operations = this.document.operations
       .map((operation) => OperationDefinitionTransformer.toNestjsMethod(operation, {
         esm: this.options.esm,
-        qs: this.options.qs,
       }))
       .join('\n\n')
 

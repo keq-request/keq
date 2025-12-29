@@ -3,11 +3,11 @@ import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { SupportedMethods } from '~/constants/supported-methods.js'
 
 
-type OperationUpdater = (method: string, pathname: string, operation: OpenAPIV3_1.OperationObject) => string | undefined
+export type OpenapiOperationMapper = (method: string, pathname: string, operation: OpenAPIV3_1.OperationObject) => OpenAPIV3_1.OperationObject
 
 
-export function updateOperationId(swagger: OpenAPIV3_1.Document, fn: OperationUpdater): OpenAPIV3_1.Document {
-  const shadow = R.clone(swagger)
+export function mapOperation(specification: OpenAPIV3_1.Document, mapper: OpenapiOperationMapper): OpenAPIV3_1.Document {
+  const shadow = R.clone(specification)
 
   for (const [pathname, pathItem] of Object.entries(shadow.paths || {})) {
     for (const m in pathItem) {
@@ -16,11 +16,7 @@ export function updateOperationId(swagger: OpenAPIV3_1.Document, fn: OperationUp
       if (typeof pathItem[m] !== 'object' || Array.isArray(pathItem[m]) || pathItem[m] === null) continue
 
       const operation: OpenAPIV3_1.OperationObject = pathItem[m]
-      const operationId = fn(method, pathname, operation)
-
-      if (typeof operationId === 'string' && operationId.length > 0) {
-        operation.operationId = operationId
-      }
+      pathItem[m] = mapper(method, pathname, operation)
     }
   }
 

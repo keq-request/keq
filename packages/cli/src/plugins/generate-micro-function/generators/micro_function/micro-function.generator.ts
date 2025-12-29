@@ -70,7 +70,6 @@ export class MicroFunctionGenerator implements Generator {
       id: MicroFunctionGenerator.getOperationDefinitionArtifactId(operationDefinition),
       filepath,
       content: OperationDefinitionTransformer.toMicroFunction(operationDefinition, {
-        qs: rc.qs,
         esm: rc.esm,
         getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string {
           const relativePath = path.relative(

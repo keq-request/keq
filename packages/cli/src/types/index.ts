@@ -1,6 +1,5 @@
 export * from './build-cli-options.js'
 export * from './plugin.js'
 export * from './generator.js'
-export * from './qs.js'
 export * from './runtime-config.js'
 export * from './to-code-options.js'

@@ -44,7 +44,6 @@ export class NestjsModuleGenerator implements Generator {
       filepath,
       content: ApiDocumentTransformer.toNestjsClient(document, {
         esm: rc.esm,
-        qs: rc.qs,
         getOperationDefinitionDeclarationFilepath(operationDefinition) {
           const relativePath = path.relative(
             dirpath,
