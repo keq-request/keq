@@ -1,5 +1,20 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.24
+
+### Major Changes
+
+- 2ead9d0: **BREAKING CHANGE:** operationIdFactory is removed, please use OverwriteOperationIdPlugin instead.
+
+### Minor Changes
+
+- 0a2eb2f: **Feat:** server-sent event support.
+
+### Patch Changes
+
+- Updated dependencies [0a2eb2f]
+  - keq@5.0.0-alpha.24
+
 ## 5.0.0-alpha.23
 
 ### Minor Changes

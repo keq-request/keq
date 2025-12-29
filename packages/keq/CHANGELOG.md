@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.24
+
+### Minor Changes
+
+- 0a2eb2f: **Feat:** server-sent event support.
+
 ## 5.0.0-alpha.23
 
 ### Patch Changes
