@@ -47,6 +47,13 @@ export class InitializePlugin implements Plugin {
       } else if (rc.mode === 'nestjs-module') {
         new GenerateNestjsModulePlugin().apply(compiler)
       }
+
+      // Apply Custom Plugins
+      if (rc.plugins && rc.plugins.length) {
+        for (const plugin of rc.plugins) {
+          plugin.apply(compiler)
+        }
+      }
     })
 
     if (this.options.includes && this.options.includes.length) {

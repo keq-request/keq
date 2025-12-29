@@ -43,7 +43,7 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
                 throw new Exception(moduleDefinition, `Cannot download document from ${moduleDefinition.address}`)
               }
 
-              let spec = JSON.parse(content)
+              const spec = JSON.parse(content)
 
               const { valid, errors } = await validate(spec)
               if (!valid) {
@@ -52,14 +52,6 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
               }
 
               OpenapiUtils.dereferenceOperation(spec)
-              const rc = context.rc
-              if (rc?.operationIdFactory) {
-                const operationIdFactory = rc.operationIdFactory
-                spec = OpenapiUtils.updateOperationId(
-                  spec,
-                  (method, pathname, operation) => operationIdFactory({ method, pathname, operation, module: moduleDefinition }),
-                )
-              }
 
               const document = new ApiDocumentV3_1(
                 spec,

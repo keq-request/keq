@@ -62,13 +62,6 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
 
       context.rc = rc
 
-      // Apply Plugins
-      if (rc.plugins && rc.plugins.length) {
-        for (const plugin of rc.plugins) {
-          plugin.apply(compiler)
-        }
-      }
-
 
       // Setup IgnoreMatcher
 
