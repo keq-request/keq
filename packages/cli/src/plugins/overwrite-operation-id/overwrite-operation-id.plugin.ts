@@ -7,19 +7,16 @@ import { Plugin } from '~/types/plugin.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
-export interface OperationIdFactoryOptions {
-  module: ModuleDefinition
-
-  method: string
-  pathname: string
-  operation: OpenAPIV3_1.OperationObject
-}
-
 /**
  * A factory function that generates an operationId for a given operation.
  * If undefined is returned, the operationId will not be modified.
  */
-export type OperationIdFactory = (context: OperationIdFactoryOptions) => string | undefined
+export type OperationIdFactory = (context: {
+  module: ModuleDefinition
+  method: string
+  pathname: string
+  operation: OpenAPIV3_1.OperationObject
+}) => string | undefined
 
 
 export class OverwriteOperationIdPlugin implements Plugin {
