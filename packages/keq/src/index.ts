@@ -26,11 +26,6 @@ export {
 export {
   type KeqRoute,
   composeRoute,
-  keqHostRoute,
-  keqLocationRoute,
-  keqMethodRoute,
-  keqModuleRoute,
-  keqPathnameRoute,
 } from './router'
 
 export {

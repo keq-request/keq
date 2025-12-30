@@ -15,7 +15,7 @@ export class KeqRouter {
     private readonly middlewares: KeqMiddleware[] = [],
   ) { }
 
-  private buildMiddleware(route: KeqRoute, middlewares: KeqMiddleware[]): KeqMiddleware {
+  private static buildMiddleware(route: KeqRoute, middlewares: KeqMiddleware[]): KeqMiddleware {
     if (middlewares.length === 0) {
       throw new TypeException('At least one middleware is required to build a route middleware')
     }
@@ -30,45 +30,113 @@ export class KeqRouter {
     return middleware
   }
 
-  route(route: KeqRoute, ...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(route, middlewares)
-    middleware.__keqMiddlewareName__ = `route(${route.__keqRouteName__ || route.name}, ${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  route(route: KeqRoute, middleware: KeqMiddleware[]): this
+  route(route: KeqRoute, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  route(route: KeqRoute, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.route(route, middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
   }
 
-  host(host: string, ...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(keqHostRoute(host), middlewares)
-    middleware.__keqMiddlewareName__ = `host(${JSON.stringify(host)}, ${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  host(host: string, middleware: KeqMiddleware[]): this
+  host(host: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  host(host: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.host(host, middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
   }
 
-  method(method: string, ...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(keqMethodRoute(method), middlewares)
-    middleware.__keqMiddlewareName__ = `method(${JSON.stringify(method)}, ${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  method(method: string, middleware: KeqMiddleware[]): this
+  method(method: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  method(method: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.method(method, middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
   }
 
-  pathname(pathname: string, ...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(keqPathnameRoute(pathname), middlewares)
-    middleware.__keqMiddlewareName__ = `pathname(${JSON.stringify(pathname)}, ${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  pathname(pathname: string, middleware: KeqMiddleware[]): this
+  pathname(pathname: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  pathname(pathname: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.pathname(pathname, middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
   }
 
-  location(...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(keqLocationRoute(), middlewares)
-    middleware.__keqMiddlewareName__ = `location(${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  location(middleware: KeqMiddleware[]): this
+  location(middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  location(middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.location(middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
   }
 
-  module(moduleName: string, ...middlewares: KeqMiddleware[]): this {
-    const middleware = this.buildMiddleware(keqModuleRoute(moduleName), middlewares)
-    middleware.__keqMiddlewareName__ = `module(${JSON.stringify(moduleName)}, ${middlewares.map(getMiddlewareName).join(', ')})`
-    this.middlewares.push(middleware)
+  module(moduleName: string, middleware: KeqMiddleware[]): this
+  module(moduleName: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
+  module(moduleName: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
+    // @ts-ignore
+    const mid = KeqRouter.module(moduleName, middleware, ...additionalMiddlewares)
+    this.middlewares.push(mid)
     return this
+  }
+
+  static route(route: KeqRoute, middleware: KeqMiddleware[]): KeqMiddleware
+  static route(route: KeqRoute, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static route(route: KeqRoute, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(route, list)
+    mid.__keqMiddlewareName__ = `route(${route.__keqRouteName__ || route.name}, ${list.map(getMiddlewareName).join(', ')})`
+    return mid
+  }
+
+
+  static host(host: string, middleware: KeqMiddleware[]): KeqMiddleware
+  static host(host: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static host(host: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(keqHostRoute(host), list)
+    mid.__keqMiddlewareName__ = `host(${JSON.stringify(host)}, ${list.map(getMiddlewareName).join(', ')})`
+    return mid
+  }
+
+  static method(method: string, middleware: KeqMiddleware[]): KeqMiddleware
+  static method(method: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static method(method: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(keqMethodRoute(method), list)
+    mid.__keqMiddlewareName__ = `method(${JSON.stringify(method)}, ${list.map(getMiddlewareName).join(', ')})`
+    return mid
+  }
+
+
+  static pathname(pathname: string, middleware: KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static pathname(pathname: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static pathname(pathname: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(keqPathnameRoute(pathname), list)
+    mid.__keqMiddlewareName__ = `pathname(${JSON.stringify(pathname)}, ${list.map(getMiddlewareName).join(', ')})`
+    return mid
+  }
+
+  static location(middleware: KeqMiddleware[]): KeqMiddleware
+  static location(middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static location(middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(keqLocationRoute(), list)
+    mid.__keqMiddlewareName__ = `location(${list.map(getMiddlewareName).join(', ')})`
+    return mid
+  }
+
+  static module(moduleName: string, middleware: KeqMiddleware[]): KeqMiddleware
+  static module(moduleName: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
+  static module(moduleName: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    const mid = KeqRouter.buildMiddleware(keqModuleRoute(moduleName), list)
+    mid.__keqMiddlewareName__ = `module(${JSON.stringify(moduleName)}, ${list.map(getMiddlewareName).join(', ')})`
+    return mid
   }
 }
