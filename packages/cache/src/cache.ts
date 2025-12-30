@@ -5,7 +5,7 @@ import { RequestCacheHandler } from './request-cache-handler/index.js'
 import { KeqCacheKeyFactory, KeqCacheRule, RequestCacheOptions } from './types/index.js'
 
 
-export interface KeqCacheOptions {
+export interface KeqCacheOptions extends Pick<RequestCacheOptions, 'serverTiming'> {
   storage: KeqCacheStorage
 
   /**
@@ -80,6 +80,10 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
       console.warn('[@keq/cache] Warning: Cannot resolve Cache Key. Cache is skipped.')
       await next()
       return
+    }
+
+    if (requestCacheOptions.serverTiming === undefined && options.serverTiming !== undefined) {
+      requestCacheOptions.serverTiming = options.serverTiming
     }
 
     const handler = new RequestCacheHandler(storage, requestCacheOptions)
