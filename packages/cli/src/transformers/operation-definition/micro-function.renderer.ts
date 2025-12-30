@@ -59,7 +59,7 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
       `  const req = request.${$method}<${this.typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
       '    .option(\'module\', { name: moduleName, pathname, method })',
       '',
-      $mediaType || undefined,
+      $mediaType ? indent(2, $mediaType) : undefined,
       '  /* @anchor:query:start */',
       $queryParameters ? indent(2, $queryParameters) : undefined,
       '  /* @anchor:query:end */',
