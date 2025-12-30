@@ -6,6 +6,16 @@ import { KeqCacheStrategy, KeqCacheKey } from '~/types/index.js'
  */
 export interface RequestCacheOptions {
   /**
+   * Enable debug logs
+   */
+  debug?: boolean
+
+  /**
+   * Enable Server-Timing header
+   */
+  serverTiming?: boolean
+
+  /**
    * Cache Key
    */
   key?: KeqCacheKey

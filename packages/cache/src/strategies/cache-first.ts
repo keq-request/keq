@@ -1,9 +1,20 @@
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
+import { Logger } from '~/utils'
 
 
 export const cacheFirst: KeqCacheStrategy = async function cacheFirst(handler, context, next): Promise<void> {
   // return async function (context, next): Promise<void> {
   const [cacheKey, cacheValue] = await handler.getCache(context)
+
+  if (handler.options.debug) {
+    Logger.debug([
+      '',
+      `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+      'Strategy: Cache First',
+      `Cache Key: ${cacheKey}`,
+      `Cache Status: ${cacheValue ? 'HIT' : 'MISS'}`,
+    ].join('\n'))
+  }
 
   if (cacheValue) {
     // hit cache
@@ -17,6 +28,17 @@ export const cacheFirst: KeqCacheStrategy = async function cacheFirst(handler, c
   await next()
 
   const [, entry] = await handler.setCache(context)
+
+  if (handler.options.debug) {
+    Logger.debug([
+      '',
+      `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+      'Strategy: Cache First',
+      `Cache Key: ${cacheKey}`,
+      `ACTIONS: ${entry ? 'UPDATED' : 'EXCLUDED'}`,
+    ].join('\n'))
+  }
+
   if (entry) {
     context.emitter.emit('cache:update', {
       key: entry.key,

@@ -1,12 +1,24 @@
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
+import { Logger } from '~/utils'
 
 
 export const networkFirst: KeqCacheStrategy = async function networkFirst(handler, context, next) {
   try {
     await next()
 
-    const [,cache] = await handler.getCache(context)
+    const [cacheKey, cache] = await handler.getCache(context)
     const [,entry] = await handler.setCache(context)
+
+    if (handler.options.debug) {
+      Logger.debug([
+        '',
+        `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+        'Strategy: Network First',
+        `Cache Key: ${cacheKey}`,
+        `ACTIONS: ${entry ? 'UPDATED' : 'EXCLUDED'}`,
+      ].join('\n'))
+    }
+
     if (entry) {
       context.emitter.emit('cache:update', {
         key: entry.key,
@@ -16,13 +28,24 @@ export const networkFirst: KeqCacheStrategy = async function networkFirst(handle
       })
     }
   } catch (err) {
-    const [key, cache] = await handler.getCache(context)
+    const [cacheKey, cache] = await handler.getCache(context)
+
+    if (handler.options.debug) {
+      Logger.debug([
+        '',
+        `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+        'Strategy: Network First',
+        `Cache Key: ${cacheKey}`,
+        `Cache Status: ${cache ? 'HIT' : 'MISS'}`,
+      ].join('\n'))
+    }
+
     if (!cache) {
-      context.emitter.emit('cache:miss', { key, context })
+      context.emitter.emit('cache:miss', { key: cacheKey, context })
       throw err
     }
 
-    context.emitter.emit('cache:hit', { key, response: cache.response, context })
+    context.emitter.emit('cache:hit', { key: cacheKey, response: cache.response, context })
     context.res = cache.response
   }
 }

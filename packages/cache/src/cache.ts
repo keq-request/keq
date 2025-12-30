@@ -1,8 +1,8 @@
 import * as R from 'ramda'
 import type { Keq, KeqMiddleware, KeqContext } from 'keq'
 import { KeqCacheStorage } from './storage/keq-cache-storage.js'
-import { RequestCacheOptions, RequestCacheHandler } from './request-cache-handler/index.js'
-import { KeqCacheKeyFactory, KeqCacheRule } from './types/index.js'
+import { RequestCacheHandler } from './request-cache-handler/index.js'
+import { KeqCacheKeyFactory, KeqCacheRule, RequestCacheOptions } from './types/index.js'
 
 
 export interface KeqCacheOptions {
@@ -83,6 +83,7 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
     }
 
     const handler = new RequestCacheHandler(storage, requestCacheOptions)
+
     const strategy = requestCacheOptions.strategy
     await strategy(handler, ctx, next)
   }

@@ -1,14 +1,18 @@
 import * as R from 'ramda'
-import { RequestCacheOptions } from './types/request-cache-options'
 import { KeqContext } from 'keq'
 import { CacheException } from '~/exceptions'
 import { KeqCacheStorage } from '~/storage'
 import { CacheEntry } from '~/cache-entry'
+import { RequestCacheOptions } from '../types/index.js'
 
+
+export type RequestCacheHandlerOptions = Omit<RequestCacheOptions, 'strategy'>
 
 export class RequestCacheHandler {
-  constructor(public storage: KeqCacheStorage, private options: Omit<RequestCacheOptions, 'strategy'>) {
-  }
+  constructor(
+    public readonly storage: KeqCacheStorage,
+    public readonly options: Readonly<RequestCacheHandlerOptions>,
+  ) {}
 
   /**
    * Get cache key for request
@@ -27,6 +31,18 @@ export class RequestCacheHandler {
    */
   async getCache(context: KeqContext): Promise<[string, CacheEntry | undefined]> {
     const key = this.getRequestCacheKey(context)
+
+    if (this.options.serverTiming) {
+      const startAt = new Date()
+      const entry = await this.storage.get(key)
+      if (entry) {
+        const dur = new Date().getTime() - startAt.getTime()
+        entry.response.headers.append('Server-Timing', `keq-cache; dur=${dur}; desc="HIT"`)
+      }
+
+      return [key, entry]
+    }
+
     return [key, await this.storage.get(key)]
   }
 

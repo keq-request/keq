@@ -1,11 +1,27 @@
 import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
+import { Logger } from '~/utils'
 
 export const staleWhileRevalidate: KeqCacheStrategy = async function (handler, context, next) {
-  const [key, cache] = await handler.getCache(context)
-  // await storage.get(key)
+  const [cacheKey, cache] = await handler.getCache(context)
+
+  if (handler.options.debug) {
+    Logger.debug([
+      '',
+      `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+      'Strategy: Stale While Revalidate',
+      `Cache Key: ${cacheKey}`,
+      `Cache Status: ${cache ? 'HIT' : 'MISS'}`,
+    ].join('\n'))
+  }
 
   if (cache) {
-    context.emitter.emit('cache:hit', { key, response: cache.response, context })
+    context.emitter.emit('cache:hit', { key: cacheKey, response: cache.response, context })
+  } else {
+    context.emitter.emit('cache:miss', { key: cacheKey, context })
+  }
+
+
+  if (cache) {
     const orchestrator = context.orchestration.fork()
 
     context.res = cache.response
@@ -15,12 +31,21 @@ export const staleWhileRevalidate: KeqCacheStrategy = async function (handler, c
       try {
         await orchestrator.execute()
         const context = orchestrator.context
-        const [,entry] = await handler.setCache(context)
-        // await cacheContext(opts, context)
+        const [cacheKey, entry] = await handler.setCache(context)
+
+        if (handler.options.debug) {
+          Logger.debug([
+            '',
+            `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+            'Strategy: Stale While Revalidate',
+            `Cache Key: ${cacheKey}`,
+            `ACTIONS: ${entry ? 'UPDATED' : 'EXCLUDED'}`,
+          ].join('\n'))
+        }
 
         if (entry) {
           context.emitter.emit('cache:update', {
-            key,
+            key: cacheKey,
             oldResponse: cache.response,
             newResponse: entry.response,
             context,
@@ -31,13 +56,22 @@ export const staleWhileRevalidate: KeqCacheStrategy = async function (handler, c
       }
     }, 1)
   } else {
-    context.emitter.emit('cache:miss', { key, context })
     await next()
-    const [,entry] = await handler.setCache(context)
+    const [cacheKey, entry] = await handler.setCache(context)
+
+    if (handler.options.debug) {
+      Logger.debug([
+        '',
+        `Request: ${context.request.method.toUpperCase()} ${context.request.__url__.href}`,
+        'Strategy: Stale While Revalidate',
+        `Cache Key: ${cacheKey}`,
+        `ACTIONS: ${entry ? 'UPDATED' : 'EXCLUDED'}`,
+      ].join('\n'))
+    }
 
     if (entry) {
       context.emitter.emit('cache:update', {
-        key,
+        key: cacheKey,
         oldResponse: undefined,
         newResponse: entry.response,
         context,
