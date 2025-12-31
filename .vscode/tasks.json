@@ -1,0 +1,123 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/keq"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/keq:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/cli"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/cli:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/exception"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/exception:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/url"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/url:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/headers"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/headers:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
+        "cwd": "packages/nestjs"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/nestjs:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "watch",
+      "dependsOn": [
+        "packages/keq:dev",
+        "packages/cli:dev",
+        "packages/exception:dev",
+        "packages/url:dev",
+        "packages/headers:dev",
+        "packages/nestjs:dev"
+      ],
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": [],
+      "label": "pnpm: build",
+      "detail": "turbo run build",
+      "presentation": {
+        "close": true
+      }
+    }
+  ]
+}

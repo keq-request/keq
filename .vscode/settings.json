@@ -3,5 +3,7 @@
     "editor.formatOnSave": false
   },
   "javascript.preferences.importModuleSpecifierEnding": "js",
-  "cSpell.words": ["keqignore"]
+  "cSpell.words": ["keqignore"],
+  "typescript.tsc.autoDetect": "off",
+  "npm.autoDetect": "off"
 }
