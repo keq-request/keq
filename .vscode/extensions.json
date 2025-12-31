@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "luxass.tsup-problem-matchers",
+    "Orta.vscode-jest"
+  ]
+}
