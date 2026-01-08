@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { KeqGlobal } from '~/context'
+import { KeqEvents, KeqGlobal } from '~/context'
 import { Keq } from './keq'
 import { KeqApiSchema, KeqDefaultOperation, KeqQueryOptions } from './types'
 import { getLocationId } from './utils'
@@ -184,6 +184,17 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
 
   useRouter(): KeqRouter {
     return new KeqRouter(this.preMiddlewares)
+  }
+
+  on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {
+    const middleware: KeqMiddleware = async (context, next) => {
+      context.emitter.on(event, listener)
+      await next()
+    }
+
+    this.use(middleware)
+
+    return this
   }
 }
 

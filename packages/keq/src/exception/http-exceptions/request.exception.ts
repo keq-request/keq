@@ -2,10 +2,10 @@ import { Exception } from '../exception.js'
 
 
 export class RequestException extends Exception {
-  statusCode: number
+  statusCode: number | string
   retry: boolean
 
-  constructor(statusCode: number, message?: string, retry = true) {
+  constructor(statusCode: number | string, message?: string, retry = true) {
     super(message)
 
     this.statusCode = statusCode
