@@ -1,9 +1,9 @@
-import { RequestException } from './request.exception'
+import { RequestException, RequestExceptionOptions } from './request.exception'
 
 
 export class BadRequestException extends RequestException {
-  constructor(message: string = 'Bad Request', retry = false) {
-    super(400, message, retry)
+  constructor(message: string = 'Bad Request', options?: RequestExceptionOptions) {
+    super(400, message, { fatal: true, ...options })
 
     Object.defineProperty(this, 'name', { value: 'BadRequestException' })
   }

@@ -42,38 +42,38 @@ export function validateStatusCode(): KeqMiddleware {
     if (status >= 400 && status < 500) {
       switch (status) {
       case 400:
-        throw new BadRequestException(statusText)
+        throw new BadRequestException(statusText, { response })
       case 401:
-        throw new UnauthorizedException(statusText)
+        throw new UnauthorizedException(statusText, { response })
       case 403:
-        throw new ForbiddenException(statusText)
+        throw new ForbiddenException(statusText, { response })
       case 404:
-        throw new NotFoundedException(statusText)
+        throw new NotFoundedException(statusText, { response })
       case 405:
-        throw new MethodNotAllowedException(statusText)
+        throw new MethodNotAllowedException(statusText, { response })
       case 406:
-        throw new NotAcceptableException(statusText)
+        throw new NotAcceptableException(statusText, { response })
       case 407:
-        throw new ProxyAuthenticationRequiredException(statusText)
+        throw new ProxyAuthenticationRequiredException(statusText, { response })
       case 408:
-        throw new RequestTimeoutException(statusText)
+        throw new RequestTimeoutException(statusText, { response })
       case 409:
-        throw new ConflictException(statusText)
+        throw new ConflictException(statusText, { response })
       case 412:
-        throw new PreconditionFailedException(statusText)
+        throw new PreconditionFailedException(statusText, { response })
       case 413:
-        throw new ContentTooLargeException(statusText)
+        throw new ContentTooLargeException(statusText, { response })
       case 414:
-        throw new UriTooLongException(statusText)
+        throw new UriTooLongException(statusText, { response })
       case 415:
-        throw new UnsupportedMediaTypeException(statusText)
+        throw new UnsupportedMediaTypeException(statusText, { response })
       case 418:
-        throw new ImATeapotException(statusText)
+        throw new ImATeapotException(statusText, { response })
       case 429:
-        throw new TooManyRequestsException(statusText)
+        throw new TooManyRequestsException(statusText, { response })
       default:
         // Other 4xx errors, don't retry by default
-        throw new RequestException(status, statusText, false)
+        throw new RequestException(status, statusText, { fatal: true, response })
       }
     }
 
@@ -81,18 +81,18 @@ export function validateStatusCode(): KeqMiddleware {
     if (status >= 500) {
       switch (status) {
       case 500:
-        throw new InternalServerErrorException(statusText)
+        throw new InternalServerErrorException(statusText, { response })
       case 501:
-        throw new NotImplementedException(statusText)
+        throw new NotImplementedException(statusText, { response })
       case 502:
-        throw new BadGatewayException(statusText)
+        throw new BadGatewayException(statusText, { response })
       case 503:
-        throw new ServiceUnavailableException(statusText)
+        throw new ServiceUnavailableException(statusText, { response })
       case 504:
-        throw new GatewayTimeoutException(statusText)
+        throw new GatewayTimeoutException(statusText, { response })
       default:
         // Other 5xx errors, retry by default
-        throw new RequestException(status, statusText, true)
+        throw new RequestException(status, statusText, { fatal: false, response })
       }
     }
   }

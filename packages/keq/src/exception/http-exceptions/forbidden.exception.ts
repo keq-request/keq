@@ -1,9 +1,9 @@
-import { RequestException } from './request.exception'
+import { RequestException, RequestExceptionOptions } from './request.exception'
 
 
 export class ForbiddenException extends RequestException {
-  constructor(message: string = 'Forbidden', retry = false) {
-    super(403, message, retry)
+  constructor(message: string = 'Forbidden', options?: RequestExceptionOptions) {
+    super(403, message, { fatal: true, ...options })
 
     Object.defineProperty(this, 'name', { value: 'ForbiddenException' })
   }
