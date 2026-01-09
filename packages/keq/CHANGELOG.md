@@ -1,5 +1,26 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.25
+
+### Major Changes
+
+- 214ae66: **BREAKING CHANGE:** RequestException third parameter changed from retry: boolean to options: { fatal: boolean, response: Response }
+
+  ```javascript
+  // Before
+  new RequestException(400, "Error message", true);
+
+  // After
+  new RequestException(400, "Error message", {
+    fatal: false,
+    response: someResponseObject,
+  });
+  ```
+
+### Minor Changes
+
+- 9290139: **Feat:** add event listener support to KeqRequest.
+
 ## 5.0.0-alpha.24
 
 ### Minor Changes

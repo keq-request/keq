@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.0-alpha.25
+
+### Patch Changes
+
+- Updated dependencies [214ae66]
+- Updated dependencies [9290139]
+  - keq@5.0.0-alpha.25
+
 ## 5.0.0-alpha.24
 
 ### Patch Changes
