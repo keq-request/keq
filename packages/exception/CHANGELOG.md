@@ -1,5 +1,28 @@
 # Changelog
 
+## 5.0.0-alpha.25
+
+### Major Changes
+
+- 214ae66: **BREAKING CHANGE:** RequestException third parameter changed from retry: boolean to options: { fatal: boolean, response: Response }
+
+  ```javascript
+  // Before
+  new RequestException(400, "Error message", true);
+
+  // After
+  new RequestException(400, "Error message", {
+    fatal: false,
+    response: someResponseObject,
+  });
+  ```
+
+### Patch Changes
+
+- Updated dependencies [214ae66]
+- Updated dependencies [9290139]
+  - keq@5.0.0-alpha.25
+
 ## 5.0.0-alpha.24
 
 ### Patch Changes
