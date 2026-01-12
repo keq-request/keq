@@ -9,9 +9,9 @@ describe('throwException()', () => {
   request.use(throwException((ctx) => {
     if (ctx.response) {
       if (ctx.response.status === 400) {
-        throw new RequestException(ctx.response.status, ctx.response.statusText, false)
+        throw new RequestException(ctx.response.status, ctx.response.statusText, { fatal: true, response: ctx.response })
       } else if (ctx.response.status === 500) {
-        throw new RequestException(ctx.response.status, ctx.response.statusText)
+        throw new RequestException(ctx.response.status, ctx.response.statusText, { fatal: false, response: ctx.response })
       }
     }
   }))

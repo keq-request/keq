@@ -284,8 +284,16 @@ export class Keq<
     return this
   }
 
-  flowControl(mode: KeqFlowControlMode, signal?: KeqFlowControlSignal): this {
-    const sig = signal ? signal : this.__locationId__
+  flowControl(mode: 'concurrent', limit: number, signal?: KeqFlowControlSignal): this
+  flowControl(mode: 'serial', signal?: KeqFlowControlSignal): this
+  flowControl(mode: 'abort', signal?: KeqFlowControlSignal): this
+  flowControl(mode: KeqFlowControlMode, arg2?: KeqFlowControlSignal | number, arg3?: KeqFlowControlSignal): this {
+    const concurrencyLimit = typeof arg2 === 'number' ? arg2 : undefined
+    const sig = (typeof arg2 === 'function' || typeof arg2 === 'string')
+      ? arg2
+      : arg3 && (typeof arg3 === 'function' || typeof arg3 === 'string')
+        ? arg3
+        : this.__locationId__
 
     if (!sig) {
       throw new Exception('please set signal to .flowControl()')
@@ -293,6 +301,7 @@ export class Keq<
 
     const flowControl: KeqFlowControlOptions = {
       mode,
+      concurrencyLimit,
       signal: sig,
     }
 
