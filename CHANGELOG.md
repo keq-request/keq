@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.13](https://github.com/keq-request/keq/compare/v2.8.12...v2.8.13) (2026-01-14)
+
+
+### Bug Fixes
+
+* return empty object when stringify ctx.response ([e84bdb5](https://github.com/keq-request/keq/commit/e84bdb5ced3bb1672071a277b6736595a68c6ec6))
+
 ### [2.8.12](https://github.com/keq-request/keq/compare/v2.8.11...v2.8.12) (2025-12-16)
 
 ## [2.8.11](https://github.com/keq-request/keq/compare/v2.8.10...v2.8.11) (2025-06-05)
