@@ -42,12 +42,14 @@ export function fork<T>(original: T): T {
 
 
   const createProxy = (path: PropertyKey[] = []): any => {
-    return new Proxy({} as any, {
-      get(_, prop) {
-        const target = objectPath(current, path)
-        if (prop === UnWrapPropertyKey) return target
+    const getTarget = (): any => objectPath(current, path)
 
-        const value = target[prop]
+    return new Proxy(getTarget(), {
+      get(target, prop) {
+        const realTarget = getTarget()
+        if (prop === UnWrapPropertyKey) return realTarget
+
+        const value = realTarget[prop]
 
         // return value directly if already copied
         if (current !== original) {
@@ -55,7 +57,7 @@ export function fork<T>(original: T): T {
         }
 
         // handle array mutator methods
-        if (Array.isArray(target) && ARRAY_MUTATORS.has(prop as string)) {
+        if (Array.isArray(realTarget) && ARRAY_MUTATORS.has(prop as string)) {
           return new Proxy(value, {
             apply(fn, thisArg, args) {
               ensureCopy()
@@ -73,16 +75,26 @@ export function fork<T>(original: T): T {
         return value
       },
 
-      set(_, prop, value) {
+      set(target, prop, value) {
         ensureCopy()
         objectPath(current, path)[prop] = value
         return true
       },
 
-      deleteProperty(_, prop) {
+      deleteProperty(target, prop) {
         ensureCopy()
         delete objectPath(current, path)[prop]
         return true
+      },
+
+      ownKeys(target) {
+        const realTarget = getTarget()
+        return Reflect.ownKeys(realTarget)
+      },
+
+      getOwnPropertyDescriptor(target, prop) {
+        const realTarget = getTarget()
+        return Reflect.getOwnPropertyDescriptor(realTarget, prop)
       },
     })
   }

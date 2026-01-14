@@ -277,6 +277,57 @@ describe('fork', () => {
   })
 
   describe('complex scenarios', () => {
+    test('should handle JSON.stringify correctly', () => {
+      const original = { a: 1, b: { c: 2 }, d: [1, 2, 3] }
+      const forked = fork(original)
+
+      // Before modification, JSON.stringify should work correctly
+      expect(JSON.stringify(forked)).toBe(JSON.stringify(original))
+      expect(JSON.stringify(forked)).toBe('{"a":1,"b":{"c":2},"d":[1,2,3]}')
+
+      // After modification, JSON.stringify should reflect the changes
+      forked.a = 10
+      expect(JSON.stringify(forked)).toBe('{"a":10,"b":{"c":2},"d":[1,2,3]}')
+
+      // Verify original is not modified
+      expect(JSON.stringify(original)).toBe('{"a":1,"b":{"c":2},"d":[1,2,3]}')
+    })
+
+    test('should handle Object.keys correctly', () => {
+      const original = { a: 1, b: 2, c: 3 }
+      const forked: any = fork(original)
+
+      expect(Object.keys(forked)).toEqual(['a', 'b', 'c'])
+
+      forked.d = 4
+      expect(Object.keys(forked)).toEqual(['a', 'b', 'c', 'd'])
+      expect(Object.keys(original)).toEqual(['a', 'b', 'c'])
+    })
+
+    test('should handle Object.entries correctly', () => {
+      const original = { a: 1, b: 2 }
+      const forked = fork(original)
+
+      expect(Object.entries(forked)).toEqual([['a', 1], ['b', 2]])
+
+      forked.a = 10
+      expect(Object.entries(forked)).toEqual([['a', 10], ['b', 2]])
+      expect(Object.entries(original)).toEqual([['a', 1], ['b', 2]])
+    })
+
+    test('should handle spread operator correctly', () => {
+      const original = { a: 1, b: 2 }
+      const forked = fork(original)
+
+      const spread = { ...forked }
+      expect(spread).toEqual({ a: 1, b: 2 })
+
+      forked.a = 10
+      const spread2 = { ...forked }
+      expect(spread2).toEqual({ a: 10, b: 2 })
+      expect(original).toEqual({ a: 1, b: 2 })
+    })
+
     test('should handle multiple modifications', () => {
       const original = { a: 1, b: { c: 2 }, d: [1, 2, 3] }
       const forked = fork(original)
