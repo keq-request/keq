@@ -114,10 +114,7 @@
       },
       "problemMatcher": [],
       "label": "pnpm: build",
-      "detail": "turbo run build",
-      "presentation": {
-        "close": true
-      }
+      "detail": "turbo run build"
     }
   ]
 }

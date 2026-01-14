@@ -2,19 +2,24 @@ import { KeqMiddleware } from 'keq'
 
 
 export function setBaseUrl(base: string): KeqMiddleware {
-  if (base.startsWith('/')) {
+  if (!base.startsWith('//') && base.startsWith('/')) {
+    const prefix = base.replace(/\/$/, '')
+
     return async function setBaseUrl(ctx, next) {
-      ctx.request.url.pathname = `${base.replace(/\/$/, '')}/${ctx.request.url.pathname.replace(/^\//, '')}`
+      ctx.request.url.pathname = `${prefix}/${ctx.request.url.pathname.replace(/^\//, '')}`
       await next()
     }
   }
 
   const url = new URL(base)
+  const protocol = url.protocol
+  const host = url.host
+  const prefix = url.pathname.replace(/\/$/, '')
 
   return async function setBaseUrl(ctx, next) {
-    ctx.request.url.host = url.host
-    ctx.request.url.protocol = url.protocol
-    ctx.request.url.pathname = `${url.pathname.replace(/\/$/, '')}/${ctx.request.url.pathname.replace(/^\//, '')}`
+    ctx.request.url.protocol = protocol
+    ctx.request.url.host = host
+    ctx.request.url.pathname = `${prefix}/${ctx.request.url.pathname.replace(/^\//, '')}`
 
     // Fix bug in chrome@74 bug:
     //   url.port will return `""` if the base url not contain port.
