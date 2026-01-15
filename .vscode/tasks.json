@@ -80,6 +80,21 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
+        "cwd": "packages/cache"
+      },
+      "isBackground": true,
+      "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
+      "label": "packages/cache:dev",
+      "detail": "tsup --watch",
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "type": "shell",
+      "command": "pnpm run dev",
+      "options": {
         "cwd": "packages/nestjs"
       },
       "isBackground": true,

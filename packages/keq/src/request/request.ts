@@ -192,6 +192,8 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
       await next()
     }
 
+    middleware.__keqMiddlewareName__ = `listen(${event}, ${listener.name || 'anonymous'})`
+
     this.use(middleware)
 
     return this
