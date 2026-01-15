@@ -1,5 +1,15 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.26
+
+### Minor Changes
+
+- 63161c4: **Feat:** the .flowControl() support concurrency.
+
+### Patch Changes
+
+- 22ce01a: **Fix:** JSON.stringify ctx.response always get empty object.
+
 ## 5.0.0-alpha.25
 
 ### Major Changes
