@@ -1,5 +1,13 @@
 # @keq-request/nestjs
 
+## 5.0.0-alpha.26
+
+### Patch Changes
+
+- Updated dependencies [22ce01a]
+- Updated dependencies [63161c4]
+  - keq@5.0.0-alpha.26
+
 ## 5.0.0-alpha.25
 
 ### Patch Changes
