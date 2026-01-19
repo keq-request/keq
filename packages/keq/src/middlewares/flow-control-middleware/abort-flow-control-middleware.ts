@@ -14,9 +14,10 @@ export function keqAbortFlowControlMiddleware(): KeqMiddleware {
     const key = typeof signal === 'string' ? signal : signal(ctx)
 
 
-    if (!ctx.global.abortFlowControl) ctx.global.abortFlowControl = {}
+    if (!ctx.global.core) ctx.global.core = {}
+    if (!ctx.global.core.abortFlowControl) ctx.global.core.abortFlowControl = {}
 
-    const abort = ctx.global.abortFlowControl[key]
+    const abort = ctx.global.core.abortFlowControl[key]
 
     if (abort) {
       const reason = new AbortException(`Previous request was aborted by AbortFlowControl with key "${key}"`)
@@ -24,13 +25,13 @@ export function keqAbortFlowControlMiddleware(): KeqMiddleware {
     }
 
     const fn = ctx.request.abort.bind(ctx.request)
-    ctx.global.abortFlowControl[key] = fn
+    ctx.global.core.abortFlowControl[key] = fn
 
     try {
       await next()
     } finally {
-      if (ctx.global.abortFlowControl[key] === fn) {
-        ctx.global.abortFlowControl[key] = undefined
+      if (ctx.global.core.abortFlowControl[key] === fn) {
+        ctx.global.core.abortFlowControl[key] = undefined
       }
     }
   }

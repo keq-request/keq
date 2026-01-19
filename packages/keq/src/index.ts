@@ -37,6 +37,7 @@ export {
   type KeqContextData,
   type KeqContextEmitter,
   type KeqGlobal,
+  type KeqGlobalCore,
   type KeqContextOptions,
   type KeqMiddlewareOptions,
   type KeqEvents,

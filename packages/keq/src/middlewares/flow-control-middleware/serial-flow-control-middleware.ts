@@ -21,15 +21,16 @@ export function keqSerialFlowControlMiddleware(): KeqMiddleware {
 
     const key = typeof signal === 'string' ? signal : signal(ctx)
 
-    if (!ctx.global.serialFlowControl) ctx.global.serialFlowControl = {}
+    if (!ctx.global.core) ctx.global.core = {}
+    if (!ctx.global.core.serialFlowControl) ctx.global.core.serialFlowControl = {}
 
-    if (!ctx.global.serialFlowControl[key]) {
-      ctx.global.serialFlowControl[key] = fastq.promise(async ({ next }) => {
+    if (!ctx.global.core.serialFlowControl[key]) {
+      ctx.global.core.serialFlowControl[key] = fastq.promise(async ({ next }) => {
         await next()
       }, concurrent)
     }
 
-    const queue: Required<KeqGlobal>['serialFlowControl'][string] = ctx.global.serialFlowControl[key]
+    const queue: Required<Required<KeqGlobal>['core']>['serialFlowControl'][string] = ctx.global.core.serialFlowControl[key]
 
     await queue.push({ next })
   }

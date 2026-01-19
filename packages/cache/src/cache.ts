@@ -1,5 +1,7 @@
 import * as R from 'ramda'
-import type { Keq, KeqMiddleware, KeqContext } from 'keq'
+import * as fastq from 'fastq'
+import type { queueAsPromised } from 'fastq'
+import type { Keq, KeqMiddleware, KeqContext, KeqNext } from 'keq'
 import { KeqCacheStorage } from './storage/keq-cache-storage.js'
 import { RequestCacheHandler } from './request-cache-handler/index.js'
 import { KeqCacheKeyFactory, KeqCacheRule, RequestCacheOptions } from './types/index.js'
@@ -44,6 +46,10 @@ declare module 'keq' {
       context: KeqContext
     }
   }
+
+  export interface KeqGlobalCore {
+    cache?: Record<string, queueAsPromised<{ next: KeqNext }, void>>
+  }
 }
 
 
@@ -86,9 +92,29 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
       requestCacheOptions.serverTiming = options.serverTiming
     }
 
-    const handler = new RequestCacheHandler(storage, requestCacheOptions)
 
+    const handler = new RequestCacheHandler(storage, requestCacheOptions)
     const strategy = requestCacheOptions.strategy
-    await strategy(handler, ctx, next)
+
+    if (requestCacheOptions.concurrent) {
+      await strategy(handler, ctx, next)
+    } else {
+      if (!ctx.global.core) ctx.global.core = {}
+      if (!ctx.global.core.cache) ctx.global.core.cache = {}
+
+      const cacheKey = handler.getRequestCacheKey(ctx)
+      if (!ctx.global.core.cache[cacheKey]) {
+        ctx.global.core.cache[cacheKey] = fastq.promise(async ({ next }) => {
+          await next()
+        }, 1)
+      }
+
+      const queue = ctx.global.core.cache[cacheKey]!
+      await queue.push({
+        next: async () => {
+          await strategy(handler, ctx, next)
+        },
+      })
+    }
   }
 }

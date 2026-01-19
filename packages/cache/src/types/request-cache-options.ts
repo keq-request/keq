@@ -16,6 +16,19 @@ export interface RequestCacheOptions {
   serverTiming?: boolean
 
   /**
+   * This configuration item controls whether requests are allowed to be concurrent.
+   * By default, concurrency is disabled
+   *
+   * When multiple requests with the same key occur,
+   * the subsequent ones are blocked until the previous request completes.
+   * This ensures that the cache is utilized effectively and prevents redundant processing for identical keys
+   *
+   * @default false
+   */
+  concurrent?: boolean
+
+
+  /**
    * Cache Key
    */
   key?: KeqCacheKey
