@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.27
+
+### Major Changes
+
+- 0c7db81: **BREAKING CHANGE:** remove appendMiddlewares and prependMiddlewares from Keq.
+
 ## 5.0.0-alpha.26
 
 ### Minor Changes

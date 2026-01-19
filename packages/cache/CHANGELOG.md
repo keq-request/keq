@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.0.0-alpha.27
+
+### Patch Changes
+
+- bbfda6b: Fix the error throw when set server-timing header.
+- 5d2ce07: **Perf:** add blocking for concurrent requests with same cache key.
+- Updated dependencies [0c7db81]
+  - keq@5.0.0-alpha.27
+
 ## 5.0.0-alpha.26
 
 ### Patch Changes

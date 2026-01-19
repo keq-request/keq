@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/nestjs",
-  "version": "5.0.0-alpha.26",
+  "version": "5.0.0-alpha.27",
   "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
   "keywords": [
     "request",
@@ -46,7 +46,7 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0-alpha.26",
+    "keq": "^5.0.0-alpha.27",
     "@nestjs/common": "^11.0.0"
   },
   "engines": {
