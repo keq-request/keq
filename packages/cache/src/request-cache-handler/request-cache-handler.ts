@@ -37,7 +37,11 @@ export class RequestCacheHandler {
       const entry = await this.storage.get(key)
       if (entry) {
         const dur = new Date().getTime() - startAt.getTime()
-        entry.response.headers.append('Server-Timing', `keq-cache; dur=${dur}; desc="HIT"`)
+
+        const HeadersWithServerTiming = new Headers(entry.response.headers)
+        HeadersWithServerTiming.set('Server-Timing', `keq-cache; dur=${dur}; desc="HIT"`)
+
+        entry.assignResponseHeaders(HeadersWithServerTiming)
       }
 
       return [key, entry]

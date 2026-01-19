@@ -49,12 +49,11 @@ export class CacheEntry {
     })
   }
 
-
-  assign(another: CacheEntry): CacheEntry {
-    this.key = another.key
-    this.response = another.response.clone()
-    this.size = another.size
-    this.expiredAt = another.expiredAt
-    return this
+  assignResponseHeaders(headers: Headers): void {
+    this.response = new Response(this.response.body, {
+      status: this.response.status,
+      statusText: this.response.statusText,
+      headers: headers,
+    })
   }
 }
