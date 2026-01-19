@@ -75,10 +75,18 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
     init: KeqRequestFetchOptions,
     locationId?: string,
   ): Keq<any> {
-    const keq = new Keq(this.__formatUrl__(url), { ...init, locationId, global: this.global, qs: this.qs })
+    const keq = new Keq(
+      this.__formatUrl__(url),
+      {
+        ...init, locationId,
+        global: this.global,
+        qs: this.qs,
+        middlewares: [
+          ...this.preMiddlewares,
+          ...this.postMiddlewares,
+        ],
+      })
 
-    keq.appendMiddlewares(...this.postMiddlewares)
-    keq.prependMiddlewares(...this.preMiddlewares)
     return keq as Keq<any>
   }
 
@@ -106,19 +114,11 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
   put<P extends keyof ExtractMethodOperations<SCHEMA, 'put'>>(url: P): Keq<ExtractMethodOperations<SCHEMA, 'put'>[P], ExtractMethodOperations<SCHEMA, 'put'>[P]>
   put<T>(url: string | URL): Keq<KeqDefaultOperation<{ responseBody: T }>>
   put(url: string | URL): Keq<any> {
-    const locationId = getLocationId(1)
-    const keq = new Keq(
-      this.__formatUrl__(url),
-      {
-        method: 'put',
-        locationId,
-        global: this.global,
-      },
+    return this.__fetch__(
+      url,
+      { method: 'put' },
+      getLocationId(1),
     )
-
-    keq.appendMiddlewares(...this.postMiddlewares)
-    keq.prependMiddlewares(...this.preMiddlewares)
-    return keq
   }
 
   delete<P extends keyof ExtractMethodOperations<SCHEMA, 'delete'>>(url: P): Keq<ExtractMethodOperations<SCHEMA, 'delete'>[P], ExtractMethodOperations<SCHEMA, 'delete'>[P]>

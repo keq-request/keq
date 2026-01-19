@@ -6,13 +6,17 @@ import { cloneSharedContext } from '~/context/utils/clone-shared-context.js'
 import { assignSharedContext } from '~/context/utils/assign-shared-context.js'
 
 
-export class KeqMiddlewareOrchestrator {
-  main?: {
-    orchestrator: KeqMiddlewareOrchestrator
-    index: number
-  }
+interface KeqMiddlewareOrchestratorPointer {
+  orchestrator: KeqMiddlewareOrchestrator
+  index: number
+}
 
-  status: 'idle' | 'pending' | 'fulfilled' | 'rejected' = 'idle'
+export type KeqMiddlewareOrchestratorStatus = 'idle' | 'pending' | 'fulfilled' | 'rejected'
+
+export class KeqMiddlewareOrchestrator {
+  main?: KeqMiddlewareOrchestratorPointer
+
+  status: KeqMiddlewareOrchestratorStatus = 'idle'
   context: KeqSharedContext
   executors: KeqMiddlewareExecutor[] = []
 
@@ -21,9 +25,14 @@ export class KeqMiddlewareOrchestrator {
   constructor(
     context: KeqSharedContext,
     middlewares: KeqMiddleware[] = [],
+    inherit?: {
+      main?: KeqMiddlewareOrchestratorPointer
+    },
   ) {
     this.context = context
     this.executors = middlewares.map((mw) => new KeqMiddlewareExecutor(mw))
+
+    if (inherit?.main) this.main = inherit.main
   }
 
   private cancelNotFinished(): void {
@@ -102,11 +111,12 @@ export class KeqMiddlewareOrchestrator {
     const middlewares = this.executors.slice(next)
       .map((executor) => executor.middleware)
 
-    const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares)
-    forkedOrchestrator.main = {
-      orchestrator: this.main ? this.main.orchestrator : this,
-      index: this.main ? this.main.index + next : next,
-    }
+    const forkedOrchestrator = new KeqMiddlewareOrchestrator(context, middlewares, {
+      main: {
+        orchestrator: this.main ? this.main.orchestrator : this,
+        index: this.main ? this.main.index + next : next,
+      },
+    })
 
     return forkedOrchestrator
   }

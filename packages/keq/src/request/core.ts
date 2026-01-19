@@ -13,6 +13,7 @@ export type KeqOptions = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signa
   locationId?: string
   global?: KeqGlobal
   qs?: KeqQueryOptions
+  middlewares?: KeqMiddleware[]
 }
 
 /**
@@ -60,25 +61,31 @@ export class Core<
       ...options,
       url: new URL(url.href),
     })
+
+    if (options.middlewares) {
+      this.__append_middlewares__.push(...options.middlewares)
+    }
   }
 
-  prependMiddlewares(...middlewares: KeqMiddleware[]): this {
-    this.__prepend_middlewares__.push(...middlewares)
-    return this
-  }
+  // prependMiddlewares(...middlewares: KeqMiddleware[]): this {
+  //   this.__prepend_middlewares__.push(...middlewares)
+  //   return this
+  // }
 
-  /**
-   * Appends middlewares to the end of the middleware chain.
-   * Using this method indiscriminately is discouraged;
-   * prefer using `.use` to maintain predictable execution order.
-   */
-  appendMiddlewares(...middlewares: KeqMiddleware[]): this {
-    this.__append_middlewares__.unshift(...middlewares)
-    return this
-  }
+  // /**
+  //  * Appends middlewares to the end of the middleware chain.
+  //  * Using this method indiscriminately is discouraged;
+  //  * prefer using `.use` to maintain predictable execution order.
+  //  */
+  // appendMiddlewares(...middlewares: KeqMiddleware[]): this {
+  //   this.__append_middlewares__.unshift(...middlewares)
+  //   return this
+  // }
 
   use(...middlewares: KeqMiddleware[]): this {
-    return this.prependMiddlewares(...middlewares)
+    this.__prepend_middlewares__.push(...middlewares)
+    return this
+    // return this.prependMiddlewares(...middlewares)
   }
 
   on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {

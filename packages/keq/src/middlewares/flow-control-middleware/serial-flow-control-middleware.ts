@@ -1,6 +1,6 @@
-import type { queueAsPromised } from 'fastq'
 import * as fastq from 'fastq'
-import type { KeqMiddleware, KeqNext } from '~/middleware/types/index.js'
+import { KeqGlobal } from '~/context'
+import type { KeqMiddleware } from '~/middleware/types/index.js'
 
 
 export function keqSerialFlowControlMiddleware(): KeqMiddleware {
@@ -24,12 +24,13 @@ export function keqSerialFlowControlMiddleware(): KeqMiddleware {
     if (!ctx.global.serialFlowControl) ctx.global.serialFlowControl = {}
 
     if (!ctx.global.serialFlowControl[key]) {
-      ctx.global.serialFlowControl[key] = fastq.promise(async (next: KeqNext) => {
+      ctx.global.serialFlowControl[key] = fastq.promise(async ({ next }) => {
         await next()
       }, concurrent)
     }
 
-    const queue: queueAsPromised<KeqNext> = ctx.global.serialFlowControl[key]
-    await queue.push(next)
+    const queue: Required<KeqGlobal>['serialFlowControl'][string] = ctx.global.serialFlowControl[key]
+
+    await queue.push({ next })
   }
 }
