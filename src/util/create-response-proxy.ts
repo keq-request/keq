@@ -1,7 +1,7 @@
 import { fork } from './fork.js'
 
-const JsonCachePropertyKey = Symbol('KeqResponseProxyJsonCachePropertyKey')
-const TextCachePropertyKey = Symbol('KeqResponseProxyTextCachePropertyKey')
+const JsonCachePropertyKey = '__KeqProtectedProperty(response.proxy.cache.json)__'
+const TextCachePropertyKey = '__KeqProtectedProperty(response.proxy.cache.text)__'
 
 export function createResponseProxy(response: Response): Response {
   return new Proxy(response, {

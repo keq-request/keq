@@ -3,7 +3,7 @@
 import { klona } from 'klona/json'
 
 
-const UnWrapPropertyKey = Symbol('UnWrapPropertyKey')
+const ForkedObjectBrandPropertyKey = '__KeqProtectedProperty(forked.object.brand)__'
 
 const ARRAY_MUTATORS = new Set([
   'push',
@@ -47,7 +47,7 @@ export function fork<T>(original: T): T {
     return new Proxy(getTarget(), {
       get(target, prop) {
         const realTarget = getTarget()
-        if (prop === UnWrapPropertyKey) return realTarget
+        if (prop === ForkedObjectBrandPropertyKey) return realTarget
 
         const value = realTarget[prop]
 
@@ -103,5 +103,5 @@ export function fork<T>(original: T): T {
 }
 
 export function unwrap<T>(proxy: T): T {
-  return proxy && (proxy as any)[UnWrapPropertyKey] ? (proxy as any)[UnWrapPropertyKey] : proxy
+  return proxy && (proxy as any)[ForkedObjectBrandPropertyKey] ? (proxy as any)[ForkedObjectBrandPropertyKey] : proxy
 }
