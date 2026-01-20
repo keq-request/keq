@@ -27,7 +27,7 @@ export interface KeqRequestInitOptions {
   referrerPolicy?: ReferrerPolicy
 }
 
-export const AbortControllerProperty = Symbol('context.request.abortController')
+export const AbortControllerProperty = '__KeqProtectedProperty(context.request.abortController)__'
 
 export class KeqRequestInit {
   url: URL

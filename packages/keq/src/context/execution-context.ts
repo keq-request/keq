@@ -9,8 +9,8 @@ import type {
   KeqGlobal,
 } from './types/index.js'
 
-export const ContextOrchestratorProperty = Symbol('protected context.orchestrator')
-export const ContextOrchestrationProperty = Symbol('protected context.orchestration')
+export const ContextOrchestratorProperty = '__KeyProtectedProperty(context.orchestrator)__'
+export const ContextOrchestrationProperty = '__KeyProtectedProperty(context.orchestration)__'
 
 
 export class KeqExecutionContext implements KeqContext {

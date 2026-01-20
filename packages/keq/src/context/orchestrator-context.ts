@@ -2,8 +2,8 @@ import type { KeqMiddlewareExecutor, KeqMiddlewareOrchestrator } from '~/orchest
 import { KeqMiddlewareContext } from './middleware-context.js'
 
 
-const OrchestratorProperty = Symbol('protected context.orchestration.orchestrator')
-const ExecutorProperty = Symbol('protected context.orchestration.executor')
+const OrchestratorProperty = '__KeyProtectedProperty(context.orchestration.orchestrator)__'
+const ExecutorProperty = '__KeyProtectedProperty(context.orchestration.executor)__'
 
 export class KeqOrchestratorContext {
   readonly [OrchestratorProperty]: KeqMiddlewareOrchestrator
