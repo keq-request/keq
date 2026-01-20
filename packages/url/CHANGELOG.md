@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-alpha.28
+
+### Patch Changes
+
+- Updated dependencies [d076b76]
+  - keq@5.0.0-alpha.28
+
 ## 5.0.0-alpha.27
 
 ### Patch Changes

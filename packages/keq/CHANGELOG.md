@@ -1,5 +1,11 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.28
+
+### Patch Changes
+
+- d076b76: **Fix:** resolve pnpm singleton trap by deduplicating instances.
+
 ## 5.0.0-alpha.27
 
 ### Major Changes
