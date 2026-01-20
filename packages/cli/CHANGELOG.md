@@ -1,5 +1,17 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.28
+
+### Major Changes
+
+- bbc3403: **BREAKING CHANGE:** drop support relative path and use 'file://' insteaded.
+- bbc3403: **BREAKING CHANGE:** rename defineKeqConfig to defineConfig.
+
+### Patch Changes
+
+- Updated dependencies [d076b76]
+  - keq@5.0.0-alpha.28
+
 ## 5.0.0-alpha.27
 
 ### Patch Changes
