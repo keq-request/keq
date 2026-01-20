@@ -1,5 +1,5 @@
 import { ApiDocumentV3_1, Artifact, Asset } from '~/models/index.js'
-import { RuntimeConfig } from '~/types/runtime-config.js'
+import { RuntimeConfig } from '~/types/index.js'
 import { IgnoreMatcher } from '~/utils/ignore-matcher.js'
 
 

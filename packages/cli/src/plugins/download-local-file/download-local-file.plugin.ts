@@ -4,21 +4,25 @@ import * as yaml from 'js-yaml'
 import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
+import { fileURLToPath } from 'url'
 
 
 export class DownloadLocalFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
     compiler.hooks.download.tapPromise(DownloadLocalFilePlugin.name, async (address, task) => {
-      if (!address.startsWith('./') && !address.startsWith('/') && !address.startsWith('../')) return undefined
+      const { url, encoding } = address
+      if (!url.startsWith('file://')) return undefined
+      const filepath = fileURLToPath(url)
 
-      const fileExt = path.extname(address)
-      const content = await fs.readFile(address, 'utf8')
+      const fileExt = path.extname(filepath)
+      const content = await fs.readFile(filepath, encoding)
+      const str = typeof content === 'string' ? content : content.toString(encoding)
 
       if (['.yml', '.yaml'].includes(fileExt)) {
-        const value = yaml.load(content)
+        const value = yaml.load(str)
         return JSON.stringify(OpenapiUtils.to3_1(value))
       } else if (fileExt === '.json') {
-        return JSON.stringify(OpenapiUtils.to3_1(JSON.parse(content)))
+        return JSON.stringify(OpenapiUtils.to3_1(JSON.parse(str)))
       }
     })
   }

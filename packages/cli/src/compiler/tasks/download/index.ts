@@ -35,12 +35,12 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
                 return
               }
 
-              task.output = `Downloaded from ${moduleDefinition.address}`
+              task.output = `Downloaded from ${moduleDefinition.address.url}`
 
               const content = await compiler.hooks.download.promise(moduleDefinition.address, moduleDefinition, task)
 
               if (!content) {
-                throw new Exception(moduleDefinition, `Cannot download document from ${moduleDefinition.address}`)
+                throw new Exception(moduleDefinition, `Cannot download document from ${moduleDefinition.address.url}`)
               }
 
               const spec = JSON.parse(content)

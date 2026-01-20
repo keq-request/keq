@@ -45,7 +45,11 @@ export class ShakingPlugin implements Plugin {
       sharkedSwagger,
       new ModuleDefinition(
         document.module.name,
-        `file://${document.module.name}.v3_1.sharked.json`,
+        {
+          url: `memory://${document.module.name}.v3_1.sharked.json`,
+          headers: {},
+          encoding: 'utf8',
+        },
       ),
     )
   }

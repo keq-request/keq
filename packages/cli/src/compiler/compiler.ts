@@ -1,7 +1,7 @@
 
 
 import { Listr } from 'listr2'
-import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, AsyncSeriesWaterfallHook, SyncHook } from 'tapable'
+import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, SyncHook } from 'tapable'
 import { CompilerHooks, CompilerContext } from './types/index.js'
 import {
   ModuleDefinition,
@@ -22,6 +22,7 @@ import {
   InitializePlugin,
   TerminalSelectPluginOptions,
 } from '~/plugins/index.js'
+import { Address } from '~/types/index.js'
 
 
 interface Options extends SetupTaskOptions {
@@ -39,7 +40,7 @@ export class Compiler {
     afterSetup: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
     beforeDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    download: new AsyncSeriesBailHook<[string, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
+    download: new AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
     afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
     beforeCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),

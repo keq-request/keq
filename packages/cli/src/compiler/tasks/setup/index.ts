@@ -1,15 +1,14 @@
 import fs from 'fs-extra'
 import path from 'path'
 import { CosmiconfigResult } from 'cosmiconfig'
-import { Value } from '@sinclair/typebox/value'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
 import { IgnoreMatcher, IgnoreMatcherRule } from '~/utils/ignore-matcher.js'
-import { RuntimeConfig } from '~/types/index.js'
-import { validateModules, findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
+import { findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
 import type { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '../../compiler.js'
 import { CompilerContext } from '../../types/index.js'
+import { parseRuntimeConfig } from './utils/parse-runtime-config.js'
 
 
 export interface SetupTaskOptions {
@@ -24,6 +23,7 @@ export interface SetupTaskOptions {
 
 const explore = cosmiconfig('keq')
 
+
 function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<CompilerContext> {
   return {
     task: async (context, task) => {
@@ -35,15 +35,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
         throw new Error('Cannot find config file.')
       }
 
-      if (!Value.Check(RuntimeConfig, result.config)) {
-        const errors = [...Value.Errors(RuntimeConfig, result.config)]
-        const message = errors.map(({ path, message }) => `${path}: ${message}`).join('\n')
-        throw new Error(`Invalid Config: ${message}`)
-      }
-
-      const rc = Value.Default(RuntimeConfig, result.config) as RuntimeConfig
-
-      validateModules(rc.modules)
+      const rc = parseRuntimeConfig(result.config)
 
       if (options?.debug) {
         await fs.ensureDir('.keq')

@@ -1,7 +1,7 @@
-export { defineKeqConfig } from './define-keq-config.js'
+export { defineConfig } from './define-config.js'
 
-export {
-  RuntimeConfig,
+export type {
+  RawConfig as Config,
   Plugin,
 } from './types/index.js'
 
