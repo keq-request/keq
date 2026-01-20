@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.8.14](https://github.com/keq-request/keq/compare/v2.8.13...v2.8.14) (2026-01-20)
+
+
+### Bug Fixes
+
+* resolve pnpm singleton trap ([89eed47](https://github.com/keq-request/keq/commit/89eed475346262d5cad371a1aa39cf257bf2a42f))
+
 ### [2.8.13](https://github.com/keq-request/keq/compare/v2.8.12...v2.8.13) (2026-01-14)
 
 
