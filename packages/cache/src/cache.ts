@@ -92,8 +92,8 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
       requestCacheOptions.serverTiming = options.serverTiming
     }
 
-
-    const handler = new RequestCacheHandler(storage, requestCacheOptions)
+    const cacheKey = RequestCacheHandler.resolveRequestCacheKey(ctx, requestCacheOptions)
+    const handler = new RequestCacheHandler(cacheKey, storage, requestCacheOptions)
     const strategy = requestCacheOptions.strategy
 
     if (requestCacheOptions.concurrent) {
@@ -101,15 +101,13 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
     } else {
       if (!ctx.global.core) ctx.global.core = {}
       if (!ctx.global.core.cache) ctx.global.core.cache = {}
-
-      const cacheKey = handler.getRequestCacheKey(ctx)
       if (!ctx.global.core.cache[cacheKey]) {
         ctx.global.core.cache[cacheKey] = fastq.promise(async ({ next }) => {
           await next()
         }, 1)
       }
 
-      const queue = ctx.global.core.cache[cacheKey]!
+      const queue = ctx.global.core.cache[cacheKey]
       await queue.push({
         next: async () => {
           await strategy(handler, ctx, next)

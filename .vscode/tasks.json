@@ -114,7 +114,8 @@
         "packages/exception:dev",
         "packages/url:dev",
         "packages/headers:dev",
-        "packages/nestjs:dev"
+        "packages/nestjs:dev",
+        "packages/cache:dev"
       ],
       "runOptions": {
         "runOn": "folderOpen"

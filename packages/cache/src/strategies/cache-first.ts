@@ -4,7 +4,7 @@ import { Logger } from '~/utils'
 
 export const cacheFirst: KeqCacheStrategy = async function cacheFirst(handler, context, next): Promise<void> {
   // return async function (context, next): Promise<void> {
-  const [cacheKey, cacheValue] = await handler.getCache(context)
+  const [cacheKey, cacheValue] = await handler.getCache()
 
   if (handler.options.debug) {
     Logger.debug([

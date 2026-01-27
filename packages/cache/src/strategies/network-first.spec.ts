@@ -18,7 +18,7 @@ test('Strategies.NETWORK_FIRST', async () => {
   })
 
   function createRequestHandler(key: string): RequestCacheHandler {
-    return new RequestCacheHandler(storage, { key })
+    return new RequestCacheHandler(key, storage, { key })
   }
 
 

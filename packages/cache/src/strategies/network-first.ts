@@ -6,7 +6,7 @@ export const networkFirst: KeqCacheStrategy = async function networkFirst(handle
   try {
     await next()
 
-    const [cacheKey, cache] = await handler.getCache(context)
+    const [cacheKey, cache] = await handler.getCache()
     const [,entry] = await handler.setCache(context)
 
     if (handler.options.debug) {
@@ -28,7 +28,7 @@ export const networkFirst: KeqCacheStrategy = async function networkFirst(handle
       })
     }
   } catch (err) {
-    const [cacheKey, cache] = await handler.getCache(context)
+    const [cacheKey, cache] = await handler.getCache()
 
     if (handler.options.debug) {
       Logger.debug([

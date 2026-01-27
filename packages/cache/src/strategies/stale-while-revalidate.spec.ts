@@ -13,7 +13,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
   const storage = new MemoryStorage({ size: 100, eviction: Eviction.TTL })
 
   function createRequestHandler(key: string): RequestCacheHandler {
-    return new RequestCacheHandler(storage, { key })
+    return new RequestCacheHandler(key, storage, { key })
   }
 
   spyOn(storage, 'set')

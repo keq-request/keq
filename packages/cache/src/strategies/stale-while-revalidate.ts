@@ -2,7 +2,7 @@ import { KeqCacheStrategy } from '~/types/keq-cache-strategy.js'
 import { Logger } from '~/utils'
 
 export const staleWhileRevalidate: KeqCacheStrategy = async function (handler, context, next) {
-  const [cacheKey, cache] = await handler.getCache(context)
+  const [cacheKey, cache] = await handler.getCache()
 
   if (handler.options.debug) {
     Logger.debug([

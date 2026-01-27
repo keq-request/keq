@@ -10,16 +10,15 @@ export type RequestCacheHandlerOptions = Omit<RequestCacheOptions, 'strategy'>
 
 export class RequestCacheHandler {
   constructor(
+    public readonly cacheKey: string,
     public readonly storage: KeqCacheStorage,
     public readonly options: Readonly<RequestCacheHandlerOptions>,
   ) {}
 
   /**
-   * Get cache key for request
+   * Resolve cache key for request context
    */
-  getRequestCacheKey(context: KeqContext): string {
-    const options = this.options
-
+  static resolveRequestCacheKey(context: KeqContext, options: RequestCacheHandlerOptions): string {
     if (typeof options.key === 'string') return options.key
     else if (typeof options.key === 'function') return options.key(context)
     else if (R.isNil(options.key) && context.locationId) return context.locationId
@@ -29,8 +28,8 @@ export class RequestCacheHandler {
   /**
    * Get cache from storage
    */
-  async getCache(context: KeqContext): Promise<[string, CacheEntry | undefined]> {
-    const key = this.getRequestCacheKey(context)
+  async getCache(): Promise<[string, CacheEntry | undefined]> {
+    const key = this.cacheKey
 
     if (this.options.serverTiming) {
       const startAt = new Date()
@@ -55,7 +54,7 @@ export class RequestCacheHandler {
    */
   async setCache(context: KeqContext): Promise<[string, CacheEntry | undefined]> {
     const options = this.options
-    const key = this.getRequestCacheKey(context)
+    const key = this.cacheKey
 
     if (!context.response) return [key, undefined]
     if (options.exclude && (await options.exclude(context.response))) return [key, undefined]
