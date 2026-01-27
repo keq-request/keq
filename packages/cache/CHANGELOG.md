@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-alpha.29
+
+### Patch Changes
+
+- ff5464b: Prevent other middlewares from inadvertently modifying the cache key.
+  - keq@5.0.0-alpha.29
+
 ## 5.0.0-alpha.28
 
 ### Patch Changes
