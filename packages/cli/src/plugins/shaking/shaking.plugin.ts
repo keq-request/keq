@@ -4,9 +4,15 @@ import { ApiDocumentV3_1, ModuleDefinition, OperationDefinition } from '~/models
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { SupportedMethods } from '~/constants/index.js'
 import { openapiShakingSync } from '@opendoc/openapi-shaking'
+import { ShakingPluginMetadata, MetadataStorage } from './constants/index.js'
 
 export class ShakingPlugin implements Plugin {
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
+    ShakingPlugin.register(compiler)
+
     compiler.hooks.beforeCompile.tap(ShakingPlugin.name, (task) => {
       const matcher = compiler.context.matcher!
       const documents = compiler.context.documents!
@@ -52,5 +58,20 @@ export class ShakingPlugin implements Plugin {
         },
       ),
     )
+  }
+
+
+  static register(compiler: Compiler): ShakingPluginMetadata {
+    if (!MetadataStorage.has(compiler)) {
+      MetadataStorage.set(compiler, {
+        hooks: {
+        },
+      })
+    }
+    return MetadataStorage.get(compiler)!
+  }
+
+  static of(compiler: Compiler): ShakingPluginMetadata | undefined {
+    return this.register(compiler)
   }
 }

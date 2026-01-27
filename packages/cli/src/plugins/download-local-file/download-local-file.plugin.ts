@@ -5,10 +5,16 @@ import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 import { fileURLToPath } from 'url'
+import { DownloadLocalFilePluginMetadata, MetadataStorage } from './constants/index.js'
 
 
 export class DownloadLocalFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
+    DownloadLocalFilePlugin.register(compiler)
+
     compiler.hooks.download.tapPromise(DownloadLocalFilePlugin.name, async (address, task) => {
       const { url, encoding } = address
       if (!url.startsWith('file://')) return undefined
@@ -25,5 +31,19 @@ export class DownloadLocalFilePlugin implements Plugin {
         return JSON.stringify(OpenapiUtils.to3_1(JSON.parse(str)))
       }
     })
+  }
+
+  static register(compiler: Compiler): DownloadLocalFilePluginMetadata {
+    if (!MetadataStorage.has(compiler)) {
+      MetadataStorage.set(compiler, {
+        hooks: {
+        },
+      })
+    }
+    return MetadataStorage.get(compiler)!
+  }
+
+  static of(compiler: Compiler): DownloadLocalFilePluginMetadata | undefined {
+    return this.register(compiler)
   }
 }

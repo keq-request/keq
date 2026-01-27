@@ -17,6 +17,9 @@ export class GenerateDeclarationPlugin implements Plugin {
   constructor() {}
 
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
     GenerateDeclarationPlugin.register(compiler)
 
     compiler.hooks.compile.tapPromise(GenerateDeclarationPlugin.name, async (task: TaskWrapper) => {

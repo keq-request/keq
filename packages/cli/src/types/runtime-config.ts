@@ -4,6 +4,7 @@ import { FileNamingStyle } from '../constants/file-naming-style.js'
 import { Plugin } from './plugin.js'
 import { Address } from './address.js'
 import { isValidURL } from '../utils/is-valid-url.js'
+import { Translator } from './index.js'
 
 
 const Modules = Type.Transform(
@@ -47,14 +48,6 @@ const Modules = Type.Transform(
 
 
 export const RawConfig = Type.Object({
-  mode: Type.Optional(
-    Type.Union([
-      Type.Literal('micro-function'),
-      Type.Literal('nestjs-module'),
-      Type.Literal('none'),
-    ], { default: 'micro-function' }),
-  ),
-
   /**
    * Whether to generate ES Module code
    *
@@ -73,8 +66,17 @@ export const RawConfig = Type.Object({
    */
   fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.snakeCase }),
 
+  /**
+   * OpenAPI/Swagger document sources
+   *
+   * A map of module names to their document URLs or Address objects.
+   * The module name must be a valid JavaScript identifier.
+   */
   modules: Modules,
 
+  /**
+   * Enable debug mode to output detailed logs during compilation
+   */
   debug: Type.Optional(Type.Boolean({ default: false })),
 
   /**
@@ -82,6 +84,33 @@ export const RawConfig = Type.Object({
    */
   tolerant: Type.Optional(Type.Boolean({ default: false })),
 
+  /**
+   * Translators to transform generated code
+   *
+   * Used to customize the code generation process for different frameworks or patterns.
+   * Can be a single translator or an array of translators.
+   */
+  translators: Type.Optional(
+    Type.Transform(
+      Type.Union([
+        Type.Unsafe<Translator>(Type.Any()),
+        Type.Array(Type.Unsafe<Translator>(Type.Any())),
+      ], { default: [] }),
+    )
+      .Decode((value): Translator[] => {
+        if (value === undefined) return []
+        if (Array.isArray(value)) return value
+        return [value]
+      })
+      .Encode((value) => value),
+  ),
+
+  /**
+   * Plugins to extend code generation functionality
+   *
+   * An array of plugin instances that can hook into various stages of the compilation process,
+   * such as code transformation, formatting, linting, or custom file generation.
+   */
   plugins: Type.Optional(Type.Array(Type.Unsafe<Plugin>(Type.Any()), { default: [] })),
 })
 

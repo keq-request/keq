@@ -108,6 +108,6 @@ export class OperationDeclarationGenerator implements Generator {
   }
 
   static getEntrypointArtifactId(moduleDefinition: ModuleDefinition): string {
-    return `${moduleDefinition.address}/paths/entrypoint?generator=${OPERATION_GENERATOR}`
+    return `${moduleDefinition.address.url}/paths/entrypoint?generator=${OPERATION_GENERATOR}`
   }
 }

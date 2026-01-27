@@ -1,5 +1,5 @@
 import { Value } from '@sinclair/typebox/value'
-import { RawConfig, RuntimeConfig, Plugin } from '~/types/index.js'
+import { RawConfig, RuntimeConfig, Plugin, Translator } from '~/types/index.js'
 
 
 export function parseRuntimeConfig(data: unknown): RuntimeConfig {
@@ -9,11 +9,20 @@ export function parseRuntimeConfig(data: unknown): RuntimeConfig {
       ? (data as Record<string, unknown>).plugins
       : undefined
 
+    const originTranslators = typeof data === 'object' && data !== null && 'translators' in data
+      ? (data as Record<string, unknown>).translators
+      : undefined
+
     const parsed = Value.Parse(RawConfig, data)
 
     // Restore the original plugins if they existed
     if (originalPlugins !== undefined) {
       parsed.plugins = originalPlugins as Plugin[]
+    }
+
+    // Restore the original translators if they existed
+    if (originTranslators !== undefined) {
+      parsed.translators = originTranslators as Translator[]
     }
 
     return parsed

@@ -1,10 +1,16 @@
 import { Compiler } from '~/compiler/index.js'
 import { Plugin, Address } from '~/types/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
+import { DownloadHttpFilePluginMetadata, MetadataStorage } from './constants/index.js'
 
 
 export class DownloadHttpFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
+    DownloadHttpFilePlugin.register(compiler)
+
     compiler.hooks.download.tapPromise(DownloadHttpFilePlugin.name, async (address, task) => {
       const { url } = address
 
@@ -37,5 +43,19 @@ export class DownloadHttpFilePlugin implements Plugin {
     const json = JSON.parse(content)
     const spec = OpenapiUtils.to3_1(json)
     return spec
+  }
+
+  static register(compiler: Compiler): DownloadHttpFilePluginMetadata {
+    if (!MetadataStorage.has(compiler)) {
+      MetadataStorage.set(compiler, {
+        hooks: {
+        },
+      })
+    }
+    return MetadataStorage.get(compiler)!
+  }
+
+  static of(compiler: Compiler): DownloadHttpFilePluginMetadata | undefined {
+    return this.register(compiler)
   }
 }

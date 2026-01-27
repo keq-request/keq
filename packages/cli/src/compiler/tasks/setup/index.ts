@@ -9,6 +9,7 @@ import type { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '../../compiler.js'
 import { CompilerContext } from '../../types/index.js'
 import { parseRuntimeConfig } from './utils/parse-runtime-config.js'
+import { MicroFunctionTranslator } from '~/translators/micro-function.translator.js'
 
 
 export interface SetupTaskOptions {
@@ -43,6 +44,10 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
       }
 
       rc.tolerant = Boolean(rc.tolerant)
+
+      if (!rc.translators || !rc.translators.length) {
+        rc.translators = [new MicroFunctionTranslator()]
+      }
 
       const packageJsonInfo = findNearestPackageJson()
       if (packageJsonInfo) {

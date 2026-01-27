@@ -3,11 +3,8 @@ import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/plugin.js'
 import { DownloadHttpFilePlugin } from '../download-http-file/index.js'
 import { DownloadLocalFilePlugin } from '../download-local-file/index.js'
-import { GenerateDeclarationPlugin } from '../generate-declaration/index.js'
 import { ShakingPlugin } from '../shaking/index.js'
 import { TerminalSelectPlugin, TerminalSelectPluginOptions } from '../terminal-select/index.js'
-import { GenerateMicroFunctionPlugin } from '../generate-micro-function/index.js'
-import { GenerateNestjsModulePlugin } from '../generate-nestjs-module/index.js'
 
 
 interface InitializePluginOptions {
@@ -23,36 +20,42 @@ export class InitializePlugin implements Plugin {
 
   apply(compiler: Compiler): void {
     compiler.hooks.setup.tap(InitializePlugin.name, (task) => {
-      new DownloadHttpFilePlugin().apply(compiler)
-      new DownloadLocalFilePlugin().apply(compiler)
-
-      new GenerateDeclarationPlugin().apply(compiler)
+      const plugins: Plugin[] = [
+        new DownloadHttpFilePlugin(),
+        new DownloadLocalFilePlugin(),
+      ]
 
       if (this.options.build) {
-        new ShakingPlugin().apply(compiler)
+        plugins.push(new ShakingPlugin())
       }
 
       if (this.options.interactive) {
-        new TerminalSelectPlugin(
-          typeof this.options.interactive === 'object'
-            ? this.options.interactive
-            : { mode: 'except' },
-        ).apply(compiler)
+        plugins.push(
+          new TerminalSelectPlugin(
+            typeof this.options.interactive === 'object'
+              ? this.options.interactive
+              : { mode: 'except' },
+          ),
+        )
       }
 
       const rc = compiler.context.rc!
 
-      if (rc.mode === 'micro-function') {
-        new GenerateMicroFunctionPlugin().apply(compiler)
-      } else if (rc.mode === 'nestjs-module') {
-        new GenerateNestjsModulePlugin().apply(compiler)
+      plugins.push(
+        ...R.unnest(
+          (rc.translators || []).map((translator) => {
+            const plugins = translator.apply()
+            return plugins
+          }),
+        ),
+      )
+
+      if (rc.plugins && rc.plugins.length) {
+        plugins.push(...rc.plugins)
       }
 
-      // Apply Custom Plugins
-      if (rc.plugins && rc.plugins.length) {
-        for (const plugin of rc.plugins) {
-          plugin.apply(compiler)
-        }
+      for (const plugin of plugins) {
+        plugin.apply(compiler)
       }
     })
 

@@ -10,6 +10,9 @@ export class GenerateNestjsModulePlugin implements Plugin {
   private readonly nestjsModuleGenerator = new NestjsModuleGenerator()
 
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
     GenerateNestjsModulePlugin.register(compiler)
 
     compiler.hooks.compile.tapPromise(GenerateNestjsModulePlugin.name, async (task) => {

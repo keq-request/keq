@@ -11,6 +11,9 @@ export class GenerateMicroFunctionPlugin implements Plugin {
   private readonly requestGenerator = new RequestGenerator()
 
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
     GenerateMicroFunctionPlugin.register(compiler)
 
     compiler.hooks.compile.tapPromise(GenerateMicroFunctionPlugin.name, async (task: TaskWrapper) => {

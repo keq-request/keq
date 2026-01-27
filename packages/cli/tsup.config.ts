@@ -6,6 +6,7 @@ export default defineConfig({
     index: 'src/index.ts',
     cli: 'src/cli.ts',
     plugins: 'src/plugins/index.ts',
+    translators: 'src/translators/index.ts',
   },
   format: ['cjs', 'esm'],
   tsconfig: 'tsconfig.lib.json',

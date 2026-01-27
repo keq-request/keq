@@ -6,10 +6,16 @@ import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 
 import { GenerateMicroFunctionPlugin } from '../generate-micro-function/index.js'
+import { BodyFallbackPluginMetadata, MetadataStorage } from './constants/index.js'
 
 
 export class BodyFallbackPlugin implements Plugin {
   apply(compiler: Compiler): void {
+    // Prevent duplicate registration
+    if (MetadataStorage.has(compiler)) return
+
+    BodyFallbackPlugin.register(compiler)
+
     compiler.hooks.setup.tap(BodyFallbackPlugin.name, () => {
       const generateMicroFunctionPluginMetadata = GenerateMicroFunctionPlugin.of(compiler)
 
@@ -50,5 +56,18 @@ export class BodyFallbackPlugin implements Plugin {
           return artifact
         })
     })
+  }
+
+  static register(compiler: Compiler): BodyFallbackPluginMetadata {
+    if (!MetadataStorage.has(compiler)) {
+      MetadataStorage.set(compiler, {
+        hooks: { },
+      })
+    }
+    return MetadataStorage.get(compiler)!
+  }
+
+  static of(compiler: Compiler): BodyFallbackPluginMetadata | undefined {
+    return this.register(compiler)
   }
 }

@@ -18,9 +18,7 @@ export class SchemaDeclarationGenerator implements Generator {
     const metadata = MetadataStorage.get(compiler)!
 
     const rc = context.rc!
-    // const matcher = context.matcher!
     const documents = context.documents!
-    // .filter((document) => !matcher.isModuleIgnored(document.module))
 
     const schemaDefinitions = documents.flatMap((document) => document.schemas)
 
@@ -110,7 +108,7 @@ export class SchemaDeclarationGenerator implements Generator {
   }
 
   static getEntrypointArtifactId(moduleDefinition: ModuleDefinition): string {
-    return `${moduleDefinition.address}/components/schemas/entrypoint?generator=${SCHEMA_GENERATOR}`
+    return `${moduleDefinition.address.url}/components/schemas/entrypoint?generator=${SCHEMA_GENERATOR}`
   }
 
   static getSchemaDefinitionArtifactFilepath(schemaDefinition: SchemaDefinition, fileNamingStyle: FileNamingStyle): string {

@@ -43,6 +43,11 @@
       "types": "./dist/plugins/index.d.ts",
       "import": "./dist/plugins.js",
       "require": "./dist/plugins.cjs"
+    },
+    "./translators": {
+      "types": "./dist/translators/index.d.ts",
+      "import": "./dist/translators.js",
+      "require": "./dist/translators.cjs"
     }
   },
   "scripts": {
