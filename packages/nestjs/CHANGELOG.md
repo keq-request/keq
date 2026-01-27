@@ -1,5 +1,11 @@
 # @keq-request/nestjs
 
+## 5.0.0-alpha.29
+
+### Patch Changes
+
+- keq@5.0.0-alpha.29
+
 ## 5.0.0-alpha.28
 
 ### Patch Changes

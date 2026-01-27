@@ -1,5 +1,12 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.29
+
+### Patch Changes
+
+- 3e073b9: Ensure plugins are not registered more than once.
+  - keq@5.0.0-alpha.29
+
 ## 5.0.0-alpha.28
 
 ### Major Changes

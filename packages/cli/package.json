@@ -7,7 +7,7 @@
     "keq": "dist/cli.cjs"
   },
   "description": "Transform Swagger/OpenAPI to the function that send request by keq",
-  "version": "5.0.0-alpha.28",
+  "version": "5.0.0-alpha.29",
   "engines": {
     "node": ">=20.0.0"
   },
