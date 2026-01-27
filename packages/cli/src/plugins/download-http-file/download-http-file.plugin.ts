@@ -6,10 +6,11 @@ import { DownloadHttpFilePluginMetadata, MetadataStorage } from './constants/ind
 
 export class DownloadHttpFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = DownloadHttpFilePlugin.register(compiler)
+    if (metadata.applied) return
 
-    DownloadHttpFilePlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.download.tapPromise(DownloadHttpFilePlugin.name, async (address, task) => {
       const { url } = address
@@ -48,6 +49,7 @@ export class DownloadHttpFilePlugin implements Plugin {
   static register(compiler: Compiler): DownloadHttpFilePluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
         },
       })

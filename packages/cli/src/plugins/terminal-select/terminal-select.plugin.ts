@@ -21,10 +21,11 @@ export class TerminalSelectPlugin implements Plugin {
   constructor(private options: TerminalSelectPluginOptions) {}
 
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = TerminalSelectPlugin.register(compiler)
+    if (metadata.applied) return
 
-    TerminalSelectPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.afterDownload.tapPromise(TerminalSelectPlugin.name, async (task) => {
       const context = compiler.context
@@ -59,6 +60,7 @@ export class TerminalSelectPlugin implements Plugin {
   static register(compiler: Compiler): TerminalSelectPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {},
       })
     }

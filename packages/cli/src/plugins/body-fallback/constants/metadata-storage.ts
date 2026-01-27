@@ -2,6 +2,7 @@ import { Compiler } from '~/compiler/index.js'
 
 
 export interface BodyFallbackPluginMetadata {
+  applied: boolean
   hooks: object
 }
 

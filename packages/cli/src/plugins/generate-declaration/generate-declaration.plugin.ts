@@ -17,10 +17,12 @@ export class GenerateDeclarationPlugin implements Plugin {
   constructor() {}
 
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    // Prevent duplicate registration by checking applied flag
+    const metadata = GenerateDeclarationPlugin.register(compiler)
+    if (metadata.applied) return
 
-    GenerateDeclarationPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.compile.tapPromise(GenerateDeclarationPlugin.name, async (task: TaskWrapper) => {
       compiler.context.artifacts?.push(
@@ -33,6 +35,7 @@ export class GenerateDeclarationPlugin implements Plugin {
   static register(compiler: Compiler): GenerateDeclarationPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
           afterEntrypointArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, TaskWrapper], Artifact>(['artifact', 'task']),
           afterSchemaDeclarationArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper], Artifact>(['artifact', 'schemaDefinition', 'task']),
@@ -40,6 +43,7 @@ export class GenerateDeclarationPlugin implements Plugin {
         },
       })
     }
+
     return MetadataStorage.get(compiler)!
   }
 

@@ -10,6 +10,12 @@ interface SchemaDefinitionDeclarationRendererOptions {
   getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
 }
 
+interface SchemaDefinitionZodRendererOptions {
+  esm?: boolean
+
+  getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
+}
+
 export class SchemaDefinitionTransformer {
   static toDeclaration(schemaDefinition: SchemaDefinition, options: SchemaDefinitionDeclarationRendererOptions): string {
     const dependencies = schemaDefinition.getDependencies()
@@ -63,6 +69,54 @@ export class SchemaDefinitionTransformer {
       $dependencies,
       $comment || undefined,
       `export type ${schemaDefinition.name} = ${JsonSchemaTransformer.toDeclaration(schemaDefinition.schema)}`,
+      '',
+      '/* @anchor:file:end */',
+    ].filter(R.isNotNil).join('\n')
+  }
+
+  static toZod(schemaDefinition: SchemaDefinition, options: SchemaDefinitionZodRendererOptions): string {
+    const dependencies = schemaDefinition.getDependencies()
+    let $dependencies = dependencies
+      .filter((dep) => !SchemaDefinition.isUnknown(dep))
+      .map((dep) => {
+        const filepath = options.getDependentSchemaDefinitionFilepath(dep)
+        return `import { ${dep.name}, ${dep.name}Schema } from "${filepath}"`
+      })
+      .map((str) => str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, options.esm ? ' from "$1.js"' : ' from "$1"'))
+      .join('\n')
+
+    if ($dependencies) $dependencies += '\n'
+
+    let $comment = JsonSchemaTransformer.toComment(schemaDefinition.schema)
+    if ($comment) $comment += '\n'
+
+    // Add zod import
+    const $zodImport = 'import { z } from \'zod\'\n'
+
+    if (typeof schemaDefinition.schema === 'boolean') {
+      return [
+        '/* @anchor:file:start */',
+        '',
+        $zodImport,
+        $dependencies,
+        $comment || undefined,
+        `export const ${schemaDefinition.name}Schema = z.unknown()`,
+        `export type ${schemaDefinition.name} = z.infer<typeof ${schemaDefinition.name}Schema>`,
+        '',
+        '/* @anchor:file:end */',
+      ].filter(R.isNotNil).join('\n')
+    }
+
+    const $schema = JsonSchemaTransformer.toZod(schemaDefinition.schema)
+
+    return [
+      '/* @anchor:file:start */',
+      '',
+      $zodImport,
+      $dependencies,
+      $comment || undefined,
+      `export const ${schemaDefinition.name}Schema = ${$schema}`,
+      `export type ${schemaDefinition.name} = z.infer<typeof ${schemaDefinition.name}Schema>`,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')

@@ -11,10 +11,12 @@ export class PrettierPlugin implements Plugin {
   apply(compiler: Compiler): void {
     if (!compiler.options.build) return
 
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    // Prevent duplicate registration by checking applied flag
+    const metadata = PrettierPlugin.register(compiler)
+    if (metadata.applied) return
 
-    PrettierPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.afterPersist.tapPromise(PrettierPlugin.name, async () => {
       const files = compiler.context.assets || []
@@ -28,6 +30,7 @@ export class PrettierPlugin implements Plugin {
   static register(compiler: Compiler): PrettierPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
         },
       })

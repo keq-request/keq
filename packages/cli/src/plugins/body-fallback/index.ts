@@ -11,10 +11,11 @@ import { BodyFallbackPluginMetadata, MetadataStorage } from './constants/index.j
 
 export class BodyFallbackPlugin implements Plugin {
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = BodyFallbackPlugin.register(compiler)
+    if (metadata.applied) return
 
-    BodyFallbackPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.setup.tap(BodyFallbackPlugin.name, () => {
       const generateMicroFunctionPluginMetadata = GenerateMicroFunctionPlugin.of(compiler)
@@ -61,6 +62,7 @@ export class BodyFallbackPlugin implements Plugin {
   static register(compiler: Compiler): BodyFallbackPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: { },
       })
     }

@@ -3,6 +3,7 @@ import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { Artifact, OperationDefinition } from '~/models/index.js'
 
 export interface GenerateMicroFunctionPluginMetadata {
+  applied: boolean
   hooks: {
     afterEntrypointArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
     afterMicroFunctionArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>

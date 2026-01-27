@@ -10,7 +10,7 @@ export default defineConfig({
   },
   format: ['cjs', 'esm'],
   tsconfig: 'tsconfig.lib.json',
-  splitting: false,
+  splitting: true,
   sourcemap: true,
   clean: true,
   external: ['eslint'],

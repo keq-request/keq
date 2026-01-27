@@ -2,6 +2,7 @@ import { Compiler } from '~/compiler/index.js'
 
 
 export interface PrettierPluginMetadata {
+  applied: boolean
   hooks: object
 }
 

@@ -10,10 +10,11 @@ import { DownloadLocalFilePluginMetadata, MetadataStorage } from './constants/in
 
 export class DownloadLocalFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = DownloadLocalFilePlugin.register(compiler)
+    if (metadata.applied) return
 
-    DownloadLocalFilePlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.download.tapPromise(DownloadLocalFilePlugin.name, async (address, task) => {
       const { url, encoding } = address
@@ -36,6 +37,7 @@ export class DownloadLocalFilePlugin implements Plugin {
   static register(compiler: Compiler): DownloadLocalFilePluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
         },
       })

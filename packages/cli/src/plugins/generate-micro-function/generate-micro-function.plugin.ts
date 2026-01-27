@@ -11,10 +11,12 @@ export class GenerateMicroFunctionPlugin implements Plugin {
   private readonly requestGenerator = new RequestGenerator()
 
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    // Prevent duplicate registration by checking applied flag
+    const metadata = GenerateMicroFunctionPlugin.register(compiler)
+    if (metadata.applied) return
 
-    GenerateMicroFunctionPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.compile.tapPromise(GenerateMicroFunctionPlugin.name, async (task: TaskWrapper) => {
       const artifacts = [
@@ -29,6 +31,7 @@ export class GenerateMicroFunctionPlugin implements Plugin {
   static register(compiler: Compiler): GenerateMicroFunctionPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
           afterEntrypointArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>(['artifact', 'task']),
           afterMicroFunctionArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>(['artifact', 'operationDefinition', 'task']),

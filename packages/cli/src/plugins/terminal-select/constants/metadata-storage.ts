@@ -2,6 +2,7 @@ import { Compiler } from '~/compiler/index.js'
 
 
 export interface TerminalSelectPluginMetadata {
+  applied: boolean
   hooks: object
 }
 

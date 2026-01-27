@@ -18,9 +18,12 @@ export class EslintPlugin implements Plugin {
   apply(compiler: Compiler): void {
     if (!compiler.options.build) return
 
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
-    EslintPlugin.register(compiler)
+    // Prevent duplicate registration by checking applied flag
+    const metadata = EslintPlugin.register(compiler)
+    if (metadata.applied) return
+
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     if (this.options.disable && this.options.disable.length > 0) {
       const $rules = [
@@ -49,6 +52,7 @@ export class EslintPlugin implements Plugin {
   static register(compiler: Compiler): EslintPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: { },
       })
     }

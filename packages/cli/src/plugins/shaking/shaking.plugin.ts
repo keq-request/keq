@@ -8,10 +8,11 @@ import { ShakingPluginMetadata, MetadataStorage } from './constants/index.js'
 
 export class ShakingPlugin implements Plugin {
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = ShakingPlugin.register(compiler)
+    if (metadata.applied) return
 
-    ShakingPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.beforeCompile.tap(ShakingPlugin.name, (task) => {
       const matcher = compiler.context.matcher!
@@ -64,6 +65,7 @@ export class ShakingPlugin implements Plugin {
   static register(compiler: Compiler): ShakingPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
         },
       })

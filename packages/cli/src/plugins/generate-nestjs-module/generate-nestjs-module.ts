@@ -10,10 +10,12 @@ export class GenerateNestjsModulePlugin implements Plugin {
   private readonly nestjsModuleGenerator = new NestjsModuleGenerator()
 
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    // Prevent duplicate registration by checking applied flag
+    const metadata = GenerateNestjsModulePlugin.register(compiler)
+    if (metadata.applied) return
 
-    GenerateNestjsModulePlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.compile.tapPromise(GenerateNestjsModulePlugin.name, async (task) => {
       const artifacts = await this.nestjsModuleGenerator.compile(compiler, task)
@@ -24,6 +26,7 @@ export class GenerateNestjsModulePlugin implements Plugin {
   static register(compiler: Compiler): GenerateNestjsModulePluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: {
           afterNestjsModuleArtifactGenerated: new AsyncSeriesWaterfallHook<[Artifact, ApiDocumentV3_1, TaskWrapper]>(['artifact', 'document', 'task']),
         },

@@ -4,6 +4,7 @@ import { Artifact, OperationDefinition, SchemaDefinition } from '~/models/index.
 
 
 export interface GenerateDeclarationPluginMetadata {
+  applied: boolean
   hooks: {
     afterEntrypointArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
     afterSchemaDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper]>
@@ -11,4 +12,4 @@ export interface GenerateDeclarationPluginMetadata {
   }
 }
 
-export const MetadataStorage = new WeakMap<Compiler, GenerateDeclarationPluginMetadata>()
+export const MetadataStorage = new Map<Compiler, GenerateDeclarationPluginMetadata>()

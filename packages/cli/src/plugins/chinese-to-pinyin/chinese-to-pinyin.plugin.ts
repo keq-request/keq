@@ -7,10 +7,11 @@ import { ChineseToPinyinPluginMetadata, MetadataStorage } from './constants/inde
 
 export class ChineseToPinyinPlugin {
   apply(compiler: Compiler): void {
-    // Prevent duplicate registration
-    if (MetadataStorage.has(compiler)) return
+    const metadata = ChineseToPinyinPlugin.register(compiler)
+    if (metadata.applied) return
 
-    ChineseToPinyinPlugin.register(compiler)
+    // Mark as applied immediately to prevent re-entry
+    metadata.applied = true
 
     compiler.hooks.afterDownload.tap(ChineseToPinyinPlugin.name, (task) => {
       const documents = compiler.context.documents!
@@ -27,6 +28,7 @@ export class ChineseToPinyinPlugin {
   static register(compiler: Compiler): ChineseToPinyinPluginMetadata {
     if (!MetadataStorage.has(compiler)) {
       MetadataStorage.set(compiler, {
+        applied: false,
         hooks: { },
       })
     }

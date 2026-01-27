@@ -2,6 +2,7 @@ import { Compiler } from '~/compiler/index.js'
 
 
 export interface DownloadLocalFilePluginMetadata {
+  applied: boolean
   hooks: object
 }
 
