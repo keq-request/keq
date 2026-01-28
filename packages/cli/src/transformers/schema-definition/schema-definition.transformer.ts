@@ -10,7 +10,7 @@ interface SchemaDefinitionDeclarationRendererOptions {
   getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
 }
 
-interface SchemaDefinitionZodRendererOptions {
+interface SchemaDefinitionValibotRendererOptions {
   esm?: boolean
 
   getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
@@ -74,7 +74,7 @@ export class SchemaDefinitionTransformer {
     ].filter(R.isNotNil).join('\n')
   }
 
-  static toZod(schemaDefinition: SchemaDefinition, options: SchemaDefinitionZodRendererOptions): string {
+  static toValibot(schemaDefinition: SchemaDefinition, options: SchemaDefinitionValibotRendererOptions): string {
     const dependencies = schemaDefinition.getDependencies()
     let $dependencies = dependencies
       .filter((dep) => !SchemaDefinition.isUnknown(dep))
@@ -90,33 +90,33 @@ export class SchemaDefinitionTransformer {
     let $comment = JsonSchemaTransformer.toComment(schemaDefinition.schema)
     if ($comment) $comment += '\n'
 
-    // Add zod import
-    const $zodImport = 'import { z } from \'zod\'\n'
+    // Add valibot import
+    const $valibotImport = 'import * as v from \'valibot\'\n'
 
     if (typeof schemaDefinition.schema === 'boolean') {
       return [
         '/* @anchor:file:start */',
         '',
-        $zodImport,
+        $valibotImport,
         $dependencies,
         $comment || undefined,
-        `export const ${schemaDefinition.name}Schema = z.unknown()`,
-        `export type ${schemaDefinition.name} = z.infer<typeof ${schemaDefinition.name}Schema>`,
+        `export const ${schemaDefinition.name}Schema = v.unknown()`,
+        `export type ${schemaDefinition.name} = v.InferOutput<typeof ${schemaDefinition.name}Schema>`,
         '',
         '/* @anchor:file:end */',
       ].filter(R.isNotNil).join('\n')
     }
 
-    const $schema = JsonSchemaTransformer.toZod(schemaDefinition.schema)
+    const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema)
 
     return [
       '/* @anchor:file:start */',
       '',
-      $zodImport,
+      $valibotImport,
       $dependencies,
       $comment || undefined,
       `export const ${schemaDefinition.name}Schema = ${$schema}`,
-      `export type ${schemaDefinition.name} = z.infer<typeof ${schemaDefinition.name}Schema>`,
+      `export type ${schemaDefinition.name} = v.InferOutput<typeof ${schemaDefinition.name}Schema>`,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')

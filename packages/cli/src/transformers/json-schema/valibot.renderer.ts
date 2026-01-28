@@ -10,14 +10,14 @@ import { ReferenceTransformer } from './reference.transformer.js'
 import { Renderer } from '../types/renderer.js'
 
 
-export interface JsonSchemaZodRendererOptions {
+export interface JsonSchemaValibotRendererOptions {
   referenceTransformer?: (schema: OpenAPIV3_1.ReferenceObject) => string
 }
 
-export class ZodRenderer implements Renderer {
+export class ValibotRenderer implements Renderer {
   constructor(
     private readonly schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject,
-    private readonly options: JsonSchemaZodRendererOptions = {},
+    private readonly options: JsonSchemaValibotRendererOptions = {},
   ) {
   }
 
@@ -26,7 +26,7 @@ export class ZodRenderer implements Renderer {
   }
 
   private renderSchema(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject): string {
-    if (typeof schema === 'boolean') return 'z.unknown()'
+    if (typeof schema === 'boolean') return 'v.unknown()'
 
     if (JsonSchemaUtils.isRef(schema)) return this.renderReference(schema)
     if (JsonSchemaUtils.isMixed(schema)) return this.renderMixed(schema)
@@ -43,7 +43,7 @@ export class ZodRenderer implements Renderer {
     if (schema.type === 'null') return this.renderNull(schema)
     if (schema.type === 'integer') return this.renderInteger(schema)
 
-    return 'z.unknown()'
+    return 'v.unknown()'
   }
 
 
@@ -53,10 +53,10 @@ export class ZodRenderer implements Renderer {
         .map((type): (OpenAPIV3_1.ArraySchemaObject | OpenAPIV3_1.NonArraySchemaObject) => ({ ...schema, type }))
         .map((schema) => this.renderSchema(schema))
 
-      return `z.union([${schemas.join(', ')}])`
+      return `v.union([${schemas.join(', ')}])`
     }
 
-    return 'z.unknown()'
+    return 'v.unknown()'
   }
 
   private renderReference(schema: OpenAPIV3_1.ReferenceObject): string {
@@ -72,20 +72,24 @@ export class ZodRenderer implements Renderer {
 
     if (schema.items && Array.isArray(schema.items)) {
       const items = schema.items.map((s) => this.renderSchema(s)).join(', ')
-      result = `z.tuple([${items}])`
+      result = `v.tuple([${items}])`
     } else if (schema.items && typeof schema.items === 'object') {
-      result = `z.array(${this.renderSchema(schema.items)})`
+      result = `v.array(${this.renderSchema(schema.items)})`
     } else {
-      result = 'z.array(z.any())'
+      result = 'v.array(v.any())'
     }
 
-    // Add array length constraints
-    if (schema.minItems !== undefined && schema.maxItems !== undefined) {
-      result += `.min(${schema.minItems}).max(${schema.maxItems})`
-    } else if (schema.minItems !== undefined) {
-      result += `.min(${schema.minItems})`
-    } else if (schema.maxItems !== undefined) {
-      result += `.max(${schema.maxItems})`
+    // Add array length constraints using pipe
+    const constraints: string[] = []
+    if (schema.minItems !== undefined) {
+      constraints.push(`v.minLength(${schema.minItems})`)
+    }
+    if (schema.maxItems !== undefined) {
+      constraints.push(`v.maxLength(${schema.maxItems})`)
+    }
+
+    if (constraints.length > 0) {
+      result = `v.pipe(${result}, ${constraints.join(', ')})`
     }
 
     return result
@@ -97,7 +101,7 @@ export class ZodRenderer implements Renderer {
       (!schema.properties || R.isEmpty(schema.properties))
       && (!schema.additionalProperties || R.isEmpty(schema.additionalProperties))
     ) {
-      return 'z.object({})'
+      return 'v.object({})'
     }
 
     const $properties = Object.entries(schema.properties || {})
@@ -108,209 +112,193 @@ export class ZodRenderer implements Renderer {
         const $key = `"${propertyName}"`
         let $value = this.renderSchema(propertySchema)
 
-        // Add .optional() for non-required fields
+        // Add v.optional() for non-required fields
         if (!schema.required?.includes(propertyName)) {
-          $value += '.optional()'
+          $value = `v.optional(${$value})`
         }
 
         return indent(2, `${$comment}${$key}: ${$value},`)
       })
 
     let result = [
-      'z.object({',
+      'v.object({',
       ...$properties,
       '})',
     ].join('\n')
 
-    // Handle additionalProperties
+    // Handle additionalProperties - Valibot uses looseness
     if (schema.additionalProperties) {
-      const $value = schema.additionalProperties === true
-        ? 'z.any()'
-        : this.renderSchema(schema.additionalProperties)
-      result += `.catchall(${$value})`
+      if (schema.additionalProperties === true) {
+        // For loose objects, we need to wrap with v.looseObject
+        result = result.replace('v.object({', 'v.looseObject({')
+      } else {
+        // For specific additional properties type, use v.record
+        const $value = this.renderSchema(schema.additionalProperties)
+        result = `v.intersect([${result}, v.record(v.string(), ${$value})])`
+      }
     }
 
     return result
   }
 
   private renderOneOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (!schema.oneOf) return 'z.unknown()'
+    if (!schema.oneOf) return 'v.unknown()'
 
     const schemas = schema.oneOf.map((s) => this.renderSchema(s))
-    return `z.union([${schemas.join(', ')}])`
+    return `v.union([${schemas.join(', ')}])`
   }
 
   private renderAnyOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (!schema.anyOf) return 'z.unknown()'
+    if (!schema.anyOf) return 'v.unknown()'
 
     const schemas = schema.anyOf.map((s) => this.renderSchema(s))
-    return `z.union([${schemas.join(', ')}])`
+    return `v.union([${schemas.join(', ')}])`
   }
 
   private renderAllOf(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (!schema.allOf || schema.allOf.length === 0) return 'z.unknown()'
+    if (!schema.allOf || schema.allOf.length === 0) return 'v.unknown()'
 
     const schemas = schema.allOf.map((s) => this.renderSchema(s))
 
-    // If we have only one schema, return it directly
-    if (schemas.length === 1) {
-      return schemas[0]
-    }
-
-    // If we have two schemas, use z.intersection
-    if (schemas.length === 2) {
-      return `z.intersection(${schemas[0]}, ${schemas[1]})`
-    }
-
-    // For more than 2 schemas, chain intersections from left to right
-    return schemas.reduce((acc, schema) => {
-      return `z.intersection(${acc}, ${schema})`
-    })
+    // Valibot uses v.intersect with an array of schemas
+    return `v.intersect([${schemas.join(', ')}])`
   }
 
   private renderEnum(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (!schema.enum || schema.enum.length === 0) return 'z.unknown()'
+    if (!schema.enum || schema.enum.length === 0) return 'v.unknown()'
 
     // For single value, use literal
     if (schema.enum.length === 1) {
-      return `z.literal(${JSON.stringify(schema.enum[0])})`
+      return `v.literal(${JSON.stringify(schema.enum[0])})`
     }
 
-    // For multiple values of the same type, use z.enum for strings or z.union of literals for mixed types
+    // For multiple values of the same type, use v.picklist for strings or v.union of literals for mixed types
     const allStrings = schema.enum.every((v) => typeof v === 'string')
 
     if (allStrings) {
       const values = schema.enum.map((v) => JSON.stringify(v)).join(', ')
-      return `z.enum([${values}])`
+      return `v.picklist([${values}])`
     }
 
     // Mixed types: use union of literals
-    const literals = schema.enum.map((v) => `z.literal(${JSON.stringify(v)})`)
-    return `z.union([${literals.join(', ')}])`
+    const literals = schema.enum.map((v) => `v.literal(${JSON.stringify(v)})`)
+    return `v.union([${literals.join(', ')}])`
   }
 
   private renderString(schema: OpenAPIV3_1.NonArraySchemaObject): string {
     if (schema.contentMediaType === 'application/octet-stream') {
-      return 'z.union([z.instanceof(Blob), z.instanceof(Buffer)])'
+      return 'v.union([v.instance(Blob), v.instance(Buffer)])'
     }
 
     if (schema.format === 'binary') {
-      return 'z.union([z.instanceof(Blob), z.instanceof(Buffer)])'
+      return 'v.union([v.instance(Blob), v.instance(Buffer)])'
     }
 
-    let result = 'z.string()'
+    let result = 'v.string()'
+    const constraints: string[] = []
 
     // Add format validations
     if (schema.format === 'email') {
-      result += '.email()'
+      constraints.push('v.email()')
     } else if (schema.format === 'uri' || schema.format === 'url') {
-      result += '.url()'
+      constraints.push('v.url()')
     } else if (schema.format === 'uuid') {
-      result += '.uuid()'
+      constraints.push('v.uuid()')
     } else if (schema.format === 'date-time') {
-      result += '.datetime()'
+      constraints.push('v.isoDateTime()')
     } else if (schema.format === 'date') {
-      result += '.date()'
+      constraints.push('v.isoDate()')
     } else if (schema.format === 'time') {
-      result += '.time()'
+      constraints.push('v.isoTime()')
     }
 
     // Add length constraints
-    if (schema.minLength !== undefined && schema.maxLength !== undefined) {
-      result += `.min(${schema.minLength}).max(${schema.maxLength})`
-    } else if (schema.minLength !== undefined) {
-      result += `.min(${schema.minLength})`
-    } else if (schema.maxLength !== undefined) {
-      result += `.max(${schema.maxLength})`
+    if (schema.minLength !== undefined) {
+      constraints.push(`v.minLength(${schema.minLength})`)
+    }
+    if (schema.maxLength !== undefined) {
+      constraints.push(`v.maxLength(${schema.maxLength})`)
     }
 
     // Add pattern validation
     if (schema.pattern) {
       const escapedPattern = schema.pattern.replace(/\\/g, '\\\\')
-      result += `.regex(/${escapedPattern}/)`
+      constraints.push(`v.regex(/${escapedPattern}/)`)
+    }
+
+    if (constraints.length > 0) {
+      result = `v.pipe(${result}, ${constraints.join(', ')})`
     }
 
     return result
   }
 
   private renderNumber(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    let result = 'z.number()'
+    let result = 'v.number()'
+    const constraints: string[] = []
 
     // Add numeric constraints
-    if (schema.minimum !== undefined && schema.maximum !== undefined) {
+    if (schema.minimum !== undefined) {
       if (schema.exclusiveMinimum) {
-        result += `.gt(${schema.minimum})`
+        constraints.push(`v.minValue(${schema.minimum + Number.EPSILON})`)
       } else {
-        result += `.gte(${schema.minimum})`
+        constraints.push(`v.minValue(${schema.minimum})`)
       }
+    }
+    if (schema.maximum !== undefined) {
       if (schema.exclusiveMaximum) {
-        result += `.lt(${schema.maximum})`
+        constraints.push(`v.maxValue(${schema.maximum - Number.EPSILON})`)
       } else {
-        result += `.lte(${schema.maximum})`
-      }
-    } else if (schema.minimum !== undefined) {
-      if (schema.exclusiveMinimum) {
-        result += `.gt(${schema.minimum})`
-      } else {
-        result += `.gte(${schema.minimum})`
-      }
-    } else if (schema.maximum !== undefined) {
-      if (schema.exclusiveMaximum) {
-        result += `.lt(${schema.maximum})`
-      } else {
-        result += `.lte(${schema.maximum})`
+        constraints.push(`v.maxValue(${schema.maximum})`)
       }
     }
 
     // Add multipleOf constraint
     if (schema.multipleOf !== undefined) {
-      result += `.multipleOf(${schema.multipleOf})`
+      constraints.push(`v.multipleOf(${schema.multipleOf})`)
+    }
+
+    if (constraints.length > 0) {
+      result = `v.pipe(${result}, ${constraints.join(', ')})`
     }
 
     return result
   }
 
   private renderBoolean(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    return 'z.boolean()'
+    return 'v.boolean()'
   }
 
   private renderNull(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    return 'z.null()'
+    return 'v.null()'
   }
 
   private renderInteger(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    let result = 'z.number().int()'
+    let result = 'v.number()'
+    const constraints: string[] = ['v.integer()']
 
     // Add numeric constraints
-    if (schema.minimum !== undefined && schema.maximum !== undefined) {
+    if (schema.minimum !== undefined) {
       if (schema.exclusiveMinimum) {
-        result += `.gt(${schema.minimum})`
+        constraints.push(`v.minValue(${schema.minimum + 1})`)
       } else {
-        result += `.gte(${schema.minimum})`
+        constraints.push(`v.minValue(${schema.minimum})`)
       }
+    }
+    if (schema.maximum !== undefined) {
       if (schema.exclusiveMaximum) {
-        result += `.lt(${schema.maximum})`
+        constraints.push(`v.maxValue(${schema.maximum - 1})`)
       } else {
-        result += `.lte(${schema.maximum})`
-      }
-    } else if (schema.minimum !== undefined) {
-      if (schema.exclusiveMinimum) {
-        result += `.gt(${schema.minimum})`
-      } else {
-        result += `.gte(${schema.minimum})`
-      }
-    } else if (schema.maximum !== undefined) {
-      if (schema.exclusiveMaximum) {
-        result += `.lt(${schema.maximum})`
-      } else {
-        result += `.lte(${schema.maximum})`
+        constraints.push(`v.maxValue(${schema.maximum})`)
       }
     }
 
     // Add multipleOf constraint
     if (schema.multipleOf !== undefined) {
-      result += `.multipleOf(${schema.multipleOf})`
+      constraints.push(`v.multipleOf(${schema.multipleOf})`)
     }
+
+    result = `v.pipe(${result}, ${constraints.join(', ')})`
 
     return result
   }

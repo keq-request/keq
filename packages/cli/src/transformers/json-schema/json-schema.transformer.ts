@@ -1,7 +1,7 @@
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { CommentRenderer } from './comment.renderer.js'
 import { DeclarationRenderer, JsonSchemaDeclarationRendererOptions } from './declaration.renderer.js'
-import { ZodRenderer, JsonSchemaZodRendererOptions } from './zod.renderer.js'
+import { ValibotRenderer, JsonSchemaValibotRendererOptions } from './valibot.renderer.js'
 
 
 export class JsonSchemaTransformer {
@@ -13,7 +13,7 @@ export class JsonSchemaTransformer {
     return new DeclarationRenderer(schema, options).render()
   }
 
-  static toZod(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject, options?: JsonSchemaZodRendererOptions): string {
-    return new ZodRenderer(schema, options).render()
+  static toValibot(schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject, options?: JsonSchemaValibotRendererOptions): string {
+    return new ValibotRenderer(schema, options).render()
   }
 }
