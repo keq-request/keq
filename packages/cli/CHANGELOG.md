@@ -1,5 +1,16 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.30
+
+### Minor Changes
+
+- 8046e78: Add UseValibotPlugin
+- 7c8d5f0: **Feat:** add list command.
+
+### Patch Changes
+
+- keq@5.0.0-alpha.30
+
 ## 5.0.0-alpha.29
 
 ### Patch Changes
