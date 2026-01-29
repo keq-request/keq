@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/exception",
-  "version": "5.0.0-alpha.29",
+  "version": "5.0.0-alpha.30",
   "description": "Request exception for keq",
   "keywords": [
     "keq",
@@ -49,7 +49,7 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0-alpha.29"
+    "keq": "^5.0.0-alpha.30"
   },
   "optionalDependencies": {
     "@keq-request/cli": "workspace:*"
