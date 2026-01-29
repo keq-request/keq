@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import * as path from 'path'
 import semver from 'semver'
 import { Argument, Command, Option } from 'commander'
 import { SupportedMethods } from './constants/supported-methods.js'
@@ -161,14 +162,18 @@ program
       const invalidFiles = await findInvalidFiles(context.rc.outdir, validFilePaths)
 
       for (const file of invalidFiles) {
-        console.log(`  ${file.relativePath}`)
+        // Join outdir with relative path to show full path with ./ prefix
+        const fullPath = `./${path.join(context.rc.outdir, file.relativePath)}`
+        console.log(fullPath)
       }
     } else {
       // List files that should be generated based on current config
       const artifacts = context.artifacts || []
 
       for (const artifact of artifacts) {
-        console.log(`  ${artifact.filepath}`)
+        // Join outdir with artifact filepath, similar to persist task, with ./ prefix
+        const fullPath = `./${path.join(context.rc.outdir, artifact.filepath)}`
+        console.log(fullPath)
       }
     }
   })
