@@ -178,6 +178,112 @@ program
     }
   })
 
+
+program
+  .command('apis')
+  .option('-c --config <config>', 'The keq-cli config file')
+  .option('--module <modules...>', 'Filter module(s) to list')
+  .addOption(
+    new Option('--includes <includes...>', 'Include specific parts')
+      .choices(['operations', 'components']),
+  )
+  .option('--json', 'Output in JSON format')
+  .option('--debug', 'Print debug information')
+  .action(async (options) => {
+    const compiler = new Compiler({
+      build: true,
+      persist: false,
+      silent: true,
+      config: options.config,
+      includes: options.module || [],
+      debug: !!options.debug,
+    })
+
+    await compiler.run()
+
+    const context = compiler.context
+    const documents = context.documents || []
+
+    // Determine what to include
+    const includesList = options.includes || ['operations', 'components']
+    const includeOperations = includesList.includes('operations')
+    const includeComponents = includesList.includes('components')
+
+    // Build unified data structure
+    const result = documents.map((document) => {
+      const item: {
+        module: string
+        operations?: Array<{ method: string; path: string; operationId: string }>
+        components?: { schemas: Array<{ name: string }> }
+      } = {
+        module: document.module.name,
+      }
+
+      if (includeOperations) {
+        item.operations = document.operations.map((operation) => ({
+          method: operation.method.toUpperCase(),
+          path: operation.pathname,
+          operationId: operation.operationId,
+        }))
+      }
+
+      if (includeComponents) {
+        item.components = {
+          schemas: document.schemas.map((schema) => ({
+            name: schema.name,
+          })),
+        }
+      }
+
+      return item
+    })
+
+    if (options.json) {
+      // JSON format output
+      console.log(JSON.stringify(result, null, 2))
+    } else {
+      // Human-readable format output
+      for (const item of result) {
+        console.log(`\nModule: ${item.module}`)
+        console.log('─'.repeat(70))
+
+        // Display APIs
+        if (includeOperations) {
+          console.log('\n  APIs:')
+          if (!item.operations || item.operations.length === 0) {
+            console.log('    (No APIs)')
+          } else {
+            for (const operation of item.operations) {
+              const method = operation.method.padEnd(7)
+              console.log(`    ${method} ${operation.path}`)
+            }
+          }
+        }
+
+        // Display Schemas
+        if (includeComponents) {
+          console.log('\n  Schemas:')
+          if (!item.components || item.components.schemas.length === 0) {
+            console.log('    (No Schemas)')
+          } else {
+            for (const schema of item.components.schemas) {
+              console.log(`    ${schema.name}`)
+            }
+          }
+        }
+      }
+
+      // Print summary
+      const totalApis = result.reduce((sum, item) => sum + (item.operations?.length || 0), 0)
+      const totalSchemas = result.reduce((sum, item) => sum + (item.components?.schemas.length || 0), 0)
+      console.log('\n' + '─'.repeat(70))
+      const parts = [`${result.length} modules`]
+      if (includeOperations) parts.push(`${totalApis} APIs`)
+      if (includeComponents) parts.push(`${totalSchemas} Schemas`)
+      console.log(`Total: ${parts.join(', ')}`)
+    }
+  })
+
 async function main(): Promise<void> {
   program.on('command:*', function (operands) {
     throw new Error(`Unknown command '${String(operands[0])}'`)
