@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.0-alpha.31
+
+### Patch Changes
+
+- keq@5.0.0-alpha.31
+
 ## 5.0.0-alpha.30
 
 ### Patch Changes

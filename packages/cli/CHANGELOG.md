@@ -1,5 +1,15 @@
 ## 5.0.0-alpha.6 (2025-09-17)
 
+## 5.0.0-alpha.31
+
+### Minor Changes
+
+- a86d287: **Feat:** add apis command to list operations and schemas.
+
+### Patch Changes
+
+- keq@5.0.0-alpha.31
+
 ## 5.0.0-alpha.30
 
 ### Minor Changes
