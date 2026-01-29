@@ -4,6 +4,7 @@ import { Argument, Command, Option } from 'commander'
 import { SupportedMethods } from './constants/supported-methods.js'
 import { logger } from './utils/logger.js'
 import { Compiler } from './compiler/compiler.js'
+import { findInvalidFiles } from './utils/scan-generated-files.js'
 
 
 if (semver.lt(process.version, '20.0.0')) {
@@ -23,6 +24,7 @@ program
   .action(async (options) => {
     const compiler = new Compiler({
       build: true,
+      persist: true,
       config: options.config,
       includes: options.module,
       debug: !!options.debug,
@@ -65,6 +67,7 @@ program
 
       compiler = new Compiler({
         build: false,
+        persist: true,
         config: options.config,
         includes: options.module,
         debug: !!options.debug,
@@ -87,6 +90,7 @@ program
 
       compiler = new Compiler({
         build: !!options.build,
+        persist: true,
         config: options.config,
         includes: options.module,
         debug: !!options.debug,
@@ -105,6 +109,7 @@ program
 
       compiler = new Compiler({
         build: !!options.build,
+        persist: true,
         config: options.config,
         debug: !!options.debug,
         includes: options.module,
@@ -122,6 +127,50 @@ program
     }
 
     await compiler.run()
+  })
+
+
+program
+  .command('list')
+  .option('-c --config <config>', 'The keq-cli config file')
+  .option('--invalid', 'List only invalid generated files (files not in current build)')
+  .option('--debug', 'Print debug information')
+  .action(async (options) => {
+    const compiler = new Compiler({
+      build: true,
+      persist: false,
+      silent: true,
+      config: options.config,
+      includes: [],
+      debug: !!options.debug,
+    })
+
+    await compiler.run()
+
+    const context = compiler.context
+
+    if (!context.rc) {
+      throw new Error('Failed to load configuration')
+    }
+
+    if (options.invalid) {
+      // Get valid file paths from artifacts
+      const validFilePaths = (context.artifacts || []).map((artifact) => artifact.filepath)
+
+      // Find invalid files (all files in outdir not in current build)
+      const invalidFiles = await findInvalidFiles(context.rc.outdir, validFilePaths)
+
+      for (const file of invalidFiles) {
+        console.log(`  ${file.relativePath}`)
+      }
+    } else {
+      // List files that should be generated based on current config
+      const artifacts = context.artifacts || []
+
+      for (const artifact of artifacts) {
+        console.log(`  ${artifact.filepath}`)
+      }
+    }
   })
 
 async function main(): Promise<void> {

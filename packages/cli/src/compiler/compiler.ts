@@ -28,6 +28,8 @@ import { Address } from '~/types/index.js'
 interface Options extends SetupTaskOptions {
   includes: string[]
   build: boolean
+  persist?: boolean
+  silent?: boolean
   interactive?: boolean | TerminalSelectPluginOptions
 }
 
@@ -74,16 +76,16 @@ export class Compiler {
   async run(): Promise<void> {
     const options = this.options
 
-    const tasks = new Listr<CompilerContext>(
+    const tasks = new Listr<CompilerContext, 'default' | 'silent'>(
       [
         createSetupTask(this, options),
         createDownloadTask(this, { skipIgnoredModules: !options.interactive }),
         createCompileTask(this, { enabled: !!options.build }),
-        createPersistTask(this),
+        createPersistTask(this, { enabled: !!options.persist }),
       ],
       {
         concurrent: false,
-        renderer: 'default',
+        renderer: options.silent ? 'silent' : 'default',
         rendererOptions: {
           suffixSkips: true,
           collapseSubtasks: false,
