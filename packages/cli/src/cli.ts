@@ -17,6 +17,7 @@ const program = new Command()
 
 program
   .command('build')
+  .description('Build and generate API client code from OpenAPI/Swagger specifications')
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--module <modules...>', 'Filter module(s) to generate')
   .option('--debug', 'Print debug information')
@@ -42,6 +43,7 @@ program
 
 program
   .command('ignore')
+  .description('Manage ignore rules for API generation using .keqignore file')
   .addArgument(
     new Argument('<mode>', 'The ignore mode')
       .choices(['all', 'add', 'except'])
@@ -133,6 +135,7 @@ program
 
 program
   .command('list')
+  .description('List generated files based on current configuration')
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--invalid', 'List only invalid generated files (files not in current build)')
   .option('--debug', 'Print debug information')
@@ -181,6 +184,7 @@ program
 
 program
   .command('apis')
+  .description('List API operations and components from OpenAPI/Swagger specifications')
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--module <modules...>', 'Filter module(s) to list')
   .addOption(
@@ -282,6 +286,16 @@ program
       if (includeComponents) parts.push(`${totalSchemas} Schemas`)
       console.log(`Total: ${parts.join(', ')}`)
     }
+  })
+
+
+program
+  .command('init')
+  .description('Initialize keq configuration file')
+  .option('-f --force', 'Force overwrite existing config file')
+  .action(async (options) => {
+    const { initConfig } = await import('./init.js')
+    await initConfig(options)
   })
 
 async function main(): Promise<void> {
