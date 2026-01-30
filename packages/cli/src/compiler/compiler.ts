@@ -26,7 +26,6 @@ import { Address } from '~/types/index.js'
 
 
 interface Options extends SetupTaskOptions {
-  includes: string[]
   build: boolean
   persist?: boolean
   silent?: boolean
@@ -69,7 +68,6 @@ export class Compiler {
     new InitializePlugin({
       build: options.build,
       interactive: options.interactive,
-      includes: options.includes,
     }).apply(this)
   }
 

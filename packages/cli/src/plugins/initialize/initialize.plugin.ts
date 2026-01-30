@@ -11,7 +11,6 @@ interface InitializePluginOptions {
   build?: boolean
   interactive?: boolean | TerminalSelectPluginOptions
 
-  includes?: string[]
 }
 
 export class InitializePlugin implements Plugin {
@@ -58,30 +57,5 @@ export class InitializePlugin implements Plugin {
         plugin.apply(compiler)
       }
     })
-
-    if (this.options.includes && this.options.includes.length) {
-      const modulesIncludes = this.options.includes
-
-      compiler.hooks.afterSetup.tap(InitializePlugin.name, (task) => {
-        const rc = compiler.context.rc!
-        const matcher = compiler.context.matcher!
-
-        const notExistModules = modulesIncludes.filter((moduleName) => !(moduleName in rc.modules))
-        if (notExistModules.length) {
-          throw new Error(`Cannot find module(s) ${notExistModules.join(', ')} in config file.`)
-        }
-
-        const ignoredModules = R.difference(R.keys(rc.modules), modulesIncludes)
-        for (const moduleName of ignoredModules) {
-          matcher.append({
-            persist: false,
-            ignore: true,
-            moduleName,
-            operationMethod: '*',
-            operationPathname: '*',
-          })
-        }
-      })
-    }
   }
 }

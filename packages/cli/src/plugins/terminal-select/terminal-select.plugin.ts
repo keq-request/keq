@@ -8,12 +8,6 @@ export interface TerminalSelectPluginOptions {
   mode: IgnoreMode
 
   persist?: boolean
-
-  /**
-   * Remove all previously matcher rules.
-   * This means that all rules form `.keqignore` file will be removed.
-   */
-  clear?: boolean
 }
 
 
@@ -34,16 +28,6 @@ export class TerminalSelectPlugin implements Plugin {
       const documents = context.documents!
       const operationDefinitions = documents.flatMap((document) => document.operations)
       const selectedOperationDefinitions = await selectOperationDefinitions(task, operationDefinitions)
-
-      if (this.options.clear) {
-        matcher.append({
-          persist: false,
-          ignore: true,
-          moduleName: '*',
-          operationMethod: '*',
-          operationPathname: '*',
-        })
-      }
 
       for (const op of selectedOperationDefinitions) {
         matcher.append({

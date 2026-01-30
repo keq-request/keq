@@ -6,10 +6,21 @@ import { SupportedMethods } from './constants/supported-methods.js'
 import { logger } from './utils/logger.js'
 import { Compiler } from './compiler/compiler.js'
 import { findInvalidFiles } from './utils/scan-generated-files.js'
+import { IgnoreMatcherRule } from './utils/ignore-matcher.js'
+import { xprodMerge } from './utils/xprod-merge.js'
 
 
 if (semver.lt(process.version, '20.0.0')) {
   throw new Error('Node.js version must be greater than 20')
+}
+
+
+function xprodIgnoreRules(options: { module?: string[]; method?: string; pathname?: string; persist?: boolean }): IgnoreMatcherRule[] {
+  return xprodMerge(
+    (options.module || ['*']).map((moduleName) => ({ ignore: false, persist: options.persist, moduleName })),
+    options.method ? [{ operationMethod: options.method.toLowerCase() }] : [{ operationMethod: '*' }],
+    options.pathname ? [{ operationPathname: options.pathname }] : [{ operationPathname: '*' }],
+  ) as unknown as IgnoreMatcherRule[]
 }
 
 const program = new Command()
@@ -23,18 +34,54 @@ program
   .option('--debug', 'Print debug information')
   .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
   .option('-i --interactive', 'Interactive select the scope of generation')
+  .addOption(
+    new Option('--method <method>', 'Only generate files of the specified operation method')
+      .choices([
+        ...SupportedMethods,
+        ...SupportedMethods.map((method) => method.toUpperCase()),
+      ]),
+  )
+  .option('--pathname <pathname>', 'Only generate files of the specified operation pathname')
   .action(async (options) => {
+    // Build ignore rules based on filters
+    const ignoreRules: IgnoreMatcherRule[] = []
+
+    if (options.module || options.method || options.pathname) {
+      ignoreRules.push(
+        {
+          ignore: true,
+          persist: false,
+          moduleName: '*',
+          operationMethod: '*',
+          operationPathname: '*',
+        },
+        ...xprodIgnoreRules({
+          module: options.module,
+          method: options.method,
+          pathname: options.pathname,
+          persist: false,
+        }),
+      )
+    } else if (options.interactive) {
+      ignoreRules.push({
+        ignore: true,
+        persist: false,
+        moduleName: '*',
+        operationMethod: '*',
+        operationPathname: '*',
+      })
+    }
+
     const compiler = new Compiler({
       build: true,
       persist: true,
       config: options.config,
-      includes: options.module,
       debug: !!options.debug,
       tolerant: !!options.tolerant,
-      interactive: !!options.interactive && {
-        mode: 'except',
-        clear: true,
-      },
+      interactive: !!options.interactive && { mode: 'except' },
+      ignore: ignoreRules.length > 0
+        ? { rules: ignoreRules }
+        : undefined,
     })
 
     await compiler.run()
@@ -67,12 +114,15 @@ program
 
     if (mode === 'all') {
       if (options.build) throw new Error("'--build' cannot be used with 'all' mode")
+      if (options.interactive) throw new Error("'--interactive' cannot be used with 'all' mode")
+      if (options.module) throw new Error("'--module' cannot be used with 'all' mode")
+      if (options.method) throw new Error("'--method' cannot be used with 'all' mode")
+      if (options.pathname) throw new Error("'--pathname' cannot be used with 'all' mode'")
 
       compiler = new Compiler({
         build: false,
         persist: true,
         config: options.config,
-        includes: options.module,
         debug: !!options.debug,
         interactive: false,
         ignore: {
@@ -95,12 +145,19 @@ program
         build: !!options.build,
         persist: true,
         config: options.config,
-        includes: options.module,
         debug: !!options.debug,
-
         interactive: {
           mode,
           persist: true,
+        },
+        ignore: {
+          rules: [{
+            persist: true,
+            ignore: true,
+            moduleName: '*',
+            operationMethod: '*',
+            operationPathname: '*',
+          }],
         },
       })
     } else {
@@ -115,7 +172,6 @@ program
         persist: true,
         config: options.config,
         debug: !!options.debug,
-        includes: options.module,
         ignore: {
           rules: moduleNames.map((moduleNames) => ({
             persist: true,
@@ -145,7 +201,6 @@ program
       persist: false,
       silent: true,
       config: options.config,
-      includes: [],
       debug: !!options.debug,
     })
 
@@ -186,21 +241,52 @@ program
   .command('apis')
   .description('List API operations and components from OpenAPI/Swagger specifications')
   .option('-c --config <config>', 'The keq-cli config file')
-  .option('--module <modules...>', 'Filter module(s) to list')
   .addOption(
     new Option('--includes <includes...>', 'Include specific parts')
       .choices(['operations', 'components']),
   )
+  .option('--module <modules...>', 'Filter module(s) to list')
+  .addOption(
+    new Option('--method <method>', 'Only generate files of the specified operation method')
+      .choices([
+        ...SupportedMethods,
+        ...SupportedMethods.map((method) => method.toUpperCase()),
+      ]),
+  )
+  .option('--pathname <pathnames>', 'Only generate files of the specified operation pathname')
   .option('--json', 'Output in JSON format')
   .option('--debug', 'Print debug information')
   .action(async (options) => {
+    const ignoreRules: IgnoreMatcherRule[] = []
+
+    if (options.module || options.method || options.pathname) {
+      ignoreRules.push(
+        {
+          ignore: true,
+          persist: false,
+          moduleName: '*',
+          operationMethod: '*',
+          operationPathname: '*',
+        },
+        ...xprodIgnoreRules({
+          module: options.module,
+          method: options.method,
+          pathname: options.pathname,
+          persist: false,
+        }),
+      )
+    }
+
+
     const compiler = new Compiler({
       build: true,
       persist: false,
       silent: true,
       config: options.config,
-      includes: options.module || [],
       debug: !!options.debug,
+      ignore: ignoreRules.length > 0
+        ? { rules: ignoreRules }
+        : undefined,
     })
 
     await compiler.run()
