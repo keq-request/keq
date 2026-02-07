@@ -15,12 +15,22 @@ export class CommentRenderer implements Renderer {
     const lines = ['/**']
 
     if (operation.summary && typeof operation.summary === 'string') {
-      lines.push(` * ${R.trim(operation.summary)}`)
+      const summary = R.trim(operation.summary)
+        .replace(/\t/g, '  ')
+        .replace(/\r\n?/g, '\n')
+
+      lines.push(...summary.split('\n').map((line) => ` * ${line.trimEnd()}`))
       lines.push(' *')
     }
 
     if (operation.description && typeof operation.description === 'string') {
-      lines.push(` * @description ${R.trim(operation.description)}`)
+      const description = R.trim(operation.description)
+        .replace(/\t/g, '  ')
+        .replace(/\r\n?/g, '\n')
+
+      const descriptionLines = description.split('\n').map((line) => line.trimEnd())
+      lines.push(` * @description ${descriptionLines[0]}`)
+      lines.push(...descriptionLines.slice(1).map((line) => ` * ${line}`))
     }
 
     lines.push(' */')

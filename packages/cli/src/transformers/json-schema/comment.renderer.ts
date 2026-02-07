@@ -13,8 +13,12 @@ export class CommentRenderer implements Renderer {
     const lines = ['/**']
 
     if (schema.description) {
-      const description = schema.description.replace('*/', '*\\/')
-      lines.push(...description.split('\n').map((line) => ` * ${line}`))
+      const description = schema.description
+        .replace('*/', '*\\/')
+        .replace(/\t/g, '  ')
+        .replace(/\r\n?/g, '\n')
+
+      lines.push(...description.split('\n').map((line) => ` * ${line.trimEnd()}`))
     }
 
     if (schema.deprecated) {
