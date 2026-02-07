@@ -75,6 +75,10 @@ export function createPersistTask(compiler: Compiler, options?: BaseTaskOptions)
     skip: options?.skip,
     task: (context, task) => task.newListr(
       [
+        {
+          task: (context, task) => compiler.hooks.beforePersist
+            .promise(task),
+        },
         main(),
         {
           task: (context, task) => compiler.hooks.afterPersist

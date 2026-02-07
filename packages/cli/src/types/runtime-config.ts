@@ -106,6 +106,13 @@ export const RawConfig = Type.Object({
   ),
 
   /**
+   * Whether to clean the output directory before persisting generated files
+   *
+   * When set to true, the outdir folder will be emptied before writing new files.
+   */
+  clean: Type.Optional(Type.Boolean({ default: false })),
+
+  /**
    * Plugins to extend code generation functionality
    *
    * An array of plugin instances that can hook into various stages of the compilation process,

@@ -5,6 +5,7 @@ import { DownloadHttpFilePlugin } from '../download-http-file/index.js'
 import { DownloadLocalFilePlugin } from '../download-local-file/index.js'
 import { ShakingPlugin } from '../shaking/index.js'
 import { TerminalSelectPlugin, TerminalSelectPluginOptions } from '../terminal-select/index.js'
+import { CleanPlugin } from '../clean/index.js'
 
 
 interface InitializePluginOptions {
@@ -48,6 +49,10 @@ export class InitializePlugin implements Plugin {
           }),
         ),
       )
+
+      if (rc.clean) {
+        plugins.push(new CleanPlugin())
+      }
 
       if (rc.plugins && rc.plugins.length) {
         plugins.push(...rc.plugins)
