@@ -3,6 +3,7 @@ import { OperationDefinition } from '~/models/index.js'
 import { Renderer } from '../types/renderer.js'
 import { typeNameFactory, TypeNameFn } from './utils/index.js'
 import { indent } from '~/utils/indent.js'
+import { toSafeIdentifier } from '~/utils/to-safe-identifier.js'
 import { Exception } from '~/exception.js'
 import { CommentRenderer } from './comment.renderer.js'
 import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-snippet.js'
@@ -25,9 +26,15 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
     this.helper = new OperationDefinitionSnippet(operationDefinition, options)
   }
 
+  private get operationId(): string {
+    return toSafeIdentifier(this.operationDefinition.operationId)
+  }
+
   render(): string {
-    const { operation, operationId, method, pathname } = this.operationDefinition
+    const { operation, method, pathname } = this.operationDefinition
     if (!operation.responses) return ''
+
+    const operationId = this.operationId
 
     const $dependencies = this.renderDependencies()
     const $comment = new CommentRenderer(this.operationDefinition).render()
@@ -101,7 +108,7 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
   }
 
   private renderOperationDeclaration(): string {
-    const { operationId } = this.operationDefinition
+    const operationId = this.operationId
 
     const mediaTypes = this.helper.getRequestMediaTypes()
 

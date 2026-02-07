@@ -4,6 +4,7 @@ import { OperationDefinition } from '~/models/index.js'
 import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from './typescript-snippet.js'
 import { CommentRenderer } from './comment.renderer.js'
 import { indent } from '~/utils/indent.js'
+import { toSafeIdentifier } from '~/utils/to-safe-identifier.js'
 import { Renderer } from '../types/renderer.js'
 import { Exception } from '~/exception.js'
 
@@ -22,9 +23,11 @@ export class OperationDefinitionNestjsMethodRenderer implements Renderer {
     this.helper = new OperationDefinitionSnippet(operationDefinition, options)
   }
 
+  private get operationId(): string {
+    return toSafeIdentifier(this.operationDefinition.operationId)
+  }
 
   render(): string {
-    // const operationId = changeCase.camelCase(this.operationDefinition.operationId)
     const pathname = this.operationDefinition.pathname
 
     const $comment = new CommentRenderer(this.operationDefinition).render()
@@ -73,7 +76,7 @@ export class OperationDefinitionNestjsMethodRenderer implements Renderer {
   }
 
   private renderOperationDeclaration(operationDefinition: OperationDefinition): string {
-    const { operationId } = operationDefinition
+    const operationId = this.operationId
     const typeName = typeNameFactory(operationDefinition)
 
     const mediaTypes = this.helper.getRequestMediaTypes()

@@ -5,7 +5,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/keq"
+        "cwd": "${workspaceFolder}/packages/keq"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -20,7 +20,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/cli"
+        "cwd": "${workspaceFolder}/packages/cli"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -35,7 +35,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/exception"
+        "cwd": "${workspaceFolder}/packages/exception"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -50,7 +50,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/url"
+        "cwd": "${workspaceFolder}/packages/url"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -65,7 +65,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/headers"
+        "cwd": "${workspaceFolder}/packages/headers"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -80,7 +80,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/cache"
+        "cwd": "${workspaceFolder}/packages/cache"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
@@ -95,7 +95,7 @@
       "type": "shell",
       "command": "pnpm run dev",
       "options": {
-        "cwd": "packages/nestjs"
+        "cwd": "${workspaceFolder}/packages/nestjs"
       },
       "isBackground": true,
       "problemMatcher": ["$tsup-watch", "$tsup-dts-watch"],
