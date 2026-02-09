@@ -4,7 +4,7 @@ import { KeqModuleOptions } from './types/keq-module-options'
 
 
 export const {
-  ConfigurableModuleClass: KeqModuleClass,
+  ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
   OPTIONS_TYPE,
   ASYNC_OPTIONS_TYPE,
