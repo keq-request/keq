@@ -41,6 +41,7 @@ export class SchemaDefinition {
 
         return SchemaDefinition.unknown()
       })
+      .filter((dep) => dep.id !== this.id)
   }
 
   static unknown(): SchemaDefinition {
