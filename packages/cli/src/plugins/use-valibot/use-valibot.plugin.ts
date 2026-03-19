@@ -42,6 +42,7 @@ export class UseValibotPlugin implements Plugin {
           schemaDefinition,
           {
             esm: rc.esm,
+            additionalPropertiesType: rc.additionalPropertiesType,
             getDependentSchemaDefinitionFilepath(dependentSchemaDefinition: SchemaDefinition): string {
               const relativePath = path.relative(
                 dirpath,

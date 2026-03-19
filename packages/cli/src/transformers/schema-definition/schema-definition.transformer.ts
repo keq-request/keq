@@ -7,12 +7,14 @@ import { JsonSchemaTransformer, ReferenceTransformer } from '../json-schema/inde
 
 interface SchemaDefinitionDeclarationRendererOptions {
   esm?: boolean
+  additionalPropertiesType?: 'unknown' | 'any'
 
   getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
 }
 
 interface SchemaDefinitionValibotRendererOptions {
   esm?: boolean
+  additionalPropertiesType?: 'unknown' | 'any'
 
   getDependentSchemaDefinitionFilepath: (schemaDefinition: SchemaDefinition) => string
 }
@@ -60,7 +62,7 @@ export class SchemaDefinitionTransformer {
     }
 
     if (JsonSchemaUtils.isNonArray(schemaDefinition.schema) && schemaDefinition.schema.type === 'object') {
-      const $schema = JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer })
+      const $schema = JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer, additionalPropertiesType: options.additionalPropertiesType })
 
       const $declaration = $schema.startsWith('{')
         ? `export interface ${schemaDefinition.name} ${$schema}`
@@ -82,7 +84,7 @@ export class SchemaDefinitionTransformer {
       '',
       $dependencies,
       $comment || undefined,
-      `export type ${schemaDefinition.name} = ${JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer })}`,
+      `export type ${schemaDefinition.name} = ${JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer, additionalPropertiesType: options.additionalPropertiesType })}`,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')
@@ -136,7 +138,7 @@ export class SchemaDefinitionTransformer {
       ].filter(R.isNotNil).join('\n')
     }
 
-    const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema, { referenceTransformer })
+    const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema, { referenceTransformer, additionalPropertiesType: options.additionalPropertiesType })
 
     return [
       '/* @anchor:file:start */',

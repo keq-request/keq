@@ -29,6 +29,12 @@ export interface JsonSchemaValibotRendererOptions {
    * })
    */
   referenceTransformer?: (schema: OpenAPIV3_1.ReferenceObject) => string
+
+  /**
+   * Controls how `additionalProperties: true` (or undefined) is rendered.
+   * @default 'unknown'
+   */
+  additionalPropertiesType?: 'unknown' | 'any'
 }
 
 export class ValibotRenderer implements Renderer {
@@ -114,13 +120,25 @@ export class ValibotRenderer implements Renderer {
 
 
   private renderObject(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (
-      (!schema.properties || R.isEmpty(schema.properties))
-      && (!schema.additionalProperties || R.isEmpty(schema.additionalProperties))
-    ) {
-      return 'v.object({})'
+    const hasProperties = schema.properties && !R.isEmpty(schema.properties)
+
+    const apType = this.options.additionalPropertiesType ?? 'unknown'
+
+    // No named properties: produce v.record or v.object({}) forms
+    if (!hasProperties) {
+      if (schema.additionalProperties === false) {
+        return 'v.object({})'
+      }
+
+      if (typeof schema.additionalProperties === 'object') {
+        return `v.record(v.string(), ${this.renderSchema(schema.additionalProperties)})`
+      }
+
+      // additionalProperties true or undefined (implicit open object per OpenAPI 3.1 spec)
+      return `v.record(v.string(), v.${apType}())`
     }
 
+    // Has named properties
     const $properties = Object.entries(schema.properties || {})
       .map(([propertyName, propertySchema]) => {
         let $comment = new CommentRenderer(propertySchema).render()
@@ -129,7 +147,6 @@ export class ValibotRenderer implements Renderer {
         const $key = `"${propertyName}"`
         let $value = this.renderSchema(propertySchema)
 
-        // Add v.optional() for non-required fields
         if (!schema.required?.includes(propertyName)) {
           $value = `v.optional(${$value})`
         }
@@ -143,15 +160,14 @@ export class ValibotRenderer implements Renderer {
       '})',
     ].join('\n')
 
-    // Handle additionalProperties - Valibot uses looseness
-    if (schema.additionalProperties) {
-      if (schema.additionalProperties === true) {
-        // For loose objects, we need to wrap with v.looseObject
-        result = result.replace('v.object({', 'v.looseObject({')
-      } else {
-        // For specific additional properties type, use v.record
+    // Handle additionalProperties when properties exist
+    if (schema.additionalProperties !== false) {
+      if (typeof schema.additionalProperties === 'object') {
         const $value = this.renderSchema(schema.additionalProperties)
         result = `v.intersect([${result}, v.record(v.string(), ${$value})])`
+      } else {
+        // undefined or true: use looseObject
+        result = result.replace('v.object({', 'v.looseObject({')
       }
     }
 

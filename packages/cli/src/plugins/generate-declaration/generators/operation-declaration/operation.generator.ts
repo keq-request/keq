@@ -51,6 +51,7 @@ export class OperationDeclarationGenerator implements Generator {
         operationDefinition,
         {
           esm: rc.esm,
+          additionalPropertiesType: rc.additionalPropertiesType,
           getDependentSchemaDefinitionFilepath(dependentSchemaDefinition) {
             const relativePath = path.relative(
               dirpath,

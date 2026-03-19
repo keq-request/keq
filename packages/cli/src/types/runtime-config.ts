@@ -113,6 +113,16 @@ export const RawConfig = Type.Object({
   clean: Type.Optional(Type.Boolean({ default: false })),
 
   /**
+   * Controls how `additionalProperties: true` (or undefined) is rendered in generated TypeScript types.
+   *
+   * - `'unknown'` (default): renders as `unknown`, which is stricter and type-safe
+   * - `'any'`: renders as `any`, which is more permissive
+   */
+  additionalPropertiesType: Type.Optional(
+    Type.Union([Type.Literal('unknown'), Type.Literal('any')], { default: 'unknown' }),
+  ),
+
+  /**
    * Plugins to extend code generation functionality
    *
    * An array of plugin instances that can hook into various stages of the compilation process,

@@ -7,10 +7,12 @@ import { indent } from '~/utils/indent.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 import { JsonSchemaTransformer, JsonSchemaDeclarationRendererOptions, ReferenceTransformer } from '../json-schema/index.js'
 import { Renderer } from '../types/renderer.js'
+import { rewriteAdditionalPropertiesForParameter } from './utils/rewrite-additional-properties-for-parameter.js'
 
 
 export interface OperationDefinitionDeclarationRendererOptions {
   esm?: boolean
+  additionalPropertiesType?: 'unknown' | 'any'
 
   getDependentSchemaDefinitionFilepath(dependentSchemaDefinition: SchemaDefinition): string
 }
@@ -153,7 +155,10 @@ export class DeclarationRenderer implements Renderer {
     const $parameters = parameters.map((parameter) => {
       const parameterName = `"${parameter.name}"`
       const $key = parameter.required ? parameterName : `${parameterName}?`
-      const $value = JsonSchemaTransformer.toDeclaration(parameter.schema || { type: 'any' }, options)
+      const schema = parameter.schema
+        ? rewriteAdditionalPropertiesForParameter(parameter.schema, parameter.in!)
+        : { type: 'any' as const }
+      const $value = JsonSchemaTransformer.toDeclaration(schema, options)
 
       return indent(2, `${$key}: ${$value}`)
     })
@@ -200,6 +205,7 @@ export class DeclarationRenderer implements Renderer {
 
         return ReferenceTransformer.toDeclaration(schema, alias)
       },
+      additionalPropertiesType: this.options.additionalPropertiesType,
     }
 
     const $dependencies = this.renderDependencies()

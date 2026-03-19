@@ -30,6 +30,12 @@ export interface JsonSchemaDeclarationRendererOptions {
    * })
    */
   referenceTransformer?: (schema: OpenAPIV3_1.ReferenceObject) => string
+
+  /**
+   * Controls how `additionalProperties: true` (or undefined) is rendered.
+   * @default 'unknown'
+   */
+  additionalPropertiesType?: 'unknown' | 'any'
 }
 
 export class DeclarationRenderer implements Renderer {
@@ -99,14 +105,25 @@ export class DeclarationRenderer implements Renderer {
 
 
   private renderObject(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (
-      (!schema.properties || R.isEmpty(schema.properties))
-      && (!schema.additionalProperties || R.isEmpty(schema.additionalProperties))
-    ) {
-      return 'object'
+    const hasProperties = schema.properties && !R.isEmpty(schema.properties)
+
+    const apType = this.options.additionalPropertiesType ?? 'unknown'
+
+    // No named properties: produce Record<K, V> forms
+    if (!hasProperties) {
+      if (schema.additionalProperties === false) {
+        return 'Record<string, never>'
+      }
+
+      if (typeof schema.additionalProperties === 'object') {
+        return `Record<string, ${this.renderSchema(schema.additionalProperties)}>`
+      }
+
+      // additionalProperties true or undefined (implicit open object per OpenAPI 3.1 spec)
+      return `Record<string, ${apType}>`
     }
 
-
+    // Has named properties: render as object literal
     const $properties = Object.entries(schema.properties || {})
       .map(([propertyName, propertySchema]) => {
         let $comment = new CommentRenderer(propertySchema).render()
@@ -118,11 +135,14 @@ export class DeclarationRenderer implements Renderer {
         return indent(2, `${$comment}${$key}: ${$value}`)
       })
 
-    if (schema.additionalProperties) {
-      const $value = schema.additionalProperties === true
-        ? 'any'
-        : this.renderSchema(schema.additionalProperties)
-      $properties.push(indent(2, `[key: string]: ${$value}`))
+    // Add index signature when additionalProperties is not false
+    if (schema.additionalProperties !== false) {
+      if (typeof schema.additionalProperties === 'object') {
+        $properties.push(indent(2, `[key: string]: ${this.renderSchema(schema.additionalProperties)}`))
+      } else {
+        // additionalProperties true or undefined (implicit open object per OpenAPI 3.1 spec)
+        $properties.push(indent(2, `[key: string]: ${apType}`))
+      }
     }
 
     return [
