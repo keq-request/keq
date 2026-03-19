@@ -191,8 +191,13 @@ export class DeclarationRenderer implements Renderer {
 
     if (!operation.responses) return ''
 
+    const hint = `Referenced from operation "${this.operationDefinition.method.toUpperCase()} ${this.operationDefinition.pathname}".`
     const jsonSchemaDeclarationRendererOptions: JsonSchemaDeclarationRendererOptions = {
       referenceTransformer: (schema: OpenAPIV3_1.ReferenceObject) => {
+        if (schema.$ref && schema.$ref.startsWith('#') && !this.operationDefinition.document.isRefDefined(schema.$ref)) {
+          return ReferenceTransformer.toNotFoundDeclaration(schema, hint)
+        }
+
         return ReferenceTransformer.toDeclaration(schema, alias)
       },
     }

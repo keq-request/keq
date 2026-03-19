@@ -11,6 +11,24 @@ import { Renderer } from '../types/renderer.js'
 
 
 export interface JsonSchemaDeclarationRendererOptions {
+  /**
+   * Custom renderer for `$ref` reference objects in TypeScript type declarations.
+   *
+   * When not provided, defaults to `ReferenceTransformer.toDeclaration`,
+   * which converts the `$ref` path to a type name.
+   *
+   * @example
+   * // Default behavior (without referenceTransformer):
+   * // { $ref: '#/components/schemas/User' } → 'User'
+   *
+   * @example
+   * // Custom transformer with alias mapping to avoid type name conflicts:
+   * // Given aliases = { '#/components/schemas/User': 'UserV2' }
+   * // { $ref: '#/components/schemas/User' } → 'UserV2'
+   * const renderer = new DeclarationRenderer(schema, {
+   *   referenceTransformer: (ref) => aliases.get(ref.$ref) ?? ReferenceTransformer.toDeclaration(ref),
+   * })
+   */
   referenceTransformer?: (schema: OpenAPIV3_1.ReferenceObject) => string
 }
 

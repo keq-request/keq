@@ -1,7 +1,8 @@
 import * as R from 'ramda'
+import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { SchemaDefinition } from '~/models/index.js'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
-import { JsonSchemaTransformer } from '../json-schema/index.js'
+import { JsonSchemaTransformer, ReferenceTransformer } from '../json-schema/index.js'
 
 
 interface SchemaDefinitionDeclarationRendererOptions {
@@ -18,6 +19,19 @@ interface SchemaDefinitionValibotRendererOptions {
 
 export class SchemaDefinitionTransformer {
   static toDeclaration(schemaDefinition: SchemaDefinition, options: SchemaDefinitionDeclarationRendererOptions): string {
+    const hint = `Referenced from schema definition "${schemaDefinition.name}".`
+    const referenceTransformer = (schema: OpenAPIV3_1.ReferenceObject): string => {
+      if (!schema.$ref || !schema.$ref.startsWith('#')) {
+        return ReferenceTransformer.toInvalidDeclaration(schema, hint)
+      }
+
+      if (!schemaDefinition.document.isRefDefined(schema.$ref)) {
+        return ReferenceTransformer.toNotFoundDeclaration(schema, hint)
+      }
+
+      return ReferenceTransformer.toDeclaration(schema)
+    }
+
     const dependencies = schemaDefinition.getDependencies()
     let $dependencies = dependencies
       .filter((dep) => !SchemaDefinition.isUnknown(dep))
@@ -46,7 +60,7 @@ export class SchemaDefinitionTransformer {
     }
 
     if (JsonSchemaUtils.isNonArray(schemaDefinition.schema) && schemaDefinition.schema.type === 'object') {
-      const $schema = JsonSchemaTransformer.toDeclaration(schemaDefinition.schema)
+      const $schema = JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer })
 
       const $declaration = $schema.startsWith('{')
         ? `export interface ${schemaDefinition.name} ${$schema}`
@@ -68,13 +82,28 @@ export class SchemaDefinitionTransformer {
       '',
       $dependencies,
       $comment || undefined,
-      `export type ${schemaDefinition.name} = ${JsonSchemaTransformer.toDeclaration(schemaDefinition.schema)}`,
+      `export type ${schemaDefinition.name} = ${JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer })}`,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')
   }
 
   static toValibot(schemaDefinition: SchemaDefinition, options: SchemaDefinitionValibotRendererOptions): string {
+    const hint = `Referenced from schema definition "${schemaDefinition.name}".`
+    const referenceTransformer = (schema: OpenAPIV3_1.ReferenceObject): string => {
+      if (!schema.$ref || !schema.$ref.startsWith('#')) {
+        const base = ReferenceTransformer.toInvalidDeclaration(schema, hint)
+        return base.replace(/^unknown/, 'v.unknown()')
+      }
+
+      if (!schemaDefinition.document.isRefDefined(schema.$ref)) {
+        const base = ReferenceTransformer.toNotFoundDeclaration(schema, hint)
+        return base.replace(/^unknown/, 'v.unknown()')
+      }
+
+      return ReferenceTransformer.toDeclaration(schema, (name) => `${name}Schema`)
+    }
+
     const dependencies = schemaDefinition.getDependencies()
     let $dependencies = dependencies
       .filter((dep) => !SchemaDefinition.isUnknown(dep))
@@ -107,7 +136,7 @@ export class SchemaDefinitionTransformer {
       ].filter(R.isNotNil).join('\n')
     }
 
-    const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema)
+    const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema, { referenceTransformer })
 
     return [
       '/* @anchor:file:start */',

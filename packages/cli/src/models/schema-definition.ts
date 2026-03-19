@@ -12,7 +12,7 @@ export class SchemaDefinition {
   readonly document: ApiDocumentV3_1
 
   get id(): string {
-    return `${this.module.address}#/components/schemas/${this.name}`
+    return `${this.module.address.url}#/components/schemas/${this.name}`
   }
 
   constructor(args: {

@@ -18,7 +18,7 @@ export class OperationDefinition {
   readonly document: ApiDocumentV3_1
 
   get id(): string {
-    return `${this.module.address}#/paths/${this.pathname}/${this.method}`
+    return `${this.module.address.url}#/paths/${this.pathname}/${this.method}`
   }
 
   constructor(args: {

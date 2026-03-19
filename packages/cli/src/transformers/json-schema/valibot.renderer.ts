@@ -11,6 +11,23 @@ import { Renderer } from '../types/renderer.js'
 
 
 export interface JsonSchemaValibotRendererOptions {
+  /**
+   * Custom renderer for `$ref` reference objects in Valibot schema generation.
+   *
+   * When not provided, defaults to `ReferenceTransformer.toDeclaration` with a `Schema` suffix appended.
+   *
+   * @example
+   * // Default behavior (without referenceTransformer):
+   * // { $ref: '#/components/schemas/User' } → 'UserSchema'
+   *
+   * @example
+   * // Custom transformer with alias mapping:
+   * // Given aliases = { '#/components/schemas/User': 'UserV2Schema' }
+   * // { $ref: '#/components/schemas/User' } → 'UserV2Schema'
+   * const renderer = new ValibotRenderer(schema, {
+   *   referenceTransformer: (ref) => aliases.get(ref.$ref) ?? `${ReferenceTransformer.toDeclaration(ref)}Schema`,
+   * })
+   */
   referenceTransformer?: (schema: OpenAPIV3_1.ReferenceObject) => string
 }
 
