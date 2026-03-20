@@ -10,7 +10,8 @@ import { KeqBodyInit } from '~/request-init/index.js'
 
 import type { KeqRetryOn, KeqRetryDelay, KeqResolveWithMode } from '~/context/index.js'
 import type { CommonContentType, ShorthandContentType, KeqDefaultOperation, KeqOperation, KeqAttachableFile, KeqQueryOptions, KeqPathParameterInit, KeqQueryInit, ServerSentEvent } from './types/index.js'
-import type { ConditionalPick, Merge, Primitive } from 'type-fest'
+import type { ConditionalPick, Primitive } from 'type-fest'
+import type { Override } from '~/types/index.js'
 import type { LiteralKeys, StringIndexValueOf, EnabledIfStringIndex, LooseNestedObject, EnableLooseNestedLike, LooseNestedLike } from '~/types/index.js'
 
 
@@ -314,12 +315,12 @@ export class Keq<
     return this
   }
 
-  resolveWith(m: 'response'): Keq<Merge<OP, { responseBody: Response }>>
-  resolveWith(m: 'array-buffer'): Keq<Merge<OP, { responseBody: ArrayBuffer }>>
-  resolveWith(m: 'blob'): Keq<Merge<OP, { responseBody: Blob }>>
-  resolveWith(m: 'text'): Keq<Merge<OP, { responseBody: string }>>
-  resolveWith(m: 'sse'): Keq<Merge<OP, { responseBody: ReadableStream<ServerSentEvent> }>>
-  resolveWith<T = any>(m: 'json' | 'form-data'): Keq<Merge<OP, { responseBody: T }>>
+  resolveWith(m: 'response'): Keq<Override<OP, { responseBody: Response }>>
+  resolveWith(m: 'array-buffer'): Keq<Override<OP, { responseBody: ArrayBuffer }>>
+  resolveWith(m: 'blob'): Keq<Override<OP, { responseBody: Blob }>>
+  resolveWith(m: 'text'): Keq<Override<OP, { responseBody: string }>>
+  resolveWith(m: 'sse'): Keq<Override<OP, { responseBody: ReadableStream<ServerSentEvent> }>>
+  resolveWith<T = any>(m: 'json' | 'form-data'): Keq<Override<OP, { responseBody: T }>>
   resolveWith(m: KeqResolveWithMode | any): any {
     this.option('resolveWith', m)
 

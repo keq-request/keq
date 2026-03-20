@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
-import { Merge } from 'type-fest'
 import { KeqOperation } from './operation'
+import { Override } from '~/types'
 
 
 export interface DefaultOperation extends KeqOperation {
@@ -28,4 +28,4 @@ export interface DefaultOperation extends KeqOperation {
 }
 
 
-export type KeqDefaultOperation<T extends Partial<KeqOperation> = {}> = Merge<DefaultOperation, T>
+export type KeqDefaultOperation<T extends Partial<KeqOperation> = {}> = Override<DefaultOperation, T>
