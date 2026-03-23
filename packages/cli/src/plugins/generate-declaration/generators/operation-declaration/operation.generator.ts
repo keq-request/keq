@@ -6,6 +6,7 @@ import { OperationDefinitionTransformer, EntrypointTransformer } from '~/transfo
 import { FileNamingStyle } from '~/constants/index.js'
 import type { Generator, RuntimeConfig } from '~/types/index.js'
 import { SchemaDeclarationGenerator } from '../schema-declaration/index.js'
+import { ResponseDeclarationGenerator } from '../response-declaration/index.js'
 import { MetadataStorage } from '../../constants/metadata-storage.js'
 
 
@@ -56,6 +57,13 @@ export class OperationDeclarationGenerator implements Generator {
             const relativePath = path.relative(
               dirpath,
               SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.fileNamingStyle),
+            )
+            return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
+          },
+          getDependentResponseDefinitionFilepath(dependentResponseDefinition) {
+            const relativePath = path.relative(
+              dirpath,
+              ResponseDeclarationGenerator.getResponseDefinitionArtifactFilepath(dependentResponseDefinition, rc.fileNamingStyle),
             )
             return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
           },

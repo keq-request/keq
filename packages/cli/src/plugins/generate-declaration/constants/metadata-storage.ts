@@ -1,6 +1,6 @@
 import { AsyncSeriesWaterfallHook } from 'tapable'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
-import { Artifact, OperationDefinition, SchemaDefinition } from '~/models/index.js'
+import { Artifact, OperationDefinition, ResponseDefinition, SchemaDefinition } from '~/models/index.js'
 
 
 export interface GenerateDeclarationPluginMetadata {
@@ -8,6 +8,7 @@ export interface GenerateDeclarationPluginMetadata {
   hooks: {
     afterEntrypointArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, TaskWrapper]>
     afterSchemaDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, SchemaDefinition, TaskWrapper]>
+    afterResponseDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, ResponseDefinition, TaskWrapper]>
     afterOperationDeclarationArtifactGenerated: AsyncSeriesWaterfallHook<[Artifact, OperationDefinition, TaskWrapper]>
   }
 }

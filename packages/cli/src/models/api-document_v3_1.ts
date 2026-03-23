@@ -4,6 +4,7 @@ import { ModuleDefinition } from './module-definition.js'
 import { SupportedMethods } from '~/constants/supported-methods.js'
 import { OperationDefinition } from './operation-definition.js'
 import { SchemaDefinition } from './schema-definition.js'
+import { ResponseDefinition } from './response-definition.js'
 import { logger } from '~/utils/logger.js'
 
 
@@ -28,6 +29,22 @@ export class ApiDocumentV3_1 {
       }))
   }
 
+  get responses(): ResponseDefinition[] {
+    const module = this.module
+
+    return Object.entries(this.specification.components?.responses || {})
+      .filter((entry): entry is [string, OpenAPIV3_1.ResponseObject] => {
+        const [, response] = entry
+        return typeof response === 'object' && !('$ref' in response)
+      })
+      .map(([name, response]) => new ResponseDefinition({
+        name,
+        response,
+        module,
+        document: this,
+      }))
+  }
+
   get operations(): OperationDefinition[] {
     const module = this.module
 
@@ -47,8 +64,12 @@ export class ApiDocumentV3_1 {
     return R.isEmpty(this.specification.paths)
   }
 
-  dereference($ref: string): SchemaDefinition | undefined {
+  dereference($ref: string): SchemaDefinition | ResponseDefinition | undefined {
     if ($ref.startsWith('#/')) {
+      if ($ref.startsWith('#/components/responses/')) {
+        return this.responses.find((response) => response.id.endsWith($ref))
+      }
+
       return this.schemas.find((schema) => schema.id.endsWith($ref))
     }
 

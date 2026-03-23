@@ -33,20 +33,28 @@ function dereferenceRequestBody(swagger: OpenAPIV3_1.Document): void {
 }
 
 export function dereferenceResponses(swagger: OpenAPIV3_1.Document): void {
-  const matches = [
-    ...JSONPath({
-      path: '$.paths.*.*.responses.*.$ref^',
-      json: swagger,
-      resultType: 'all',
-    }),
-    ...JSONPath({
-      path: '$.paths.*.*.responses.*.headers.*.$ref^',
-      json: swagger,
-      resultType: 'all',
-    }),
-  ]
+  const responseMatches = JSONPath({
+    path: '$.paths.*.*.responses.*.$ref^',
+    json: swagger,
+    resultType: 'all',
+  })
 
-  for (const match of matches) {
+  // Only dereference response refs that do NOT point to #/components/responses/
+  // Preserve response-level refs so they can be reused as shared types
+  for (const match of responseMatches) {
+    if (match.value.$ref && !match.value.$ref.startsWith('#/components/responses/')) {
+      const value = dereference(match.value.$ref, swagger)
+      jsonpointer.set(swagger, match.pointer, value)
+    }
+  }
+
+  const headerMatches = JSONPath({
+    path: '$.paths.*.*.responses.*.headers.*.$ref^',
+    json: swagger,
+    resultType: 'all',
+  })
+
+  for (const match of headerMatches) {
     const value = dereference(match.value.$ref, swagger)
     jsonpointer.set(swagger, match.pointer, value)
   }

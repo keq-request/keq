@@ -1,6 +1,6 @@
 import * as R from 'ramda'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
-import { OperationDefinition, SchemaDefinition } from '~/models/index.js'
+import { OperationDefinition, ResponseDefinition, SchemaDefinition } from '~/models/index.js'
 import { typeNameFactory, TypeNameFn } from './utils/index.js'
 import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { indent } from '~/utils/indent.js'
@@ -15,9 +15,11 @@ export interface OperationDefinitionDeclarationRendererOptions {
   additionalPropertiesType?: 'unknown' | 'any'
 
   getDependentSchemaDefinitionFilepath(dependentSchemaDefinition: SchemaDefinition): string
+  getDependentResponseDefinitionFilepath(dependentResponseDefinition: ResponseDefinition): string
 }
 
 const alias = (name: string): string => `${name}Schema`
+const responseAlias = (name: string): string => `${name}Response`
 
 export class DeclarationRenderer implements Renderer {
   private typeName: TypeNameFn
@@ -36,20 +38,23 @@ export class DeclarationRenderer implements Renderer {
 
     const $responses = Object.entries(operation.responses)
       .map(([statusCode, response]) => {
-        if (!JsonSchemaUtils.isRef(response)) {
-          const $value = Object.entries(response.content || {})
-            .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
-            .map(([mediaType, schema]) => {
-              if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
-              if (mediaType.includes('multipart/form-data')) return 'FormData'
-              if (!schema) return 'unknown'
-
-              return JsonSchemaTransformer.toDeclaration(schema, options)
-            })
-            .join(' | ')
-
-          return indent(2, `${statusCode}: ${$value || 'void'}`)
+        if (JsonSchemaUtils.isRef(response)) {
+          const refName = response.$ref.split('/').pop() || ''
+          return indent(2, `${statusCode}: ${responseAlias(refName)}`)
         }
+
+        const $value = Object.entries(response.content || {})
+          .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
+          .map(([mediaType, schema]) => {
+            if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
+            if (mediaType.includes('multipart/form-data')) return 'FormData'
+            if (!schema) return 'unknown'
+
+            return JsonSchemaTransformer.toDeclaration(schema, options)
+          })
+          .join(' | ')
+
+        return indent(2, `${statusCode}: ${$value || 'void'}`)
       })
       .join('\n')
 
@@ -185,9 +190,22 @@ export class DeclarationRenderer implements Renderer {
       })
       .map((str) => (str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, this.options.esm ? ' from "$1.js"' : ' from "$1"')))
 
+    const responseDefinitions = this.operationDefinition.getResponseDependencies()
+      .filter((responseDefinition) => !ResponseDefinition.isUnknown(responseDefinition))
+
+    const $responseDefinitions = responseDefinitions
+      .map((responseDefinition) => {
+        const filepath = this.options.getDependentResponseDefinitionFilepath(responseDefinition)
+        const responseName = responseDefinition.name
+
+        return `import type { ${responseName} as ${responseAlias(responseName)} } from "${filepath}"`
+      })
+      .map((str) => (str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, this.options.esm ? ' from "$1.js"' : ' from "$1"')))
+
     return [
       'import type { KeqOperation, KeqPathParameterInit, KeqQueryInit, ServerSentEvent } from "keq"',
       ...$schemaDefinitions,
+      ...$responseDefinitions,
     ].join('\n')
   }
 

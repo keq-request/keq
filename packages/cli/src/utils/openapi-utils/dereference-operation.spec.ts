@@ -68,6 +68,7 @@ test('dereferenceOperation', () => {
   const dereferencedSwagger = dereferenceOperation(swagger)
 
   expect(dereferencedSwagger.paths!['/test']!.post!.requestBody).toEqual(RequestBody)
-  expect(dereferencedSwagger.paths!['/test']!.post!.responses![200]).toEqual(Response)
+  // Response $ref pointing to #/components/responses/ should be preserved for reuse
+  expect(dereferencedSwagger.paths!['/test']!.post!.responses![200]).toEqual({ $ref: '#/components/responses/Response' })
 })
 

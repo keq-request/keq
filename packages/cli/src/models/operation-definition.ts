@@ -6,6 +6,8 @@ import { isReservedWord } from '~/utils/is-reserved-word.js'
 import { ApiDocumentV3_1 } from './api-document_v3_1.js'
 import { JSONPath } from 'jsonpath-plus'
 import { SchemaDefinition } from './schema-definition.js'
+import { ResponseDefinition } from './response-definition.js'
+import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 
 
 export class OperationDefinition {
@@ -78,12 +80,29 @@ export class OperationDefinition {
     const dependencies = refs
       .filter((ref) => typeof ref === 'string' && ref)
       .map((ref) => {
-        const schemaDefinition = this.document.dereference(ref)
-        if (schemaDefinition) return schemaDefinition
+        const definition = this.document.dereference(ref)
+        if (definition instanceof SchemaDefinition) return definition
 
         return SchemaDefinition.unknown()
       })
 
     return dependencies
+  }
+
+  getResponseDependencies(): ResponseDefinition[] {
+    const responses = this.operation.responses || {}
+
+    return R.uniqBy(
+      (dep) => dep.id,
+      Object.values(responses)
+        .filter((response): response is OpenAPIV3_1.ReferenceObject => JsonSchemaUtils.isRef(response))
+        .map((response) => {
+          const definition = this.document.dereference(response.$ref)
+          if (definition instanceof ResponseDefinition) return definition
+
+          return ResponseDefinition.unknown()
+        })
+        .filter((dep) => !ResponseDefinition.isUnknown(dep)),
+    )
   }
 }

@@ -3,34 +3,35 @@ import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { ModuleDefinition } from './module-definition.js'
 import { JSONPath } from 'jsonpath-plus'
 import { ApiDocumentV3_1 } from './api-document_v3_1.js'
+import { SchemaDefinition } from './schema-definition.js'
 
 
-export class SchemaDefinition {
+export class ResponseDefinition {
   readonly name: string
-  readonly schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject
+  readonly response: OpenAPIV3_1.ResponseObject
   readonly module: ModuleDefinition
   readonly document: ApiDocumentV3_1
 
   get id(): string {
-    return `${this.module.address.url}#/components/schemas/${this.name}`
+    return `${this.module.address.url}#/components/responses/${this.name}`
   }
 
   constructor(args: {
     name: string
-    schema: OpenAPIV3_1.SchemaObject | OpenAPIV3_1.ReferenceObject
+    response: OpenAPIV3_1.ResponseObject
     module: ModuleDefinition
     document: ApiDocumentV3_1
   }) {
     this.module = args.module
     this.name = args.name
-    this.schema = args.schema
+    this.response = args.response
     this.document = args.document
   }
 
   getDependencies(): SchemaDefinition[] {
     const refs: string[] = R.uniq(JSONPath({
-      path: "$..*['$ref']",
-      json: this.schema,
+      path: "$.content..schema..$['$ref']",
+      json: this.response,
     }))
 
     return refs
@@ -44,16 +45,16 @@ export class SchemaDefinition {
       .filter((dep) => dep.id !== this.id)
   }
 
-  static unknown(): SchemaDefinition {
-    return new SchemaDefinition({
+  static unknown(): ResponseDefinition {
+    return new ResponseDefinition({
       name: '',
-      schema: {},
+      response: { description: '' },
       module: ModuleDefinition.unknown(),
       document: ApiDocumentV3_1.unknown(),
     })
   }
 
-  static isUnknown(definition: SchemaDefinition): boolean {
+  static isUnknown(definition: ResponseDefinition): boolean {
     return definition.name === ''
   }
 }
