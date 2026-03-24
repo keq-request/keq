@@ -2,6 +2,7 @@ import * as R from 'ramda'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { ResponseDefinition } from '~/models/index.js'
 import { SchemaDefinition } from '~/models/index.js'
+import { ImportAliasManager } from '~/utils/import-alias-manager.js'
 import { JsonSchemaTransformer, ReferenceTransformer } from '../json-schema/index.js'
 
 
@@ -15,6 +16,23 @@ interface ResponseDefinitionDeclarationRendererOptions {
 export class ResponseDefinitionTransformer {
   static toDeclaration(responseDefinition: ResponseDefinition, options: ResponseDefinitionDeclarationRendererOptions): string {
     const hint = `Referenced from response definition "${responseDefinition.name}".`
+    const aliasManager = new ImportAliasManager([responseDefinition.name])
+
+    // NOTE: Import generation (register) must run BEFORE referenceTransformer (resolve),
+    // because the first register() call determines each alias name.
+    const dependencies = responseDefinition.getDependencies()
+      .filter((dep) => !SchemaDefinition.isUnknown(dep))
+
+    let $dependencies = dependencies
+      .map((dep) => {
+        const filepath = options.getDependentSchemaDefinitionFilepath(dep)
+        return `import type { ${dep.name} as ${aliasManager.register('schema', dep.name)} } from "${filepath}"`
+      })
+      .map((str) => str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, options.esm ? ' from "$1.js"' : ' from "$1"'))
+      .join('\n')
+
+    if ($dependencies) $dependencies += '\n'
+
     const referenceTransformer = (schema: OpenAPIV3_1.ReferenceObject): string => {
       if (!schema.$ref || !schema.$ref.startsWith('#')) {
         return ReferenceTransformer.toInvalidDeclaration(schema, hint)
@@ -24,20 +42,8 @@ export class ResponseDefinitionTransformer {
         return ReferenceTransformer.toNotFoundDeclaration(schema, hint)
       }
 
-      return ReferenceTransformer.toDeclaration(schema, (name) => `${name}Schema`)
+      return ReferenceTransformer.toDeclaration(schema, (name) => aliasManager.resolve('schema', name) ?? `${name}Schema`)
     }
-
-    const dependencies = responseDefinition.getDependencies()
-    let $dependencies = dependencies
-      .filter((dep) => !SchemaDefinition.isUnknown(dep))
-      .map((dep) => {
-        const filepath = options.getDependentSchemaDefinitionFilepath(dep)
-        return `import type { ${dep.name} as ${dep.name}Schema } from "${filepath}"`
-      })
-      .map((str) => str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, options.esm ? ' from "$1.js"' : ' from "$1"'))
-      .join('\n')
-
-    if ($dependencies) $dependencies += '\n'
 
     const $type = ResponseDefinitionTransformer.renderContentType(
       responseDefinition.response,
