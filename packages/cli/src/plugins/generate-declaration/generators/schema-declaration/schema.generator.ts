@@ -57,7 +57,7 @@ export class SchemaDeclarationGenerator implements Generator {
   }
 
   private generateSchemaDefinitionsArtifact(schemaDefinition: SchemaDefinition, rc: RuntimeConfig): Artifact {
-    const filepath = SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(schemaDefinition, rc.fileNamingStyle)
+    const filepath = SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(schemaDefinition, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({
@@ -66,12 +66,12 @@ export class SchemaDeclarationGenerator implements Generator {
       content: SchemaDefinitionTransformer.toDeclaration(
         schemaDefinition,
         {
-          esm: rc.esm,
-          additionalPropertiesType: rc.additionalPropertiesType,
+          esm: rc.rendering.esm,
+          additionalPropertiesType: rc.rendering.additionalPropertiesType,
           getDependentSchemaDefinitionFilepath(dependentSchemaDefinition: SchemaDefinition): string {
             const relativePath = path.relative(
               dirpath,
-              SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.fileNamingStyle),
+              SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.rendering.fileNamingStyle),
             )
 
             return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
@@ -85,7 +85,7 @@ export class SchemaDeclarationGenerator implements Generator {
   }
 
   private generateEntrypointArtifact(moduleDefinition: ModuleDefinition, exports: Artifact[], rc: RuntimeConfig): Artifact {
-    const filepath = SchemaDeclarationGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.fileNamingStyle)
+    const filepath = SchemaDeclarationGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({

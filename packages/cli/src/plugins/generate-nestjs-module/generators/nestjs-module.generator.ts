@@ -13,18 +13,18 @@ const NESTJS_MODULE_GENERATOR = 'nestjs-module-generator'
 
 export class NestjsModuleGenerator implements Generator {
   private generateNestjsModuleArtifact(document: ApiDocumentV3_1, rc: RuntimeConfig): Artifact {
-    const filepath = NestjsModuleGenerator.getNestjsModuleArtifactFilepath(document, rc.fileNamingStyle)
+    const filepath = NestjsModuleGenerator.getNestjsModuleArtifactFilepath(document, rc.rendering.fileNamingStyle)
     const dirname = path.dirname(filepath)
 
     const artifact = new Artifact({
       id: NestjsModuleGenerator.getNestjsModuleArtifactId(document),
       filepath,
       content: ApiDocumentTransformer.toNestjsModule(document, {
-        esm: rc.esm,
+        esm: rc.rendering.esm,
         getNestjsClientFilepath(document) {
           const relativePath = path.relative(
             dirname,
-            NestjsModuleGenerator.getNestjsClientArtifactFilepath(document, rc.fileNamingStyle),
+            NestjsModuleGenerator.getNestjsClientArtifactFilepath(document, rc.rendering.fileNamingStyle),
           )
 
           return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
@@ -36,18 +36,18 @@ export class NestjsModuleGenerator implements Generator {
   }
 
   private generateNestjsClientArtifact(document: ApiDocumentV3_1, rc: RuntimeConfig): Artifact {
-    const filepath = NestjsModuleGenerator.getNestjsClientArtifactFilepath(document, rc.fileNamingStyle)
+    const filepath = NestjsModuleGenerator.getNestjsClientArtifactFilepath(document, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({
       id: NestjsModuleGenerator.getNestjsClientArtifactId(document),
       filepath,
       content: ApiDocumentTransformer.toNestjsClient(document, {
-        esm: rc.esm,
+        esm: rc.rendering.esm,
         getOperationDefinitionDeclarationFilepath(operationDefinition) {
           const relativePath = path.relative(
             dirpath,
-            OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle),
+            OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.rendering.fileNamingStyle),
           )
 
           return relativePath.startsWith('.') ? relativePath : `./${relativePath}`

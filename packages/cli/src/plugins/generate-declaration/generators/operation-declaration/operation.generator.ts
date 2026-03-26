@@ -42,7 +42,7 @@ export class OperationDeclarationGenerator implements Generator {
 
 
   private generateOperationDefinitionArtifact(operationDefinition: OperationDefinition, rc: RuntimeConfig): Artifact {
-    const filepath = OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle)
+    const filepath = OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({
@@ -51,19 +51,19 @@ export class OperationDeclarationGenerator implements Generator {
       content: OperationDefinitionTransformer.toDeclaration(
         operationDefinition,
         {
-          esm: rc.esm,
-          additionalPropertiesType: rc.additionalPropertiesType,
+          esm: rc.rendering.esm,
+          additionalPropertiesType: rc.rendering.additionalPropertiesType,
           getDependentSchemaDefinitionFilepath(dependentSchemaDefinition) {
             const relativePath = path.relative(
               dirpath,
-              SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.fileNamingStyle),
+              SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.rendering.fileNamingStyle),
             )
             return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
           },
           getDependentResponseDefinitionFilepath(dependentResponseDefinition) {
             const relativePath = path.relative(
               dirpath,
-              ResponseDeclarationGenerator.getResponseDefinitionArtifactFilepath(dependentResponseDefinition, rc.fileNamingStyle),
+              ResponseDeclarationGenerator.getResponseDefinitionArtifactFilepath(dependentResponseDefinition, rc.rendering.fileNamingStyle),
             )
             return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
           },
@@ -76,7 +76,7 @@ export class OperationDeclarationGenerator implements Generator {
   }
 
   private generateEntrypointArtifact(moduleDefinition: ModuleDefinition, exports: Artifact[], rc: RuntimeConfig): Artifact {
-    const filepath = OperationDeclarationGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.fileNamingStyle)
+    const filepath = OperationDeclarationGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({

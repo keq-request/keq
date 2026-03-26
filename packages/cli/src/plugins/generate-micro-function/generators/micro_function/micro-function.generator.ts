@@ -63,18 +63,18 @@ export class MicroFunctionGenerator implements Generator {
 
 
   private generateOperationDefinitionArtifact(operationDefinition: OperationDefinition, rc: RuntimeConfig): Artifact {
-    const filepath = MicroFunctionGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle)
+    const filepath = MicroFunctionGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.rendering.fileNamingStyle)
     const dirpath = path.dirname(filepath)
 
     const artifact = new Artifact({
       id: MicroFunctionGenerator.getOperationDefinitionArtifactId(operationDefinition),
       filepath,
       content: OperationDefinitionTransformer.toMicroFunction(operationDefinition, {
-        esm: rc.esm,
+        esm: rc.rendering.esm,
         getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string {
           const relativePath = path.relative(
             dirpath,
-            OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.fileNamingStyle),
+            OperationDeclarationGenerator.getOperationDefinitionArtifactFilepath(operationDefinition, rc.rendering.fileNamingStyle),
           )
 
           return relativePath.startsWith('.') ? relativePath : `./${relativePath}`
@@ -95,7 +95,7 @@ export class MicroFunctionGenerator implements Generator {
   }
 
   private generateEntrypointArtifact(moduleDefinition: ModuleDefinition, exports: Artifact[], rc: RuntimeConfig): Artifact {
-    const filepath = MicroFunctionGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.fileNamingStyle)
+    const filepath = MicroFunctionGenerator.getEntrypointArtifactFilepath(moduleDefinition, rc.rendering.fileNamingStyle)
     const dirpath = filepath.substring(0, filepath.lastIndexOf('/'))
 
     const artifact = new Artifact({

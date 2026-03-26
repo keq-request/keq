@@ -49,22 +49,37 @@ const Modules = Type.Transform(
 
 export const RawConfig = Type.Object({
   /**
-   * Whether to generate ES Module code
-   *
-   * If not specified, the module system will be inferred from the nearest package.json "type" field
-   * or defaults to "cjs" if no package.json is found.
-   */
-  esm: Type.Optional(Type.Boolean({ default: false })),
-
-  /**
    * Output directory for generated files
    */
   outdir: Type.String({ default: `${process.cwd()}/api` }),
 
   /**
-   * File naming style for generated files
+   * Rendering options that directly control code generation output
    */
-  fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.snakeCase }),
+  rendering: Type.Object({
+    /**
+     * Whether to generate ES Module code
+     *
+     * If not specified, the module system will be inferred from the nearest package.json "type" field
+     * or defaults to "cjs" if no package.json is found.
+     */
+    esm: Type.Optional(Type.Boolean({ default: false })),
+
+    /**
+     * File naming style for generated files
+     */
+    fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.snakeCase }),
+
+    /**
+     * Controls how `additionalProperties: true` (or undefined) is rendered in generated TypeScript types.
+     *
+     * - `'unknown'` (default): renders as `unknown`, which is stricter and type-safe
+     * - `'any'`: renders as `any`, which is more permissive
+     */
+    additionalPropertiesType: Type.Optional(
+      Type.Union([Type.Literal('unknown'), Type.Literal('any')], { default: 'unknown' }),
+    ),
+  }, { default: {} }),
 
   /**
    * OpenAPI/Swagger document sources
@@ -111,16 +126,6 @@ export const RawConfig = Type.Object({
    * When set to true, the outdir folder will be emptied before writing new files.
    */
   clean: Type.Optional(Type.Boolean({ default: false })),
-
-  /**
-   * Controls how `additionalProperties: true` (or undefined) is rendered in generated TypeScript types.
-   *
-   * - `'unknown'` (default): renders as `unknown`, which is stricter and type-safe
-   * - `'any'`: renders as `any`, which is more permissive
-   */
-  additionalPropertiesType: Type.Optional(
-    Type.Union([Type.Literal('unknown'), Type.Literal('any')], { default: 'unknown' }),
-  ),
 
   /**
    * Plugins to extend code generation functionality

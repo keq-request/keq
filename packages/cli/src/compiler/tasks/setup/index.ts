@@ -52,7 +52,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
       const packageJsonInfo = findNearestPackageJson()
       if (packageJsonInfo) {
         const moduleSystem = getProjectModuleSystem(packageJsonInfo)
-        rc.esm = moduleSystem === 'esm'
+        rc.rendering.esm = moduleSystem === 'esm'
       }
 
       context.rc = rc

@@ -41,12 +41,12 @@ export class UseValibotPlugin implements Plugin {
         const valibotContent = SchemaDefinitionTransformer.toValibot(
           schemaDefinition,
           {
-            esm: rc.esm,
-            additionalPropertiesType: rc.additionalPropertiesType,
+            esm: rc.rendering.esm,
+            additionalPropertiesType: rc.rendering.additionalPropertiesType,
             getDependentSchemaDefinitionFilepath(dependentSchemaDefinition: SchemaDefinition): string {
               const relativePath = path.relative(
                 dirpath,
-                SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.fileNamingStyle),
+                SchemaDeclarationGenerator.getSchemaDefinitionArtifactFilepath(dependentSchemaDefinition, rc.rendering.fileNamingStyle),
               )
 
               return relativePath.startsWith('.') ? relativePath : `./${relativePath}`

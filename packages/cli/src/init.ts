@@ -13,8 +13,11 @@ export default defineConfig({
   // Output directory for generated files
   outdir: './apis',
 
-  // File naming style for generated files
-  fileNamingStyle: FileNamingStyle.kebabCase,
+  // Rendering options for code generation
+  rendering: {
+    // File naming style for generated files
+    fileNamingStyle: FileNamingStyle.kebabCase,
+  },
 
   // OpenAPI/Swagger document sources
   modules: {
@@ -32,11 +35,14 @@ module.exports = defineConfig({
   // Output directory for generated files
   outdir: './apis',
 
-  // File naming style for generated files
-  // Options: 'camelCase', 'capitalCase', 'constantCase', 'dotCase', 'headerCase',
-  //          'noCase', 'paramCase', 'pascalCase', 'pathCase', 'sentenceCase',
-  //          'snakeCase', 'kebabCase'
-  fileNamingStyle: 'kebabCase',
+  // Rendering options for code generation
+  rendering: {
+    // File naming style for generated files
+    // Options: 'camelCase', 'capitalCase', 'constantCase', 'dotCase', 'headerCase',
+    //          'noCase', 'paramCase', 'pascalCase', 'pathCase', 'sentenceCase',
+    //          'snakeCase', 'kebabCase'
+    fileNamingStyle: 'kebabCase',
+  },
 
   // OpenAPI/Swagger document sources
   modules: {
@@ -54,8 +60,11 @@ export default defineConfig({
   // Output directory for generated files
   outdir: './apis',
 
-  // File naming style for generated files
-  fileNamingStyle: FileNamingStyle.kebabCase,
+  // Rendering options for code generation
+  rendering: {
+    // File naming style for generated files
+    fileNamingStyle: FileNamingStyle.kebabCase,
+  },
 
   // OpenAPI/Swagger document sources
   modules: {
