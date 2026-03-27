@@ -103,7 +103,20 @@ export class SchemaDefinitionTransformer {
         return base.replace(/^unknown/, 'v.unknown()')
       }
 
-      return ReferenceTransformer.toDeclaration(schema, (name) => `${name}Schema`)
+      const schemaVarName = ReferenceTransformer.toDeclaration(schema, (name) => `${name}Schema`)
+      return `v.lazy(() => ${schemaVarName})`
+    }
+
+    const declarationReferenceTransformer = (schema: OpenAPIV3_1.ReferenceObject): string => {
+      if (!schema.$ref || !schema.$ref.startsWith('#')) {
+        return ReferenceTransformer.toInvalidDeclaration(schema, hint)
+      }
+
+      if (!schemaDefinition.document.isRefDefined(schema.$ref)) {
+        return ReferenceTransformer.toNotFoundDeclaration(schema, hint)
+      }
+
+      return ReferenceTransformer.toDeclaration(schema)
     }
 
     const dependencies = schemaDefinition.getDependencies()
@@ -111,7 +124,7 @@ export class SchemaDefinitionTransformer {
       .filter((dep) => !SchemaDefinition.isUnknown(dep))
       .map((dep) => {
         const filepath = options.getDependentSchemaDefinitionFilepath(dep)
-        return `import { ${dep.name}, ${dep.name}Schema } from "${filepath}"`
+        return `import { type ${dep.name}, ${dep.name}Schema } from "${filepath}"`
       })
       .map((str) => str.replace(/ from "(\.\.?\/.+?)(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?"/, options.esm ? ' from "$1.js"' : ' from "$1"'))
       .join('\n')
@@ -140,14 +153,19 @@ export class SchemaDefinitionTransformer {
 
     const $schema = JsonSchemaTransformer.toValibot(schemaDefinition.schema, { referenceTransformer, additionalPropertiesType: options.additionalPropertiesType })
 
+    const $typeSchema = JsonSchemaTransformer.toDeclaration(schemaDefinition.schema, { referenceTransformer: declarationReferenceTransformer, additionalPropertiesType: options.additionalPropertiesType })
+    const $typeDeclaration = $typeSchema.startsWith('{')
+      ? `export interface ${schemaDefinition.name} ${$typeSchema}`
+      : `export type ${schemaDefinition.name} = ${$typeSchema}`
+
     return [
       '/* @anchor:file:start */',
       '',
       $valibotImport,
       $dependencies,
       $comment || undefined,
-      `export const ${schemaDefinition.name}Schema = ${$schema}`,
-      `export type ${schemaDefinition.name} = v.InferOutput<typeof ${schemaDefinition.name}Schema>`,
+      $typeDeclaration,
+      `export const ${schemaDefinition.name}Schema: v.GenericSchema<${schemaDefinition.name}> = ${$schema}`,
       '',
       '/* @anchor:file:end */',
     ].filter(R.isNotNil).join('\n')
