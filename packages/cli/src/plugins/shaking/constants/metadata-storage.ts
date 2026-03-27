@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface ShakingPluginMetadata {
@@ -6,4 +6,6 @@ export interface ShakingPluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, ShakingPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<ShakingPluginMetadata>(
+  '@keq-request/cli:ShakingPlugin:MetadataStorage',
+)

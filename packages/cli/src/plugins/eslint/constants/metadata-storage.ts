@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface EslintPluginMetadata {
@@ -6,4 +6,6 @@ export interface EslintPluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, EslintPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<EslintPluginMetadata>(
+  '@keq-request/cli:EslintPlugin:MetadataStorage',
+)

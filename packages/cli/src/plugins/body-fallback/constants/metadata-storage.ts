@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface BodyFallbackPluginMetadata {
@@ -6,4 +6,6 @@ export interface BodyFallbackPluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, BodyFallbackPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<BodyFallbackPluginMetadata>(
+  '@keq-request/cli:BodyFallbackPlugin:MetadataStorage',
+)

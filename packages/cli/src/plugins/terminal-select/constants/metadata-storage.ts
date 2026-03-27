@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface TerminalSelectPluginMetadata {
@@ -6,4 +6,6 @@ export interface TerminalSelectPluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, TerminalSelectPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<TerminalSelectPluginMetadata>(
+  '@keq-request/cli:TerminalSelectPlugin:MetadataStorage',
+)

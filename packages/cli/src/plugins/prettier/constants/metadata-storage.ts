@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface PrettierPluginMetadata {
@@ -6,4 +6,6 @@ export interface PrettierPluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, PrettierPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<PrettierPluginMetadata>(
+  '@keq-request/cli:PrettierPlugin:MetadataStorage',
+)

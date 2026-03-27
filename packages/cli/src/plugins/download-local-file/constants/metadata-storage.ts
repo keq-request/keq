@@ -1,4 +1,4 @@
-import { Compiler } from '~/compiler/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface DownloadLocalFilePluginMetadata {
@@ -6,4 +6,6 @@ export interface DownloadLocalFilePluginMetadata {
   hooks: object
 }
 
-export const MetadataStorage = new WeakMap<Compiler, DownloadLocalFilePluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<DownloadLocalFilePluginMetadata>(
+  '@keq-request/cli:DownloadLocalFilePlugin:MetadataStorage',
+)

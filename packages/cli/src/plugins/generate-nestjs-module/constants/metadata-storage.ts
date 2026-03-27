@@ -1,6 +1,7 @@
 import { AsyncSeriesWaterfallHook } from 'tapable'
-import { Compiler, TaskWrapper } from '~/compiler/index.js'
+import { TaskWrapper } from '~/compiler/index.js'
 import { ApiDocumentV3_1, Artifact } from '~/models/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 export interface GenerateNestjsModulePluginMetadata {
   applied: boolean
@@ -9,4 +10,6 @@ export interface GenerateNestjsModulePluginMetadata {
   }
 }
 
-export const MetadataStorage = new WeakMap<Compiler, GenerateNestjsModulePluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<GenerateNestjsModulePluginMetadata>(
+  '@keq-request/cli:GenerateNestjsModulePlugin:MetadataStorage',
+)

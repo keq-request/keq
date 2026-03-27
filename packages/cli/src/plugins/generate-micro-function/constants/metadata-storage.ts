@@ -1,6 +1,7 @@
 import { AsyncSeriesWaterfallHook } from 'tapable'
-import { Compiler, TaskWrapper } from '~/compiler/index.js'
+import { TaskWrapper } from '~/compiler/index.js'
 import { Artifact, OperationDefinition } from '~/models/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 export interface GenerateMicroFunctionPluginMetadata {
   applied: boolean
@@ -10,4 +11,6 @@ export interface GenerateMicroFunctionPluginMetadata {
   }
 }
 
-export const MetadataStorage = new WeakMap<Compiler, GenerateMicroFunctionPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<GenerateMicroFunctionPluginMetadata>(
+  '@keq-request/cli:GenerateMicroFunctionPlugin:MetadataStorage',
+)

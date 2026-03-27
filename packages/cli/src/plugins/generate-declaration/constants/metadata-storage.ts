@@ -1,6 +1,7 @@
 import { AsyncSeriesWaterfallHook } from 'tapable'
-import { Compiler, TaskWrapper } from '~/compiler/index.js'
+import { TaskWrapper } from '~/compiler/index.js'
 import { Artifact, OperationDefinition, ResponseDefinition, SchemaDefinition } from '~/models/index.js'
+import { PluginMetadataStorage } from '~/models/plugin-metadata-storage.js'
 
 
 export interface GenerateDeclarationPluginMetadata {
@@ -13,4 +14,6 @@ export interface GenerateDeclarationPluginMetadata {
   }
 }
 
-export const MetadataStorage = new Map<Compiler, GenerateDeclarationPluginMetadata>()
+export const MetadataStorage = new PluginMetadataStorage<GenerateDeclarationPluginMetadata>(
+  '@keq-request/cli:GenerateDeclarationPlugin:MetadataStorage',
+)
