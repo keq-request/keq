@@ -52,6 +52,7 @@ export {
   AbortException,
 
   RequestException,
+  type RequestExceptionOptions,
 
   BadRequestException,
   UnauthorizedException,

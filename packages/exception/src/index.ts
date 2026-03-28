@@ -1,3 +1,4 @@
 export * from './throw-exception.js'
 export * from './catch-exception.js'
 export * from './validate-status-code.js'
+export * from './create-exception-by-status-code.js'
