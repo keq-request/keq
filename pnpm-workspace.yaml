@@ -1,6 +1,7 @@
 packages:
-- packages/*
+  - packages/*
 
 onlyBuiltDependencies:
-- '@swc/core'
-- unrs-resolver
+  - '@swc/core'
+  - esbuild
+  - unrs-resolver
