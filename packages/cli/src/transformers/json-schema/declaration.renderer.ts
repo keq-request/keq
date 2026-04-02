@@ -172,7 +172,7 @@ export class DeclarationRenderer implements Renderer {
 
   private renderEnum(schema: OpenAPIV3_1.NonArraySchemaObject): string {
     if (!schema.enum) return 'unknown'
-    return schema.enum.map((v) => JSON.stringify(v)).join(' | ')
+    return `(${schema.enum.map((v) => JSON.stringify(v)).join(' | ')})`
   }
 
   private renderString(schema: OpenAPIV3_1.NonArraySchemaObject): string {
