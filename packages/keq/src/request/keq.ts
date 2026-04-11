@@ -74,8 +74,32 @@ export class Keq<
    */
   query(obj: Partial<REQ_QUERY>, options?: KeqQueryOptions): this
   query<T extends keyof LiteralKeys<REQ_QUERY>>(key: T, value: LiteralKeys<REQ_QUERY>[T], options?: KeqQueryOptions): this
-  query<O extends { [K in keyof O]: StringIndexValueOf<REQ_QUERY> }>(key: string, obj: StringIndexValueOf<REQ_QUERY> & EnabledIfStringIndex<REQ_QUERY>, options?: KeqQueryOptions): this
+  /**
+   * The following two overloads handle flat (non-nested) query params
+   * with arbitrary key names when REQ_QUERY has a string index signature (`[key: string]: ...`).
+   * Values must be directly assignable to the string index value type — no nested objects.
+   *
+   * @example
+   * ```ts
+   * // Given REQ_QUERY = { [key: string]: string }
+   * request.query('customKey', 'value')
+   * request.query({ customKey: 'value', anotherKey: 'value2' })
+   * ```
+   */
+  query<O extends { [K in keyof O]: StringIndexValueOf<REQ_QUERY> }>(key: string, obj: (StringIndexValueOf<REQ_QUERY> & EnabledIfStringIndex<REQ_QUERY>) | undefined, options?: KeqQueryOptions): this
   query<O extends { [K in keyof O]: StringIndexValueOf<REQ_QUERY> }>(obj: Partial<O> & EnabledIfStringIndex<REQ_QUERY>, options?: KeqQueryOptions): this
+  /**
+   * The following two overloads handle nested object query params
+   * when REQ_QUERY has a string index signature (`[key: string]: ...`).
+   * Every leaf value in the nested object must be assignable to the string index value type of REQ_QUERY.
+   *
+   * @example
+   * ```ts
+   * // Given REQ_QUERY = { [key: string]: string }
+   * request.query({ filter: { status: 'active', tags: ['a', 'b'] } })
+   * request.query('filter', { status: 'active', tags: ['a', 'b'] })
+   * ```
+   */
   query<O extends object>(
     arg: O
       & Partial<LooseNestedObject<REQ_QUERY, O>>
@@ -84,10 +108,10 @@ export class Keq<
   ): this
   query<K extends keyof REQ_QUERY, O extends object>(
     key: K,
-    arg: O
+    arg: (O
       & LooseNestedLike<StringIndexValueOf<REQ_QUERY>, O>
       & EnableLooseNestedLike<StringIndexValueOf<REQ_QUERY>, O>
-      & EnabledIfStringIndex<REQ_QUERY>,
+      & EnabledIfStringIndex<REQ_QUERY>) | undefined,
     options?: KeqQueryOptions,
   ): this
   query(arg1: string | Partial<REQ_QUERY>, arg2?: KeqQueryInit | KeqQueryOptions, arg3?: KeqQueryOptions): this {
