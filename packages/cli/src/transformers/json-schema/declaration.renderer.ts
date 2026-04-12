@@ -73,7 +73,7 @@ export class DeclarationRenderer implements Renderer {
 
   private renderMixed(schema: MixedSchemaObject): string {
     if (Array.isArray(schema.type)) {
-      schema.type
+      return schema.type
         .map((type): (OpenAPIV3_1.ArraySchemaObject | OpenAPIV3_1.NonArraySchemaObject) => ({ ...schema, type }))
         .map((schema) => this.renderSchema(schema))
         .join(' | ')

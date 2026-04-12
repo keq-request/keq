@@ -116,10 +116,7 @@
         "packages/headers:dev",
         "packages/nestjs:dev",
         "packages/cache:dev"
-      ],
-      "runOptions": {
-        "runOn": "folderOpen"
-      }
+      ]
     },
     {
       "type": "shell",
