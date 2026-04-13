@@ -79,6 +79,14 @@ export const RawConfig = Type.Object({
     additionalPropertiesType: Type.Optional(
       Type.Union([Type.Literal('unknown'), Type.Literal('any')], { default: 'unknown' }),
     ),
+
+    /**
+     * Whether to generate entrypoint (index) files that re-export all generated modules.
+     *
+     * Disable this to avoid merge conflicts in multi-branch collaborative development,
+     * as auto-generated index files change frequently.
+     */
+    entrypoint: Type.Optional(Type.Boolean({ default: false })),
   }, { default: {} }),
 
   /**

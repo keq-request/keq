@@ -38,6 +38,10 @@ export class ResponseDeclarationGenerator implements Generator {
       ),
     )
 
+    if (!rc.rendering.entrypoint) {
+      return [...artifactMap.values()]
+    }
+
     const entrypoints = R.collectBy(
       (responseDefinition) => responseDefinition.module.name,
       responseDefinitions,

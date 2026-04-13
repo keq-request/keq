@@ -35,6 +35,9 @@ export class SchemaDeclarationGenerator implements Generator {
       ),
     )
 
+    if (!rc.rendering.entrypoint) {
+      return [...artifactMap.values()]
+    }
 
     const entrypoints = R.collectBy(
       (schemaDefinition) => schemaDefinition.module.name,

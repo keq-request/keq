@@ -36,6 +36,9 @@ export class MicroFunctionGenerator implements Generator {
       ),
     )
 
+    if (!rc.rendering.entrypoint) {
+      return [...artifactMap.values()]
+    }
 
     const entrypoints = await Promise.all(
       R.collectBy(
