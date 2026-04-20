@@ -12,6 +12,7 @@ export default defineConfig({
   tsconfig: 'tsconfig.lib.json',
   splitting: true,
   sourcemap: true,
+  shims: true,
   clean: true,
   external: ['eslint'],
   onSuccess: 'tsc --emitDeclarationOnly -d --declarationMap -p ./tsconfig.lib.json && tsc-alias -p ./tsconfig.lib.json',

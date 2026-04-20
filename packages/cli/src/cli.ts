@@ -384,6 +384,15 @@ program
     await initConfig(options)
   })
 
+
+program
+  .command('install-skill')
+  .description('Install predefined Claude Code skill files into .claude/skills/')
+  .action(async () => {
+    const { installSkill } = await import('./install-skill.js')
+    await installSkill()
+  })
+
 async function main(): Promise<void> {
   program.on('command:*', function (operands) {
     throw new Error(`Unknown command '${String(operands[0])}'`)
