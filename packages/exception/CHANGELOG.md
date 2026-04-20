@@ -1,5 +1,17 @@
 # Changelog
 
+## 5.0.0-alpha.32
+
+### Minor Changes
+
+- 74803c8: export `createExceptionByStatusCode` to create HTTP exceptions from a `Response` object
+
+### Patch Changes
+
+- Updated dependencies [f194c41]
+- Updated dependencies [b8d02ca]
+  - keq@5.0.0-alpha.32
+
 ## 5.0.0-alpha.31
 
 ### Patch Changes
