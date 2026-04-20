@@ -89,17 +89,17 @@ program
 
 
 program
-  .command('ignore')
-  .description('Manage ignore rules for API generation using .keqignore file')
+  .command('filter')
+  .description('Manage filter rules for API generation using .keqfilter file')
   .addArgument(
-    new Argument('<mode>', 'The ignore mode')
-      .choices(['all', 'add', 'except'])
+    new Argument('<mode>', 'The filter mode')
+      .choices(['all', 'deny', 'allow'])
       .argRequired(),
   )
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--debug', 'Print debug information')
   .option('--module <modules...>')
-  .option('--build', 'Build after updating .keqignore file')
+  .option('--build', 'Build after updating .keqfilter file')
   .addOption(
     new Option('--method <method>', 'Only generate files of the specified operation method')
       .choices([
@@ -117,7 +117,7 @@ program
       if (options.interactive) throw new Error("'--interactive' cannot be used with 'all' mode")
       if (options.module) throw new Error("'--module' cannot be used with 'all' mode")
       if (options.method) throw new Error("'--method' cannot be used with 'all' mode")
-      if (options.pathname) throw new Error("'--pathname' cannot be used with 'all' mode'")
+      if (options.pathname) throw new Error("'--pathname' cannot be used with 'all' mode")
 
       compiler = new Compiler({
         build: false,
@@ -175,7 +175,7 @@ program
         ignore: {
           rules: moduleNames.map((moduleNames) => ({
             persist: true,
-            ignore: mode === 'add',
+            ignore: mode === 'deny',
             moduleName: moduleNames,
             operationMethod: options.method,
             operationPathname: options.pathname,

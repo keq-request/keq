@@ -1,7 +1,10 @@
 import * as R from 'ramda'
 import fs from 'fs-extra'
+import picomatch from 'picomatch'
 import { OperationDefinition, ModuleDefinition } from '~/models/index.js'
 
+
+const ALL_HTTP_METHODS = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options']
 
 export interface IgnoreMatcherRule {
   persist: boolean
@@ -11,98 +14,146 @@ export interface IgnoreMatcherRule {
   operationPathname: string
 }
 
+function deduplicateRules(rules: IgnoreMatcherRule[]): IgnoreMatcherRule[] {
+  const sorted = R.sortBy(R.prop('ignore'), rules)
+  return R.uniqWith(
+    (a, b) => a.moduleName === b.moduleName && a.operationMethod === b.operationMethod && a.operationPathname === b.operationPathname,
+    sorted,
+  )
+}
+
+function sortRulesForOutput(rules: IgnoreMatcherRule[]): IgnoreMatcherRule[] {
+  return [...rules].sort((a, b) => {
+    if (a.moduleName === '*' && b.moduleName !== '*') return -1
+    if (a.moduleName !== '*' && b.moduleName === '*') return 1
+    if (a.moduleName !== b.moduleName) return a.moduleName.localeCompare(b.moduleName)
+    if (a.operationMethod === '*' && b.operationMethod !== '*') return -1
+    if (a.operationMethod !== '*' && b.operationMethod === '*') return 1
+    if (a.operationMethod !== b.operationMethod) return a.operationMethod.localeCompare(b.operationMethod)
+    return a.operationPathname.localeCompare(b.operationPathname)
+  })
+}
+
+function renderBlock(section: 'deny' | 'allow', rules: IgnoreMatcherRule[]): string {
+  if (rules.length === 0) return ''
+  const maxMethodLen = Math.max(...rules.map((r) => r.operationMethod.toUpperCase().length))
+  const lines = rules.map((r) => `${r.operationMethod.toUpperCase().padEnd(maxMethodLen + 2)}${r.moduleName}:${r.operationPathname}`)
+  return `[${section}]\n${lines.join('\n')}`
+}
+
+
+interface CompiledRule {
+  rule: IgnoreMatcherRule
+  matchModuleName: (s: string) => boolean
+  matchMethod: (s: string) => boolean
+  matchPathname: (s: string) => boolean
+}
+
+function compileRule(rule: IgnoreMatcherRule): CompiledRule {
+  return {
+    rule,
+    matchModuleName: picomatch(rule.moduleName),
+    matchMethod: picomatch(rule.operationMethod),
+    matchPathname: picomatch(rule.operationPathname),
+  }
+}
+
 
 export class IgnoreMatcher {
-  private rules: IgnoreMatcherRule[]
+  private compiled: CompiledRule[]
 
   constructor(rules: IgnoreMatcherRule[]) {
-    this.rules = rules
+    this.compiled = rules.map(compileRule)
+  }
+
+  private get rules(): IgnoreMatcherRule[] {
+    return this.compiled.map((c) => c.rule)
+  }
+
+  /**
+   * Parse .keqfilter file content into an IgnoreMatcher.
+   *
+   * File format:
+   * ```
+   * [deny]
+   * GET     petStore:/pets
+   * *       userService:/**
+   *
+   * [allow]
+   * GET     petStore:/pets/details
+   * ```
+   *
+   * Line format: `METHOD module:/pathname`
+   * - method: HTTP method or `*`, case-insensitive
+   * - module:/pathname: module name + `:` + path pattern (glob supported)
+   */
+  static parse(content: string): IgnoreMatcher {
+    const normalized = content
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+
+    const rules: IgnoreMatcherRule[] = []
+    let currentIgnore: boolean | null = null
+
+    for (const rawLine of normalized.split('\n')) {
+      const line = rawLine.replace(/#.*$/, '').trim()
+      if (!line) continue
+
+      if (line === '[deny]') {
+        currentIgnore = true
+        continue
+      }
+      if (line === '[allow]') {
+        currentIgnore = false
+        continue
+      }
+      if (currentIgnore === null) continue
+
+      const matched = line.match(/^([^\s]+)\s+([^:\s]+):(.*)$/)
+      if (!matched) throw new Error(`Invalid filter rule: "${line}"`)
+
+      const [, operationMethod, moduleName, operationPathname] = matched
+      rules.push({
+        persist: true,
+        ignore: currentIgnore,
+        moduleName,
+        operationMethod: operationMethod.toLowerCase(),
+        operationPathname,
+      })
+    }
+
+    return new IgnoreMatcher(deduplicateRules(rules))
   }
 
   static async read(filepath: string): Promise<IgnoreMatcher> {
-    let content = await fs.readFile(filepath, 'utf-8')
-
-    content = content
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
-      .replace(/#.*$/gm, '')
-      .replace(/\n+/g, '\n')
-      .trim()
-
-    let rules = content
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0)
-      .map((line): IgnoreMatcherRule => {
-        const matched = line.match(/^(!)?\s*([^\s/]+)\s+([^\s/]+)\s+([^\s]+)$/)
-        if (!matched) throw new Error(`Invalid ignore rule: "${line}"`)
-
-        const [, flag, moduleName, operationMethod, operationPathname] = matched
-
-        return {
-          persist: true,
-          ignore: !flag,
-          moduleName,
-          operationMethod: operationMethod.toLowerCase(),
-          operationPathname,
-        }
-      })
-    rules = R.sortBy(
-      R.prop('ignore'),
-      rules,
-    )
-
-    rules = R.uniqWith(
-      (a, b) => a.moduleName === b.moduleName && a.operationMethod === b.operationMethod && a.operationPathname === b.operationPathname,
-      rules,
-    )
-
-    return new IgnoreMatcher(rules)
+    const content = await fs.readFile(filepath, 'utf-8')
+    return IgnoreMatcher.parse(content)
   }
 
   async write(filepath: string): Promise<void> {
-    const ruleGroups = R.compose(
-      R.groupBy((rule: IgnoreMatcherRule) => rule.moduleName),
+    const persistRules: IgnoreMatcherRule[] = R.compose(
       R.reverse,
       R.uniqWith<IgnoreMatcherRule>(
         (a, b) => a.moduleName === b.moduleName && a.operationMethod === b.operationMethod && a.operationPathname === b.operationPathname,
       ),
       R.filter((rule: IgnoreMatcherRule) => rule.persist),
-    )(this.rules)
+    )(this.rules) as IgnoreMatcherRule[]
 
-    const content = Object.entries(ruleGroups)
-      .sort((a, b) => {
-        const aModuleName = a[0]
-        const bModuleName = b[0]
+    const denyRules = sortRulesForOutput(persistRules.filter((r) => r.ignore))
+    const allowRules = sortRulesForOutput(persistRules.filter((r) => !r.ignore))
 
-        if (aModuleName === '*') return -1
-        if (bModuleName === '*') return 1
+    const blocks = [
+      renderBlock('deny', denyRules),
+      renderBlock('allow', allowRules),
+    ].filter(Boolean)
 
-        return aModuleName.localeCompare(bModuleName)
-      })
-      .map(([, rules]) => (rules || [])
-        .sort((a, b) => {
-          if (a.ignore !== b.ignore) return a.ignore ? -1 : 1
+    if (blocks.length === 0) return
 
-          if (a.operationMethod === '*') return -1
-          if (b.operationMethod === '*') return 1
-          if (a.operationPathname === '*') return -1
-          if (b.operationPathname === '*') return 1
-
-          if (a.operationMethod !== b.operationMethod) return a.operationMethod.localeCompare(b.operationMethod)
-          if (a.operationPathname !== b.operationPathname) return a.operationPathname.localeCompare(b.operationPathname)
-
-          return 0
-        })
-        .map((rule) => `${rule.ignore ? '' : '! '}${rule.moduleName} ${rule.operationMethod.toUpperCase()} ${rule.operationPathname}`)
-        .join('\n'))
-      .join('\n\n')
-
-    await fs.writeFile(filepath, content, 'utf-8')
+    await fs.writeFile(filepath, blocks.join('\n\n'), 'utf-8')
   }
 
   append(rule: IgnoreMatcherRule): void {
-    this.rules.unshift(rule)
+    this.compiled.unshift(compileRule(rule))
   }
 
   // if operation is ignored, return true
@@ -111,10 +162,10 @@ export class IgnoreMatcher {
     const operationMethod = operationDefinition.method.toLowerCase()
     const operationPathname = operationDefinition.pathname
 
-    for (const rule of this.rules) {
-      if (rule.moduleName !== '*' && rule.moduleName !== moduleName) continue
-      if (rule.operationMethod !== '*' && rule.operationMethod !== operationMethod) continue
-      if (rule.operationPathname !== '*' && rule.operationPathname !== operationPathname) continue
+    for (const { rule, matchModuleName, matchMethod, matchPathname } of this.compiled) {
+      if (!matchModuleName(moduleName)) continue
+      if (!matchMethod(operationMethod)) continue
+      if (!matchPathname(operationPathname)) continue
 
       return rule.ignore
     }
@@ -125,16 +176,18 @@ export class IgnoreMatcher {
   isModuleIgnored(moduleDefinition: ModuleDefinition): boolean {
     const moduleName = moduleDefinition.name
 
-    for (const rule of this.rules) {
-      if (!rule.ignore) {
-        if (rule.moduleName === '*' || rule.moduleName === moduleName) return false
-        continue
-      }
+    for (const { rule, matchModuleName, matchMethod, matchPathname } of this.compiled) {
+      if (!matchModuleName(moduleName)) continue
 
-      if (rule.operationMethod !== '*') continue
-      if (rule.operationPathname !== '*') continue
+      if (!rule.ignore) return false
 
-      if (rule.moduleName === '*' || rule.moduleName === moduleName) return true
+      // only treat as module-level ignore when method and pathname patterns cover all values:
+      // - method pattern must match every known HTTP method
+      // - pathname pattern must match a deeply-nested path (i.e. crosses slashes)
+      if (!ALL_HTTP_METHODS.every((m) => matchMethod(m))) continue
+      if (!matchPathname('/a/b/c/d')) continue
+
+      return true
     }
 
     return false

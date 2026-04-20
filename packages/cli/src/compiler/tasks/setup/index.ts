@@ -62,7 +62,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
 
       let matcher: IgnoreMatcher = new IgnoreMatcher([])
       if (result.filepath) {
-        const ignoreFilepath = path.resolve(path.dirname(result.filepath), '.keqignore')
+        const ignoreFilepath = path.resolve(path.dirname(result.filepath), '.keqfilter')
         if (await fs.exists(ignoreFilepath)) {
           matcher = await IgnoreMatcher.read(ignoreFilepath)
         }

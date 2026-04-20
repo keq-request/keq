@@ -4,7 +4,7 @@
 
 The compiler runs 4 phases in sequence. Plugins hook into these phases via tapable hooks:
 
-1. **Setup** — Load config, parse `.keqignore` rules
+1. **Setup** — Load config, parse `.keqfilter` rules
 2. **Download** — Fetch OpenAPI docs from local files or HTTP URLs, convert to OpenAPI 3.1, dereference `$ref`
 3. **Compile** — Transform OpenAPI operations/schemas into TypeScript code artifacts
 4. **Persist** — Write generated files to disk

@@ -59,6 +59,7 @@
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.19.25",
+    "@types/picomatch": "^4.0.3",
     "@types/ramda": "^0.31.1",
     "@types/swagger2openapi": "^7.0.4",
     "keq": "workspace:*"
@@ -83,6 +84,7 @@
     "jsonpath-plus": "^10.3.0",
     "jsonpointer": "^5.0.1",
     "listr2": "^9.0.5",
+    "picomatch": "^4.0.4",
     "ramda": "^0.32.0",
     "semver": "^7.7.3",
     "swagger-fix": "^1.0.5",

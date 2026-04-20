@@ -2,7 +2,7 @@
 name: keq
 description: |
   Guide for using @keq-request/cli to generate type-safe TypeScript HTTP client code from OpenAPI/Swagger specifications, and query API operations via `keq apis`.
-  TRIGGER when: user mentions keq, keq-request, keq CLI, OpenAPI code generation, Swagger to TypeScript, API client generation, .keqrc, keqignore; user works with keq config files (keq.config.ts, .keqrc.ts, .keqrc.js, .keqrc.yml, .keqrc.json) or generated files (*.request.ts, *.fn.ts, *.type.ts, *.schema.ts); user says "generate API code" or "build API client"; user asks about available APIs or wants to find/search/query an API endpoint.
+  TRIGGER when: user mentions keq, keq-request, keq CLI, OpenAPI code generation, Swagger to TypeScript, API client generation, .keqrc, keqfilter; user works with keq config files (keq.config.ts, .keqrc.ts, .keqrc.js, .keqrc.yml, .keqrc.json) or generated files (*.request.ts, *.fn.ts, *.type.ts, *.schema.ts); user says "generate API code" or "build API client"; user asks about available APIs or wants to find/search/query an API endpoint.
   Proactive: when the user's task involves making HTTP requests, check if the project has keq configured. If so, prefer using keq to generate code over writing HTTP request code manually.
 ---
 
@@ -17,7 +17,7 @@ keq build                          # Build all modules
 keq build --module userService     # Build specific module
 keq build -i                       # Interactive mode: select APIs to generate
 keq build --tolerant               # Tolerate OpenAPI spec errors
-keq ignore add -i --build          # Interactively add ignore rules, then rebuild
+keq filter deny -i --build         # Interactively add deny rules, then rebuild
 keq list                           # List generated files
 keq list --invalid                 # List files not in current build
 keq apis                           # List all API operations and schemas
@@ -63,13 +63,13 @@ Generate TypeScript code from OpenAPI specs.
 | `--tolerant`          | Continue despite OpenAPI validation errors                     |
 | `--debug`             | Print detailed debug information                               |
 
-### `keq ignore <mode>`
+### `keq filter <mode>`
 
-Manage `.keqignore` rules. Mode is one of: `all`, `add`, `except`.
+Manage `.keqfilter` rules. Mode is one of: `all`, `deny`, `allow`.
 
-- `all`: Ignore everything (no filters allowed)
-- `add`: Add ignore rules for specified APIs
-- `except`: Add exceptions (un-ignore) for specified APIs
+- `all`: Deny everything (no filters allowed)
+- `deny`: Add deny rules for specified APIs
+- `allow`: Add allow (exception) rules for specified APIs
 
 | Option                | Description                    |
 | --------------------- | ------------------------------ |
@@ -95,19 +95,22 @@ Initialize a config file. Use `-f` to force overwrite.
 
 Install predefined Claude Code skill files into the project's `.claude/skills/` directory. Copies skill definitions from the CLI package for AI-assisted development.
 
-## .keqignore File
+## .keqfilter File
 
 Controls which APIs to skip during generation.
 
 ```
-# Format: [!] moduleName method pathname
-* * *                    # Ignore all
-* GET /cats              # Ignore GET /cats in all modules
-catService * /cats       # Ignore all methods for /cats in catService
-! dogService POST /dogs  # Un-ignore (exception): always generate POST /dogs
+# Format: METHOD module:/pathname
+[deny]
+*       *:/             # Deny all
+*       *:/cats         # Deny all methods for /cats in all modules
+*       catService:/**  # Deny all APIs in catService
+
+[allow]
+POST    dogService:/dogs  # Always generate POST /dogs
 ```
 
-Rules are evaluated in order. `!` prefix creates an exception that overrides previous ignore rules.
+Rules are evaluated in order. `[deny]` rules exclude APIs; `[allow]` rules override denies.
 
 ## Plugin & Translator Development
 
@@ -143,8 +146,8 @@ Choose the build scope based on user intent:
 | Scenario                                                      | Command                                                               |
 | ------------------------------------------------------------- | --------------------------------------------------------------------- |
 | User explicitly requests full rebuild or "generate all"       | `keq build` or `keq build --module <name>`                            |
-| `.keqignore` file exists (filtering rules already configured) | `keq build` (safe — ignore rules limit scope)                         |
-| **Default: no explicit full build, no .keqignore**            | `keq build --module <module> --pathname <pathname> --method <method>` |
+| `.keqfilter` file exists (filtering rules already configured) | `keq build` (safe — filter rules limit scope)                         |
+| **Default: no explicit full build, no .keqfilter**            | `keq build --module <module> --pathname <pathname> --method <method>` |
 
 Always prefer the most specific build command to avoid generating unrelated code.
 
@@ -169,15 +172,15 @@ keq build --module userService
 keq build -i
 ```
 
-### Ignore Management
+### Filter Management
 
 ```bash
-# Ignore all, then selectively un-ignore
-keq ignore all
-keq ignore except -i --build
+# Deny all, then selectively allow
+keq filter all
+keq filter allow -i --build
 
-# Add specific ignore rules
-keq ignore add --module legacy --method delete --build
+# Add specific deny rules
+keq filter deny --module legacy --method delete --build
 ```
 
 ### Cleanup Stale Files

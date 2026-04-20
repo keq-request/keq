@@ -40,12 +40,12 @@ function createPersistArtifactTask(): ListrTask<CompilerContext> {
 
 function createPersistIgnoreTask(): ListrTask<CompilerContext> {
   return {
-    title: 'Update .keqignore',
+    title: 'Update .keqfilter',
     task: async (context, task) => {
       if (!context.matcher) throw new Error('Please run setup task first.')
 
       const matcher = context.matcher
-      await matcher.write('.keqignore')
+      await matcher.write('.keqfilter')
     },
   }
 }
