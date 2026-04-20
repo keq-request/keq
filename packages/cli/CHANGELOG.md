@@ -1,3 +1,35 @@
+## 5.0.0-alpha.32
+
+### Major Changes
+
+- 8077f32: **BREAKING CHANGE:** move `fileNamingStyle`, `esm` and `additionalPropertiesType` into a `rendering` config object.
+
+### Minor Changes
+
+- 979a721: **Feat:** generate components.responses as independent interfaces.
+- d0033aa: **Feat:** add clean option to clean outdir before persisting generated files.
+- 35bfcab: **Feat:** add OverwriteAdditionPropertiesPlugin to control undefined additionalProperties.
+- 031eace: **Feat:** add LintSchemaPlugin for validating OpenAPI schema objects against JSON Schema Draft 2020-12 meta-schema.
+- a566a72: **Feat:** add install-skill command.
+- b1e72c8: **Feat:** add init command.
+- c17f598: **Feat:** Add `rendering.entrypoint` option to control index file generation (default: `false`)
+- 35bfcab: **Feat:** add `additionalPropertiesType` option to control how open object schemas render in generated types.
+
+### Patch Changes
+
+- b1e72c8: **Feat:** add FileNamingStyle.kebabCase.
+- 950d3af: **Fix:** filter out self-referencing dependencies in schema definitions.
+- e89cddf: **Fix:** add import alias collision detection to prevent naming conflicts in generated declaration files.
+- 86ac1a8: Fix the comments that do not conform to jsdoc specifications.
+- 0771a4b: Prevent unsafe operationId to be function name.
+- d1ce45a: **Fix:** plugin hooks not firing when plugins are imported from ESM entry point.
+- d66c48a: **Fix:** wrap enum union type with parentheses to ensure correct type precedence.
+- d1ce45a: **Fix:** wrap all `$ref` with `v.lazy()` to handle circular schema references.
+- eee8dda: **Fix:** render unresolved or invalid $ref as `unknown /* ... */` instead of generating undefined type names
+- Updated dependencies [f194c41]
+- Updated dependencies [b8d02ca]
+  - keq@5.0.0-alpha.32
+
 ## 5.0.0-alpha.6 (2025-09-17)
 
 ## 5.0.0-alpha.31

@@ -1,3 +1,13 @@
+## 5.0.0-alpha.32
+
+### Minor Changes
+
+- b8d02ca: **Perf:** allow `undefined` as query value in string index signature overloads.
+
+### Patch Changes
+
+- f194c41: **Fix:** types being unrecognized due to type-fest version upgrades.
+
 ## 5.0.0-alpha.6 (2025-09-17)
 
 ## 5.0.0-alpha.31
