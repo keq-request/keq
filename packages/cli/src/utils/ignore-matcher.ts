@@ -12,6 +12,15 @@ export interface IgnoreMatcherRule {
   moduleName: string
   operationMethod: string
   operationPathname: string
+  /** Lines (comment or blank) that appear before this rule in the file */
+  leadingComments?: string[]
+  /** Inline comment at end of the rule line, e.g. `# some note` */
+  inlineComment?: string
+}
+
+interface IgnoreMatcherMeta {
+  preambleComments?: string[]
+  trailingComments?: string[]
 }
 
 function deduplicateRules(rules: IgnoreMatcherRule[]): IgnoreMatcherRule[] {
@@ -37,7 +46,14 @@ function sortRulesForOutput(rules: IgnoreMatcherRule[]): IgnoreMatcherRule[] {
 function renderBlock(section: 'deny' | 'allow', rules: IgnoreMatcherRule[]): string {
   if (rules.length === 0) return ''
   const maxMethodLen = Math.max(...rules.map((r) => r.operationMethod.toUpperCase().length))
-  const lines = rules.map((r) => `${r.operationMethod.toUpperCase().padEnd(maxMethodLen + 2)}${r.moduleName}:${r.operationPathname}`)
+  const lines: string[] = []
+  for (const r of rules) {
+    if (r.leadingComments && r.leadingComments.length > 0) {
+      lines.push(...r.leadingComments)
+    }
+    const ruleLine = `${r.operationMethod.toUpperCase().padEnd(maxMethodLen + 2)}${r.moduleName}:${r.operationPathname}`
+    lines.push(r.inlineComment ? `${ruleLine}  ${r.inlineComment}` : ruleLine)
+  }
   return `[${section}]\n${lines.join('\n')}`
 }
 
@@ -61,9 +77,13 @@ function compileRule(rule: IgnoreMatcherRule): CompiledRule {
 
 export class IgnoreMatcher {
   private compiled: CompiledRule[]
+  private preambleComments: string[]
+  private trailingComments: string[]
 
-  constructor(rules: IgnoreMatcherRule[]) {
+  constructor(rules: IgnoreMatcherRule[], meta: IgnoreMatcherMeta = {}) {
     this.compiled = rules.map(compileRule)
+    this.preambleComments = meta.preambleComments ?? []
+    this.trailingComments = meta.trailingComments ?? []
   }
 
   private get rules(): IgnoreMatcherRule[] {
@@ -94,16 +114,34 @@ export class IgnoreMatcher {
 
     const rules: IgnoreMatcherRule[] = []
     let currentIgnore: boolean | null = null
+    let firstSectionSeen = false
+    let preambleComments: string[] = []
+    const pendingComments: string[] = []
 
     for (const rawLine of normalized.split('\n')) {
       const line = rawLine.replace(/#.*$/, '').trim()
-      if (!line) continue
+
+      if (!line) {
+        // blank line or comment-only line — buffer it
+        pendingComments.push(rawLine)
+        continue
+      }
 
       if (line === '[deny]') {
+        if (!firstSectionSeen) {
+          preambleComments = [...pendingComments]
+          pendingComments.length = 0
+          firstSectionSeen = true
+        }
         currentIgnore = true
         continue
       }
       if (line === '[allow]') {
+        if (!firstSectionSeen) {
+          preambleComments = [...pendingComments]
+          pendingComments.length = 0
+          firstSectionSeen = true
+        }
         currentIgnore = false
         continue
       }
@@ -113,16 +151,33 @@ export class IgnoreMatcher {
       if (!matched) throw new Error(`Invalid filter rule: "${line}"`)
 
       const [, operationMethod, moduleName, operationPathname] = matched
+
+      // extract inline comment from the original raw line (whitespace + # + text at end)
+      const inlineCommentMatch = rawLine.match(/\s+(#.*)$/)
+      const inlineComment = inlineCommentMatch ? inlineCommentMatch[1] : undefined
+
       rules.push({
         persist: true,
         ignore: currentIgnore,
         moduleName,
         operationMethod: operationMethod.toLowerCase(),
         operationPathname,
+        leadingComments: pendingComments.length > 0 ? [...pendingComments] : undefined,
+        inlineComment,
       })
+      pendingComments.length = 0
     }
 
-    return new IgnoreMatcher(deduplicateRules(rules))
+    const trailingComments = [...pendingComments]
+    // strip trailing empty strings that are artifacts of the file's trailing newline
+    while (trailingComments.length > 0 && trailingComments[trailingComments.length - 1].trim() === '') {
+      trailingComments.pop()
+    }
+    // strip trailing empty strings from preamble for the same reason
+    while (preambleComments.length > 0 && preambleComments[preambleComments.length - 1].trim() === '') {
+      preambleComments.pop()
+    }
+    return new IgnoreMatcher(deduplicateRules(rules), { preambleComments, trailingComments })
   }
 
   static async read(filepath: string): Promise<IgnoreMatcher> {
@@ -149,7 +204,19 @@ export class IgnoreMatcher {
 
     if (blocks.length === 0) return
 
-    await fs.writeFile(filepath, blocks.join('\n\n'), 'utf-8')
+    const blockContent = blocks.join('\n\n')
+
+    // prepend preamble comments (file-level comments before the first section)
+    const mainContent = this.preambleComments.length > 0
+      ? `${this.preambleComments.join('\n')}\n${blockContent}`
+      : blockContent
+
+    // append trailing comments (after the last rule)
+    const output = this.trailingComments.length > 0
+      ? `${mainContent}\n\n${this.trailingComments.join('\n')}`
+      : mainContent
+
+    await fs.writeFile(filepath, output, 'utf-8')
   }
 
   append(rule: IgnoreMatcherRule): void {
