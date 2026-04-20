@@ -130,18 +130,18 @@ export class IgnoreMatcher {
       if (line === '[deny]') {
         if (!firstSectionSeen) {
           preambleComments = [...pendingComments]
-          pendingComments.length = 0
           firstSectionSeen = true
         }
+        pendingComments.length = 0
         currentIgnore = true
         continue
       }
       if (line === '[allow]') {
         if (!firstSectionSeen) {
           preambleComments = [...pendingComments]
-          pendingComments.length = 0
           firstSectionSeen = true
         }
+        pendingComments.length = 0
         currentIgnore = false
         continue
       }
