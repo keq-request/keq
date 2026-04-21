@@ -10,6 +10,7 @@ import { CleanPlugin } from '../clean/index.js'
 
 interface InitializePluginOptions {
   build?: boolean
+  fresh?: boolean
   interactive?: boolean | TerminalSelectPluginOptions
 
 }
@@ -50,7 +51,7 @@ export class InitializePlugin implements Plugin {
         ),
       )
 
-      if (rc.clean) {
+      if (this.options.fresh) {
         plugins.push(new CleanPlugin())
       }
 

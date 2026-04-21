@@ -29,6 +29,7 @@ interface Options extends SetupTaskOptions {
   build: boolean
   persist?: boolean
   silent?: boolean
+  fresh?: boolean
   interactive?: boolean | TerminalSelectPluginOptions
 }
 
@@ -67,6 +68,7 @@ export class Compiler {
 
     new InitializePlugin({
       build: options.build,
+      fresh: options.fresh,
       interactive: options.interactive,
     }).apply(this)
   }
