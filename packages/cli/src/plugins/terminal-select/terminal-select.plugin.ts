@@ -1,11 +1,11 @@
 import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/plugin.js'
 import { selectOperationDefinitions } from './utils/select-operation-definitions.js'
-import { IgnoreMode } from './types/index.js'
+import { FilterMode } from './types/index.js'
 import { MetadataStorage, TerminalSelectPluginMetadata } from './constants/index.js'
 
 export interface TerminalSelectPluginOptions {
-  mode: IgnoreMode
+  mode: FilterMode
 
   persist?: boolean
 }
@@ -32,7 +32,7 @@ export class TerminalSelectPlugin implements Plugin {
       for (const op of selectedOperationDefinitions) {
         matcher.append({
           persist: !!this.options.persist,
-          ignore: this.options.mode === 'add',
+          deny: this.options.mode === 'deny',
           moduleName: op.module.name,
           operationMethod: op.method,
           operationPathname: op.pathname,

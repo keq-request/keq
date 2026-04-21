@@ -6,7 +6,7 @@ import { SupportedMethods } from './constants/supported-methods.js'
 import { logger } from './utils/logger.js'
 import { Compiler } from './compiler/compiler.js'
 import { findInvalidFiles } from './utils/scan-generated-files.js'
-import { IgnoreMatcherRule } from './utils/ignore-matcher.js'
+import { FilterRule } from './utils/matcher.js'
 import { xprodMerge } from './utils/xprod-merge.js'
 
 
@@ -15,12 +15,12 @@ if (semver.lt(process.version, '20.0.0')) {
 }
 
 
-function xprodIgnoreRules(options: { module?: string[]; method?: string; pathname?: string; persist?: boolean }): IgnoreMatcherRule[] {
+function xprodFilterRules(options: { module?: string[]; method?: string; pathname?: string; persist?: boolean }): FilterRule[] {
   return xprodMerge(
-    (options.module || ['*']).map((moduleName) => ({ ignore: false, persist: options.persist, moduleName })),
+    (options.module || ['*']).map((moduleName) => ({ deny: false, persist: options.persist, moduleName })),
     options.method ? [{ operationMethod: options.method.toLowerCase() }] : [{ operationMethod: '*' }],
     options.pathname ? [{ operationPathname: options.pathname }] : [{ operationPathname: '*' }],
-  ) as unknown as IgnoreMatcherRule[]
+  ) as unknown as FilterRule[]
 }
 
 const program = new Command()
@@ -44,19 +44,18 @@ program
   )
   .option('--pathname <pathname>', 'Only generate files of the specified operation pathname')
   .action(async (options) => {
-    // Build ignore rules based on filters
-    const ignoreRules: IgnoreMatcherRule[] = []
+    const filterRules: FilterRule[] = []
 
     if (options.module || options.method || options.pathname) {
-      ignoreRules.push(
+      filterRules.push(
         {
-          ignore: true,
+          deny: true,
           persist: false,
           moduleName: '*',
           operationMethod: '*',
           operationPathname: '*',
         },
-        ...xprodIgnoreRules({
+        ...xprodFilterRules({
           module: options.module,
           method: options.method,
           pathname: options.pathname,
@@ -64,8 +63,8 @@ program
         }),
       )
     } else if (options.interactive) {
-      ignoreRules.push({
-        ignore: true,
+      filterRules.push({
+        deny: true,
         persist: false,
         moduleName: '*',
         operationMethod: '*',
@@ -80,9 +79,9 @@ program
       config: options.config,
       debug: !!options.debug,
       tolerant: !!options.tolerant,
-      interactive: !!options.interactive && { mode: 'except' },
-      ignore: ignoreRules.length > 0
-        ? { rules: ignoreRules }
+      interactive: !!options.interactive && { mode: 'allow' },
+      filter: filterRules.length > 0
+        ? { rules: filterRules }
         : undefined,
     })
 
@@ -127,10 +126,10 @@ program
         config: options.config,
         debug: !!options.debug,
         interactive: false,
-        ignore: {
+        filter: {
           rules: [{
             persist: true,
-            ignore: true,
+            deny: true,
             moduleName: '*',
             operationMethod: '*',
             operationPathname: '*',
@@ -152,10 +151,10 @@ program
           mode,
           persist: true,
         },
-        ignore: {
+        filter: {
           rules: [{
             persist: true,
-            ignore: true,
+            deny: true,
             moduleName: '*',
             operationMethod: '*',
             operationPathname: '*',
@@ -174,10 +173,10 @@ program
         persist: true,
         config: options.config,
         debug: !!options.debug,
-        ignore: {
+        filter: {
           rules: moduleNames.map((moduleNames) => ({
             persist: true,
-            ignore: mode === 'deny',
+            deny: mode === 'deny',
             moduleName: moduleNames,
             operationMethod: options.method,
             operationPathname: options.pathname,
@@ -259,18 +258,18 @@ program
   .option('--json', 'Output in JSON format')
   .option('--debug', 'Print debug information')
   .action(async (options) => {
-    const ignoreRules: IgnoreMatcherRule[] = []
+    const filterRules: FilterRule[] = []
 
     if (options.module || options.method || options.pathname) {
-      ignoreRules.push(
+      filterRules.push(
         {
-          ignore: true,
+          deny: true,
           persist: false,
           moduleName: '*',
           operationMethod: '*',
           operationPathname: '*',
         },
-        ...xprodIgnoreRules({
+        ...xprodFilterRules({
           module: options.module,
           method: options.method,
           pathname: options.pathname,
@@ -286,8 +285,8 @@ program
       silent: true,
       config: options.config,
       debug: !!options.debug,
-      ignore: ignoreRules.length > 0
-        ? { rules: ignoreRules }
+      filter: filterRules.length > 0
+        ? { rules: filterRules }
         : undefined,
     })
 

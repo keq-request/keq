@@ -1,20 +1,12 @@
 import * as R from 'ramda'
 import { expect, test } from '@jest/globals'
-import { beforeEach } from 'node:test'
-import { openDB } from 'idb'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 import { TTLIndexedDBStorage } from './ttl-indexed-db-storage'
 import { CacheEntry } from '~/cache-entry'
 import { createResponse } from '@keq-request/test'
 
 
-beforeEach(async () => {
-  const db = await openDB(DEFAULT_TABLE_NAME)
-  db.deleteObjectStore('entries')
-  db.deleteObjectStore('responses')
-})
-
-test.only('new TTLIndexedDBStorage({ size: 100 })', async () => {
+test('new TTLIndexedDBStorage({ size: 100 })', async () => {
   const storage = new TTLIndexedDBStorage({ size: 100 })
 
   for (const i of R.range(0, 10)) {

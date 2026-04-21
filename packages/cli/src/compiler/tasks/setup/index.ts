@@ -3,7 +3,7 @@ import path from 'path'
 import { CosmiconfigResult } from 'cosmiconfig'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
-import { IgnoreMatcher, IgnoreMatcherRule } from '~/utils/ignore-matcher.js'
+import { Matcher, FilterRule } from '~/utils/matcher.js'
 import { findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
 import type { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '../../compiler.js'
@@ -17,8 +17,8 @@ export interface SetupTaskOptions {
   debug?: boolean
   tolerant?: boolean
 
-  ignore?: false | {
-    rules: IgnoreMatcherRule[]
+  filter?: false | {
+    rules: FilterRule[]
   }
 }
 
@@ -58,21 +58,21 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
       context.rc = rc
 
 
-      // Setup IgnoreMatcher
+      // Setup Matcher
 
-      let matcher: IgnoreMatcher = new IgnoreMatcher([])
+      let matcher: Matcher = new Matcher([])
       if (result.filepath) {
-        const ignoreFilepath = path.resolve(path.dirname(result.filepath), '.keqfilter')
-        if (await fs.exists(ignoreFilepath)) {
-          matcher = await IgnoreMatcher.read(ignoreFilepath)
+        const filterFilepath = path.resolve(path.dirname(result.filepath), '.keqfilter')
+        if (await fs.exists(filterFilepath)) {
+          matcher = await Matcher.read(filterFilepath)
         }
       }
 
-      const ignoreRules = options.ignore === false ? [] : options.ignore?.rules || []
-      for (const rule of ignoreRules) {
+      const filterRules = options.filter === false ? [] : options.filter?.rules || []
+      for (const rule of filterRules) {
         matcher.append({
           persist: !!rule.persist,
-          ignore: rule.ignore,
+          deny: rule.deny,
           moduleName: rule.moduleName,
           operationMethod: rule.operationMethod,
           operationPathname: rule.operationPathname,

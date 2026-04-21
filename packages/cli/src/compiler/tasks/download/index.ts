@@ -9,7 +9,7 @@ import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 
 
 interface DownloadTaskOptions {
-  skipIgnoredModules?: boolean
+  skipFilteredModules?: boolean
 }
 
 function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<CompilerContext> {
@@ -30,8 +30,8 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
           .map((moduleDefinition): ListrTask<CompilerContext> => ({
             title: moduleDefinition.name,
             task: async (ctx, task) => {
-              if (options?.skipIgnoredModules && matcher.isModuleIgnored(moduleDefinition)) {
-                task.skip(`(${moduleDefinition.name}) is ignored`)
+              if (options?.skipFilteredModules && matcher.isModuleDenied(moduleDefinition)) {
+                task.skip(`(${moduleDefinition.name}) is filtered`)
                 return
               }
 

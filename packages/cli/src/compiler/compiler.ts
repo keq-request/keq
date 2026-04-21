@@ -79,7 +79,7 @@ export class Compiler {
     const tasks = new Listr<CompilerContext, 'default' | 'silent'>(
       [
         createSetupTask(this, options),
-        createDownloadTask(this, { skipIgnoredModules: !options.interactive }),
+        createDownloadTask(this, { skipFilteredModules: !options.interactive }),
         createCompileTask(this, { enabled: !!options.build }),
         createPersistTask(this, { enabled: !!options.persist }),
       ],

@@ -38,7 +38,7 @@ function createPersistArtifactTask(): ListrTask<CompilerContext> {
   }
 }
 
-function createPersistIgnoreTask(): ListrTask<CompilerContext> {
+function createPersistFilterTask(): ListrTask<CompilerContext> {
   return {
     title: 'Update .keqfilter',
     task: async (context, task) => {
@@ -56,7 +56,7 @@ function main(): ListrTask<CompilerContext> {
     task: (context, task) => task.newListr(
       [
         createPersistArtifactTask(),
-        createPersistIgnoreTask(),
+        createPersistFilterTask(),
       ],
       {
         concurrent: true,

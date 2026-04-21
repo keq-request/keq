@@ -35,7 +35,7 @@ export class InitializePlugin implements Plugin {
           new TerminalSelectPlugin(
             typeof this.options.interactive === 'object'
               ? this.options.interactive
-              : { mode: 'except' },
+              : { mode: 'allow' },
           ),
         )
       }

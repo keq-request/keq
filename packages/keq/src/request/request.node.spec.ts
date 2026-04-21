@@ -64,7 +64,7 @@ describe('KeqRequest', () => {
     await expect(() => keq.end()).rejects.toThrow('fetch failed')
   })
 
-  test.only('Query', async () => {
+  test('Query', async () => {
     const mockedFetch = global.fetch as Mock<typeof global.fetch>
 
     await request

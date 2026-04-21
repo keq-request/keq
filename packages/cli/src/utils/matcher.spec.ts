@@ -2,12 +2,12 @@ import { describe, expect, it } from '@jest/globals'
 import os from 'os'
 import path from 'path'
 import fs from 'fs-extra'
-import { IgnoreMatcher, IgnoreMatcherRule } from './ignore-matcher.js'
+import { Matcher, FilterRule } from './matcher.js'
 import type { ModuleDefinition, OperationDefinition } from '../models/index.js'
 
 
-function makeRule(moduleName: string, operationMethod: string, operationPathname: string, ignore = true): IgnoreMatcherRule {
-  return { persist: false, ignore, moduleName, operationMethod, operationPathname }
+function makeRule(moduleName: string, operationMethod: string, operationPathname: string, deny = true): FilterRule {
+  return { persist: false, deny, moduleName, operationMethod, operationPathname }
 }
 
 function makeOperation(moduleName: string, method: string, pathname: string): OperationDefinition {
@@ -18,152 +18,151 @@ function makeModule(name: string): ModuleDefinition {
   return { name } as unknown as ModuleDefinition
 }
 
-// ─── isOperationIgnored ──────────────────────────────────────────────────────
+// ─── isOperationDenied ──────────────────────────────────────────────────────
 
-describe('IgnoreMatcher.isOperationIgnored', () => {
+describe('Matcher.isOperationDenied', () => {
   describe('exact match (backward-compatible)', () => {
     it('matches exact module / method / pathname', () => {
-      const matcher = new IgnoreMatcher([makeRule('petStore', 'get', '/pets')])
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+      const matcher = new Matcher([makeRule('petStore', 'get', '/pets')])
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
     })
 
     it('does not match wrong method', () => {
-      const matcher = new IgnoreMatcher([makeRule('petStore', 'get', '/pets')])
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'post', '/pets'))).toBe(false)
+      const matcher = new Matcher([makeRule('petStore', 'get', '/pets')])
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'post', '/pets'))).toBe(false)
     })
 
     it('does not match wrong pathname', () => {
-      const matcher = new IgnoreMatcher([makeRule('petStore', 'get', '/pets')])
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/owners'))).toBe(false)
+      const matcher = new Matcher([makeRule('petStore', 'get', '/pets')])
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/owners'))).toBe(false)
     })
   })
 
   describe('** wildcard (new "match all" syntax)', () => {
     it('** on all fields matches any operation', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('anyModule', 'delete', '/a/b/c'))).toBe(true)
+      const matcher = new Matcher([makeRule('**', '**', '**')])
+      expect(matcher.isOperationDenied(makeOperation('anyModule', 'delete', '/a/b/c'))).toBe(true)
     })
 
     it('** on pathname matches deeply-nested path', () => {
-      const matcher = new IgnoreMatcher([makeRule('petStore', '**', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'post', '/v1/users/123/orders'))).toBe(true)
+      const matcher = new Matcher([makeRule('petStore', '**', '**')])
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'post', '/v1/users/123/orders'))).toBe(true)
     })
   })
 
   describe('pathname glob', () => {
     it('/api/v1/* matches single-segment path', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/*')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'get', '/api/v1/users'))).toBe(true)
+      const matcher = new Matcher([makeRule('**', '**', '/api/v1/*')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'get', '/api/v1/users'))).toBe(true)
     })
 
     it('/api/v1/* does NOT match multi-segment path', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/*')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'get', '/api/v1/users/123'))).toBe(false)
+      const matcher = new Matcher([makeRule('**', '**', '/api/v1/*')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'get', '/api/v1/users/123'))).toBe(false)
     })
 
     it('/api/v1/** matches multi-segment path', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/**')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'get', '/api/v1/users/123'))).toBe(true)
+      const matcher = new Matcher([makeRule('**', '**', '/api/v1/**')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'get', '/api/v1/users/123'))).toBe(true)
     })
 
     it('/api/v1/** also matches single-segment path', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/**')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'post', '/api/v1/orders'))).toBe(true)
+      const matcher = new Matcher([makeRule('**', '**', '/api/v1/**')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'post', '/api/v1/orders'))).toBe(true)
     })
 
     it('/api/v1/** does NOT match /api/v2/something', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/**')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'get', '/api/v2/orders'))).toBe(false)
+      const matcher = new Matcher([makeRule('**', '**', '/api/v1/**')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'get', '/api/v2/orders'))).toBe(false)
     })
   })
 
   describe('moduleName glob', () => {
     it('pet* matches modules starting with "pet"', () => {
-      const matcher = new IgnoreMatcher([makeRule('pet*', '**', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+      const matcher = new Matcher([makeRule('pet*', '**', '**')])
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
     })
 
     it('pet* does NOT match unrelated module', () => {
-      const matcher = new IgnoreMatcher([makeRule('pet*', '**', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('userService', 'get', '/users'))).toBe(false)
+      const matcher = new Matcher([makeRule('pet*', '**', '**')])
+      expect(matcher.isOperationDenied(makeOperation('userService', 'get', '/users'))).toBe(false)
     })
   })
 
   describe('operationMethod glob', () => {
     it('{get,post} matches GET and POST', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '{get,post}', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'get', '/users'))).toBe(true)
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'post', '/users'))).toBe(true)
+      const matcher = new Matcher([makeRule('**', '{get,post}', '**')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'get', '/users'))).toBe(true)
+      expect(matcher.isOperationDenied(makeOperation('svc', 'post', '/users'))).toBe(true)
     })
 
     it('{get,post} does NOT match DELETE', () => {
-      const matcher = new IgnoreMatcher([makeRule('**', '{get,post}', '**')])
-      expect(matcher.isOperationIgnored(makeOperation('svc', 'delete', '/users'))).toBe(false)
+      const matcher = new Matcher([makeRule('**', '{get,post}', '**')])
+      expect(matcher.isOperationDenied(makeOperation('svc', 'delete', '/users'))).toBe(false)
     })
   })
 
-  describe('exception rule (!ignore)', () => {
-    it('exception rule overrides prior ignore rule (first match wins, rules inserted via unshift)', () => {
-      // exception rule has higher priority (added last via unshift in append())
-      const matcher = new IgnoreMatcher([
-        makeRule('petStore', 'get', '/pets', false), // exception: do NOT ignore
-        makeRule('petStore', '**', '**', true), // ignore all
+  describe('allow rule (!deny)', () => {
+    it('allow rule overrides prior deny rule (first match wins, rules inserted via unshift)', () => {
+      const matcher = new Matcher([
+        makeRule('petStore', 'get', '/pets', false), // allow: do NOT deny
+        makeRule('petStore', '**', '**', true), // deny all
       ])
-      // First rule matches, ignore=false → not ignored
-      expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(false)
+      // First rule matches, deny=false → not denied
+      expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(false)
     })
   })
 })
 
-// ─── isModuleIgnored ─────────────────────────────────────────────────────────
+// ─── isModuleDenied ─────────────────────────────────────────────────────────
 
-describe('IgnoreMatcher.isModuleIgnored', () => {
+describe('Matcher.isModuleDenied', () => {
   it('returns true when module has a ** ** ** rule', () => {
-    const matcher = new IgnoreMatcher([makeRule('**', '**', '**')])
-    expect(matcher.isModuleIgnored(makeModule('petStore'))).toBe(true)
+    const matcher = new Matcher([makeRule('**', '**', '**')])
+    expect(matcher.isModuleDenied(makeModule('petStore'))).toBe(true)
   })
 
   it('returns true when module matches by name with ** ** rule', () => {
-    const matcher = new IgnoreMatcher([makeRule('petStore', '**', '**')])
-    expect(matcher.isModuleIgnored(makeModule('petStore'))).toBe(true)
+    const matcher = new Matcher([makeRule('petStore', '**', '**')])
+    expect(matcher.isModuleDenied(makeModule('petStore'))).toBe(true)
   })
 
   it('returns false for a different module name', () => {
-    const matcher = new IgnoreMatcher([makeRule('petStore', '**', '**')])
-    expect(matcher.isModuleIgnored(makeModule('userService'))).toBe(false)
+    const matcher = new Matcher([makeRule('petStore', '**', '**')])
+    expect(matcher.isModuleDenied(makeModule('userService'))).toBe(false)
   })
 
   it('returns false when method does not cover all (e.g., rule is "get" only)', () => {
-    const matcher = new IgnoreMatcher([makeRule('**', 'get', '**')])
-    expect(matcher.isModuleIgnored(makeModule('petStore'))).toBe(false)
+    const matcher = new Matcher([makeRule('**', 'get', '**')])
+    expect(matcher.isModuleDenied(makeModule('petStore'))).toBe(false)
   })
 
   it('returns false when pathname does not cover all (e.g., /api/v1/**)', () => {
-    const matcher = new IgnoreMatcher([makeRule('**', '**', '/api/v1/**')])
-    expect(matcher.isModuleIgnored(makeModule('petStore'))).toBe(false)
+    const matcher = new Matcher([makeRule('**', '**', '/api/v1/**')])
+    expect(matcher.isModuleDenied(makeModule('petStore'))).toBe(false)
   })
 
-  it('returns false when an exception rule matches the module', () => {
-    const matcher = new IgnoreMatcher([
-      makeRule('petStore', 'get', '/pets', false), // exception
+  it('returns false when an allow rule matches the module', () => {
+    const matcher = new Matcher([
+      makeRule('petStore', 'get', '/pets', false), // allow
       makeRule('**', '**', '**', true),
     ])
-    expect(matcher.isModuleIgnored(makeModule('petStore'))).toBe(false)
+    expect(matcher.isModuleDenied(makeModule('petStore'))).toBe(false)
   })
 })
 
-// ─── IgnoreMatcher.parse ─────────────────────────────────────────────────────
+// ─── Matcher.parse ─────────────────────────────────────────────────────
 
-describe('IgnoreMatcher.parse', () => {
+describe('Matcher.parse', () => {
   it('parses [deny] section correctly', () => {
     const content = `
 [deny]
 GET   petStore:/pets
 *     userService:/**
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
-    expect(matcher.isOperationIgnored(makeOperation('userService', 'post', '/users'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+    expect(matcher.isOperationDenied(makeOperation('userService', 'post', '/users'))).toBe(true)
   })
 
   it('parses [allow] section correctly', () => {
@@ -174,9 +173,9 @@ GET   petStore:/pets
 [allow]
 GET   petStore:/pets/details
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'post', '/pets'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'post', '/pets'))).toBe(true)
   })
 
   it('[allow] rule wins over [deny] for same triple (dedup keeps allow)', () => {
@@ -187,8 +186,8 @@ GET   petStore:/pets
 [allow]
 GET   petStore:/pets
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(false)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(false)
   })
 
   it('ignores comment lines', () => {
@@ -198,8 +197,8 @@ GET   petStore:/pets
 # another comment
 GET   petStore:/pets
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
   })
 
   it('ignores lines before any section header', () => {
@@ -208,46 +207,46 @@ GET   petStore:/pets
 [deny]
 POST  orderService:/orders
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(false)
-    expect(matcher.isOperationIgnored(makeOperation('orderService', 'post', '/orders'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(false)
+    expect(matcher.isOperationDenied(makeOperation('orderService', 'post', '/orders'))).toBe(true)
   })
 
   it('handles CRLF line endings', () => {
     const content = '[deny]\r\nGET   petStore:/pets\r\n'
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
   })
 
   it('method matching is case-insensitive', () => {
     const content = '[deny]\nGET   petStore:/pets\n'
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'GET', '/pets'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'GET', '/pets'))).toBe(true)
   })
 
   it('throws on invalid rule line', () => {
     const content = '[deny]\nbadline\n'
-    expect(() => IgnoreMatcher.parse(content)).toThrow('Invalid filter rule')
+    expect(() => Matcher.parse(content)).toThrow('Invalid filter rule')
   })
 
   it('parses only [allow] section with no [deny]', () => {
     const content = '[allow]\nGET   petStore:/pets\n'
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(false)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'post', '/others'))).toBe(false)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(false)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'post', '/others'))).toBe(false)
   })
 })
 
-// ─── IgnoreMatcher.write ─────────────────────────────────────────────────────
+// ─── Matcher.write ─────────────────────────────────────────────────────
 
-describe('IgnoreMatcher.write', () => {
+describe('Matcher.write', () => {
   it('writes [deny] and [allow] sections with aligned columns', async () => {
-    const rules: IgnoreMatcherRule[] = [
-      { persist: true, ignore: true, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
-      { persist: true, ignore: true, moduleName: 'userService', operationMethod: 'delete', operationPathname: '/**' },
-      { persist: true, ignore: false, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets/details' },
+    const rules: FilterRule[] = [
+      { persist: true, deny: true, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
+      { persist: true, deny: true, moduleName: 'userService', operationMethod: 'delete', operationPathname: '/**' },
+      { persist: true, deny: false, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets/details' },
     ]
-    const matcher = new IgnoreMatcher(rules)
+    const matcher = new Matcher(rules)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
 
     try {
@@ -266,10 +265,10 @@ describe('IgnoreMatcher.write', () => {
   })
 
   it('omits [allow] section when there are no allow rules', async () => {
-    const rules: IgnoreMatcherRule[] = [
-      { persist: true, ignore: true, moduleName: '*', operationMethod: '*', operationPathname: '**' },
+    const rules: FilterRule[] = [
+      { persist: true, deny: true, moduleName: '*', operationMethod: '*', operationPathname: '**' },
     ]
-    const matcher = new IgnoreMatcher(rules)
+    const matcher = new Matcher(rules)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
 
     try {
@@ -283,10 +282,10 @@ describe('IgnoreMatcher.write', () => {
   })
 
   it('omits [deny] section when there are no deny rules', async () => {
-    const rules: IgnoreMatcherRule[] = [
-      { persist: true, ignore: false, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
+    const rules: FilterRule[] = [
+      { persist: true, deny: false, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
     ]
-    const matcher = new IgnoreMatcher(rules)
+    const matcher = new Matcher(rules)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
 
     try {
@@ -300,10 +299,10 @@ describe('IgnoreMatcher.write', () => {
   })
 
   it('does not persist rules with persist=false, and does not create the file', async () => {
-    const rules: IgnoreMatcherRule[] = [
-      { persist: false, ignore: true, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
+    const rules: FilterRule[] = [
+      { persist: false, deny: true, moduleName: 'petStore', operationMethod: 'get', operationPathname: '/pets' },
     ]
-    const matcher = new IgnoreMatcher(rules)
+    const matcher = new Matcher(rules)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
 
     try {
@@ -322,17 +321,17 @@ GET     petStore:/pets
 [allow]
 GET     petStore:/pets/details
 `
-    const matcher = IgnoreMatcher.parse(original)
+    const matcher = Matcher.parse(original)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
 
     try {
       await matcher.write(tmpFile)
       const written = await fs.readFile(tmpFile, 'utf-8')
-      const reparsed = IgnoreMatcher.parse(written)
+      const reparsed = Matcher.parse(written)
 
-      expect(reparsed.isOperationIgnored(makeOperation('userService', 'post', '/users'))).toBe(true)
-      expect(reparsed.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
-      expect(reparsed.isOperationIgnored(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
+      expect(reparsed.isOperationDenied(makeOperation('userService', 'post', '/users'))).toBe(true)
+      expect(reparsed.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+      expect(reparsed.isOperationDenied(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
     } finally {
       await fs.remove(tmpFile)
     }
@@ -341,9 +340,9 @@ GET     petStore:/pets/details
 
 // ─── Comment preservation ────────────────────────────────────────────────────
 
-describe('IgnoreMatcher comment preservation', () => {
+describe('Matcher comment preservation', () => {
   async function roundTrip(input: string): Promise<string> {
-    const matcher = IgnoreMatcher.parse(input)
+    const matcher = Matcher.parse(input)
     const tmpFile = path.join(os.tmpdir(), `keqfilter-test-${Date.now()}.keqfilter`)
     try {
       await matcher.write(tmpFile)
@@ -368,12 +367,12 @@ GET     petStore:/pets
 
   it('preserves leading comments before individual rules', async () => {
     const input = `[deny]
-# ignore all pet store operations
+# deny all pet store operations
 GET     petStore:/pets
 `
     const output = await roundTrip(input)
-    expect(output).toContain('# ignore all pet store operations')
-    expect(output.indexOf('# ignore all pet store operations')).toBeLessThan(output.indexOf('GET'))
+    expect(output).toContain('# deny all pet store operations')
+    expect(output.indexOf('# deny all pet store operations')).toBeLessThan(output.indexOf('GET'))
   })
 
   it('preserves inline comments on rule lines', async () => {
@@ -426,8 +425,8 @@ GET     petStore:/pets
     const content = `[deny]
 GET     petStore:/pets  # this comment should not break matching
 `
-    const matcher = IgnoreMatcher.parse(content)
-    expect(matcher.isOperationIgnored(makeOperation('petStore', 'get', '/pets'))).toBe(true)
+    const matcher = Matcher.parse(content)
+    expect(matcher.isOperationDenied(makeOperation('petStore', 'get', '/pets'))).toBe(true)
   })
 
   it('preserves all comment types in one complex file', async () => {
@@ -459,9 +458,9 @@ GET     petStore:/pets/details  # always generate details
     expect(output).toContain('# always generate details')
 
     // semantics still correct after round-trip
-    const reparsed = IgnoreMatcher.parse(output)
-    expect(reparsed.isOperationIgnored(makeOperation('userService', 'delete', '/users'))).toBe(true)
-    expect(reparsed.isOperationIgnored(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
+    const reparsed = Matcher.parse(output)
+    expect(reparsed.isOperationDenied(makeOperation('userService', 'delete', '/users'))).toBe(true)
+    expect(reparsed.isOperationDenied(makeOperation('petStore', 'get', '/pets/details'))).toBe(false)
   })
 
   it('repeated write does not accumulate trailing blank lines', async () => {
@@ -471,7 +470,7 @@ GET     petStore:/pets/details  # always generate details
       // write 3 times in a row simulating repeated CLI runs
       for (let i = 0; i < 3; i++) {
         const src = i === 0 ? input : await fs.readFile(tmpFile, 'utf-8')
-        const matcher = IgnoreMatcher.parse(src)
+        const matcher = Matcher.parse(src)
         await matcher.write(tmpFile)
       }
       const final = await fs.readFile(tmpFile, 'utf-8')

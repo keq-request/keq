@@ -21,7 +21,7 @@ export class ShakingPlugin implements Plugin {
       compiler.context.documents = documents
         .map((document) => this.shaking(compiler, document))
         .filter((document) => !document.isEmpty())
-        .filter((document) => !matcher.isModuleIgnored(document.module))
+        .filter((document) => !matcher.isModuleDenied(document.module))
     })
   }
 
@@ -32,7 +32,7 @@ export class ShakingPlugin implements Plugin {
     const isAccepted = (pathname: string, method: string, operation: OpenAPIV3_1.Document): boolean => {
       if (!SupportedMethods.includes(method)) return false
 
-      return !matcher.isOperationIgnored(new OperationDefinition({
+      return !matcher.isOperationDenied(new OperationDefinition({
         method,
         pathname,
         operation,

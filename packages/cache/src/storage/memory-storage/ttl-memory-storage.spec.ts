@@ -37,7 +37,7 @@ test('new TTLMemoryStorage({ size: 100 })', async () => {
   }
 })
 
-test.only('new TTLMemoryStorage({ eviction: Eviction.TTL })', async () => {
+test('new TTLMemoryStorage({ eviction: Eviction.TTL })', async () => {
   const storage = new TTLMemoryStorage()
 
   const response = createResponse({ body: { size: 10 } })

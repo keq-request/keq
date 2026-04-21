@@ -20,7 +20,7 @@ export class OperationDeclarationGenerator implements Generator {
     const rc = context.rc!
     // const matcher = context.matcher!
     const documents = context.documents!
-    // .filter((document) => !matcher.isModuleIgnored(document.module))
+    // .filter((document) => !matcher.isModuleDenied(document.module))
 
     const operationDefinitions = documents.flatMap((document) => document.operations)
 
