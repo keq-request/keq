@@ -22,13 +22,27 @@ export type KeqOptions = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signa
 export class Core<
   OP extends KeqOperation = KeqDefaultOperation,
   RES_BODY extends KeqOperation['responseBody'] = OP['responseBody'],
-> {
+> extends Promise<RES_BODY> {
+  /**
+   * Ensures `.then()`, `.catch()`, `.finally()` return plain Promise instances instead of Core/Keq instances.
+   */
+  static get [Symbol.species](): PromiseConstructor {
+    return Promise
+  }
+
   /**
    * The unique identifier of the request's location in the code
    */
   __locationId__?: string
 
-  private requestPromise?: Promise<RES_BODY>
+  /** Deferred resolve callback captured from the Promise executor. */
+  private __resolve__!: (value: RES_BODY | PromiseLike<RES_BODY>) => void
+  /** Deferred reject callback captured from the Promise executor. */
+  private __reject__!: (reason: unknown) => void
+  /** Whether the request has been lazily triggered by `.then()`. */
+  private __triggered__ = false
+  /** Cached promise for idempotent `end()` calls. */
+  private __requestPromise__?: Promise<RES_BODY>
 
   protected requestInit: KeqRequestInit
 
@@ -49,6 +63,15 @@ export class Core<
   }
 
   public constructor(url: URL, options: KeqOptions) {
+    let resolve!: (value: RES_BODY | PromiseLike<RES_BODY>) => void
+    let reject!: (reason: unknown) => void
+    super((res, rej) => {
+      resolve = res
+      reject = rej
+    })
+    this.__resolve__ = resolve
+    this.__reject__ = reject
+
     this.__global__ = options.global || {}
     this.__locationId__ = options.locationId
     this.__qs__ = options.qs
@@ -179,53 +202,52 @@ export class Core<
     }
   }
 
-  async end(): Promise<RES_BODY> {
-    const coreContext = await this.run()
-    const resolveWithMode = coreContext.options.resolveWith
+  end(): Promise<RES_BODY> {
+    if (!this.__requestPromise__) {
+      this.__requestPromise__ = (async () => {
+        const coreContext = await this.run()
+        const resolveWithMode = coreContext.options.resolveWith
 
-    if (resolveWithMode === 'response') {
-      // NOTE: return a clone of the response rather than the proxy response
-      return coreContext.response?.clone() as RES_BODY
+        if (resolveWithMode === 'response') {
+          // NOTE: return a clone of the response rather than the proxy response
+          return coreContext.response?.clone() as RES_BODY
+        }
+
+        const response = coreContext.response
+
+        if (!resolveWithMode || resolveWithMode === 'intelligent') {
+          const output: any = coreContext.output
+          if (output !== undefined) {
+            return output as RES_BODY
+          }
+
+          return await intelligentParseResponse<RES_BODY>(response)
+        }
+
+        if (!response) {
+          throw new Exception([
+            `Unable to process the response with '${resolveWithMode}'. Possible causes:`,
+            '1. The request was never initiated or sent',
+            '2. The request failed before a response was received.',
+          ].join('\n'))
+        }
+
+        return await resolveWith(response, resolveWithMode)
+      })()
     }
 
-    const response = coreContext.response
+    return this.__requestPromise__
+  }
 
-    if (!resolveWithMode || resolveWithMode === 'intelligent') {
-      const output: any = coreContext.output
-      if (output !== undefined) {
-        return output as RES_BODY
-      }
-
-      return await intelligentParseResponse<RES_BODY>(response)
+  /** Lazily triggers the request on first invocation, then delegates to the native Promise. */
+  override then<TResult1 = RES_BODY, TResult2 = never>(
+    onfulfilled?: ((value: RES_BODY) => TResult1 | PromiseLike<TResult1>) | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+  ): Promise<TResult1 | TResult2> {
+    if (!this.__triggered__) {
+      this.__triggered__ = true
+      this.end().then(this.__resolve__, this.__reject__)
     }
-
-    if (!response) {
-      throw new Exception([
-        `Unable to process the response with '${resolveWithMode}'. Possible causes:`,
-        '1. The request was never initiated or sent',
-        '2. The request failed before a response was received.',
-      ].join('\n'))
-    }
-
-    return await resolveWith(response, resolveWithMode)
-  }
-
-  /**
-   * Attaches callbacks for the resolution and/or rejection of the Promise.
-   * @param onfulfilled The callback to execute when the Promise is resolved.
-   * @param onrejected The callback to execute when the Promise is rejected.
-   * @returns A Promise for the completion of which ever callback is executed.
-   */
-  then<TResult1 = RES_BODY, TResult2 = never>(onfulfilled?: ((value: RES_BODY) => TResult1 | PromiseLike<TResult1>) | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null): Promise<TResult1 | TResult2> {
-    if (!this.requestPromise) this.requestPromise = this.end()
-    return this.requestPromise.then(onfulfilled, onrejected)
-  }
-
-  catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null): Promise<RES_BODY | TResult> {
-    return this.end().catch(onrejected)
-  }
-
-  finally(onfinally?: (() => void) | null): Promise<RES_BODY> {
-    return this.end().finally(onfinally)
+    return super.then(onfulfilled, onrejected)
   }
 }
