@@ -1,3 +1,13 @@
+## 5.0.0-alpha.34
+
+### Major Changes
+
+- f8abc63: **BREAKING CHANGE:** Remove `end()`, add `derive()` for reusing request configuration and `fire()` for fire-and-forget invocation.
+
+### Minor Changes
+
+- a7a83da: **Perf:** Core now extends Promise, making keq instances true Promises instead of thenables.
+
 ## 5.0.0-alpha.33
 
 ## 5.0.0-alpha.32

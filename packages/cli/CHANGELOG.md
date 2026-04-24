@@ -1,3 +1,16 @@
+## 5.0.0-alpha.34
+
+### Major Changes
+
+- 1442fba: **BREAKING CHANGE:** exit 1 on build errors and make --tolerant control fault tolerance.
+
+### Patch Changes
+
+- 350b88e: **Perf:** using package name as command name.
+- Updated dependencies [a7a83da]
+- Updated dependencies [f8abc63]
+  - keq@5.0.0-alpha.34
+
 ## 5.0.0-alpha.33
 
 ### Major Changes
