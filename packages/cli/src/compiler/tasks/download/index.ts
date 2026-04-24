@@ -48,7 +48,12 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
               const { valid, errors } = await validate(spec)
               if (!valid) {
                 const message = `${moduleDefinition.name} module openapi/swagger file does not conform to the openapi specifications or have grammatical errors, which may cause unexpected errors: \n${errors?.map((e) => `  - ${e.message}`).join('\n')}`
-                task.output = message
+
+                if (compiler.options.tolerant) {
+                  task.output = message
+                } else {
+                  throw new Exception(moduleDefinition, message)
+                }
               }
 
               OpenapiUtils.dereferenceOperation(spec)
@@ -63,11 +68,10 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
           })),
         {
           concurrent: true,
-          exitOnError: false,
-          collectErrors: 'minimal',
+          exitOnError: !compiler.options.tolerant,
+          collectErrors: compiler.options.tolerant ? 'minimal' : false,
           rendererOptions: {
             collapseSubtasks: false,
-            // collapseSkips: false,
             suffixSkips: true,
             timer: PRESET_TIMER,
           },

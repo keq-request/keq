@@ -99,6 +99,7 @@ program
   )
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--debug', 'Print debug information')
+  .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
   .option('--module <modules...>')
   .option('--build', 'Build after updating .keqfilter file')
   .addOption(
@@ -125,6 +126,7 @@ program
         persist: true,
         config: options.config,
         debug: !!options.debug,
+        tolerant: !!options.tolerant,
         interactive: false,
         filter: {
           rules: [{
@@ -147,6 +149,7 @@ program
         persist: true,
         config: options.config,
         debug: !!options.debug,
+        tolerant: !!options.tolerant,
         interactive: {
           mode,
           persist: true,
@@ -173,6 +176,7 @@ program
         persist: true,
         config: options.config,
         debug: !!options.debug,
+        tolerant: !!options.tolerant,
         filter: {
           rules: moduleNames.map((moduleNames) => ({
             persist: true,
@@ -196,6 +200,7 @@ program
   .option('-c --config <config>', 'The keq-cli config file')
   .option('--invalid', 'List only invalid generated files (files not in current build)')
   .option('--debug', 'Print debug information')
+  .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
   .action(async (options) => {
     const compiler = new Compiler({
       build: true,
@@ -203,6 +208,7 @@ program
       silent: true,
       config: options.config,
       debug: !!options.debug,
+      tolerant: !!options.tolerant,
     })
 
     await compiler.run()
@@ -242,6 +248,7 @@ program
   .command('apis')
   .description('List API operations and components from OpenAPI/Swagger specifications')
   .option('-c --config <config>', 'The keq-cli config file')
+  .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
   .addOption(
     new Option('--includes <includes...>', 'Include specific parts')
       .choices(['operations', 'components']),
@@ -285,6 +292,7 @@ program
       silent: true,
       config: options.config,
       debug: !!options.debug,
+      tolerant: !!options.tolerant,
       filter: filterRules.length > 0
         ? { rules: filterRules }
         : undefined,
@@ -407,6 +415,7 @@ async function main(): Promise<void> {
     } else {
       logger.error(err instanceof Error ? err.message : String(err))
     }
+    process.exit(1)
   }
 }
 

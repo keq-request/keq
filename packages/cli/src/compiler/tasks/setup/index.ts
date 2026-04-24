@@ -43,7 +43,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
         rc.debug = true
       }
 
-      rc.tolerant = Boolean(rc.tolerant)
+      rc.tolerant = Boolean(rc.tolerant || options?.tolerant)
 
       if (!rc.translators || !rc.translators.length) {
         rc.translators = [new MicroFunctionTranslator()]
