@@ -61,7 +61,7 @@ describe('KeqRequest', () => {
       .get('http://test.com')
       .option('fetchAPI', mockedFetch)
 
-    await expect(() => keq.end()).rejects.toThrow('fetch failed')
+    await expect(keq).rejects.toThrow('fetch failed')
   })
 
   test('Query', async () => {

@@ -7,6 +7,7 @@ import { KeqMiddlewareOrchestrator } from '~/orchestrator/index.js'
 import { KeqMiddleware } from '~/middleware/index.js'
 import { intelligentParseResponse, resolveWith } from './utils/index.js'
 import { KeqDefaultOperation, KeqOperation, KeqQueryOptions } from './types/index.js'
+import { klona } from 'klona/json'
 
 
 export type KeqOptions = Partial<Omit<KeqRequestInit, 'url' | '__url__' | 'signal' | 'abort' | 'clone'>> & {
@@ -131,6 +132,40 @@ export class Core<
     return this
   }
 
+  derive(): this {
+    const derived = new (this.constructor as new (url: URL, options: KeqOptions) => this)(
+      this.requestInit.url,
+      {
+        method: this.requestInit.method,
+        headers: this.requestInit.headers,
+        body: this.requestInit.body,
+        pathParameters: this.requestInit.pathParameters,
+        cache: this.requestInit.cache,
+        credentials: this.requestInit.credentials,
+        integrity: this.requestInit.integrity,
+        keepalive: this.requestInit.keepalive,
+        mode: this.requestInit.mode,
+        redirect: this.requestInit.redirect,
+        referrer: this.requestInit.referrer,
+        referrerPolicy: this.requestInit.referrerPolicy,
+        locationId: this.__locationId__,
+        global: this.__global__,
+        qs: this.__qs__ ? { ...this.__qs__ } : undefined,
+        middlewares: [...this.__append_middlewares__],
+      },
+    )
+
+    derived.__prepend_middlewares__ = [...this.__prepend_middlewares__]
+
+    derived.__listeners__ = {}
+    for (const key in this.__listeners__) {
+      derived.__listeners__[key] = [...this.__listeners__[key]!]
+    }
+
+    derived.__options__ = klona(this.__options__)
+
+    return derived
+  }
 
   private buildSharedContext(): KeqSharedContext {
     const coreContext = new KeqSharedContext({
@@ -202,14 +237,13 @@ export class Core<
     }
   }
 
-  end(): Promise<RES_BODY> {
+  private __execute__(): Promise<RES_BODY> {
     if (!this.__requestPromise__) {
       this.__requestPromise__ = (async () => {
         const coreContext = await this.run()
         const resolveWithMode = coreContext.options.resolveWith
 
         if (resolveWithMode === 'response') {
-          // NOTE: return a clone of the response rather than the proxy response
           return coreContext.response?.clone() as RES_BODY
         }
 
@@ -239,14 +273,20 @@ export class Core<
     return this.__requestPromise__
   }
 
-  /** Lazily triggers the request on first invocation, then delegates to the native Promise. */
+  fire(): void {
+    if (!this.__triggered__) {
+      this.__triggered__ = true
+      this.__execute__().then(this.__resolve__, this.__reject__)
+    }
+  }
+
   override then<TResult1 = RES_BODY, TResult2 = never>(
     onfulfilled?: ((value: RES_BODY) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2> {
     if (!this.__triggered__) {
       this.__triggered__ = true
-      this.end().then(this.__resolve__, this.__reject__)
+      this.__execute__().then(this.__resolve__, this.__reject__)
     }
     return super.then(onfulfilled, onrejected)
   }

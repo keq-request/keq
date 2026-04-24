@@ -14,7 +14,6 @@ test('abort flowController request', async () => {
       .option('fetchAPI', mockedFetch)
       .flowControl('abort', 'test')
       .on('abort', abortListener)
-      .end()
   }
 
   let error: unknown = undefined
@@ -42,7 +41,6 @@ test('serial flowController request', async () => {
       .get('http://test.com')
       .option('fetchAPI', mockedFetch)
       .flowControl('serial', 'test')
-      .end()
   }
 
   const catchFn = jest.fn()

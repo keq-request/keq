@@ -36,7 +36,7 @@ Keq wraps the Fetch APIs, adding chain calls and middleware functions.
 ### Send Request
 
 A request can be initiated by invoking the appropriate method on the request object,
-then calling `.then()` (or `.end()` or `await`) to send the request.
+then calling `.then()` (or `await`) to send the request.
 For example a simple GET request:
 
 ```javascript
