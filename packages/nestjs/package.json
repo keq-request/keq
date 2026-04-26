@@ -39,15 +39,14 @@
     "test": "jest",
     "test:update": "jest -u"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.19.25",
-    "@nestjs/common": "^11.0.0",
+    "@nestjs/common": "^11.1.19",
+    "@types/node": "^20.19.39",
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0-alpha.34",
-    "@nestjs/common": "^11.0.0"
+    "@nestjs/common": "^11.0.0",
+    "keq": "^5.0.0-alpha.34"
   },
   "engines": {
     "node": ">=20.0.0"

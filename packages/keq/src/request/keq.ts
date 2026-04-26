@@ -219,7 +219,7 @@ export class Keq<
   field(arg1: ConditionalPick<RES_BODY, Primitive>): this
   field(arg1: string, value: string | string[]): this
   field(arg1: Record<string, string>): this
-  field(arg1: string | Record<string, string>, arg2?: any): this {
+  field(arg1: string | Record<string, string> | ConditionalPick<RES_BODY, Primitive>, arg2?: any): this {
     if (typeof arg1 === 'object') {
       this.requestInit.body = mergeKeqRequestBody(this.requestInit.body, arg1)
     } else if (arg2) {

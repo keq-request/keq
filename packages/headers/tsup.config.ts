@@ -3,7 +3,7 @@ import { defineConfig } from 'tsup'
 export default defineConfig({
   entry: ['src/index.ts'],
   format: ['cjs', 'esm'],
-  target: ['chrome70', 'firefox78', 'safari12', 'edge80', 'node20'],
+  target: ['chrome91', 'firefox90', 'safari15', 'edge91', 'node20'],
   platform: 'neutral',
   tsconfig: 'tsconfig.lib.json',
   dts: false,

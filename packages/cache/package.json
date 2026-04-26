@@ -32,7 +32,7 @@
     "test:update": "jest --updateSnapshot"
   },
   "devDependencies": {
-    "@types/node": "^20.19.25",
+    "@types/node": "^20.19.39",
     "@types/ramda": "^0.31.1",
     "fake-indexeddb": "^6.2.5",
     "isomorphic-fetch": "^3.0.0",
@@ -42,10 +42,10 @@
     "keq": "^5.0.0-alpha.34"
   },
   "dependencies": {
-    "dayjs": "^1.11.19",
-    "fastq": "^1.19.1",
+    "dayjs": "^1.11.20",
+    "fastq": "^1.20.1",
     "idb": "^8.0.3",
     "ramda": "^0.32.0",
-    "type-fest": "^5.3.0"
+    "type-fest": "^5.6.0"
   }
 }

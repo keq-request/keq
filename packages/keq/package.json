@@ -41,20 +41,20 @@
   },
   "dependencies": {
     "@opendoc/uri-template": "^1.5.4",
-    "eventsource-parser": "^3.0.6",
-    "fastq": "^1.19.1",
+    "eventsource-parser": "^3.0.8",
+    "fastq": "^1.20.1",
     "klona": "^2.0.6",
-    "picomatch": "^4.0.2",
     "mitt": "^3.0.1",
-    "qs": "^6.14.0",
+    "picomatch": "^4.0.4",
+    "qs": "^6.15.1",
     "ts-custom-error": "^3.3.1",
-    "type-fest": "^5.3.0"
+    "type-fest": "^5.6.0"
   },
   "devDependencies": {
     "@types/clone": "^2.1.4",
-    "@types/node": "^20.19.25",
+    "@types/node": "^20.19.39",
     "@types/picomatch": "^2.3.4",
-    "@types/qs": "^6.14.0"
+    "@types/qs": "^6.15.0"
   },
   "engines": {
     "node": ">=20.0.0"
