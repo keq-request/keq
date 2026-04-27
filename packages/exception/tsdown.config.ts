@@ -1,4 +1,4 @@
-import { defineConfig } from 'tsup'
+import { defineConfig } from 'tsdown'
 
 export default defineConfig([
   {
@@ -8,20 +8,18 @@ export default defineConfig([
     outDir: 'dist',
     platform: 'neutral',
     tsconfig: 'tsconfig.lib.json',
-    dts: false,
-    splitting: false,
+    dts: { sourcemap: true },
     sourcemap: true,
     clean: true,
-    onSuccess: 'tsc --emitDeclarationOnly -d --declarationMap -p ./tsconfig.lib.json && tsc-alias -p ./tsconfig.lib.json',
   },
   {
     entry: ['./plugins/index.ts'],
     format: ['cjs', 'esm'],
     outDir: 'dist/plugins',
-    platform: 'node',
+    platform: 'neutral',
     target: ['node20'],
     dts: true,
     tsconfig: './plugins/tsconfig.json',
-    external: ['@keq-request/cli', '@scalar/openapi-types'],
+    deps: { neverBundle: ['@keq-request/cli', '@scalar/openapi-types'] },
   },
 ])

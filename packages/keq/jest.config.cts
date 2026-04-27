@@ -8,9 +8,15 @@ export default (): Config => {
   const tsconfig = JSON.parse(fs.readFileSync(path.join(__dirname, './tsconfig.json'), 'utf-8'))
 
   return {
-    preset: 'ts-jest',
+    transform: {
+      '^.+\\.tsx?$': ['ts-jest', {
+        tsconfig: {
+          noEmitOnError: false,
+        },
+      }],
+    },
     setupFilesAfterEnv: ['<rootDir>/__tests__/setup.ts'],
-    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/src', useESM: true }),
+    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>', useESM: true }),
     testEnvironment: 'node',
     testMatch: [
       '<rootDir>/__tests__/node/**/*.spec.ts',

@@ -4,6 +4,12 @@ import { compilerOptions } from './tsconfig.json'
 
 
 export default (): Config => ({
-  preset: 'ts-jest',
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/src', useESM: true }),
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', {
+      tsconfig: {
+        noEmitOnError: false,
+      },
+    }],
+  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>', useESM: true }),
 })

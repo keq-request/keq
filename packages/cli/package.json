@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@keq-request/cli",
   "main": "dist/index.cjs",
-  "types": "dist/index.d.ts",
+  "types": "dist/index.d.cts",
   "bin": {
     "keq": "dist/cli.cjs",
     "@keq-request/cli": "dist/cli.cjs"
@@ -36,24 +36,39 @@
   "homepage": "https://keq-request.github.io",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     },
     "./plugins": {
-      "types": "./dist/plugins/index.d.ts",
-      "import": "./dist/plugins.js",
-      "require": "./dist/plugins.cjs"
+      "import": {
+        "types": "./dist/plugins.d.mts",
+        "default": "./dist/plugins.mjs"
+      },
+      "require": {
+        "types": "./dist/plugins.d.cts",
+        "default": "./dist/plugins.cjs"
+      }
     },
     "./translators": {
-      "types": "./dist/translators/index.d.ts",
-      "import": "./dist/translators.js",
-      "require": "./dist/translators.cjs"
+      "import": {
+        "types": "./dist/translators.d.mts",
+        "default": "./dist/translators.mjs"
+      },
+      "require": {
+        "types": "./dist/translators.d.cts",
+        "default": "./dist/translators.cjs"
+      }
     }
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "tsdown",
+    "dev": "tsdown --watch",
     "test": "jest",
     "test:update": "jest -u"
   },

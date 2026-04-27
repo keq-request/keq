@@ -1,2 +1,2 @@
 export * from './indexed-db-storage.js'
-export { IndexedDbStorageOptions } from './types/index.js'
+export type { IndexedDbStorageOptions } from './types/index.js'

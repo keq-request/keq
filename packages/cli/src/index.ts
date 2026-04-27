@@ -12,6 +12,8 @@ export {
 
 export {
   Compiler,
+} from './compiler/index.js'
+export type {
   CompilerContext,
   TaskWrapper,
 } from './compiler/index.js'

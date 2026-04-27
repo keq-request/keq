@@ -1,12 +1,13 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./src",
+    "rootDir": "..",
+    "outDir": "./dist",
     "paths": {
-      "~/*": ["./*"],
-      "~~/*": ["../*"],
-      "@keq-request/test": ["../../test/src/index.ts"],
-      "keq": ["./index.ts"]
+      "~/*": ["./src/*"],
+      "~~/*": ["./*"],
+      "@keq-request/test": ["../test/src/index.ts"],
+      "keq": ["./src/index.ts"]
     }
   }
 }

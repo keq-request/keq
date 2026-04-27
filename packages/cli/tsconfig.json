@@ -1,6 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "rootDir": "..",
+    "outDir": "./dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "esModuleInterop": true,

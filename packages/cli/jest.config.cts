@@ -6,7 +6,13 @@ export default async (): Promise<Config> => {
   const tsconfig = (await import('./tsconfig.json')).default
 
   return {
-    preset: 'ts-jest',
-    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>/src', useESM: true }),
+    transform: {
+      '^.+\\.tsx?$': ['ts-jest', {
+        tsconfig: {
+          noEmitOnError: false,
+        },
+      }],
+    },
+    moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: '<rootDir>', useESM: true }),
   }
 }

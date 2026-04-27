@@ -9,16 +9,18 @@
     "skipLibCheck": true,
     "declaration": true,
     "declarationMap": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "ESNext",
     "target": "ESNext",
-    "lib": ["DOM", "Es2015.Proxy", "ESNext", "DOM.Iterable"],
+    "lib": ["DOM", "Es2015.Proxy", "ESNext"],
+    "types": ["node"],
     "preserveWatchOutput": true
   },
   "ts-node": {
     "compilerOptions": {
-      "moduleResolution": "node",
-      "module": "CommonJS"
+      "module": "commonjs",
+      "moduleResolution": "bundler",
+      "rootDir": "."
     }
   }
 }
