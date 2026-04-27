@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.0.0-alpha.35
+
+### Major Changes
+
+- 0a04864: **Fix:** fix: update browser targets to chrome91/firefox90/safari15/edge91 to resolve esbuild 0.27 destructuring build errors.
+
+### Patch Changes
+
+- Updated dependencies [0a04864]
+  - keq@5.0.0-alpha.35
+
 ## 5.0.0-alpha.34
 
 ### Patch Changes
