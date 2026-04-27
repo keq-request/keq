@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@keq-request/cli": "workspace:*",
-    "@scalar/openapi-types": "^0.5.4",
+    "@scalar/openapi-types": "^0.8.0",
     "@types/node": "^20.19.39",
     "keq": "workspace:*"
   },
