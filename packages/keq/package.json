@@ -53,7 +53,7 @@
   "devDependencies": {
     "@types/clone": "^2.1.4",
     "@types/node": "^20.19.39",
-    "@types/picomatch": "^2.3.4",
+    "@types/picomatch": "^4.0.3",
     "@types/qs": "^6.15.0"
   },
   "engines": {

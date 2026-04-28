@@ -36,8 +36,8 @@ importers:
         specifier: ^10.2.1
         version: 10.2.1(jiti@2.6.1)
       globals:
-        specifier: ^16.5.0
-        version: 16.5.0
+        specifier: ^17.5.0
+        version: 17.5.0
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -282,8 +282,8 @@ importers:
         specifier: ^20.19.39
         version: 20.19.39
       '@types/picomatch':
-        specifier: ^2.3.4
-        version: 2.3.4
+        specifier: ^4.0.3
+        version: 4.0.3
       '@types/qs':
         specifier: ^6.15.0
         version: 6.15.0
@@ -1438,9 +1438,6 @@ packages:
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
-  '@types/picomatch@2.3.4':
-    resolution: {integrity: sha512-0so8lU8O5zatZS/2Fi4zrwks+vZv7e0dygrgEZXljODXBig97l4cPQD+9LabXfGJOWwoRkTVz6Q4edZvD12UOA==}
-
   '@types/picomatch@4.0.3':
     resolution: {integrity: sha512-iG0T6+nYJ9FAPmx9SsUlnwcq1ZVRuCXcVEvWnntoPlrOpwtSTKNDC9uVAxTsC3PUvJ+99n4RpAcNgBbHX3JSnQ==}
 
@@ -2322,6 +2319,10 @@ packages:
 
   globals@16.5.0:
     resolution: {integrity: sha512-c/c15i26VrJ4IRt5Z89DnIzCGDn9EcebibhAOjw5ibqEHsE1wLUgkPn9RDmNcUKyU87GeaL633nyJ+pplFR2ZQ==}
+    engines: {node: '>=18'}
+
+  globals@17.5.0:
+    resolution: {integrity: sha512-qoV+HK2yFl/366t2/Cb3+xxPUo5BuMynomoDmiaZBIdbs+0pYbjfZU+twLhGKp4uCZ/+NbtpVepH5bGCxRyy2g==}
     engines: {node: '>=18'}
 
   globby@11.1.0:
@@ -5056,8 +5057,6 @@ snapshots:
   '@types/parse-json@4.0.2':
     optional: true
 
-  '@types/picomatch@2.3.4': {}
-
   '@types/picomatch@4.0.3': {}
 
   '@types/qs@6.15.0': {}
@@ -5920,6 +5919,8 @@ snapshots:
       ini: 6.0.0
 
   globals@16.5.0: {}
+
+  globals@17.5.0: {}
 
   globby@11.1.0:
     dependencies:
