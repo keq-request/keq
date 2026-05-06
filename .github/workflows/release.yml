@@ -3,6 +3,7 @@ on:
     branches:
       # - main
       - alpha
+      - beta
   workflow_dispatch:
 
 name: Release
@@ -45,13 +46,62 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') == ''
+      - name: Enter prerelease mode
+        if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') == ''
         run: pnpm changeset pre enter ${{ env.NPM_CONFIG_TAG }}
 
-      - if: env.NPM_CONFIG_TAG == 'latest' && hashFiles('.changeset/pre.json') != ''
+      - name: Upgrade prerelease tag
+        id: pre-upgrade
+        if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT_TAG=$(node -e "console.log(require('./.changeset/pre.json').tag)")
+          if [ "$CURRENT_TAG" != "${{ env.NPM_CONFIG_TAG }}" ]; then
+            tag_order() {
+              case "$1" in
+                alpha) echo 1 ;;
+                beta) echo 2 ;;
+                rc) echo 3 ;;
+                *) echo 0 ;;
+              esac
+            }
+            CURRENT_ORDER=$(tag_order "$CURRENT_TAG")
+            EXPECTED_ORDER=$(tag_order "${{ env.NPM_CONFIG_TAG }}")
+            if [ "$EXPECTED_ORDER" -gt "$CURRENT_ORDER" ]; then
+              echo "Upgrading prerelease tag: $CURRENT_TAG -> ${{ env.NPM_CONFIG_TAG }}"
+              rm .changeset/pre.json
+              pnpm changeset pre enter ${{ env.NPM_CONFIG_TAG }}
+
+              BRANCH="chore/upgrade-prerelease-$CURRENT_TAG-to-${{ env.NPM_CONFIG_TAG }}"
+              git config user.name "github-actions[bot]"
+              git config user.email "github-actions[bot]@users.noreply.github.com"
+              git checkout -b "$BRANCH"
+              git add .changeset/pre.json
+              git commit -m "chore: upgrade prerelease tag $CURRENT_TAG -> ${{ env.NPM_CONFIG_TAG }}"
+              git push --force-with-lease origin "$BRANCH"
+              EXISTING_PR=$(gh pr list --head "$BRANCH" --base "${{ github.ref_name }}" --json number --jq '.[0].number')
+              if [ -z "$EXISTING_PR" ]; then
+                gh pr create \
+                  --base "${{ github.ref_name }}" \
+                  --head "$BRANCH" \
+                  --title "chore: upgrade prerelease tag $CURRENT_TAG -> ${{ env.NPM_CONFIG_TAG }}" \
+                  --body "Automatically upgrade prerelease tag from \`$CURRENT_TAG\` to \`${{ env.NPM_CONFIG_TAG }}\`."
+              fi
+              echo "upgraded=true" >> $GITHUB_OUTPUT
+            else
+              echo "::error::Cannot downgrade prerelease tag from $CURRENT_TAG to ${{ env.NPM_CONFIG_TAG }}"
+              exit 1
+            fi
+          fi
+
+      - name: Exit prerelease mode
+        if: env.NPM_CONFIG_TAG == 'latest' && hashFiles('.changeset/pre.json') != ''
         run: pnpm changeset pre exit
 
-      - id: changesets
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        if: steps.pre-upgrade.outputs.upgraded != 'true'
         uses: changesets/action@v1
         with:
           title: "Release"
