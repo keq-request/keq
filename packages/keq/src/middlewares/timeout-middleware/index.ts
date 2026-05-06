@@ -13,15 +13,21 @@ export function keqTimeoutMiddleware(): KeqMiddleware {
     }
 
     const millisecond = ctx.options.timeout.millisecond
-    ctx.emitter.on('fetch:after', ({ context }) => {
-      setTimeout(
-        () => {
-          const err = new TimeoutException(`keq request timeout(${millisecond}ms)`)
-          context.request.abort(err)
-          context.emitter.emit('timeout', { context })
-        },
-        millisecond,
-      )
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    ctx.emitter.on('fetch:before', ({ context }) => {
+      timer = setTimeout(() => {
+        const err = new TimeoutException(`keq request timeout(${millisecond}ms)`)
+        context.request.abort(err)
+        context.emitter.emit('timeout', { context })
+      }, millisecond)
+    })
+
+    ctx.emitter.on('fetch:after', () => {
+      if (timer !== undefined) {
+        clearTimeout(timer)
+        timer = undefined
+      }
     })
 
     await next()

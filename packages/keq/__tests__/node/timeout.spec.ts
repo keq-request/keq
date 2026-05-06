@@ -3,6 +3,8 @@ import { request } from './request.js'
 
 
 test('timeout request', async () => {
+  expect.assertions(2)
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const mockedFetch = jest.fn((input: RequestInfo | URL, init?: RequestInit) => new Promise((resolve, reject) => {
     let finished = false
@@ -17,7 +19,6 @@ test('timeout request', async () => {
       }
     }
 
-    // sleet 500ms
     setTimeout(
       () => {
         if (finished) return

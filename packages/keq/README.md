@@ -92,7 +92,7 @@ import { request } from "keq";
 
 const response = await request
   .get("http://test.com")
-  .resolve('response')
+  .resolveWith('response')
 
 const body = await response.json();
 ```

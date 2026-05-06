@@ -4,7 +4,7 @@
 
 ```typescript
 import { request } from "keq";
-import { cache, MemoryStorage } from "keq-cache";
+import { cache, MemoryStorage } from "@keq-request/cache";
 
 request.use(
   cache({
@@ -35,7 +35,7 @@ request.post("/cat");
 <!-- prettier-ignore -->
 ```typescript
 import { request } from "keq";
-import { cache, MemoryStorage } from "keq-cache";
+import { cache, MemoryStorage } from "@keq-request/cache";
 
 request.use(cache({ storage: new MemoryStorage() }));
 
@@ -61,7 +61,7 @@ request
 <!-- prettier-ignore -->
 ```typescript
 import { request, KeqMiddleware } from "keq";
-import { cache, MemoryStorage } from "keq-cache";
+import { cache, MemoryStorage } from "@keq-request/cache";
 
 const storage = new MemoryStorage();
 

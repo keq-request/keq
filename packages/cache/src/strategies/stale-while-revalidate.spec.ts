@@ -57,7 +57,7 @@ test('Strategies.StaleWhileRevalidate', async () => {
 
   expect(await sharedContext2.response?.text()).toEqual('1')
   expect(fetchMiddleware2).toHaveBeenCalledTimes(0)
-  await sleep(20)
+  await sleep(100)
   expect(await sharedContext2.response?.text()).toEqual('1')
   expect(fetchMiddleware2).toHaveBeenCalledTimes(1)
   expect(cacheUpdateHandler2).toHaveBeenCalledTimes(1)

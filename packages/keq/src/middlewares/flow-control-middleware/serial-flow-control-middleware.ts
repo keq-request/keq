@@ -13,11 +13,9 @@ export function keqSerialFlowControlMiddleware(): KeqMiddleware {
     const { signal } = ctx.options.flowControl
     const concurrent = ctx.options.flowControl.mode === 'serial'
       ? 1
-      : !ctx.options.flowControl.concurrencyLimit
+      : !ctx.options.flowControl.concurrencyLimit || ctx.options.flowControl.concurrencyLimit < 1
         ? 1
-        : ctx.options.flowControl.concurrencyLimit < 1
-          ? 1
-          : parseInt(ctx.options.flowControl.concurrencyLimit as any, 10)
+        : Math.floor(ctx.options.flowControl.concurrencyLimit)
 
     const key = typeof signal === 'string' ? signal : signal(ctx)
 

@@ -91,25 +91,9 @@ export class Core<
     }
   }
 
-  // prependMiddlewares(...middlewares: KeqMiddleware[]): this {
-  //   this.__prepend_middlewares__.push(...middlewares)
-  //   return this
-  // }
-
-  // /**
-  //  * Appends middlewares to the end of the middleware chain.
-  //  * Using this method indiscriminately is discouraged;
-  //  * prefer using `.use` to maintain predictable execution order.
-  //  */
-  // appendMiddlewares(...middlewares: KeqMiddleware[]): this {
-  //   this.__append_middlewares__.unshift(...middlewares)
-  //   return this
-  // }
-
   use(...middlewares: KeqMiddleware[]): this {
     this.__prepend_middlewares__.push(...middlewares)
     return this
-    // return this.prependMiddlewares(...middlewares)
   }
 
   on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {
