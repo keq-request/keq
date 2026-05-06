@@ -1,0 +1,89 @@
+name: Upgrade Prerelease Tag
+description: Upgrade changeset prerelease tag and create a PR with version updates
+
+inputs:
+  expected-tag:
+    description: Target prerelease tag (alpha, beta, rc)
+    required: true
+  base-branch:
+    description: Branch name to create PR against
+    required: true
+
+outputs:
+  upgraded:
+    description: Whether the prerelease tag was upgraded ("true" or empty)
+    value: ${{ steps.upgrade.outputs.upgraded }}
+
+runs:
+  using: composite
+  steps:
+    - name: Upgrade prerelease tag
+      id: upgrade
+      shell: bash
+      run: |
+        CURRENT_TAG=$(node -e "console.log(require('./.changeset/pre.json').tag)")
+        EXPECTED_TAG="${{ inputs.expected-tag }}"
+
+        if [ "$CURRENT_TAG" = "$EXPECTED_TAG" ]; then
+          exit 0
+        fi
+
+        tag_order() {
+          case "$1" in
+            alpha) echo 1 ;;
+            beta) echo 2 ;;
+            rc) echo 3 ;;
+            *) echo 0 ;;
+          esac
+        }
+
+        CURRENT_ORDER=$(tag_order "$CURRENT_TAG")
+        EXPECTED_ORDER=$(tag_order "$EXPECTED_TAG")
+
+        if [ "$EXPECTED_ORDER" -le "$CURRENT_ORDER" ]; then
+          echo "::error::Cannot downgrade prerelease tag from $CURRENT_TAG to $EXPECTED_TAG"
+          exit 1
+        fi
+
+        echo "Upgrading prerelease tag: $CURRENT_TAG -> $EXPECTED_TAG"
+
+        node -e "
+        const fs = require('fs');
+        const path = require('path');
+        const tag = '$EXPECTED_TAG';
+        const pkgDirs = fs.readdirSync('packages', { withFileTypes: true })
+          .filter(d => d.isDirectory())
+          .map(d => path.join('packages', d.name, 'package.json'))
+          .filter(p => fs.existsSync(p));
+        for (const pkgJson of pkgDirs) {
+          const pkg = JSON.parse(fs.readFileSync(pkgJson, 'utf8'));
+          if (pkg.version && pkg.version.includes('-')) {
+            const base = pkg.version.replace(/-.*$/, '');
+            pkg.version = base + '-' + tag + '.0';
+            fs.writeFileSync(pkgJson, JSON.stringify(pkg, null, 2) + '\n');
+            console.log('Reset', pkgJson, '->', pkg.version);
+          }
+        }
+        "
+
+        rm .changeset/pre.json
+        pnpm changeset pre enter $EXPECTED_TAG
+
+        BRANCH="chore/upgrade-prerelease-$CURRENT_TAG-to-$EXPECTED_TAG"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git checkout -b "$BRANCH"
+        git add .changeset/pre.json packages/*/package.json
+        git commit -m "chore: upgrade prerelease tag $CURRENT_TAG -> $EXPECTED_TAG"
+        git push --force-with-lease origin "$BRANCH"
+
+        EXISTING_PR=$(gh pr list --head "$BRANCH" --base "${{ inputs.base-branch }}" --json number --jq '.[0].number')
+        if [ -z "$EXISTING_PR" ]; then
+          gh pr create \
+            --base "${{ inputs.base-branch }}" \
+            --head "$BRANCH" \
+            --title "chore: upgrade prerelease tag $CURRENT_TAG -> $EXPECTED_TAG" \
+            --body "Automatically upgrade prerelease tag from \`$CURRENT_TAG\` to \`$EXPECTED_TAG\`."
+        fi
+
+        echo "upgraded=true" >> $GITHUB_OUTPUT

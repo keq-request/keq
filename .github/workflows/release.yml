@@ -3,6 +3,7 @@ on:
     branches:
       # - main
       - alpha
+      - beta
   workflow_dispatch:
 
 name: Release
@@ -45,13 +46,27 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') == ''
+      - name: Enter prerelease mode
+        if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') == ''
         run: pnpm changeset pre enter ${{ env.NPM_CONFIG_TAG }}
 
-      - if: env.NPM_CONFIG_TAG == 'latest' && hashFiles('.changeset/pre.json') != ''
+      - name: Upgrade prerelease tag
+        id: pre-upgrade
+        if: env.NPM_CONFIG_TAG != 'latest' && hashFiles('.changeset/pre.json') != ''
+        uses: ./.github/actions/upgrade-prerelease
+        with:
+          expected-tag: ${{ env.NPM_CONFIG_TAG }}
+          base-branch: ${{ github.ref_name }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Exit prerelease mode
+        if: env.NPM_CONFIG_TAG == 'latest' && hashFiles('.changeset/pre.json') != ''
         run: pnpm changeset pre exit
 
-      - id: changesets
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        if: steps.pre-upgrade.outputs.upgraded != 'true'
         uses: changesets/action@v1
         with:
           title: "Release"
