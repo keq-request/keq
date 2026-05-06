@@ -1,3 +1,111 @@
+## 5.0.0-beta.1
+
+### Major Changes
+
+- 153244f: **BREAKING CHANGE:** Add an options to control query serialization.
+
+  - `.query({ a: [1, 2]})` => `?a[0]=1&a[1]=2`
+  - `.query({ a: [1, 2]}, { arrayFormat: 'brackets' })` => `?a[]=1&a[]=2`(default in keq@2)
+  - `.query({ a: [1, 2]}, { arrayFormat: 'repeat' })` => `?a=1&a=2`
+  - `.query({ a: [1, 2]}, { arrayFormat: 'comma' })` => `?a=1,2`
+
+- 153244f: **BREAKING CHANGE:** Prevent modification of the immutable properties of the context.
+- 153244f: **BREAKING CHANGE:** `.params(key, value)` will not encode value automatically, please replace it with `.params(key, encodeURIComponent(value)`, if necessary.
+- 214ae66: **BREAKING CHANGE:** RequestException third parameter changed from retry: boolean to options: { fatal: boolean, response: Response }
+
+  ```javascript
+  // Before
+  new RequestException(400, "Error message", true);
+
+  // After
+  new RequestException(400, "Error message", {
+    fatal: false,
+    response: someResponseObject,
+  });
+  ```
+
+- 0c7db81: **BREAKING CHANGE:** remove appendMiddlewares and prependMiddlewares from Keq.
+- 153244f: **BREAKING CHANGE:** refactor event emitter. `fetch` event has been removed, please use `fetch:before`/`fetch:after` instead.
+
+  - add new function `.on(eventName, callback)` listen keq events
+  - add new event `fetch:before`
+  - add new event `fetch:after`
+  - add new event `middleware:before`
+  - add new event `middleware:after`
+  - add new event `timeout`
+  - add new event `abort`
+  - add new event `error`
+  - add new event `retry`
+
+- 7ff2162: **BREAKING CHANGE:** Strictly adhere to URI template implementation (RFC 6570 compliant). Therefore, ':id' is no longer supported.
+- 153244f: **BREAKING CHANGE:** change KeqRequest from interface to class.
+
+  - `request` cannot be invoke directly, please use `request.fetch()` instead.
+  - `KeqOptions` renamed to `KeqMiddlewareOptions`.
+  - `KeqOperations` renamed to `KeqApiSchema`.
+  - `KeqBaseOperation` renamed to `KeqDefaultOperation`.
+
+- 153244f: **BREAKING CHANGE:** Refactoring keq middlewares
+
+  - `retryMiddleware`, `proxyResponseMiddleware`, `fetchArgumentMiddleware` be removed.
+  - `abortFlowControlMiddleware` and `serialFlowControlMiddleware` merged into `flowControlMiddleware`.
+  - `ctx.metadata` has been removed, please use `ctx.orchestrator` instead.
+  - `.retry()` will rerun all middlewares now, assert `ctx.data.retry.attempt` if middleware is not expect to be run.
+  - `ctx.options.retryOn`, `ctx.options.retryTimes` and `ctx.options.retryDelay` are replaced by `ctx.options.retry.on`, `ctx.options.retry.times` and `ctx.options.retry.delay`.
+  - `.option("resolveWithResponse")` had be removed, please use `.resolveWith('response')` instead.
+  - `next` cannot be run multi-times now.
+  - Some typescript type names have changed.
+  - `ctx.request.routeParams` is renamed to `ctx.request.pathParameters`
+
+- 153244f: **BREAKING CHANGE:** Drop support node@18.
+- f8abc63: **BREAKING CHANGE:** Remove `end()`, add `derive()` for reusing request configuration and `fire()` for fire-and-forget invocation.
+- 0a04864: **Fix:** fix: update browser targets to chrome91/firefox90/safari15/edge91 to resolve esbuild 0.27 destructuring build errors.
+
+### Minor Changes
+
+- 0a2eb2f: **Feat:** server-sent event support.
+- c7ffd1f: **Feat:** synchronous middleware can be written
+- 9290139: **Feat:** add event listener support to KeqRequest.
+- a7a83da: **Perf:** Core now extends Promise, making keq instances true Promises instead of thenables.
+- 153244f: **Feat:** add `.headers` as an alias for `.set`
+- ca6c879: The forked orchestrator can be merged into original orchestrator.
+- 63161c4: **Feat:** the .flowControl() support concurrency.
+- d472648: context.orhestration.middleware can get current middleware status
+- b8d02ca: **Perf:** allow `undefined` as query value in string index signature overloads.
+- 153244f: **Feat:** `.attach` can take multiple files.
+- eed26f9: **Feat:** add build-in http exceptions.
+
+  - `BadRequestException`
+  - `UnauthorizedException`
+  - `ForbiddenException`
+  - `NotFoundedException`
+  - `NotAcceptableException`
+  - `ConflictException`
+  - `GatewayTimeoutException`
+  - `InternalServerErrorException`
+  - `BadGatewayException`
+  - `ServiceUnavailableException`
+  - `PreconditionFailedException`
+
+### Patch Changes
+
+- cbc5d17: ensure the monotonicity of middleware execution
+- 153244f: optimize code suggestions
+- 90311b3: Fix the error in recording the execution sequence number of orc caused by a middleware error.
+- 1f367c0: more internal http exception
+- df114d1: Fixed the issue of missing res after merging forked orchestrator.
+- 2686b8d: build with turbo
+- 842e555: **Perf:** avoid unnecessary deserialization.
+- 2686b8d: remove private dependencies
+- 7873a0a: Optimize middleware name generation
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 22ce01a: **Fix:** JSON.stringify ctx.response always get empty object.
+- 0873c7e: Incorrect build before release.
+- f194c41: **Fix:** types being unrecognized due to type-fest version upgrades.
+- d076b76: **Fix:** resolve pnpm singleton trap by deduplicating instances.
+- 581815a: ensure compatibility
+- 7343445: Incorrect build before release
+
 ## 5.0.0-alpha.36
 
 ## 5.0.0-alpha.35
