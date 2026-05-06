@@ -1,5 +1,56 @@
 # @keq-request/test
 
+## 5.0.0-beta.1
+
+### Patch Changes
+
+- 2686b8d: build with turbo
+- 2686b8d: remove private dependencies
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 0873c7e: Incorrect build before release.
+- 581815a: ensure compatibility
+- 7343445: Incorrect build before release
+- Updated dependencies [cbc5d17]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [214ae66]
+- Updated dependencies [c7ffd1f]
+- Updated dependencies [90311b3]
+- Updated dependencies [1f367c0]
+- Updated dependencies [0c7db81]
+- Updated dependencies [df114d1]
+- Updated dependencies [2686b8d]
+- Updated dependencies [842e555]
+- Updated dependencies [153244f]
+- Updated dependencies [2686b8d]
+- Updated dependencies [9290139]
+- Updated dependencies [7873a0a]
+- Updated dependencies [e7eb9dc]
+- Updated dependencies [7ff2162]
+- Updated dependencies [22ce01a]
+- Updated dependencies [0873c7e]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [f194c41]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [d076b76]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [63161c4]
+- Updated dependencies [d472648]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [581815a]
+- Updated dependencies [7343445]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0-beta.1
+
 ## 5.0.0-alpha.36
 
 ### Patch Changes

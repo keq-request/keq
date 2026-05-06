@@ -1,3 +1,120 @@
+## 5.0.0-beta.1
+
+### Major Changes
+
+- 339b87d: **BREAKING CHANGE:** Rename the command keq-cli to keq.
+- 8077f32: **BREAKING CHANGE:** move `fileNamingStyle`, `esm` and `additionalPropertiesType` into a `rendering` config object.
+- 153244f: **BREAKING CHANGE:** the request option in keqrc config removed.
+- 5175097: **BREAKING CHANGE:** group all packages under the @keq-request scope
+
+  - keq-cache => @keq-request/cache
+  - keq-headers => @keq-request/headers
+  - keq-cli => @keq-request/cli
+  - keq-url => @keq-request/url
+  - keq-exception => @keq-request/exception
+
+- 1442fba: **BREAKING CHANGE:** exit 1 on build errors and make --tolerant control fault tolerance.
+- 2ead9d0: **BREAKING CHANGE:** operationIdFactory is removed, please use OverwriteOperationIdPlugin instead.
+- bbc3403: **BREAKING CHANGE:** drop support relative path and use 'file://' insteaded.
+- 09421c8: **BREAKING CHANGE:** replace `.keqignore` with `.keqfilter` using an INI-style format.
+
+  - New format uses `[deny]` / `[allow]` sections with `METHOD module:/pathname` lines
+  - CLI command renamed: `keq ignore` → `keq filter`, subcommands `add` → `deny`, `except` → `allow`
+  - Precompile glob matchers for better performance
+
+- bbc3403: **BREAKING CHANGE:** rename defineKeqConfig to defineConfig.
+
+### Minor Changes
+
+- 979a721: **Feat:** generate components.responses as independent interfaces.
+- d0033aa: **Feat:** add clean option to clean outdir before persisting generated files.
+- 35bfcab: **Feat:** add OverwriteAdditionPropertiesPlugin to control undefined additionalProperties.
+- f2436b7: **Feat:** support plugin
+
+  - add `EslintPlugin`
+  - add `PrettierPlugin`
+  - add `BodyFallbackPlugin`
+
+- 0a2eb2f: **Feat:** server-sent event support.
+- 031eace: **Feat:** add LintSchemaPlugin for validating OpenAPI schema objects against JSON Schema Draft 2020-12 meta-schema.
+- 8046e78: Add UseValibotPlugin
+- a566a72: **Feat:** add install-skill command.
+- d2b249f: **Perf:** add duplicate operation id validation.
+- b1e72c8: **Feat:** add init command.
+- c17f598: **Feat:** Add `rendering.entrypoint` option to control index file generation (default: `false`)
+- 35bfcab: **Feat:** add `additionalPropertiesType` option to control how open object schemas render in generated types.
+- 437fc0c: **Feat:** nestjs supported。
+- a86d287: **Feat:** add apis command to list operations and schemas.
+- 7c8d5f0: **Feat:** add list command.
+
+### Patch Changes
+
+- 9ca7672: Empty schema objects caused code generation errors.
+- 0459484: the type exported add type prefix
+- b1e72c8: **Feat:** add FileNamingStyle.kebabCase.
+- 30b0848: rename swagger to openapi
+- 9d481d8: Generation will no longer be skipped when the object schema contains only the `additionalProperties` key.
+- 950d3af: **Fix:** filter out self-referencing dependencies in schema definitions.
+- 0459484: unabled add ignore rule by cli
+- e89cddf: **Fix:** add import alias collision detection to prevent naming conflicts in generated declaration files.
+- 5150d57: The generated type file has an error when no requestBody definition in swagger.
+- 86ac1a8: Fix the comments that do not conform to jsdoc specifications.
+- 2686b8d: build with turbo
+- 0771a4b: Prevent unsafe operationId to be function name.
+- 2686b8d: remove private dependencies
+- d1ce45a: **Fix:** plugin hooks not firing when plugins are imported from ESM entry point.
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 153244f: **Fix:** avoid conflicts between the interface name of operation and the schema name of components
+- 0459484: triggers type coercion when form-data requestBody filed is not string or file
+- 0873c7e: Incorrect build before release.
+- d66c48a: **Fix:** wrap enum union type with parentheses to ensure correct type precedence.
+- 350b88e: **Perf:** using package name as command name.
+- 3e073b9: Ensure plugins are not registered more than once.
+- d1ce45a: **Fix:** wrap all `$ref` with `v.lazy()` to handle circular schema references.
+- 581815a: ensure compatibility
+- 7343445: Incorrect build before release
+- eee8dda: **Fix:** render unresolved or invalid $ref as `unknown /* ... */` instead of generating undefined type names
+- Updated dependencies [cbc5d17]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [214ae66]
+- Updated dependencies [c7ffd1f]
+- Updated dependencies [90311b3]
+- Updated dependencies [1f367c0]
+- Updated dependencies [0c7db81]
+- Updated dependencies [df114d1]
+- Updated dependencies [2686b8d]
+- Updated dependencies [842e555]
+- Updated dependencies [153244f]
+- Updated dependencies [2686b8d]
+- Updated dependencies [9290139]
+- Updated dependencies [7873a0a]
+- Updated dependencies [e7eb9dc]
+- Updated dependencies [7ff2162]
+- Updated dependencies [22ce01a]
+- Updated dependencies [0873c7e]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [f194c41]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [d076b76]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [63161c4]
+- Updated dependencies [d472648]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [581815a]
+- Updated dependencies [7343445]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0-beta.1
+
 ## 5.0.0-alpha.36
 
 ### Minor Changes

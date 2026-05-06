@@ -1,5 +1,88 @@
 # Changelog
 
+## 5.0.0-beta.1
+
+### Major Changes
+
+- 5f5bdd9: **BREAKING CHANGE:** Simplified KeqCacheStrategy interface.
+- 5175097: **BREAKING CHANGE:** group all packages under the @keq-request scope
+
+  - keq-cache => @keq-request/cache
+  - keq-headers => @keq-request/headers
+  - keq-cli => @keq-request/cli
+  - keq-url => @keq-request/url
+  - keq-exception => @keq-request/exception
+
+- 153244f: **BREAKING CHANGE:** `onNetworkResponse` has been removed, please use `.on('cache:update', callback)` instead.
+- 0a04864: **Fix:** fix: update browser targets to chrome91/firefox90/safari15/edge91 to resolve esbuild 0.27 destructuring build errors.
+
+### Minor Changes
+
+- 153244f: **Feat:** Add `onCacheGet`, `onCacheSet`, `onCacheRemove`, `onCacheEvict` and `onCacheExpired` hook for `MemoryStorage` and `IndexedDBStorage`.
+- 54520a9: **Feat:** using `.option('cache', false)` can disable caching for request that are cached by default
+- 153244f: **Feat:** Add `cache:hit`, `cache:miss` and `cache:update` to keq events.
+- 25414cb: add print method to display MemoryStorage entries
+- 89274bd: **Feat:** add a Size enum make it easier to set the size
+- d1090d3: **Feat:** add debug logs and Server-Timing header.
+- 9ab2c64: Convert non-essential cli tasks into plugins.
+
+### Patch Changes
+
+- b8d68c7: **Fix:** IndexedDBStorage cannot evict ttl cache
+- bbfda6b: Fix the error throw when set server-timing header.
+- 20c7067: **Fix:** Failed to automatically clean up expired cache data when get immediately after initialization.
+- 153244f: **Feat:** `pattern` accept boolean and defaults to true
+- 5d2ce07: **Perf:** add blocking for concurrent requests with same cache key.
+- 2686b8d: build with turbo
+- 153244f: **Fix:** unable to cache modified `ctx.res`.
+- 2686b8d: remove private dependencies
+- 9a9caa4: Cannot call CacheEntry.response.json multiple times.
+- e7eb9dc: Don't publish .turbo and jest.config.cts to npm
+- 0873c7e: Incorrect build before release.
+- ff5464b: Prevent other middlewares from inadvertently modifying the cache key.
+- 581815a: ensure compatibility
+- 7343445: Incorrect build before release
+- Updated dependencies [cbc5d17]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [214ae66]
+- Updated dependencies [c7ffd1f]
+- Updated dependencies [90311b3]
+- Updated dependencies [1f367c0]
+- Updated dependencies [0c7db81]
+- Updated dependencies [df114d1]
+- Updated dependencies [2686b8d]
+- Updated dependencies [842e555]
+- Updated dependencies [153244f]
+- Updated dependencies [2686b8d]
+- Updated dependencies [9290139]
+- Updated dependencies [7873a0a]
+- Updated dependencies [e7eb9dc]
+- Updated dependencies [7ff2162]
+- Updated dependencies [22ce01a]
+- Updated dependencies [0873c7e]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [f194c41]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [d076b76]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [63161c4]
+- Updated dependencies [d472648]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [581815a]
+- Updated dependencies [7343445]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0-beta.1
+
 ## 5.0.0-alpha.36
 
 ### Patch Changes
