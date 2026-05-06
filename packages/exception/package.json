@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/exception",
-  "version": "5.0.0-alpha.36",
+  "version": "5.0.0-beta.0",
   "description": "Request exception for keq",
   "keywords": [
     "keq",
