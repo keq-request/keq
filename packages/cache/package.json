@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/cache",
-  "version": "5.0.0-alpha.36",
+  "version": "5.0.0-beta.0",
   "description": "Adds request caching capabilities similar to service workers",
   "keywords": [
     "keq",
