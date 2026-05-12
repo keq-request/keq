@@ -1,3 +1,10 @@
+## 5.0.0-beta.2
+
+### Patch Changes
+
+- 8b48350: **Fix:** operationPathname glob pattern from '\*' to '/\*\*' to correctlymatch multi-segment paths.
+  - keq@5.0.0-beta.2
+
 ## 5.0.0-beta.1
 
 ### Major Changes

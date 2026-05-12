@@ -1,3 +1,5 @@
+## 5.0.0-beta.2
+
 ## 5.0.0-beta.1
 
 ### Major Changes

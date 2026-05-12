@@ -1,5 +1,11 @@
 # @keq-request/nestjs
 
+## 5.0.0-beta.2
+
+### Patch Changes
+
+- keq@5.0.0-beta.2
+
 ## 5.0.0-beta.1
 
 ### Minor Changes
