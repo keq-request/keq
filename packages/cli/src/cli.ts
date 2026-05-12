@@ -19,7 +19,7 @@ function xprodFilterRules(options: { module?: string[]; method?: string; pathnam
   return xprodMerge(
     (options.module || ['*']).map((moduleName) => ({ deny: false, persist: options.persist, moduleName })),
     options.method ? [{ operationMethod: options.method.toLowerCase() }] : [{ operationMethod: '*' }],
-    options.pathname ? [{ operationPathname: options.pathname }] : [{ operationPathname: '*' }],
+    options.pathname ? [{ operationPathname: options.pathname }] : [{ operationPathname: '/**' }],
   ) as unknown as FilterRule[]
 }
 
@@ -53,7 +53,7 @@ program
           persist: false,
           moduleName: '*',
           operationMethod: '*',
-          operationPathname: '*',
+          operationPathname: '/**',
         },
         ...xprodFilterRules({
           module: options.module,
@@ -68,7 +68,7 @@ program
         persist: false,
         moduleName: '*',
         operationMethod: '*',
-        operationPathname: '*',
+        operationPathname: '/**',
       })
     }
 
@@ -134,7 +134,7 @@ program
             deny: true,
             moduleName: '*',
             operationMethod: '*',
-            operationPathname: '*',
+            operationPathname: '/**',
           }],
         },
       })
@@ -156,11 +156,11 @@ program
         },
         filter: {
           rules: [{
-            persist: true,
+            persist: false,
             deny: true,
             moduleName: '*',
             operationMethod: '*',
-            operationPathname: '*',
+            operationPathname: '/**',
           }],
         },
       })
@@ -274,7 +274,7 @@ program
           persist: false,
           moduleName: '*',
           operationMethod: '*',
-          operationPathname: '*',
+          operationPathname: '/**',
         },
         ...xprodFilterRules({
           module: options.module,
