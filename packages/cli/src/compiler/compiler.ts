@@ -43,6 +43,7 @@ export class Compiler {
 
     beforeDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
     download: new AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
+    beforeValidate: new AsyncSeriesHook<[object, ModuleDefinition]>(['spec', 'moduleDefinition']),
     afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
     beforeCompile: new AsyncSeriesHook<[TaskWrapper]>(['task']),

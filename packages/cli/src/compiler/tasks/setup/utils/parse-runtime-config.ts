@@ -4,25 +4,26 @@ import { RawConfig, RuntimeConfig, Plugin, Translator } from '~/types/index.js'
 
 export function parseRuntimeConfig(data: unknown): RuntimeConfig {
   try {
-    // Preserve the original plugins array to avoid losing Plugin instance properties
-    const originalPlugins = typeof data === 'object' && data !== null && 'plugins' in data
-      ? (data as Record<string, unknown>).plugins
+    const record = typeof data === 'object' && data !== null
+      ? data as Record<string, unknown>
       : undefined
 
-    const originTranslators = typeof data === 'object' && data !== null && 'translators' in data
-      ? (data as Record<string, unknown>).translators
-      : undefined
+    const originalPlugins = record && 'plugins' in record ? record.plugins : undefined
+    const originalTranslators = record && 'translators' in record ? record.translators : undefined
+
+    if (record) {
+      delete record.plugins
+      delete record.translators
+    }
 
     const parsed = Value.Parse(RawConfig, data)
 
-    // Restore the original plugins if they existed
     if (originalPlugins !== undefined) {
       parsed.plugins = originalPlugins as Plugin[]
     }
 
-    // Restore the original translators if they existed
-    if (originTranslators !== undefined) {
-      parsed.translators = originTranslators as Translator[]
+    if (originalTranslators !== undefined) {
+      parsed.translators = originalTranslators as Translator[]
     }
 
     return parsed

@@ -1,11 +1,11 @@
 import { ListrTask, PRESET_TIMER } from 'listr2'
-import { validate } from '@scalar/openapi-parser'
 import { ModuleDefinition, ApiDocumentV3_1 } from '~/models/index.js'
 import { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '~/compiler/compiler.js'
 import { CompilerContext } from '~/compiler/index.js'
 import { Exception } from '~/exception.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
+import { validateSpec } from './validate-spec.js'
 
 
 interface DownloadTaskOptions {
@@ -45,15 +45,14 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
 
               const spec = JSON.parse(content)
 
-              const { valid, errors } = await validate(spec)
-              if (!valid) {
-                const message = `${moduleDefinition.name} module openapi/swagger file does not conform to the openapi specifications or have grammatical errors, which may cause unexpected errors: \n${errors?.map((e) => `  - ${e.message}`).join('\n')}`
+              await compiler.hooks.beforeValidate.promise(spec, moduleDefinition)
 
-                if (compiler.options.tolerant) {
-                  task.output = message
-                } else {
-                  throw new Exception(moduleDefinition, message)
-                }
+              const result = await validateSpec(spec, {
+                moduleDefinition,
+                tolerant: !!compiler.options.tolerant,
+              })
+              if (result.warning) {
+                task.output = result.warning
               }
 
               OpenapiUtils.dereferenceOperation(spec)

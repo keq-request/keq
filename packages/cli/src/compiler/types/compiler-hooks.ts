@@ -10,6 +10,7 @@ export interface CompilerHooks {
 
   beforeDownload: AsyncSeriesHook<[TaskWrapper]>
   download: AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], string | undefined> /* Return Json String */
+  beforeValidate: AsyncSeriesHook<[object, ModuleDefinition]>
   afterDownload: AsyncSeriesHook<[TaskWrapper]>
 
   beforeCompile: AsyncSeriesHook<[TaskWrapper]>
