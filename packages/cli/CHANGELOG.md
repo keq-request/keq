@@ -1,3 +1,13 @@
+## 5.0.0-beta.3
+
+### Minor Changes
+
+- 7469cea: **Feat:** add `mock` command to start a mock server based on OpenAPI specifications
+
+### Patch Changes
+
+- keq@5.0.0-beta.3
+
 ## 5.0.0-beta.2
 
 ### Patch Changes
