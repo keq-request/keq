@@ -480,4 +480,21 @@ GET     petStore:/pets/details  # always generate details
       await fs.remove(tmpFile)
     }
   })
+
+  it('repeated read-write does not accumulate blank lines between sections', async () => {
+    const input = `[deny]\nGET     petStore:/pets\n\n[allow]\nGET     petStore:/pets/details\n`
+    const tmpFile = path.join(os.tmpdir(), `keqfilter-sections-${Date.now()}.keqfilter`)
+    try {
+      for (let i = 0; i < 5; i++) {
+        const src = i === 0 ? input : await fs.readFile(tmpFile, 'utf-8')
+        const matcher = Matcher.parse(src)
+        await matcher.write(tmpFile)
+      }
+      const final = await fs.readFile(tmpFile, 'utf-8')
+      expect(final).toMatch(/\/pets\n\n\[allow\]/)
+      expect(final).not.toMatch(/\/pets\n\n\n/)
+    } finally {
+      await fs.remove(tmpFile)
+    }
+  })
 })

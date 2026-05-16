@@ -137,6 +137,10 @@ export class Matcher {
           preambleComments = [...pendingComments]
           pendingComments.length = 0
           firstSectionSeen = true
+        } else {
+          while (pendingComments.length > 0 && pendingComments[0].trim() === '') {
+            pendingComments.shift()
+          }
         }
         currentDeny = true
         continue
@@ -146,6 +150,10 @@ export class Matcher {
           preambleComments = [...pendingComments]
           pendingComments.length = 0
           firstSectionSeen = true
+        } else {
+          while (pendingComments.length > 0 && pendingComments[0].trim() === '') {
+            pendingComments.shift()
+          }
         }
         currentDeny = false
         continue
