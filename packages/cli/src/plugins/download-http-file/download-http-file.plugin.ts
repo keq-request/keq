@@ -28,7 +28,11 @@ export class DownloadHttpFilePlugin implements Plugin {
 
     try {
       const res = await fetch(url, { headers })
-      if (res.status >= 400) throw new Error(`failed with status code ${res.status}`)
+      if (res.status >= 400) {
+        const body = await res.text().catch(() => '')
+        const detail = body ? `\n  Response Body: ${body}` : ''
+        throw new Error(`failed with status code ${res.status}${detail}`)
+      }
 
       return await res.text()
     } catch (e) {
