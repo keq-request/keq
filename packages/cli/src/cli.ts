@@ -267,8 +267,13 @@ program
       .choices(['compact', 'json']),
   )
   .option('--json', 'Output in JSON format (shortcut for --format json)')
+  .option('--all', 'Ignore .keqfilter rules and show all modules/operations')
   .option('--debug', 'Print debug information')
   .action(async (options) => {
+    if (options.all && (options.module || options.method || options.pathname)) {
+      throw new Error("'--all' cannot be used with '--module', '--method', or '--pathname'")
+    }
+
     const filterRules: FilterRule[] = []
 
     if (options.module || options.method || options.pathname) {
@@ -297,9 +302,11 @@ program
       config: options.config,
       debug: !!options.debug,
       tolerant: !!options.tolerant,
-      filter: filterRules.length > 0
-        ? { rules: filterRules }
-        : undefined,
+      filter: options.all
+        ? false
+        : filterRules.length > 0
+          ? { rules: filterRules }
+          : undefined,
     })
 
     await compiler.run()

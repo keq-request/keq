@@ -61,7 +61,8 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
       // Setup Matcher
 
       let matcher: Matcher = new Matcher([])
-      if (result.filepath) {
+      // filter === false means skip .keqfilter file loading entirely (e.g. --all flag)
+      if (options.filter !== false && result.filepath) {
         const filterFilepath = path.resolve(path.dirname(result.filepath), '.keqfilter')
         if (await fs.exists(filterFilepath)) {
           matcher = await Matcher.read(filterFilepath)
