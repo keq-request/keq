@@ -9,6 +9,8 @@ import { registerApisCommand } from './commands/apis.js'
 import { registerMockCommand } from './commands/mock.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerInstallSkillCommand } from './commands/install-skill.js'
+import { registerSearchCommand } from './commands/search.js'
+import { registerMcpCommand } from './commands/mcp.js'
 
 
 if (semver.lt(process.version, '20.0.0')) {
@@ -24,6 +26,8 @@ registerApisCommand(program)
 registerMockCommand(program)
 registerInitCommand(program)
 registerInstallSkillCommand(program)
+registerSearchCommand(program)
+registerMcpCommand(program)
 
 async function main(): Promise<void> {
   program.on('command:*', function (operands) {
