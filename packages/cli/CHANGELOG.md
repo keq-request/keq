@@ -1,3 +1,17 @@
+## 5.0.0-beta.4
+
+### Minor Changes
+
+- b57933b: **Feat:** support mcp.
+- b57933b: **Feat:** add search command.
+- f910641: **Feat:** keq apis add format option.
+
+### Patch Changes
+
+- 05ada9d: **Fix:** prevent blank lines from accumulating between sections in .keqfilter.
+- f910641: **Perf:** keq apis print summary and description.
+  - keq@5.0.0-beta.4
+
 ## 5.0.0-beta.3
 
 ### Minor Changes
