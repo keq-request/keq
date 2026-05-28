@@ -9,7 +9,16 @@ import { Compiler } from '../compiler/compiler.js'
 import { findInvalidFiles } from '../utils/scan-generated-files.js'
 import { xprodFilterRules } from './utils/xprod-filter-rules.js'
 import { CompilerProvider } from '../mcp/compiler-provider.js'
+import type { Matcher } from '../utils/matcher.js'
 import type { FilterRule } from '../utils/matcher.js'
+import type { OperationDefinition } from '../models/index.js'
+
+function getFilterAnnotation(matcher: Matcher, op: OperationDefinition | undefined): string {
+  if (op && matcher.isOperationDenied(op)) {
+    return 'This API is excluded from the code generation list by .keqfilter rules'
+  }
+  return 'This API is included in the code generation list'
+}
 
 export function registerMcpCommand(program: Command): void {
   program
@@ -28,28 +37,44 @@ export function registerMcpCommand(program: Command): void {
       const server = new McpServer({
         name: 'keq',
         version: '1.0.0',
-        description: 'keq 是一个 HTTP Client 库，keq CLI 基于 Swagger/OpenAPI 规范为 keq 自动生成类型安全的请求函数。功能：API 语义搜索、接口详情查询、代码生成、过滤规则管理、生成文件管理。',
+        description: '查询和搜索项目中对接的所有后端服务 API 接口。当用户想了解后端有哪些接口、查找某个功能的 API、查看接口的请求参数和响应格式时使用。支持自然语言语义搜索（中英文）。也可为接口生成 TypeScript 客户端代码。数据来源：项目配置的 Swagger/OpenAPI 规范文档。',
       })
 
       server.registerTool(
         'search_apis',
         {
-          description: '通过自然语言语义搜索项目中的 API 接口，支持中英文跨语言匹配。当你需要找到某个功能对应的 API 时使用。',
+          description: '搜索项目中的后端 API 接口。当用户询问某个系统或服务有哪些接口、查找某个功能对应的 API、或想了解后端提供了哪些能力时使用。支持中英文自然语言语义匹配，返回最相关的接口列表（含方法、路径、描述）。',
           inputSchema: {
-            query: z.string().describe('Natural language search query'),
+            query: z.string().describe('自然语言搜索词，如"用户登录"、"搜索商品"、"订单列表"等'),
             module: z.array(z.string()).optional()
-              .describe('Filter by module names'),
+              .describe('按模块名筛选，限定在特定后端服务中搜索'),
             limit: z.number().optional()
               .default(10)
-              .describe('Maximum number of results'),
+              .describe('返回结果数量上限'),
           },
           annotations: { readOnlyHint: true, destructiveHint: false },
         },
         async ({ query, module, limit }) => {
           try {
             const engine = await provider.getEngine()
+            const matcher = await provider.getMatcher()
+            const documents = await provider.getDocuments()
             const results = await engine.search(query, { limit, module })
-            return { content: [{ type: 'text', text: JSON.stringify(results, null, 2) }] }
+
+            const annotated = results.map((result) => {
+              const { score, ...rest } = result
+              const doc = documents.find((d) => d.module.name === result.module)
+              const op = doc?.operations.find(
+                (o) => o.method.toLowerCase() === result.method.toLowerCase() && o.pathname === result.pathname,
+              )
+              return {
+                ...rest,
+                'x-keq-score': score,
+                'x-keq-filter': getFilterAnnotation(matcher, op),
+              }
+            })
+
+            return { content: [{ type: 'text', text: JSON.stringify(annotated, null, 2) }] }
           } catch (error) {
             return { content: [{ type: 'text', text: `Error: ${error instanceof Error ? error.message : String(error)}` }], isError: true }
           }
@@ -59,7 +84,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'get_api_detail',
         {
-          description: '获取指定接口的完整定义，包含请求参数、请求体和响应体的 JSON Schema。当你需要了解如何调用某个接口时使用。',
+          description: '获取某个 API 接口的完整详情，包含请求参数、请求体、响应体的结构定义。当用户想知道某个接口怎么调用、需要传什么参数、返回什么数据时使用。需要先通过 search_apis 或 list_apis 获取接口的 module、method、pathname。',
           inputSchema: {
             module: z.string().describe('Module name'),
             method: z.string().describe('HTTP method (GET, POST, PUT, DELETE, etc.)'),
@@ -70,11 +95,19 @@ export function registerMcpCommand(program: Command): void {
         async ({ module, method, pathname }) => {
           try {
             const engine = await provider.getEngine()
+            const matcher = await provider.getMatcher()
+            const documents = await provider.getDocuments()
             const detail = engine.getDetail(module, method, pathname)
             if (!detail) {
               return { content: [{ type: 'text', text: 'API not found' }], isError: true }
             }
-            return { content: [{ type: 'text', text: JSON.stringify(detail, null, 2) }] }
+
+            const doc = documents.find((d) => d.module.name === module)
+            const op = doc?.operations.find(
+              (o) => o.method.toLowerCase() === method.toLowerCase() && o.pathname === pathname,
+            )
+
+            return { content: [{ type: 'text', text: JSON.stringify({ ...detail, 'x-keq-filter': getFilterAnnotation(matcher, op) }, null, 2) }] }
           } catch (error) {
             return { content: [{ type: 'text', text: `Error: ${error instanceof Error ? error.message : String(error)}` }], isError: true }
           }
@@ -84,7 +117,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'list_modules',
         {
-          description: '列出 .keqrc 中配置的所有 API 模块（Swagger/OpenAPI 规范来源）。当你需要了解项目接入了哪些服务时使用。',
+          description: '列出项目对接的所有后端服务模块。当用户想知道项目接入了哪些后端系统、有哪些服务可用时使用。每个模块对应一个后端服务的 API 文档。',
           inputSchema: {},
           annotations: { readOnlyHint: true, destructiveHint: false },
         },
@@ -102,7 +135,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'list_apis',
         {
-          description: '列出项目中所有 API 接口的结构化信息，包含模块、方法、路径、operationId 和摘要。当你需要浏览所有可用接口时使用。',
+          description: '列出项目中所有可用的后端 API 接口。当用户想浏览某个服务的全部接口、按条件筛选接口（如只看 GET 请求或某个路径下的接口）时使用。返回接口的方法、路径、名称和摘要。',
           inputSchema: {
             module: z.array(z.string()).optional()
               .describe('Filter by module names'),
@@ -119,12 +152,13 @@ export function registerMcpCommand(program: Command): void {
         async ({ module, method, pathname, includes }) => {
           try {
             const documents = await provider.getDocuments()
+            const matcher = await provider.getMatcher()
             const result = documents
               .filter((doc) => !module || module.includes(doc.module.name))
               .map((document) => {
                 const item: {
                   module: string
-                  operations?: Array<{ method: string; path: string; operationId: string; summary: string; description: string }>
+                  operations?: Array<{ method: string; path: string; operationId: string; summary: string; description: string; 'x-keq-filter': string }>
                   components?: { schemas: Array<{ name: string; description: string }> }
                 } = { module: document.module.name }
 
@@ -143,6 +177,7 @@ export function registerMcpCommand(program: Command): void {
                     operationId: op.operationId,
                     summary: op.operation.summary || '',
                     description: op.operation.description || '',
+                    'x-keq-filter': getFilterAnnotation(matcher, op),
                   }))
                 }
 
@@ -168,7 +203,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'build_apis',
         {
-          description: '为指定的 API 接口生成类型安全的 TypeScript 客户端代码。可按模块、方法、路径范围生成。生成后文件会写入 .keqrc 配置的输出目录。',
+          description: '为后端 API 接口生成类型安全的 TypeScript 请求函数代码。当用户想生成某个接口的调用代码、需要类型安全的 HTTP 客户端时使用。可按模块、方法、路径范围筛选要生成的接口。生成的文件写入项目配置的输出目录。',
           inputSchema: {
             module: z.array(z.string()).optional()
               .describe('Module(s) to generate code for'),
@@ -233,7 +268,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'list_generated_files',
         {
-          description: '列出已生成的 TypeScript 客户端文件。可选择只列出无效/过期文件（不在当前构建产物中的文件）。',
+          description: '列出已生成的 API 客户端代码文件。当用户想查看哪些接口已经生成了代码、或想找出过期/无效的生成文件时使用。',
           inputSchema: {
             invalid: z.boolean().optional()
               .default(false)
@@ -268,7 +303,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'get_filter_rules',
         {
-          description: '查看当前 .keqfilter 文件中的过滤规则。过滤规则控制哪些 API 会被生成代码。',
+          description: '查看当前的接口过滤规则。过滤规则决定哪些 API 接口会被纳入代码生成范围。当用户想了解哪些接口被排除或包含在生成列表中时使用。',
           inputSchema: {},
           annotations: { readOnlyHint: true, destructiveHint: false },
         },
@@ -289,7 +324,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'add_filter_rule',
         {
-          description: '向 .keqfilter 添加过滤规则。deny 规则排除 API 不生成代码，allow 规则允许生成。',
+          description: '添加接口过滤规则，控制哪些 API 需要生成代码。当用户想排除某些不需要的接口、或只保留特定接口时使用。deny 模式排除接口，allow 模式包含接口。',
           inputSchema: {
             mode: z.enum(['deny', 'allow']).describe('Rule mode: deny excludes APIs, allow includes them'),
             module: z.string().optional()
@@ -341,7 +376,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'remove_filter_rule',
         {
-          description: '从 .keqfilter 中移除指定的过滤规则。',
+          description: '移除已有的接口过滤规则。当用户想恢复之前被排除的接口、或调整过滤策略时使用。',
           inputSchema: {
             mode: z.enum(['deny', 'allow']).describe('Which section the rule is in'),
             module: z.string().describe('Exact module name pattern to match'),

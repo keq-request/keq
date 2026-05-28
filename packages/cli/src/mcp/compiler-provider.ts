@@ -1,8 +1,10 @@
 import path from 'path'
+import fs from 'fs-extra'
 import { cosmiconfig } from 'cosmiconfig'
 import { Compiler } from '~/compiler/compiler.js'
 import { SearchEngine } from '~/search/search-engine.js'
 import { FileTracker } from '~/models/file-tracker.js'
+import { Matcher } from '~/utils/matcher.js'
 import type { ApiDocumentV3_1 } from '~/models/api-document_v3_1.js'
 import type { CompilerContext } from '~/compiler/types/compiler-context.js'
 
@@ -22,6 +24,8 @@ export class CompilerProvider {
   private _engine = new SearchEngine()
   private _documents: ApiDocumentV3_1[] = []
   private _context: CompilerContext = {}
+  private _matcher: Matcher = new Matcher([])
+  private _keqfilterPath = ''
   private _loaded = false
   private _loadPromise: Promise<void> | null = null
   private options: CompilerProviderOptions
@@ -45,6 +49,7 @@ export class CompilerProvider {
     const configFilepath = result.filepath
     const keqfilterPath = path.resolve(path.dirname(configFilepath), '.keqfilter')
 
+    provider._keqfilterPath = keqfilterPath
     await provider.tracker.track(configFilepath)
     await provider.tracker.track(keqfilterPath)
 
@@ -64,6 +69,11 @@ export class CompilerProvider {
   async getContext(): Promise<CompilerContext> {
     await this.ensureLoaded()
     return this._context
+  }
+
+  async getMatcher(): Promise<Matcher> {
+    await this.ensureLoaded()
+    return this._matcher
   }
 
   async invalidate(): Promise<void> {
@@ -94,11 +104,19 @@ export class CompilerProvider {
       config,
       debug,
       tolerant,
+      filter: false,
     })
     await compiler.run()
     this._context = compiler.context
     this._documents = compiler.context.documents || []
     await this._engine.buildIndex(this._documents)
+
+    if (await fs.exists(this._keqfilterPath)) {
+      this._matcher = await Matcher.read(this._keqfilterPath)
+    } else {
+      this._matcher = new Matcher([])
+    }
+
     await this.tracker.snapshot()
     this._loaded = true
   }
