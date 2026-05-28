@@ -3,6 +3,7 @@ export { defineConfig } from './define-config.js'
 export type {
   RawConfig as Config,
   Plugin,
+  Address,
 } from './types/index.js'
 
 export {
