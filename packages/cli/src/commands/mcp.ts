@@ -430,5 +430,7 @@ export function registerMcpCommand(program: Command): void {
 
       const transport = new StdioServerTransport()
       await server.connect(transport)
+
+      provider.getEngine().catch(() => {})
     })
 }

@@ -22,6 +22,8 @@ export class CompilerProvider {
   private _engine = new SearchEngine()
   private _documents: ApiDocumentV3_1[] = []
   private _context: CompilerContext = {}
+  private _loaded = false
+  private _loadPromise: Promise<void> | null = null
   private options: CompilerProviderOptions
 
   private constructor(options: CompilerProviderOptions) {
@@ -46,28 +48,41 @@ export class CompilerProvider {
     await provider.tracker.track(configFilepath)
     await provider.tracker.track(keqfilterPath)
 
-    await provider.reload()
-
     return provider
   }
 
   async getDocuments(): Promise<ApiDocumentV3_1[]> {
-    await this.tracker.ensureFresh(() => this.reload())
+    await this.ensureLoaded()
     return this._documents
   }
 
   async getEngine(): Promise<SearchEngine> {
-    await this.tracker.ensureFresh(() => this.reload())
+    await this.ensureLoaded()
     return this._engine
   }
 
   async getContext(): Promise<CompilerContext> {
-    await this.tracker.ensureFresh(() => this.reload())
+    await this.ensureLoaded()
     return this._context
   }
 
   async invalidate(): Promise<void> {
     await this.tracker.forceReload(() => this.reload())
+  }
+
+  private async ensureLoaded(): Promise<void> {
+    if (this._loaded) {
+      await this.tracker.ensureFresh(() => this.reload())
+      return
+    }
+    if (this._loadPromise) {
+      await this._loadPromise
+      return
+    }
+    this._loadPromise = this.reload().finally(() => {
+      this._loadPromise = null
+    })
+    await this._loadPromise
   }
 
   private async reload(): Promise<void> {
@@ -85,5 +100,6 @@ export class CompilerProvider {
     this._documents = compiler.context.documents || []
     await this._engine.buildIndex(this._documents)
     await this.tracker.snapshot()
+    this._loaded = true
   }
 }
