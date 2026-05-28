@@ -43,7 +43,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'search_apis',
         {
-          description: '搜索项目中的后端 API 接口。当用户询问某个系统或服务有哪些接口、查找某个功能对应的 API、或想了解后端提供了哪些能力时使用。支持中英文自然语言语义匹配，返回最相关的接口列表（含方法、路径、描述）。',
+          description: '通过语义匹配搜索项目中的后端 API 接口。仅当用户描述了具体功能或业务场景（如"用户登录"、"搜索商品"）来查找相关接口时使用。如果用户想查看所有接口或按模块/路径浏览接口列表，应使用 list_apis 而非此工具。支持中英文自然语言，返回按相关度排序的接口列表。',
           inputSchema: {
             query: z.string().describe('自然语言搜索词，如"用户登录"、"搜索商品"、"订单列表"等'),
             module: z.array(z.string()).optional()
@@ -135,7 +135,7 @@ export function registerMcpCommand(program: Command): void {
       server.registerTool(
         'list_apis',
         {
-          description: '列出项目中所有可用的后端 API 接口。当用户想浏览某个服务的全部接口、按条件筛选接口（如只看 GET 请求或某个路径下的接口）时使用。返回接口的方法、路径、名称和摘要。',
+          description: '列出项目中所有可用的后端 API 接口。当用户想查看所有接口、浏览某个服务的全部接口、查询某个系统有哪些接口、或按条件筛选接口（如只看 GET 请求或某个路径下的接口）时使用。如果用户描述了具体功能来查找接口（如"搜索商品的接口"），应使用 search_apis。',
           inputSchema: {
             module: z.array(z.string()).optional()
               .describe('Filter by module names'),
