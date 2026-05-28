@@ -1,3 +1,10 @@
+## 5.0.0-beta.5
+
+### Patch Changes
+
+- ed5c5d8: Unabled start mcp server in 30s.
+  - keq@5.0.0-beta.5
+
 ## 5.0.0-beta.4
 
 ### Minor Changes
