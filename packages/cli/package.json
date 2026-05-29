@@ -81,7 +81,6 @@
     "keq": "workspace:*"
   },
   "dependencies": {
-    "@huggingface/transformers": "^4.2.0",
     "@inquirer/prompts": "^7.10.1",
     "@listr2/prompt-adapter-inquirer": "^3.0.5",
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -120,6 +119,7 @@
     "keq": "workspace:*"
   },
   "optionalDependencies": {
+    "@huggingface/transformers": "^4.2.0",
     "eslint": "^10.2.1"
   }
 }

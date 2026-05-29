@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import { cosmiconfig } from 'cosmiconfig'
 import { Compiler } from '~/compiler/compiler.js'
 import { SearchEngine } from '~/search/search-engine.js'
+import { EmbedderUnavailableError } from '~/search/embedder.js'
 import { FileTracker } from '~/models/file-tracker.js'
 import { Matcher } from '~/utils/matcher.js'
 import type { ApiDocumentV3_1 } from '~/models/api-document_v3_1.js'
@@ -22,6 +23,7 @@ interface CompilerProviderOptions {
 export class CompilerProvider {
   private tracker = new FileTracker()
   private _engine = new SearchEngine()
+  private _engineAvailable = false
   private _documents: ApiDocumentV3_1[] = []
   private _context: CompilerContext = {}
   private _matcher: Matcher = new Matcher([])
@@ -63,6 +65,9 @@ export class CompilerProvider {
 
   async getEngine(): Promise<SearchEngine> {
     await this.ensureLoaded()
+    if (!this._engineAvailable) {
+      throw new EmbedderUnavailableError()
+    }
     return this._engine
   }
 
@@ -109,7 +114,17 @@ export class CompilerProvider {
     await compiler.run()
     this._context = compiler.context
     this._documents = compiler.context.documents || []
-    await this._engine.buildIndex(this._documents)
+
+    try {
+      await this._engine.buildIndex(this._documents)
+      this._engineAvailable = true
+    } catch (e) {
+      if (e instanceof EmbedderUnavailableError) {
+        this._engineAvailable = false
+      } else {
+        throw e
+      }
+    }
 
     if (await fs.exists(this._keqfilterPath)) {
       this._matcher = await Matcher.read(this._keqfilterPath)

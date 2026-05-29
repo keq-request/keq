@@ -1,6 +1,7 @@
 import { Command, Option } from 'commander'
 import { Compiler } from '../compiler/compiler.js'
 import { SearchEngine } from '../search/search-engine.js'
+import { EmbedderUnavailableError } from '../search/embedder.js'
 import type { FilterRule } from '../utils/matcher.js'
 import { xprodFilterRules } from './utils/xprod-filter-rules.js'
 
@@ -58,7 +59,16 @@ export function registerSearchCommand(program: Command): void {
 
       const documents = compiler.context.documents || []
       const engine = new SearchEngine()
-      await engine.buildIndex(documents)
+
+      try {
+        await engine.buildIndex(documents)
+      } catch (e) {
+        if (e instanceof EmbedderUnavailableError) {
+          console.error(e.message)
+          process.exit(1)
+        }
+        throw e
+      }
 
       const limit = parseInt(options.limit, 10)
       const results = await engine.search(query, { limit, module: options.module })
