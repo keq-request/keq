@@ -1,3 +1,11 @@
+## 5.0.0-beta.6
+
+### Patch Changes
+
+- c96312e: perfect mcp description.
+- 33337ae: Move @huggingface/transformers to optionalDependencies
+  - keq@5.0.0-beta.6
+
 ## 5.0.0-beta.5
 
 ### Patch Changes
