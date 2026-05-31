@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.0.0-beta.7
+
+### Patch Changes
+
+- keq@5.0.0-beta.7
+
 ## 5.0.0-beta.6
 
 ### Patch Changes

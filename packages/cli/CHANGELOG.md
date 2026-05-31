@@ -1,3 +1,13 @@
+## 5.0.0-beta.7
+
+### Minor Changes
+
+- 9709a28: **Perf:** mcp server support monorepo.
+
+### Patch Changes
+
+- keq@5.0.0-beta.7
+
 ## 5.0.0-beta.6
 
 ### Patch Changes
