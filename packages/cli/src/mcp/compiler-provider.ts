@@ -28,12 +28,17 @@ export class CompilerProvider {
   private _context: CompilerContext = {}
   private _matcher: Matcher = new Matcher([])
   private _keqfilterPath = ''
+  private _configPath = ''
   private _loaded = false
   private _loadPromise: Promise<void> | null = null
   private options: CompilerProviderOptions
 
   private constructor(options: CompilerProviderOptions) {
     this.options = options
+  }
+
+  get configPath(): string {
+    return this._configPath
   }
 
   static async init(options: CompilerProviderOptions): Promise<CompilerProvider> {
@@ -52,6 +57,7 @@ export class CompilerProvider {
     const keqfilterPath = path.resolve(path.dirname(configFilepath), '.keqfilter')
 
     provider._keqfilterPath = keqfilterPath
+    provider._configPath = configFilepath
     await provider.tracker.track(configFilepath)
     await provider.tracker.track(keqfilterPath)
 
