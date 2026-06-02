@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.0.0-beta.8
+
+### Minor Changes
+
+- a183653: **Feat:** add clarifyFetchFailed middleware.
+
+### Patch Changes
+
+- keq@5.0.0-beta.8
+
 ## 5.0.0-beta.7
 
 ### Patch Changes
