@@ -11,12 +11,13 @@ export function parseRuntimeConfig(data: unknown): RuntimeConfig {
     const originalPlugins = record && 'plugins' in record ? record.plugins : undefined
     const originalTranslators = record && 'translators' in record ? record.translators : undefined
 
+    const sanitized = record ? { ...record } : data
     if (record) {
-      delete record.plugins
-      delete record.translators
+      delete (sanitized as Record<string, unknown>).plugins
+      delete (sanitized as Record<string, unknown>).translators
     }
 
-    const parsed = Value.Parse(RawConfig, data)
+    const parsed = Value.Parse(RawConfig, sanitized)
 
     if (originalPlugins !== undefined) {
       parsed.plugins = originalPlugins as Plugin[]
