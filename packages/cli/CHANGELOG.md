@@ -1,3 +1,10 @@
+## 5.0.0-beta.9
+
+### Patch Changes
+
+- 5ca0169: **Fix:** plugin not working in mcp.
+  - keq@5.0.0-beta.9
+
 ## 5.0.0-beta.8
 
 ### Patch Changes
