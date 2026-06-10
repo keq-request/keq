@@ -27,9 +27,6 @@ test('add middleware to request on specified host', async () => {
   const m7 = jest.fn<KeqMiddleware>(async (ctx, next) => {
     await next()
   })
-  const m8 = jest.fn<KeqMiddleware>(async (ctx, next) => {
-    await next()
-  })
 
   request
     .use(m1)
@@ -39,13 +36,12 @@ test('add middleware to request on specified host', async () => {
     .host('test.com', m3)
     .method('get', m4)
     .location(m5)
-    .module('m', m6)
-    .pathname('/api', m7)
+    .pathname('/api', m6)
 
 
   await request
     .get('http://test.com/api')
-    .use(m8)
+    .use(m7)
 
   await request
     .post('http://other.com/api')
@@ -55,7 +51,6 @@ test('add middleware to request on specified host', async () => {
   expect(m3).toHaveBeenCalledTimes(1)
   expect(m4).toHaveBeenCalledTimes(1)
   expect(m5).toHaveBeenCalledTimes(0)
-  expect(m6).toHaveBeenCalledTimes(0)
-  expect(m7).toHaveBeenCalledTimes(2)
-  expect(m8).toHaveBeenCalledTimes(1)
+  expect(m6).toHaveBeenCalledTimes(2)
+  expect(m7).toHaveBeenCalledTimes(1)
 })

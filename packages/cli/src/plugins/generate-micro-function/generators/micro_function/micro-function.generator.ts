@@ -85,7 +85,7 @@ export class MicroFunctionGenerator implements Generator {
         getRequestFilepath(): string {
           const relativePath = path.relative(
             dirpath,
-            RequestGenerator.getRequestArtifactFilepath(),
+            RequestGenerator.getRequestArtifactFilepath(operationDefinition.module.name, rc.rendering.fileNamingStyle),
           )
 
           return relativePath.startsWith('.') ? relativePath : `./${relativePath}`

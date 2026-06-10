@@ -2,7 +2,6 @@ import { TypeException } from '~/exception/type.exception.js'
 import { keqHostRoute } from './keq-host-route.js'
 import { keqLocationRoute } from './keq-location-route.js'
 import { keqMethodRoute } from './keq-method-route.js'
-import { keqModuleRoute } from './keq-module-route.js'
 import { keqPathnameRoute } from './keq-pathname-route.js'
 import { composeMiddleware, getMiddlewareName } from '~/middleware/index.js'
 
@@ -75,15 +74,6 @@ export class KeqRouter {
     return this
   }
 
-  module(moduleName: string, middleware: KeqMiddleware[]): this
-  module(moduleName: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): this
-  module(moduleName: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): this {
-    // @ts-ignore
-    const mid = KeqRouter.module(moduleName, middleware, ...additionalMiddlewares)
-    this.middlewares.push(mid)
-    return this
-  }
-
   static route(route: KeqRoute, middleware: KeqMiddleware[]): KeqMiddleware
   static route(route: KeqRoute, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
   static route(route: KeqRoute, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
@@ -131,12 +121,4 @@ export class KeqRouter {
     return mid
   }
 
-  static module(moduleName: string, middleware: KeqMiddleware[]): KeqMiddleware
-  static module(moduleName: string, middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware
-  static module(moduleName: string, middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddleware {
-    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
-    const mid = KeqRouter.buildMiddleware(keqModuleRoute(moduleName), list)
-    mid.__keqMiddlewareName__ = `module(${JSON.stringify(moduleName)}, ${list.map(getMiddlewareName).join(', ')})`
-    return mid
-  }
 }

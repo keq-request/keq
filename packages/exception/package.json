@@ -26,11 +26,6 @@
       "types": "./dist/index.d.ts",
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
-    },
-    "./plugins": {
-      "types": "./dist/plugins/index.d.ts",
-      "require": "./dist/plugins/index.js",
-      "import": "./dist/plugins/index.mjs"
     }
   },
   "scripts": {
@@ -43,15 +38,10 @@
     "type-fest": "^5.6.0"
   },
   "devDependencies": {
-    "@keq-request/cli": "workspace:*",
-    "@scalar/openapi-types": "^0.8.0",
     "@types/node": "^20.19.39",
     "keq": "workspace:*"
   },
   "peerDependencies": {
     "keq": "^5.0.0-beta.9"
-  },
-  "optionalDependencies": {
-    "@keq-request/cli": "workspace:*"
   }
 }

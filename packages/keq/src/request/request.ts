@@ -12,14 +12,13 @@ import { keqFetchMiddleware, keqFlowControlMiddleware, keqTimeoutMiddleware } fr
 
 
 export interface KeqRequestOptions {
-  preMiddlewares?: KeqMiddleware[]
+  middlewares?: KeqMiddleware[]
+  terminalMiddlewares?: KeqMiddleware[]
+  baseOrigin?: string
+  qs?: KeqQueryOptions
+}
 
-  /**
-   * Append middlewares to the end of the middleware chain.
-   * Using this option indiscriminately is discouraged.
-   */
-  postMiddlewares?: KeqMiddleware[]
-
+export interface KeqRequestForkOptions {
   baseOrigin?: string
   qs?: KeqQueryOptions
 }
@@ -42,8 +41,9 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
    */
   readonly global: KeqGlobal = {}
 
-  readonly preMiddlewares: KeqMiddleware[] = []
-  readonly postMiddlewares: KeqMiddleware[] = []
+  readonly middlewares: KeqMiddleware[] = []
+  private readonly __terminalMiddlewares__: KeqMiddleware[] = []
+  private __parent__?: KeqRequest
 
   constructor(options?: KeqRequestOptions) {
     if (options?.baseOrigin) {
@@ -54,12 +54,12 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
 
     this.qs = options?.qs
 
-    this.postMiddlewares = options?.postMiddlewares || [
+    this.__terminalMiddlewares__ = options?.terminalMiddlewares || [
       keqFlowControlMiddleware(),
       keqTimeoutMiddleware(),
       keqFetchMiddleware(),
     ]
-    this.preMiddlewares = options?.preMiddlewares || []
+    this.middlewares = options?.middlewares || []
   }
 
   private __formatUrl__(url: string | URL): URL {
@@ -68,6 +68,13 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
     }
 
     return new URL(url.href)
+  }
+
+  private resolveMiddlewares(): KeqMiddleware[] {
+    if (!this.__parent__) {
+      return this.middlewares
+    }
+    return [...this.__parent__.resolveMiddlewares(), ...this.middlewares]
   }
 
   private __fetch__(
@@ -82,8 +89,8 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
         global: this.global,
         qs: this.qs,
         middlewares: [
-          ...this.preMiddlewares,
-          ...this.postMiddlewares,
+          ...this.resolveMiddlewares(),
+          ...this.__terminalMiddlewares__,
         ],
       })
 
@@ -178,12 +185,36 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
   }
 
   use(firstMiddleware: KeqMiddleware, ...middleware: KeqMiddleware[]): this {
-    this.preMiddlewares.push(firstMiddleware, ...middleware)
+    this.middlewares.push(firstMiddleware, ...middleware)
     return this
   }
 
   useRouter(): KeqRouter {
-    return new KeqRouter(this.preMiddlewares)
+    return new KeqRouter(this.middlewares)
+  }
+
+  fork(options?: KeqRequestForkOptions): KeqRequest {
+    const child = new KeqRequest({
+      baseOrigin: options?.baseOrigin ?? this.baseOrigin,
+      qs: options?.qs ?? (this.qs ? { ...this.qs } : undefined),
+    })
+    child.__parent__ = this
+    return child
+  }
+
+  inherit(parent: KeqRequest): this {
+    this.__parent__ = parent
+    return this
+  }
+
+  adopt(child: KeqRequest): this {
+    child.__parent__ = this
+    return this
+  }
+
+  /** @deprecated Use `middlewares` instead */
+  get preMiddlewares(): KeqMiddleware[] {
+    return this.middlewares
   }
 
   on<K extends keyof KeqEvents>(event: K, listener: (data: KeqEvents[K]) => void): this {

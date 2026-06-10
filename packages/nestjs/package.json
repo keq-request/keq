@@ -39,13 +39,19 @@
     "test": "jest",
     "test:update": "jest -u"
   },
+  "dependencies": {
+    "picomatch": "^4.0.0"
+  },
   "devDependencies": {
     "@nestjs/common": "^11.1.19",
+    "@nestjs/core": "^11.1.19",
     "@types/node": "^20.19.39",
+    "@types/picomatch": "^4.0.0",
     "keq": "workspace:*"
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
     "keq": "^5.0.0-beta.9"
   },
   "engines": {

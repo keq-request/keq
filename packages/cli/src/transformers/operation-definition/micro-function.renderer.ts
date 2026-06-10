@@ -39,8 +39,6 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
     const $dependencies = this.renderDependencies()
     const $comment = new CommentRenderer(this.operationDefinition).render()
 
-    const moduleName = this.operationDefinition.module.name
-
     const $method = method.toLowerCase()
     const $queryParameters = this.helper.renderRequestQuery()
     const $headerParameters = this.helper.renderRequestHeaders()
@@ -57,14 +55,12 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
       '',
       $dependencies,
       '',
-      `const moduleName = "${moduleName}"`,
       `const method = "${method}"`,
       `const pathname = "${pathname}"`,
       '',
       $comment || undefined,
       `export ${$operationDeclaration} {`,
       `  const req = request.${$method}<${this.typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
-      '    .option(\'module\', { name: moduleName, pathname, method })',
       '',
       $mediaType ? indent(2, $mediaType) : undefined,
       '  /* @anchor:query:start */',

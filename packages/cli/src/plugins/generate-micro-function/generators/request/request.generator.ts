@@ -1,12 +1,14 @@
+import * as changeCase from 'change-case'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { Artifact } from '~/models/index.js'
 import { Generator } from '~/types/index.js'
+import { FileNamingStyle } from '~/constants/index.js'
 
 
 export const MICRO_FUNCTION_REQUEST_GENERATOR = 'microFunctionRequestGenerator'
 
 export class RequestGenerator implements Generator {
-  private generateRequestArtifact(): Artifact {
+  private generateRequestArtifact(moduleName: string, fileNamingStyle: FileNamingStyle): Artifact {
     const content = [
       '/* @anchor:file:start */',
       '',
@@ -19,8 +21,8 @@ export class RequestGenerator implements Generator {
     ].join('\n')
 
     return new Artifact({
-      id: RequestGenerator.getRequestArtifactId(),
-      filepath: RequestGenerator.getRequestArtifactFilepath(),
+      id: RequestGenerator.getRequestArtifactId(moduleName),
+      filepath: RequestGenerator.getRequestArtifactFilepath(moduleName, fileNamingStyle),
       content,
     })
   }
@@ -28,16 +30,24 @@ export class RequestGenerator implements Generator {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   async compile(compiler: Compiler, task: TaskWrapper): Promise<Artifact[]> {
-    return [
-      this.generateRequestArtifact(),
-    ]
+    const context = compiler.context
+    const rc = context.rc!
+    const documents = context.documents!
+
+    const moduleNames = [...new Set(
+      documents.flatMap((doc) => doc.operations.map((op) => op.module.name)),
+    )]
+
+    return moduleNames.map((moduleName) =>
+      this.generateRequestArtifact(moduleName, rc.rendering.fileNamingStyle),
+    )
   }
 
-  static getRequestArtifactFilepath(): string {
-    return './request.ts'
+  static getRequestArtifactFilepath(moduleName: string, fileNamingStyle: FileNamingStyle): string {
+    return `./${changeCase[fileNamingStyle](moduleName)}/request.ts`
   }
 
-  static getRequestArtifactId(): string {
-    return `request?generator=${MICRO_FUNCTION_REQUEST_GENERATOR}`
+  static getRequestArtifactId(moduleName: string): string {
+    return `request?module=${moduleName}&generator=${MICRO_FUNCTION_REQUEST_GENERATOR}`
   }
 }

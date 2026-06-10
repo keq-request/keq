@@ -12,14 +12,4 @@ export default defineConfig([
     sourcemap: true,
     clean: true,
   },
-  {
-    entry: ['./plugins/index.ts'],
-    format: ['cjs', 'esm'],
-    outDir: 'dist/plugins',
-    platform: 'neutral',
-    target: ['node20'],
-    dts: true,
-    tsconfig: './plugins/tsconfig.json',
-    deps: { neverBundle: ['@keq-request/cli', '@scalar/openapi-types'] },
-  },
 ])

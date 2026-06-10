@@ -304,13 +304,23 @@ importers:
         version: 6.15.0
 
   packages/nestjs:
+    dependencies:
+      picomatch:
+        specifier: ^4.0.0
+        version: 4.0.4
     devDependencies:
       '@nestjs/common':
         specifier: ^11.1.19
         version: 11.1.19(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^11.1.19
+        version: 11.1.26(@nestjs/common@11.1.19(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@types/node':
         specifier: ^20.19.39
         version: 20.19.39
+      '@types/picomatch':
+        specifier: ^4.0.0
+        version: 4.0.3
       keq:
         specifier: workspace:*
         version: link:../keq
@@ -1250,6 +1260,24 @@ packages:
       class-transformer:
         optional: true
       class-validator:
+        optional: true
+
+  '@nestjs/core@11.1.26':
+    resolution: {integrity: sha512-K45zUwYpowEsVqm8qNIzsMcl4LJev0MK9zVhDnmym7YRTJ2/caslqVeKYhPRd5+Fh81IkvWUVu6vEo46uZ5mgQ==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@nestjs/common': ^11.0.0
+      '@nestjs/microservices': ^11.0.0
+      '@nestjs/platform-express': ^11.0.0
+      '@nestjs/websockets': ^11.0.0
+      reflect-metadata: ^0.1.12 || ^0.2.0
+      rxjs: ^7.1.0
+    peerDependenciesMeta:
+      '@nestjs/microservices':
+        optional: true
+      '@nestjs/platform-express':
+        optional: true
+      '@nestjs/websockets':
         optional: true
 
   '@nodelib/fs.scandir@2.1.5':
@@ -5401,6 +5429,17 @@ snapshots:
       uid: 2.0.2
     transitivePeerDependencies:
       - supports-color
+
+  '@nestjs/core@11.1.26(@nestjs/common@11.1.19(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.1.19(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      fast-safe-stringify: 2.1.1
+      iterare: 1.2.1
+      path-to-regexp: 8.4.2
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      uid: 2.0.2
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
