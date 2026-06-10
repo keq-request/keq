@@ -312,6 +312,7 @@ export class Keq<
   flowControl(mode: 'concurrent', limit: number, signal?: KeqFlowControlSignal): this
   flowControl(mode: 'serial', signal?: KeqFlowControlSignal): this
   flowControl(mode: 'abort', signal?: KeqFlowControlSignal): this
+  flowControl(mode: 'mutex', signal?: KeqFlowControlSignal): this
   flowControl(mode: KeqFlowControlMode, arg2?: KeqFlowControlSignal | number, arg3?: KeqFlowControlSignal): this {
     const concurrencyLimit = typeof arg2 === 'number' ? arg2 : undefined
     const sig = (typeof arg2 === 'function' || typeof arg2 === 'string')

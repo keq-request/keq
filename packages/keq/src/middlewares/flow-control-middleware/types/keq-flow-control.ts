@@ -2,7 +2,7 @@ import { KeqExecutionContext } from '~/context/index.js'
 
 
 export interface KeqFlowControlOptions {
-  mode: 'abort' | 'serial' | 'concurrent'
+  mode: 'abort' | 'serial' | 'concurrent' | 'mutex'
   concurrencyLimit?: number
   signal: string | ((ctx: KeqExecutionContext) => string)
 }
