@@ -1,5 +1,16 @@
 # @keq-request/nestjs
 
+## 5.0.0-beta.10
+
+### Minor Changes
+
+- 2e13e75: **BREAKING CHANGE:** Remove `request` option from `KeqModuleOptions`, use fork-based instance isolation instead.
+
+### Patch Changes
+
+- Updated dependencies [95908fd]
+  - keq@5.0.0-beta.10
+
 ## 5.0.0-beta.9
 
 ### Patch Changes
