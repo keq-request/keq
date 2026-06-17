@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.9.0](https://github.com/keq-request/keq/compare/v2.8.14...v2.9.0) (2026-06-17)
+
+
+### Features
+
+* add mutex flow control ([3213028](https://github.com/keq-request/keq/commit/3213028b90fee45a5ef066500b4206686e7c83dc))
+
 ### [2.8.14](https://github.com/keq-request/keq/compare/v2.8.13...v2.8.14) (2026-01-20)
 
 
