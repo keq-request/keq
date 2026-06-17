@@ -2,6 +2,7 @@
 import { isBrowser } from './is/is-browser.js'
 import { Keq } from './keq.js'
 import { abortFlowControlMiddleware } from './middlewares/abort-flow-control-middleware.js'
+import { mutexFlowControlMiddleware } from './middlewares/mutex-flow-control-middleware.js'
 import { fetchArgumentsMiddleware } from './middlewares/fetch-arguments-middleware.js'
 import { fetchMiddleware } from './middlewares/fetch-middleware.js'
 import { proxyResponseMiddleware } from './middlewares/proxy-response-middleware.js'
@@ -36,6 +37,7 @@ export function createRequest<OPERATIONS extends KeqOperations>(options?: Create
     retryMiddleware(),
     serialFlowControlMiddleware(),
     abortFlowControlMiddleware(),
+    mutexFlowControlMiddleware(),
     timeoutMiddleware(),
     proxyResponseMiddleware(),
     fetchArgumentsMiddleware(),

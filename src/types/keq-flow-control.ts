@@ -2,7 +2,7 @@ import type { KeqContext } from './keq-context.js'
 
 
 export interface KeqFlowControl {
-  mode: 'abort' | 'serial'
+  mode: 'abort' | 'serial' | 'mutex'
   signal: string | ((ctx: KeqContext) => string)
 }
 
