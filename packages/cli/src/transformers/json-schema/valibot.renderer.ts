@@ -255,7 +255,7 @@ export class ValibotRenderer implements Renderer {
 
     // Add pattern validation
     if (schema.pattern) {
-      const escapedPattern = schema.pattern.replace(/\\/g, '\\\\')
+      const escapedPattern = schema.pattern.replace(/[\\/]/g, '\\$&')
       constraints.push(`v.regex(/${escapedPattern}/)`)
     }
 
