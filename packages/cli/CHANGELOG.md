@@ -1,3 +1,14 @@
+## 5.0.0-beta.11
+
+### Minor Changes
+
+- 5be3326: **Feat:** Auto-import `KeqModule` in CLI-generated NestJS modules to ensure `configureKeqMiddleware` middlewares always take effect
+
+### Patch Changes
+
+- 28d1941: **Fix:** generate wrong code when openapi has regexp with \
+  - keq@5.0.0-beta.11
+
 ## 5.0.0-beta.10
 
 ### Minor Changes

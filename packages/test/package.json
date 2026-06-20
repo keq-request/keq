@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/test",
-  "version": "5.0.0-beta.10",
+  "version": "5.0.0-beta.11",
   "description": "Test utils for keq",
   "private": true,
   "keywords": [
