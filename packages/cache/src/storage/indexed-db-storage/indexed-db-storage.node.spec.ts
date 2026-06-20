@@ -1,18 +1,13 @@
-import { expect, test } from '@jest/globals'
+import { beforeEach, expect, test } from '@jest/globals'
 import { IndexedDBStorage } from './indexed-db-storage'
 import { Eviction } from '~/constants/eviction.enum'
-import { beforeEach } from 'node:test'
-import { openDB } from 'idb'
 import { CacheEntry } from '~/cache-entry'
 import { createResponse } from '@keq-request/test'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
 
 
-beforeEach(async () => {
-  const db = await openDB(DEFAULT_TABLE_NAME)
-  db.deleteObjectStore('metadata')
-  db.deleteObjectStore('response')
-  db.deleteObjectStore('visits')
+beforeEach(() => {
+  indexedDB.deleteDatabase(DEFAULT_TABLE_NAME)
 })
 
 test('new IndexedDBStorage(100, 20, Eviction.RANDOM)', async () => {

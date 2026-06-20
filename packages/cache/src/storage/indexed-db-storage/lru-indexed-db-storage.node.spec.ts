@@ -1,19 +1,13 @@
 import * as R from 'ramda'
-import { expect, test } from '@jest/globals'
-import { beforeEach } from 'node:test'
-import { openDB } from 'idb'
+import { beforeEach, expect, test } from '@jest/globals'
 import { CacheEntry } from '~/cache-entry'
 import { createResponse, sleep } from '@keq-request/test'
 import { DEFAULT_TABLE_NAME } from './constants/default-table-name'
-import { IndexedDBSchema } from './types/indexed-db-schema'
 import { LRUIndexedDBStorage } from './lru-indexed-db-storage'
 
 
-beforeEach(async () => {
-  const db = await openDB<IndexedDBSchema>(DEFAULT_TABLE_NAME)
-  db.deleteObjectStore('metadata')
-  db.deleteObjectStore('response')
-  db.deleteObjectStore('visits')
+beforeEach(() => {
+  indexedDB.deleteDatabase(DEFAULT_TABLE_NAME)
 })
 
 test('new IndexedDBStorage(100, 20, Eviction.LRU)', async () => {

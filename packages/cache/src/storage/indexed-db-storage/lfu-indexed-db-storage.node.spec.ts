@@ -1,16 +1,12 @@
 import * as R from 'ramda'
-import { expect, test } from '@jest/globals'
-import { beforeEach } from 'node:test'
-import { openDB } from 'idb'
+import { beforeEach, expect, test } from '@jest/globals'
 import { createResponse } from '@keq-request/test'
 import { CacheEntry } from '~/cache-entry'
 import { LFUIndexedDBStorage } from './lfu-indexed-db-storage'
 
 
-beforeEach(async () => {
-  const db = await openDB('keq_cache_indexed_db_storage')
-  db.deleteObjectStore('entries')
-  db.deleteObjectStore('responses')
+beforeEach(() => {
+  indexedDB.deleteDatabase('keq_cache_indexed_db_storage')
 })
 
 test('new LFUIndexedDBStorage({ size: 100 })', async () => {
