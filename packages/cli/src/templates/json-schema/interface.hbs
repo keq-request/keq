@@ -1,0 +1,8 @@
+{{~#if (h__or jsonSchema.nullable jsonSchema.allOf jsonSchema.oneOf jsonSchema.anyOf jsonSchema.$ref jsonSchema.enum jsonSchema.const (r__includes jsonSchema.type (r__Array "string" "number" "boolean" "integer" "array")))}}
+{{#if export}}export {{/if}}type {{name}} = {{> t_json_schema_shape jsonSchema}}
+{{else if (h__or (r__equals jsonSchema.type "object") (r__isObject jsonSchema.properties) jsonSchema.additionalProperties)}}
+{{!-- only pure object --}}
+{{#if export}}export {{/if}}interface {{name}} {{> t_json_schema_shape jsonSchema}}
+{{else}}
+{{#if export}}export {{/if}}type {{name}} = {{> t_json_schema_shape jsonSchema}}
+{{/if}}

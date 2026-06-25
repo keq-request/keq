@@ -1,0 +1,55 @@
+{
+  "name": "keq",
+  "version": "2.8.11",
+  "description": "Request API write by Typescript for flexibility, readability, and a low learning curve.",
+  "keywords": [
+    "request",
+    "superagent",
+    "fetch",
+    "node",
+    "nodejs",
+    "browser",
+    "middleware",
+    "middlewares",
+    "axios",
+    "got"
+  ],
+  "license": "MIT",
+  "author": "Val.istar.Guo <val.istar.guo@gmail.com>",
+  "homepage": "https://github.com/keq-request/keq#readme",
+  "bugs": {
+    "url": "https://github.com/keq-request/keq/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keq-request/keq.git"
+  },
+  "scripts": {
+    "prepare": "is-ci || husky",
+    "test": "nx run-many -t test",
+    "build": "nx run-many -t build"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@commitlint/config-rush-scopes": "^19.8.1",
+    "@nx/jest": "21.5.2",
+    "@nx/js": "21.5.2",
+    "@nx/rollup": "21.5.2",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/node": "^20.14.1",
+    "husky": "^9.1.6",
+    "is-ci": "^3.0.1",
+    "jest": "^30.0.2",
+    "jest-raw-loader": "^1.0.1",
+    "nx": "21.5.2",
+    "rollup": "^4.14.0",
+    "rollup-plugin-string": "^3.0.0"
+  },
+  "packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

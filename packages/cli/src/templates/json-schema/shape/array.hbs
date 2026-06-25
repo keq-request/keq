@@ -1,0 +1,15 @@
+{{~#if items}}
+{{~#if (r__isArray items)}}
+{{!-- is tuple --}}
+[
+  {{~#each items~}}
+  {{~> t_json_schema_shape this}}
+  {{~#unless @last}}, {{/unless~}}
+  {{~/each~}}
+]
+{{~else~}}
+({{> t_json_schema_shape items}})[]
+{{~/if~}}
+{{~else~}}
+({{> t_json_schema_shape items}})[]
+{{~/if~}}

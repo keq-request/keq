@@ -1,0 +1,16 @@
+{
+  "targets": {
+    "rollup:build": {
+      "executor": "@nx/rollup:rollup",
+      "outputs": ["{options.outputPath}"],
+
+      "options": {
+        "useLegacyTypescriptPlugin": false,
+        "format": ["esm", "cjs"],
+        "main": "./src/index.ts",
+        "tsConfig": "./tsconfig.lib.json",
+        "outputPath": "./dist"
+      }
+    }
+  }
+}

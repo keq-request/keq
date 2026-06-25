@@ -1,0 +1,37 @@
+{{!--
+  This is a comment snippet
+  Usage:
+    {{> snapshot/comment description="Description" summary="Summary" deprecated=true type="Date" interface="MyInterface" export=true}}
+--}}
+{{#if (h__or description summary deprecated type interface export)}}
+/**
+{{#if description}}
+{{#each (r__split (newline) description)}}
+ * {{r__replace '*/' '*\/' this}}
+{{/each}}
+{{#if (h__or summary deprecated type interface export)}}
+ *
+{{/if}}
+{{/if}}
+{{!-- summary --}}
+{{#if summary}}
+ * @summary {{r__replace '*/' '*\/' summary}}
+{{/if}}
+{{!-- deprecated --}}
+{{#if deprecated}}
+ * @deprecated
+{{/if}}
+{{!-- type --}}
+{{#if type}}
+ * @type {{type}}
+{{/if}}
+{{!-- interface --}}
+{{#if interface}}
+ * @interface {{interface}}
+{{/if}}
+{{!-- export --}}
+{{#if export}}
+ * @export
+{{/if}}
+ */
+{{/if}}

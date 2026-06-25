@@ -1,0 +1,4 @@
+{{!-- ts does not support real oneOf, downgrade to anyOf --}}
+{{#each oneOf}}
+{{~#unless @first}} | {{/unless}}{{> t_json_schema_shape this~}}
+{{/each~}}

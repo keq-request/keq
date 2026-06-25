@@ -1,0 +1,2 @@
+export type ShorthandContentType = 'json' | 'form-data' | 'form' | 'jpeg' | 'bmp' | 'apng' | 'gif' | 'x-icon' | 'png' | 'webp' | 'tiff' | 'svg' | 'xml' | 'html' | 'css'
+export type CommonContentType = 'application/json' | 'multipart/form-data' | 'application/x-www-form-urlencoded' | 'image/jpeg' | 'image/bmp' | 'image/apng' | 'image/gif' | 'image/x-icon' | 'image/png' | 'image/webp' | 'image/tiff' | 'image/svg+xml' | 'text/xml' | 'text/html' | 'text/css'
