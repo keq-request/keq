@@ -4,4 +4,7 @@ packages:
 onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
+  - onnxruntime-node
+  - protobufjs
+  - sharp
   - unrs-resolver

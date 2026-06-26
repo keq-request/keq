@@ -15,6 +15,7 @@ export interface KeqModuleClass {
 }
 
 export interface KeqMiddlewareConfigProxy {
+  exclude(...routes: KeqRouteInfo[]): KeqMiddlewareConfigProxy
   forRoutes(...routes: Array<typeof KEQ_ROUTES.ALL | KeqRouteInfo | KeqModuleClass>): KeqMiddlewareConsumer
 }
 

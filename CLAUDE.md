@@ -1,0 +1,2 @@
+- 功能修改需要同时调整 `../keq-request.github.io` 中的文档。
+- 在根目录执行 `pnpm build` 全量构建，然后运行 `pnpm test` 完成测试。

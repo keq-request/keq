@@ -1,6 +1,6 @@
 import type { Type } from '@nestjs/common'
 import type { ModuleRef } from '@nestjs/core'
-import type { KeqMiddleware, KeqRoute } from 'keq'
+import type { KeqExecutionContext, KeqMiddleware, KeqRoute } from 'keq'
 import { composeRoute, KeqRequest } from 'keq'
 import picomatch from 'picomatch'
 import { KEQ_ROUTES } from './constants.js'
@@ -11,6 +11,7 @@ import type { KeqNestMiddleware } from './interfaces/keq-nest-middleware.interfa
 interface MiddlewareEntry {
   middlewares: Array<Type<KeqNestMiddleware> | KeqMiddleware>
   routes: Array<typeof KEQ_ROUTES.ALL | KeqRouteInfo | KeqModuleClass>
+  excludedRouteInfos?: KeqRouteInfo[]
 }
 
 export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
@@ -18,18 +19,34 @@ export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
 
   apply(...middlewares: Array<Type<KeqNestMiddleware> | KeqMiddleware>): KeqMiddlewareConfigProxy {
     const entry: MiddlewareEntry = { middlewares, routes: [] }
+    const excludedRouteInfos: KeqRouteInfo[] = []
     this.entries.push(entry)
-    return {
+
+    const proxy: KeqMiddlewareConfigProxy = {
+      exclude: (...routes) => {
+        excludedRouteInfos.push(...routes)
+        return proxy
+      },
       forRoutes: (...routes) => {
         entry.routes = routes
+        if (excludedRouteInfos.length > 0) {
+          entry.excludedRouteInfos = excludedRouteInfos
+        }
         return this
       },
     }
+    return proxy
   }
 
   applyTo(keqRequest: KeqRequest, moduleRef: ModuleRef): void {
     for (const entry of this.entries) {
-      const resolved = entry.middlewares.map((m) => this.resolveMiddleware(m, moduleRef))
+      let resolved = entry.middlewares.map((m) => this.resolveMiddleware(m, moduleRef))
+
+      if (entry.excludedRouteInfos && entry.excludedRouteInfos.length > 0) {
+        const excludedRoutes = entry.excludedRouteInfos.map((info) => this.buildRoute(info))
+        resolved = resolved.map((mw) => this.wrapWithExclusion(mw, excludedRoutes))
+      }
+
       const isGlobal = entry.routes.length === 0
         || entry.routes.some((r) => r === KEQ_ROUTES.ALL)
 
@@ -91,5 +108,22 @@ export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
     }
     if (routes.length === 1) return routes[0]
     return composeRoute(routes)
+  }
+
+  private wrapWithExclusion(middleware: KeqMiddleware, excludedRoutes: KeqRoute[]): KeqMiddleware {
+    const excluded: KeqMiddleware = async (ctx, next) => {
+      if (await this.checkExcluded(ctx, excludedRoutes)) {
+        return next()
+      }
+      return middleware(ctx, next)
+    }
+    return excluded
+  }
+
+  private async checkExcluded(ctx: KeqExecutionContext, excludedRoutes: KeqRoute[]): Promise<boolean> {
+    for (const route of excludedRoutes) {
+      if (await route(ctx)) return true
+    }
+    return false
   }
 }
