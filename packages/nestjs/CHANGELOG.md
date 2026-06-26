@@ -1,5 +1,15 @@
 # @keq-request/nestjs
 
+## 5.0.0-beta.12
+
+### Minor Changes
+
+- fbc851f: **Feat:** Add `exclude()` method to `KeqMiddlewareConfigProxy`, allowing middleware to skip specific routes. Supports `KeqRouteInfo` with `host`, `method`, and `pathname` patterns, following the NestJS `MiddlewareConfigProxy.exclude()` convention.
+
+### Patch Changes
+
+- keq@5.0.0-beta.12
+
 ## 5.0.0-beta.11
 
 ### Patch Changes
