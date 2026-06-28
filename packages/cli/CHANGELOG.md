@@ -1,3 +1,9 @@
+## 5.0.0-beta.13
+
+### Patch Changes
+
+- keq@5.0.0-beta.13
+
 ## 5.0.0-beta.12
 
 ### Patch Changes
