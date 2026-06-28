@@ -1,5 +1,5 @@
 import type { Type } from '@nestjs/common'
-import type { ModuleRef } from '@nestjs/core'
+import type { ModulesContainer } from '@nestjs/core'
 import type { KeqExecutionContext, KeqMiddleware, KeqRoute } from 'keq'
 import { composeRoute, KeqRequest } from 'keq'
 import picomatch from 'picomatch'
@@ -38,9 +38,9 @@ export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
     return proxy
   }
 
-  applyTo(keqRequest: KeqRequest, moduleRef: ModuleRef): void {
+  applyTo(keqRequest: KeqRequest, modulesContainer: ModulesContainer): void {
     for (const entry of this.entries) {
-      let resolved = entry.middlewares.map((m) => this.resolveMiddleware(m, moduleRef))
+      let resolved = entry.middlewares.map((m) => this.resolveMiddleware(m, modulesContainer))
 
       if (entry.excludedRouteInfos && entry.excludedRouteInfos.length > 0) {
         const excludedRoutes = entry.excludedRouteInfos.map((info) => this.buildRoute(info))
@@ -57,7 +57,7 @@ export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
           if (routeTarget === KEQ_ROUTES.ALL) continue
 
           if (this.isKeqModuleClass(routeTarget)) {
-            const targetRequest = moduleRef.get<KeqRequest>(routeTarget.KEQ_REQUEST, { strict: false })
+            const targetRequest = this.findInModulesContainer(routeTarget, modulesContainer)
             if (targetRequest) {
               for (const mw of resolved) targetRequest.use(mw)
             }
@@ -82,14 +82,64 @@ export class KeqMiddlewareConsumerImpl implements KeqMiddlewareConsumer {
     return typeof m === 'function' && m.prototype !== undefined && 'use' in m.prototype
   }
 
-  private resolveMiddleware(m: Type<KeqNestMiddleware> | KeqMiddleware, moduleRef: ModuleRef): KeqMiddleware {
+  private findMiddlewareInstance(
+    middlewareClass: Type<KeqNestMiddleware>,
+    modulesContainer: ModulesContainer,
+  ): KeqNestMiddleware | undefined {
+    for (const [, moduleWrapper] of modulesContainer) {
+      const provider = moduleWrapper.providers.get(middlewareClass)
+      if (provider?.instance) {
+        return provider.instance as KeqNestMiddleware
+      }
+    }
+    return undefined
+  }
+
+  private resolveMiddleware(
+    m: Type<KeqNestMiddleware> | KeqMiddleware,
+    modulesContainer: ModulesContainer,
+  ): KeqMiddleware {
     if (this.isNestMiddlewareClass(m)) {
-      const instance = moduleRef.get<KeqNestMiddleware>(m, { strict: false })
+      const instance = this.findMiddlewareInstance(m, modulesContainer)
+      if (!instance) {
+        throw new Error(
+          `[KeqModule] Nest middleware class '${m.name}' is not registered as a provider in any module. `
+          + 'Ensure the middleware class is added to the providers array of a @Module() decorator.',
+        )
+      }
       return async (ctx, next) => {
         await instance.use(ctx, next)
       }
     }
     return m
+  }
+
+  /**
+   * 从 ModulesContainer 中查找目标 KeqModule 的 KeqRequest 实例
+   *
+   * 通过 metatype 精确匹配模块，从模块 providers 中直接获取 KeqRequest。
+   * 不依赖 ModuleRef 的作用域机制，直接从 NestJS 全局模块容器中查找。
+   *
+   * @param routeTarget - 目标 KeqModule 类，必须具有 KEQ_REQUEST symbol 属性
+   * @param modulesContainer - NestJS 全局模块容器
+   * @returns KeqRequest 实例，未找到时返回 undefined
+   */
+  private findInModulesContainer(
+    routeTarget: KeqModuleClass,
+    modulesContainer: ModulesContainer,
+  ): KeqRequest | undefined {
+    const token = routeTarget.KEQ_REQUEST
+    for (const [, moduleWrapper] of modulesContainer) {
+      if (moduleWrapper.metatype !== routeTarget) continue
+
+      const provider = moduleWrapper.providers.get(token)
+      if (!provider) continue
+
+      if (provider.instance) {
+        return provider.instance as KeqRequest
+      }
+    }
+    return undefined
   }
 
   private buildRoute(info: KeqRouteInfo): KeqRoute {

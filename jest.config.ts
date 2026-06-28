@@ -9,5 +9,6 @@ export default (): Config => ({
     'packages/headers',
     'packages/url',
     'packages/cache',
+    'packages/nestjs',
   ],
 })

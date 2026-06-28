@@ -10,7 +10,7 @@ export interface KeqRouteInfo {
   pathname?: string
 }
 
-export interface KeqModuleClass {
+export interface KeqModuleClass extends Type<any> {
   readonly KEQ_REQUEST: symbol
 }
 
