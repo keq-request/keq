@@ -5,6 +5,7 @@ import { findConfigInDir } from './find-config-in-dir.js'
 export interface ProjectEntry {
   configPath: string
   projectDir: string
+  packageName?: string
 }
 
 interface RegistryOptions {
@@ -63,7 +64,7 @@ export class CompilerProviderRegistry {
     }
 
     if (!path.isAbsolute(projectDir)) {
-      throw new Error(`The 'project' parameter must be an absolute path. Received: ${projectDir}`)
+      throw new Error(`The 'project' parameter must be an absolute path. Received: ${projectDir}. Please call 'list_projects' tool to get valid project paths.`)
     }
 
     const existing = this.entries.get(projectDir)
@@ -71,7 +72,7 @@ export class CompilerProviderRegistry {
 
     const configPath = await findConfigInDir(projectDir)
     if (!configPath) {
-      throw new Error(`No keqrc config file found in ${projectDir}`)
+      throw new Error(`No keqrc config file found in ${projectDir}. Please call 'list_projects' tool to get valid project paths.`)
     }
 
     const entry: ProjectEntry = { configPath, projectDir }
@@ -85,12 +86,12 @@ export class CompilerProviderRegistry {
     }
 
     if (!path.isAbsolute(projectDir)) {
-      throw new Error(`The 'project' parameter must be an absolute path. Received: ${projectDir}`)
+      throw new Error(`The 'project' parameter must be an absolute path. Received: ${projectDir}. Please call 'list_projects' tool to get valid project paths.`)
     }
 
     const existing = this.entries.get(projectDir)
     if (!existing) {
-      throw new Error(`No keqrc config file found in ${projectDir}`)
+      throw new Error(`No keqrc config file found in ${projectDir}. Please call 'list_projects' tool to get valid project paths.`)
     }
     return existing
   }
@@ -98,7 +99,7 @@ export class CompilerProviderRegistry {
   private resolveDefault(): ProjectEntry {
     if (this.entries.size === 0) {
       throw new Error(
-        'No keq project found. Please specify \'project\' parameter with the absolute path to your project directory containing a keqrc config file.',
+        'No keq project found. Please call \'list_projects\' tool first to check available projects, or specify \'project\' parameter with the absolute path to your project directory containing a keqrc config file.',
       )
     }
 
@@ -107,11 +108,14 @@ export class CompilerProviderRegistry {
     }
 
     const projects = [...this.entries.values()]
-      .map((e) => `- ${e.projectDir} (${path.basename(e.configPath)})`)
+      .map((e) => {
+        const label = e.packageName ? ` [${e.packageName}]` : ''
+        return `- ${e.projectDir} (${path.basename(e.configPath)})${label}`
+      })
       .join('\n')
 
     throw new Error(
-      `This is a monorepo with multiple keq projects. Please specify 'project' parameter with one of the following project directories:\n${projects}`,
+      `This is a monorepo with multiple keq projects. Please call 'list_projects' tool to get the full project list, then specify 'project' parameter with one of the following project directories:\n${projects}`,
     )
   }
 }

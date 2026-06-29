@@ -34,14 +34,14 @@ export function registerListCommand(program: Command): void {
         const invalidFiles = await findInvalidFiles(context.rc.outdir, validFilePaths)
 
         for (const file of invalidFiles) {
-          const fullPath = `./${path.join(context.rc.outdir, file.relativePath)}`
+          const fullPath = path.relative(process.cwd(), path.join(context.rc.outdir, file.relativePath))
           console.log(fullPath)
         }
       } else {
         const artifacts = context.artifacts || []
 
         for (const artifact of artifacts) {
-          const fullPath = `./${path.join(context.rc.outdir, artifact.filepath)}`
+          const fullPath = path.relative(process.cwd(), path.join(context.rc.outdir, artifact.filepath))
           console.log(fullPath)
         }
       }

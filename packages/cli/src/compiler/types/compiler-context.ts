@@ -4,6 +4,7 @@ import { Matcher } from '~/utils/matcher.js'
 
 
 export interface CompilerContext {
+  workdir?: string
   rc?: RuntimeConfig
   matcher?: Matcher
   documents?: ApiDocumentV3_1[]

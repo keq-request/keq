@@ -51,7 +51,7 @@ export const RawConfig = Type.Object({
   /**
    * Output directory for generated files
    */
-  outdir: Type.String({ default: `${process.cwd()}/api` }),
+  outdir: Type.String({ default: './api' }),
 
   /**
    * Rendering options that directly control code generation output

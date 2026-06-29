@@ -11,6 +11,7 @@ function createPersistArtifactTask(): ListrTask<CompilerContext> {
     title: 'Write files',
     task: async (context, task) => {
       if (!context.rc) throw new Error('Please run setup task first.')
+      if (!context.workdir) throw new Error('Please run setup task first.')
       if (!context.artifacts || context.artifacts.length === 0) {
         task.skip('No compiled artifacts to persist.')
         return
@@ -23,7 +24,7 @@ function createPersistArtifactTask(): ListrTask<CompilerContext> {
       let completed = 0
 
       const files = await Promise.all(artifacts.map(async (artifact): Promise<Asset> => {
-        const realpath = `./${path.join(rc.outdir, artifact.filepath)}`
+        const realpath = path.join(rc.outdir, artifact.filepath)
         await fs.ensureFile(realpath)
         await fs.writeFile(realpath, artifact.renderer())
 
@@ -43,9 +44,11 @@ function createPersistFilterTask(): ListrTask<CompilerContext> {
     title: 'Update .keqfilter',
     task: async (context, task) => {
       if (!context.matcher) throw new Error('Please run setup task first.')
+      if (!context.workdir) throw new Error('Please run setup task first.')
 
       const matcher = context.matcher
-      await matcher.write('.keqfilter')
+      const filterPath = path.resolve(context.workdir, '.keqfilter')
+      await matcher.write(filterPath)
     },
   }
 }

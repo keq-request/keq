@@ -36,10 +36,16 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
         throw new Error('Cannot find config file.')
       }
 
+      context.workdir = path.dirname(result.filepath)
+
       const rc = parseRuntimeConfig(result.config)
 
+      rc.outdir = path.isAbsolute(rc.outdir)
+        ? rc.outdir
+        : path.resolve(context.workdir, rc.outdir)
+
       if (options?.debug) {
-        await fs.ensureDir('.keq')
+        await fs.ensureDir(path.resolve(context.workdir, '.keq'))
         rc.debug = true
       }
 

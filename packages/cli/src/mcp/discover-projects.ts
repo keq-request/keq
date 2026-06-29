@@ -8,12 +8,15 @@ import { findConfigInDir } from './find-config-in-dir.js'
 export interface ProjectEntry {
   configPath: string
   projectDir: string
+  packageName?: string
 }
 
 export async function discoverProjects(config?: string): Promise<ProjectEntry[]> {
   if (config) {
     const configPath = path.resolve(config)
-    return [{ configPath, projectDir: path.dirname(configPath) }]
+    const projectDir = path.dirname(configPath)
+    const packageName = await readPackageName(projectDir)
+    return [{ configPath, projectDir, packageName }]
   }
 
   const cwd = process.cwd()
@@ -25,7 +28,9 @@ export async function discoverProjects(config?: string): Promise<ProjectEntry[]>
   const explore = cosmiconfig('keq')
   const result = await explore.search()
   if (result) {
-    return [{ configPath: result.filepath, projectDir: path.dirname(result.filepath) }]
+    const projectDir = path.dirname(result.filepath)
+    const packageName = await readPackageName(projectDir)
+    return [{ configPath: result.filepath, projectDir, packageName }]
   }
 
   return []
@@ -43,7 +48,8 @@ async function discoverFromMonorepo(root: string): Promise<ProjectEntry[]> {
   for (const dir of dirs) {
     const configPath = await findConfigInDir(dir)
     if (configPath) {
-      entries.push({ configPath, projectDir: dir })
+      const packageName = await readPackageName(dir)
+      entries.push({ configPath, projectDir: dir, packageName })
     }
   }
 
@@ -113,4 +119,13 @@ async function expandWorkspaceGlobs(root: string, globs: string[]): Promise<stri
   }
 
   return dirs
+}
+
+async function readPackageName(dir: string): Promise<string | undefined> {
+  try {
+    const pkg = await fs.readJson(path.join(dir, 'package.json'))
+    return pkg.name
+  } catch {
+    return undefined
+  }
 }

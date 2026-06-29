@@ -49,6 +49,37 @@ export function registerMcpCommand(program: Command): void {
         .describe('项目目录绝对路径，用于 monorepo 中指定操作哪个子项目。非 monorepo 项目无需提供。')
 
       server.registerTool(
+        'list_projects',
+        {
+          description: '列出工作区中所有 keq 项目。用于获取其他工具的 project 参数可选值，monorepo 环境中应首先调用此工具确定目标项目。',
+          inputSchema: {},
+          annotations: { readOnlyHint: true, destructiveHint: false },
+        },
+        async () => {
+          try {
+            const projects = registry.list()
+            const result = projects.map((entry) => ({
+              projectDir: entry.projectDir,
+              configFile: path.basename(entry.configPath),
+              packageName: entry.packageName || null,
+            }))
+            return {
+              content: [{
+                type: 'text',
+                text: JSON.stringify({
+                  count: result.length,
+                  isMonorepo: result.length > 1,
+                  projects: result,
+                }, null, 2),
+              }],
+            }
+          } catch (error) {
+            return { content: [{ type: 'text', text: `Error: ${error instanceof Error ? error.message : String(error)}` }], isError: true }
+          }
+        },
+      )
+
+      server.registerTool(
         'search_apis',
         {
           description: '通过语义匹配搜索项目中的后端 API 接口。仅当用户描述了具体功能或业务场景（如"用户登录"、"搜索商品"）来查找相关接口时使用。如果用户想查看所有接口或按模块/路径浏览接口列表，应使用 list_apis 而非此工具。支持中英文自然语言，返回按相关度排序的接口列表。',
@@ -274,7 +305,7 @@ export function registerMcpCommand(program: Command): void {
 
             const artifacts = buildCompiler.context.artifacts || []
             const rc = buildCompiler.context.rc
-            const files = artifacts.map((a) => (rc ? `./${path.join(rc.outdir, a.filepath)}` : a.filepath))
+            const files = artifacts.map((a) => (rc ? path.join(rc.outdir, a.filepath) : a.filepath))
 
             await provider.invalidate()
 
@@ -309,12 +340,12 @@ export function registerMcpCommand(program: Command): void {
             if (invalid) {
               const validFilePaths = (context.artifacts || []).map((a) => a.filepath)
               const invalidFiles = await findInvalidFiles(rc.outdir, validFilePaths)
-              const files = invalidFiles.map((f) => `./${path.join(rc.outdir, f.relativePath)}`)
+              const files = invalidFiles.map((f) => path.join(rc.outdir, f.relativePath))
               return { content: [{ type: 'text', text: JSON.stringify({ count: files.length, files }, null, 2) }] }
             }
 
             const artifacts = context.artifacts || []
-            const files = artifacts.map((a) => `./${path.join(rc.outdir, a.filepath)}`)
+            const files = artifacts.map((a) => path.join(rc.outdir, a.filepath))
             return { content: [{ type: 'text', text: JSON.stringify({ count: files.length, files }, null, 2) }] }
           } catch (error) {
             return { content: [{ type: 'text', text: `Error: ${error instanceof Error ? error.message : String(error)}` }], isError: true }
