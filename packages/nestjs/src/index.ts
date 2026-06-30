@@ -1,3 +1,6 @@
 export * from './keq.module.js'
+export * from './keq-middleware-consumer.js'
+export * from './keq-consumer.js'
 export * from './constants.js'
 export * from './interfaces/index.js'
+export { InjectKeqConsumer } from './decorators/inject-keq-consumer.decorator.js'
