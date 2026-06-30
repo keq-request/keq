@@ -12,6 +12,7 @@
     "@keq-request/url": "5.0.0-beta.0"
   },
   "changesets": [
+    "add-download-cache-store",
     "add-mutex-flow-control",
     "afraid-cows-brush",
     "all-moles-greet",
@@ -65,6 +66,7 @@
     "little-points-obey",
     "long-zoos-shout",
     "lucky-ducks-jam",
+    "mcp-hint-list-projects",
     "moody-stamps-accept",
     "neat-chefs-invent",
     "new-singers-read",
@@ -99,7 +101,6 @@
     "silver-breads-relax",
     "six-boats-lick",
     "six-deserts-doubt",
-    "sixty-cycles-march",
     "sixty-onions-notice",
     "smart-shirts-tap",
     "some-badgers-guess",
@@ -119,6 +120,7 @@
     "three-groups-relax",
     "three-ways-decide",
     "tidy-cameras-judge",
+    "tiny-birds-laugh",
     "tired-lamps-teach",
     "twelve-dogs-turn",
     "twenty-peaches-poke",
