@@ -97,9 +97,9 @@ export function registerMcpCommand(program: Command): void {
         async ({ project, query, module, limit }) => {
           try {
             const provider = await registry.resolve(project)
-            const engine = await provider.getEngine()
-            const matcher = await provider.getMatcher()
-            const documents = await provider.getDocuments()
+            const engine = provider.getEngine()
+            const matcher = provider.matcher
+            const documents = provider.documents
             const results = await engine.search(query, { limit, module })
 
             const annotated = results.map((result) => {
@@ -137,9 +137,9 @@ export function registerMcpCommand(program: Command): void {
         async ({ project, module, method, pathname }) => {
           try {
             const provider = await registry.resolve(project)
-            const engine = await provider.getEngine()
-            const matcher = await provider.getMatcher()
-            const documents = await provider.getDocuments()
+            const engine = provider.getEngine()
+            const matcher = provider.matcher
+            const documents = provider.documents
             const detail = engine.getDetail(module, method, pathname)
             if (!detail) {
               return { content: [{ type: 'text', text: 'API not found' }], isError: true }
@@ -169,7 +169,7 @@ export function registerMcpCommand(program: Command): void {
         async ({ project }) => {
           try {
             const provider = await registry.resolve(project)
-            const engine = await provider.getEngine()
+            const engine = provider.getEngine()
             const modules = engine.listModules()
             return { content: [{ type: 'text', text: JSON.stringify(modules, null, 2) }] }
           } catch (error) {
@@ -199,8 +199,8 @@ export function registerMcpCommand(program: Command): void {
         async ({ project, module, method, pathname, includes }) => {
           try {
             const provider = await registry.resolve(project)
-            const documents = await provider.getDocuments()
-            const matcher = await provider.getMatcher()
+            const documents = provider.documents
+            const matcher = provider.matcher
             const result = documents
               .filter((doc) => !module || module.includes(doc.module.name))
               .map((document) => {
@@ -268,7 +268,6 @@ export function registerMcpCommand(program: Command): void {
         },
         async ({ project, module, method, pathname, fresh }) => {
           try {
-            const provider = await registry.resolve(project)
             const configPath = registry.getConfigPath(project)
             const filterRules: FilterRule[] = []
 
@@ -307,8 +306,6 @@ export function registerMcpCommand(program: Command): void {
             const rc = buildCompiler.context.rc
             const files = artifacts.map((a) => (rc ? path.join(rc.outdir, a.filepath) : a.filepath))
 
-            await provider.invalidate()
-
             return { content: [{ type: 'text', text: JSON.stringify({ generated: files.length, files }, null, 2) }] }
           } catch (error) {
             return { content: [{ type: 'text', text: `Error: ${error instanceof Error ? error.message : String(error)}` }], isError: true }
@@ -331,7 +328,7 @@ export function registerMcpCommand(program: Command): void {
         async ({ project, invalid }) => {
           try {
             const provider = await registry.resolve(project)
-            const context = await provider.getContext()
+            const context = provider.context
             const rc = context.rc
             if (!rc) {
               return { content: [{ type: 'text', text: 'Error: Failed to load configuration' }], isError: true }
@@ -400,7 +397,6 @@ export function registerMcpCommand(program: Command): void {
         },
         async ({ project, mode, module, method, pathname, build }) => {
           try {
-            const provider = await registry.resolve(project)
             const configPath = registry.getConfigPath(project)
 
             const filterCompiler = new Compiler({
@@ -422,10 +418,6 @@ export function registerMcpCommand(program: Command): void {
             })
 
             await filterCompiler.run()
-
-            if (build) {
-              await provider.invalidate()
-            }
 
             return { content: [{ type: 'text', text: JSON.stringify({ success: true, rule: { mode, module, method, pathname } }, null, 2) }] }
           } catch (error) {
@@ -452,7 +444,6 @@ export function registerMcpCommand(program: Command): void {
         },
         async ({ project, mode, module, method, pathname, build }) => {
           try {
-            const provider = await registry.resolve(project)
             const configPath = registry.getConfigPath(project)
             const filterPath = path.resolve(path.dirname(configPath), '.keqfilter')
 
@@ -518,7 +509,6 @@ export function registerMcpCommand(program: Command): void {
                 tolerant,
               })
               await buildCompiler.run()
-              await provider.invalidate()
             }
 
             return { content: [{ type: 'text', text: JSON.stringify({ success: true, removed: { mode, module, method, pathname } }, null, 2) }] }
@@ -532,8 +522,7 @@ export function registerMcpCommand(program: Command): void {
       await server.connect(transport)
 
       if (registry.list().length === 1) {
-        const provider = await registry.resolve()
-        provider.getEngine().catch(() => {})
+        registry.resolve().catch(() => {})
       }
     })
 }

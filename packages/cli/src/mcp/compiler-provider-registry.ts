@@ -15,12 +15,10 @@ interface RegistryOptions {
 
 /**
  * Manages multiple CompilerProvider instances for monorepo/multi-project support.
- * Lazily initializes providers on first access and dynamically registers new projects
- * when an unknown project directory is requested.
+ * Resolves project entries and creates fresh CompilerProvider instances on each access.
  */
 export class CompilerProviderRegistry {
   private entries: Map<string, ProjectEntry> = new Map()
-  private providers: Map<string, CompilerProvider> = new Map()
   private options: RegistryOptions
 
   constructor(options: RegistryOptions) {
@@ -41,16 +39,11 @@ export class CompilerProviderRegistry {
 
   async resolve(projectDir?: string): Promise<CompilerProvider> {
     const entry = await this.resolveEntry(projectDir)
-    const cached = this.providers.get(entry.projectDir)
-    if (cached) return cached
-
-    const provider = await CompilerProvider.init({
+    return CompilerProvider.init({
       config: entry.configPath,
       debug: this.options.debug,
       tolerant: this.options.tolerant,
     })
-    this.providers.set(entry.projectDir, provider)
-    return provider
   }
 
   getConfigPath(projectDir?: string): string {

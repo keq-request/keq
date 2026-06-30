@@ -37,22 +37,23 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
 
               task.output = `Downloaded from ${moduleDefinition.address.url}`
 
-              const content = await compiler.hooks.download.promise(moduleDefinition.address, moduleDefinition, task)
+              const result = await compiler.hooks.download.promise(moduleDefinition.address, moduleDefinition, task)
 
-              if (!content) {
+              if (!result) {
                 throw new Exception(moduleDefinition, `Cannot download document from ${moduleDefinition.address.url}`)
               }
 
+              const { content, fingerprint } = result
               const spec = JSON.parse(content)
 
               await compiler.hooks.beforeValidate.promise(spec, moduleDefinition)
 
-              const result = await validateSpec(spec, {
+              const validation = await validateSpec(spec, {
                 moduleDefinition,
                 tolerant: !!compiler.options.tolerant,
               })
-              if (result.warning) {
-                task.output = result.warning
+              if (validation.warning) {
+                task.output = validation.warning
               }
 
               OpenapiUtils.dereferenceOperation(spec)
@@ -60,6 +61,7 @@ function main(compiler: Compiler, options?: DownloadTaskOptions): ListrTask<Comp
               const document = new ApiDocumentV3_1(
                 spec,
                 moduleDefinition,
+                fingerprint,
               )
 
               ctx.documents?.push(document)

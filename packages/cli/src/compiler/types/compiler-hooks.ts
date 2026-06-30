@@ -1,7 +1,7 @@
 import { AsyncParallelHook, AsyncSeriesBailHook, AsyncSeriesHook, SyncHook } from 'tapable'
 import { TaskWrapper } from '../tasks/index.js'
 import { ModuleDefinition } from '~/models/index.js'
-import { Address } from '~/types/index.js'
+import { Address, DownloadResult } from '~/types/index.js'
 
 
 export interface CompilerHooks {
@@ -9,7 +9,7 @@ export interface CompilerHooks {
   afterSetup: AsyncSeriesHook<[TaskWrapper]>
 
   beforeDownload: AsyncSeriesHook<[TaskWrapper]>
-  download: AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], string | undefined> /* Return Json String */
+  download: AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], DownloadResult | undefined>
   beforeValidate: AsyncSeriesHook<[object, ModuleDefinition]>
   afterDownload: AsyncSeriesHook<[TaskWrapper]>
 

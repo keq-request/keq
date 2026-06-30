@@ -1,4 +1,5 @@
 import * as R from 'ramda'
+import { createHash } from 'crypto'
 import type { OpenAPIV3_1 } from '@scalar/openapi-types'
 import { ModuleDefinition } from './module-definition.js'
 import { SupportedMethods } from '~/constants/supported-methods.js'
@@ -11,10 +12,12 @@ import { logger } from '~/utils/logger.js'
 export class ApiDocumentV3_1 {
   readonly module: ModuleDefinition
   readonly specification: OpenAPIV3_1.Document
+  readonly fingerprint: string
 
-  constructor(specification: OpenAPIV3_1.Document, module: ModuleDefinition) {
+  constructor(specification: OpenAPIV3_1.Document, module: ModuleDefinition, fingerprint?: string) {
     this.module = module
     this.specification = specification
+    this.fingerprint = fingerprint ?? createHash('md5').update(JSON.stringify(specification)).digest('hex')
   }
 
   get schemas(): SchemaDefinition[] {

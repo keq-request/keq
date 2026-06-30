@@ -6,7 +6,13 @@ import { Plugin } from '~/types/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 import { fileURLToPath } from 'url'
 import { DownloadLocalFilePluginMetadata, MetadataStorage } from './constants/index.js'
+import type { CacheStore } from '~/cache-store/index.js'
+import type { DownloadResult } from '~/types/index.js'
 
+interface LocalFileCacheEntry {
+  content: string
+  mtimeMs: number
+}
 
 export class DownloadLocalFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
@@ -16,21 +22,43 @@ export class DownloadLocalFilePlugin implements Plugin {
     // Mark as applied immediately to prevent re-entry
     metadata.applied = true
 
+    const cache: CacheStore = compiler.getCacheStore(DownloadLocalFilePlugin.name)
+
     compiler.hooks.download.tapPromise(DownloadLocalFilePlugin.name, async (address, task) => {
       const { url, encoding } = address
       if (!url.startsWith('file://')) return undefined
       const filepath = fileURLToPath(url)
 
-      const fileExt = path.extname(filepath)
-      const content = await fs.readFile(filepath, encoding)
-      const str = typeof content === 'string' ? content : content.toString(encoding)
+      const stat = await fs.stat(filepath)
+      const fingerprint = `${filepath}:${stat.mtimeMs}`
+      const cacheKey = filepath
+      const cached = await cache.get<LocalFileCacheEntry>(cacheKey)
 
+      if (cached && cached.mtimeMs === stat.mtimeMs) {
+        return { content: cached.content, fingerprint } satisfies DownloadResult
+      }
+
+      const fileExt = path.extname(filepath)
+      const rawContent = await fs.readFile(filepath, encoding)
+      const str = typeof rawContent === 'string' ? rawContent : rawContent.toString(encoding)
+
+      let content: string | undefined
       if (['.yml', '.yaml'].includes(fileExt)) {
         const value = yaml.load(str)
-        return JSON.stringify(OpenapiUtils.to3_1(value))
+        content = JSON.stringify(OpenapiUtils.to3_1(value))
       } else if (fileExt === '.json') {
-        return JSON.stringify(OpenapiUtils.to3_1(JSON.parse(str)))
+        content = JSON.stringify(OpenapiUtils.to3_1(JSON.parse(str)))
       }
+
+      if (content) {
+        await cache.set<LocalFileCacheEntry>(cacheKey, {
+          content,
+          mtimeMs: stat.mtimeMs,
+        })
+        return { content, fingerprint } satisfies DownloadResult
+      }
+
+      return undefined
     })
   }
 

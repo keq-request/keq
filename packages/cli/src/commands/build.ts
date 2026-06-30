@@ -1,6 +1,9 @@
+import path from 'path'
 import { Command, Option } from 'commander'
 import { SupportedMethods } from '../constants/supported-methods.js'
 import { Compiler } from '../compiler/compiler.js'
+import { FileSystemCacheStore, NullCacheStore } from '../cache-store/index.js'
+import type { CacheStore } from '../cache-store/index.js'
 import type { FilterRule } from '../utils/matcher.js'
 import { xprodFilterRules } from './utils/xprod-filter-rules.js'
 
@@ -13,6 +16,7 @@ export function registerBuildCommand(program: Command): void {
     .option('--debug', 'Print debug information')
     .option('--tolerant', 'Tolerate wrong swagger/openapi structure')
     .option('--fresh', 'Clean the output directory before building')
+    .option('--no-cache', 'Disable download caching')
     .option('-i --interactive', 'Interactive select the scope of generation')
     .addOption(
       new Option('--method <method>', 'Only generate files of the specified operation method')
@@ -51,6 +55,17 @@ export function registerBuildCommand(program: Command): void {
         })
       }
 
+      let cacheStore: CacheStore
+      if (options.cache === false) {
+        cacheStore = new NullCacheStore()
+      } else {
+        const cacheDir = path.resolve(process.cwd(), '.keq/cache')
+        cacheStore = new FileSystemCacheStore(cacheDir)
+        if (options.fresh) {
+          await cacheStore.clear()
+        }
+      }
+
       const compiler = new Compiler({
         build: true,
         persist: true,
@@ -59,6 +74,7 @@ export function registerBuildCommand(program: Command): void {
         debug: !!options.debug,
         tolerant: !!options.tolerant,
         interactive: !!options.interactive && { mode: 'allow' },
+        cacheStore,
         filter: filterRules.length > 0
           ? { rules: filterRules }
           : undefined,

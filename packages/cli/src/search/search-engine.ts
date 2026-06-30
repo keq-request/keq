@@ -4,8 +4,18 @@ import { embed, embedDocuments, cosineSimilarity } from './embedder.js'
 
 export class SearchEngine {
   private operations: IndexedOperation[] = []
+  private _lastFingerprints: string[] = []
 
   async buildIndex(documents: ApiDocumentV3_1[]): Promise<void> {
+    const fingerprints = documents.map((d) => d.fingerprint).sort()
+    if (
+      this.operations.length > 0 &&
+      fingerprints.length === this._lastFingerprints.length &&
+      fingerprints.every((fp, i) => fp === this._lastFingerprints[i])
+    ) {
+      return
+    }
+
     this.operations = []
 
     for (const document of documents) {
@@ -42,6 +52,8 @@ export class SearchEngine {
     for (let i = 0; i < this.operations.length; i++) {
       this.operations[i].embedding = embeddings[i]
     }
+
+    this._lastFingerprints = fingerprints
   }
 
   async search(query: string, options?: { limit?: number; module?: string[] }): Promise<SearchResult[]> {

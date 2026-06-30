@@ -59,7 +59,7 @@ export class FileTracker {
     }
   }
 
-  private async isChanged(): Promise<boolean> {
+  async isChanged(): Promise<boolean> {
     for (const file of this.files) {
       try {
         const stat = await fs.stat(file.filepath)

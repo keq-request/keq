@@ -2,7 +2,14 @@ import { Compiler } from '~/compiler/index.js'
 import { Plugin, Address } from '~/types/index.js'
 import { OpenapiUtils } from '~/utils/openapi-utils/index.js'
 import { DownloadHttpFilePluginMetadata, MetadataStorage } from './constants/index.js'
+import type { CacheStore } from '~/cache-store/index.js'
+import type { DownloadResult } from '~/types/index.js'
 
+interface HttpCacheEntry {
+  content: string
+  etag: string
+  lastModified: string
+}
 
 export class DownloadHttpFilePlugin implements Plugin {
   apply(compiler: Compiler): void {
@@ -12,34 +19,61 @@ export class DownloadHttpFilePlugin implements Plugin {
     // Mark as applied immediately to prevent re-entry
     metadata.applied = true
 
+    const cache: CacheStore = compiler.getCacheStore(DownloadHttpFilePlugin.name)
+
     compiler.hooks.download.tapPromise(DownloadHttpFilePlugin.name, async (address, task) => {
       const { url } = address
 
       if (!url.startsWith('http://') && !url.startsWith('https://')) return undefined
 
-      const content = await this.download(address)
-      const spec = this.deserialize(content)
-      return JSON.stringify(spec)
-    })
-  }
+      const cacheKey = url
+      const cached = await cache.get<HttpCacheEntry>(cacheKey)
 
-  async download(address: Address): Promise<string> {
-    const { url, headers } = address
+      const headers: Record<string, string> = { ...address.headers }
+      if (cached) {
+        if (cached.etag) headers['If-None-Match'] = cached.etag
+        if (cached.lastModified) headers['If-Modified-Since'] = cached.lastModified
+      }
 
-    try {
-      const res = await fetch(url, { headers })
+      const res = await this.fetch(url, headers)
+
+      if (res.status === 304 && cached) {
+        await cache.set(cacheKey, cached)
+        const fingerprint = cached.etag || cached.lastModified || undefined
+        return { content: cached.content, fingerprint }
+      }
+
       if (res.status >= 400) {
         const body = await res.text().catch(() => '')
         const detail = body ? `\n  Response Body: ${body}` : ''
-        throw new Error(`failed with status code ${res.status}${detail}`)
+        throw new Error(`Unable get the openapi/swagger file from ${url}: failed with status code ${res.status}${detail}`)
       }
 
-      return await res.text()
+      const text = await res.text()
+      const spec = this.deserialize(text)
+      const content = JSON.stringify(spec)
+
+      const etag = res.headers.get('etag') || ''
+      const lastModified = res.headers.get('last-modified') || ''
+
+      await cache.set<HttpCacheEntry>(cacheKey, {
+        content,
+        etag,
+        lastModified,
+      })
+
+      const fingerprint = etag || lastModified || undefined
+      return { content, fingerprint } satisfies DownloadResult
+    })
+  }
+
+  private async fetch(url: string, headers: Record<string, string>): Promise<Response> {
+    try {
+      return await fetch(url, { headers })
     } catch (e) {
       if (e instanceof Error) {
         e.message = `Unable get the openapi/swagger file from ${url}: ${e.message}`
       }
-
       throw e
     }
   }

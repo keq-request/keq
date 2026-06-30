@@ -6,6 +6,17 @@ export type {
   Address,
 } from './types/index.js'
 
+export type {
+  CacheStore,
+  CacheSetOptions,
+} from './cache-store/index.js'
+
+export {
+  FileSystemCacheStore,
+  MemoryCacheStore,
+  NullCacheStore,
+} from './cache-store/index.js'
+
 export {
   FileNamingStyle,
   QsArrayFormat,

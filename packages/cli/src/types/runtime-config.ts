@@ -5,6 +5,7 @@ import { Plugin } from './plugin.js'
 import { Address } from './address.js'
 import { isValidURL } from '../utils/is-valid-url.js'
 import { Translator } from './index.js'
+import type { CacheStore } from '~/cache-store/index.js'
 
 
 const Modules = Type.Transform(
@@ -135,6 +136,14 @@ export const RawConfig = Type.Object({
    * such as code transformation, formatting, linting, or custom file generation.
    */
   plugins: Type.Optional(Type.Array(Type.Unsafe<Plugin>(Type.Any()), { default: [] })),
+
+  /**
+   * Cache store for download and compilation caching.
+   *
+   * Set to a CacheStore instance to enable caching, or `false` to disable.
+   * If not set, defaults to FileSystemCacheStore('.keq/cache').
+   */
+  cache: Type.Optional(Type.Unsafe<CacheStore | false>(Type.Any())),
 })
 
 export type RawConfig = StaticEncode<typeof RawConfig>

@@ -23,6 +23,9 @@ import {
   TerminalSelectPluginOptions,
 } from '~/plugins/index.js'
 import { Address } from '~/types/index.js'
+import { NamespacedCacheStore, NullCacheStore } from '~/cache-store/index.js'
+import type { CacheStore } from '~/cache-store/index.js'
+import type { DownloadResult } from '~/types/index.js'
 
 
 interface Options extends SetupTaskOptions {
@@ -31,18 +34,20 @@ interface Options extends SetupTaskOptions {
   silent?: boolean
   fresh?: boolean
   interactive?: boolean | TerminalSelectPluginOptions
+  cacheStore?: CacheStore
 }
 
 
 export class Compiler {
   context: CompilerContext = {}
+  private _cacheStore: CacheStore
 
   hooks: CompilerHooks = {
     setup: new AsyncParallelHook<[TaskWrapper]>(['task']),
     afterSetup: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
     beforeDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
-    download: new AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], string | undefined>(['address', 'moduleDefinition', 'task']),
+    download: new AsyncSeriesBailHook<[Address, ModuleDefinition, TaskWrapper], DownloadResult | undefined>(['address', 'moduleDefinition', 'task']),
     beforeValidate: new AsyncSeriesHook<[object, ModuleDefinition]>(['spec', 'moduleDefinition']),
     afterDownload: new AsyncSeriesHook<[TaskWrapper]>(['task']),
 
@@ -60,6 +65,8 @@ export class Compiler {
   constructor(
     public options: Options,
   ) {
+    this._cacheStore = options.cacheStore ?? new NullCacheStore()
+
     for (const hook of Object.values(this.hooks)) {
       hook.intercept(perfectErrorMessage())
     }
@@ -72,6 +79,10 @@ export class Compiler {
       fresh: options.fresh,
       interactive: options.interactive,
     }).apply(this)
+  }
+
+  getCacheStore(namespace: string): CacheStore {
+    return new NamespacedCacheStore(this._cacheStore, namespace)
   }
 
   async run(): Promise<void> {

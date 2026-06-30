@@ -10,6 +10,7 @@ import { registerMockCommand } from './commands/mock.js'
 import { registerInitCommand } from './commands/init.js'
 import { registerSearchCommand } from './commands/search.js'
 import { registerMcpCommand } from './commands/mcp.js'
+import { registerCacheCommand } from './commands/cache.js'
 
 
 if (semver.lt(process.version, '20.0.0')) {
@@ -26,6 +27,7 @@ registerMockCommand(program)
 registerInitCommand(program)
 registerSearchCommand(program)
 registerMcpCommand(program)
+registerCacheCommand(program)
 
 async function main(): Promise<void> {
   program.on('command:*', function (operands) {
