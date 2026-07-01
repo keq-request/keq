@@ -1,4 +1,3 @@
-import path from 'path'
 import { Command, Option } from 'commander'
 import { SupportedMethods } from '../constants/supported-methods.js'
 import { Compiler } from '../compiler/compiler.js'
@@ -6,6 +5,7 @@ import { FileSystemCacheStore, NullCacheStore } from '../cache-store/index.js'
 import type { CacheStore } from '../cache-store/index.js'
 import type { FilterRule } from '../utils/matcher.js'
 import { xprodFilterRules } from './utils/xprod-filter-rules.js'
+import { getCacheDir } from '../utils/get-cache-dir.js'
 
 export function registerBuildCommand(program: Command): void {
   program
@@ -59,8 +59,7 @@ export function registerBuildCommand(program: Command): void {
       if (options.cache === false) {
         cacheStore = new NullCacheStore()
       } else {
-        const cacheDir = path.resolve(process.cwd(), '.keq/cache')
-        cacheStore = new FileSystemCacheStore(cacheDir)
+        cacheStore = new FileSystemCacheStore(getCacheDir(process.cwd()))
         if (options.fresh) {
           await cacheStore.clear()
         }

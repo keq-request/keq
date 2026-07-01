@@ -141,7 +141,7 @@ export const RawConfig = Type.Object({
    * Cache store for download and compilation caching.
    *
    * Set to a CacheStore instance to enable caching, or `false` to disable.
-   * If not set, defaults to FileSystemCacheStore('.keq/cache').
+   * If not set, defaults to FileSystemCacheStore in the OS cache directory.
    */
   cache: Type.Optional(Type.Unsafe<CacheStore | false>(Type.Any())),
 })

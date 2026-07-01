@@ -5,6 +5,7 @@ import { Compiler } from '~/compiler/compiler.js'
 import { SearchEngine } from '~/search/search-engine.js'
 import { EmbedderUnavailableError } from '~/search/embedder.js'
 import { Matcher } from '~/utils/matcher.js'
+import { getCacheDir } from '~/utils/get-cache-dir.js'
 import { FileSystemCacheStore } from '~/cache-store/index.js'
 import type { CacheStore } from '~/cache-store/index.js'
 import type { ApiDocumentV3_1 } from '~/models/api-document_v3_1.js'
@@ -77,7 +78,7 @@ export class CompilerProvider {
     const configFilepath = result.filepath
     const keqfilterPath = path.resolve(path.dirname(configFilepath), '.keqfilter')
     const cacheStore: CacheStore = options.cacheStore ?? new FileSystemCacheStore(
-      path.resolve(path.dirname(configFilepath), '.keq/cache'),
+      getCacheDir(path.dirname(configFilepath)),
     )
 
     const compiler = new Compiler({

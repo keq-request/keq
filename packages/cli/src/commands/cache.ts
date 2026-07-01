@@ -1,6 +1,7 @@
-import path from 'path'
 import { Command } from 'commander'
+import fs from 'fs-extra'
 import { FileSystemCacheStore } from '../cache-store/index.js'
+import { getCacheDir, getAllCacheDir } from '../utils/get-cache-dir.js'
 
 export function registerCacheCommand(program: Command): void {
   const cache = program
@@ -9,12 +10,17 @@ export function registerCacheCommand(program: Command): void {
 
   cache
     .command('clear')
-    .description('Clear all cached downloads')
+    .description('Clear cached downloads')
     .option('-c --config <config>', 'The keq-cli config file')
-    .action(async () => {
-      const cacheDir = path.resolve(process.cwd(), '.keq/cache')
-      const store = new FileSystemCacheStore(cacheDir)
-      await store.clear()
-      console.log('Cache cleared.')
+    .option('--all', 'Clear cache for all projects')
+    .action(async (options) => {
+      if (options.all) {
+        await fs.remove(getAllCacheDir()).catch(() => {})
+        console.log('All caches cleared.')
+      } else {
+        const store = new FileSystemCacheStore(getCacheDir(process.cwd()))
+        await store.clear()
+        console.log('Cache cleared.')
+      }
     })
 }
