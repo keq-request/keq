@@ -49,7 +49,7 @@ export class BodyFallbackPlugin implements Plugin {
             '      }, {} as Record<string, unknown>)',
             '',
             '    if (Object.keys(requestBody).length > 0) {',
-            '      req.send(requestBody)',
+            '      void req.send(requestBody)',
             '    }',
             '  }',
           ].filter(R.isNotNil).join('\n'))

@@ -77,7 +77,7 @@ export class OperationDefinitionSnippet {
     const $headers = (operation.parameters || [])
       .filter((p): p is OpenAPIV3_1.ParameterObject => !JsonSchemaUtils.isRef(p))
       .filter((p) => p.in === 'header')
-      .map((p) => `if (args && ${JSON.stringify(p.name)} in args) req.header(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}])`)
+      .map((p) => `if (args && ${JSON.stringify(p.name)} in args) void req.header(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}])`)
       .join('\n')
 
     return $headers
@@ -94,7 +94,7 @@ export class OperationDefinitionSnippet {
         const option = this.getQsParameters(p)
         const $option = (!option || R.isEmpty(option)) ? '' : `, ${JSON.stringify(option)}`
 
-        return `if (args && ${JSON.stringify(p.name)} in args) req.query(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}]${$option})`
+        return `if (args && ${JSON.stringify(p.name)} in args) void req.query(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}]${$option})`
       })
       .join('\n')
 
@@ -108,7 +108,7 @@ export class OperationDefinitionSnippet {
     const $pathParameters = (operation.parameters || [])
       .filter((p): p is OpenAPIV3_1.ParameterObject => !JsonSchemaUtils.isRef(p))
       .filter((p) => p.in === 'path')
-      .map((p) => `if (args && ${JSON.stringify(p.name)} in args) req.params(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}])`)
+      .map((p) => `if (args && ${JSON.stringify(p.name)} in args) void req.params(${JSON.stringify(p.name)}, args[${JSON.stringify(p.name)}])`)
       .join('\n')
 
     return $pathParameters
@@ -125,13 +125,13 @@ export class OperationDefinitionSnippet {
     const mediaTypes = this.getRequestMediaTypes()
 
     if (mediaTypes.length === 1 && !mediaTypes[0].endsWith('/*')) {
-      return `req.type("${mediaTypes[0]}")\n`
+      return `void req.type("${mediaTypes[0]}")\n`
     } else if (mediaTypes.some((mediaType) => mediaType === '*/*')) {
     // no-op
     } else if (mediaTypes.some((mediaType) => mediaType.endsWith('/*'))) {
-      return 'if(args?.["content-type"]) req.type(args["content-type"])\n'
+      return 'if(args?.["content-type"]) void req.type(args["content-type"])\n'
     } else if (mediaTypes.length > 1) {
-      return 'if(args?.["content-type"]) req.type(args["content-type"])\n'
+      return 'if(args?.["content-type"]) void req.type(args["content-type"])\n'
     }
 
     return ''
@@ -155,17 +155,17 @@ export class OperationDefinitionSnippet {
       if (
         (schema.type === 'string' && schema.format === 'binary')
         || schema.contentMediaType === 'application/octet-stream') {
-        return `if (args && ${$propertyName} in args && args[${$propertyName}]) req.attach(${$propertyName}, args[${$propertyName}])`
+        return `if (args && ${$propertyName} in args && args[${$propertyName}]) void req.attach(${$propertyName}, args[${$propertyName}])`
       } else if (
         schema.type === 'string'
         || (schema.type === 'array' && schema.items && schema.items.type === 'string')
       ) {
-        return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) req.field(${$propertyName}, args[${$propertyName}])`
+        return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) void req.field(${$propertyName}, args[${$propertyName}])`
       } else if (schema.type === 'number' || schema.type === 'integer') {
-        return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) req.field(${$propertyName}, String(args[${$propertyName}]))`
+        return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) void req.field(${$propertyName}, String(args[${$propertyName}]))`
       }
 
-      return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) req.field(${$propertyName}, String(args[${$propertyName}]) /* type is non-string in schema; triggers type coercion here */)`
+      return `if (args && ${$propertyName} in args && args[${$propertyName}] !== undefined) void req.field(${$propertyName}, String(args[${$propertyName}]) /* type is non-string in schema; triggers type coercion here */)`
     } catch (err) {
       return this.renderErrorComment(err, mediaType)
     }
@@ -178,7 +178,7 @@ export class OperationDefinitionSnippet {
   ): string {
     if (mediaType === 'application/json') {
       const $propertyName = JSON.stringify(propertyName)
-      return `if (args && ${$propertyName} in args) req.send({ ${$propertyName}: args[${$propertyName}] })`
+      return `if (args && ${$propertyName} in args) void req.send({ ${$propertyName}: args[${$propertyName}] })`
     } else if (mediaType === 'multipart/form-data') {
       return this.requestBodyFormDataPropertyRenderer(propertyName, propertySchema, mediaType)
     } else {
