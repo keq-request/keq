@@ -11,6 +11,8 @@ interface StoredEntry<T = unknown> {
 
 export class FileSystemCacheStore implements CacheStore {
   private cacheDir: string
+  /** Fallback TTL to prevent cache files from accumulating indefinitely when callers omit ttl */
+  private readonly maxTtl = 7 * 24 * 60 * 60 * 1000
 
   constructor(cacheDir: string) {
     this.cacheDir = cacheDir
@@ -37,9 +39,11 @@ export class FileSystemCacheStore implements CacheStore {
     const filepath = this.keyToPath(key)
     await fs.ensureDir(path.dirname(filepath))
 
+    const effectiveTtl = options?.ttl ? Math.min(options.ttl, this.maxTtl) : this.maxTtl
+
     const entry: StoredEntry<T> = {
       value,
-      expiresAt: options?.ttl ? Date.now() + options.ttl : null,
+      expiresAt: Date.now() + effectiveTtl,
       createdAt: Date.now(),
     }
 
