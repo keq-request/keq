@@ -220,11 +220,11 @@ export class ValibotRenderer implements Renderer {
 
   private renderString(schema: OpenAPIV3_1.NonArraySchemaObject): string {
     if (schema.contentMediaType === 'application/octet-stream') {
-      return 'v.union([v.instance(Blob), v.instance(Buffer)])'
+      return 'v.instance(ArrayBuffer)'
     }
 
     if (schema.format === 'binary') {
-      return 'v.union([v.instance(Blob), v.instance(Buffer)])'
+      return 'v.instance(ArrayBuffer)'
     }
 
     let result = 'v.string()'

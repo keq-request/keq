@@ -71,6 +71,14 @@ export class ResponseDefinitionTransformer {
       .map(([mediaType, mediaTypeObject]) => {
         if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
         if (mediaType.includes('multipart/form-data')) return 'FormData'
+        if (
+          mediaType.startsWith('image/')
+          || mediaType.startsWith('audio/')
+          || mediaType.startsWith('video/')
+          || mediaType.startsWith('font/')
+          || mediaType === 'application/octet-stream'
+          || mediaType === 'application/pdf'
+        ) return 'ArrayBuffer'
         if (!mediaTypeObject.schema) return 'unknown'
 
         return JsonSchemaTransformer.toDeclaration(mediaTypeObject.schema, options)

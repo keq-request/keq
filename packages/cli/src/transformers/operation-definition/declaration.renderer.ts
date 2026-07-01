@@ -49,6 +49,14 @@ export class DeclarationRenderer implements Renderer {
             .map(([mediaType, schema]) => {
               if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
               if (mediaType.includes('multipart/form-data')) return 'FormData'
+              if (
+                mediaType.startsWith('image/')
+                || mediaType.startsWith('audio/')
+                || mediaType.startsWith('video/')
+                || mediaType.startsWith('font/')
+                || mediaType === 'application/octet-stream'
+                || mediaType === 'application/pdf'
+              ) return 'ArrayBuffer'
               if (!schema) return 'unknown'
 
               return JsonSchemaTransformer.toDeclaration(schema, options)

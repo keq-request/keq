@@ -176,8 +176,8 @@ export class DeclarationRenderer implements Renderer {
   }
 
   private renderString(schema: OpenAPIV3_1.NonArraySchemaObject): string {
-    if (schema.contentMediaType === 'application/octet-stream') return 'Blob | Buffer'
-    if (schema.format === 'binary') return 'Blob | Buffer'
+    if (schema.contentMediaType === 'application/octet-stream') return 'ArrayBuffer'
+    if (schema.format === 'binary') return 'ArrayBuffer'
     return 'string'
   }
 
