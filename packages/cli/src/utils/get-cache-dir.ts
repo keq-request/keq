@@ -4,21 +4,22 @@ import { createHash } from 'crypto'
 
 const APP_NAME = 'keq-request'
 const SUB_DIR = 'cli'
+const CACHE_VERSION = 'v5'
 
 function getBaseCacheDir(): string {
   const platform = process.platform
 
   if (platform === 'darwin') {
-    return path.join(os.homedir(), 'Library', 'Caches', APP_NAME, SUB_DIR)
+    return path.join(os.homedir(), 'Library', 'Caches', APP_NAME, SUB_DIR, CACHE_VERSION)
   }
 
   if (platform === 'win32') {
     const localAppData = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local')
-    return path.join(localAppData, APP_NAME, SUB_DIR, 'Cache')
+    return path.join(localAppData, APP_NAME, SUB_DIR, 'Cache', CACHE_VERSION)
   }
 
   const xdgCache = process.env.XDG_CACHE_HOME || path.join(os.homedir(), '.cache')
-  return path.join(xdgCache, APP_NAME, SUB_DIR)
+  return path.join(xdgCache, APP_NAME, SUB_DIR, CACHE_VERSION)
 }
 
 function hashProjectPath(projectDir: string): string {
