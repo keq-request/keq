@@ -76,6 +76,6 @@ export class ResponseDefinitionTransformer {
         return JsonSchemaTransformer.toDeclaration(mediaTypeObject.schema, options)
       })
 
-    return $types.join(' | ') || 'void'
+    return R.uniq($types).join(' | ') || 'void'
   }
 }

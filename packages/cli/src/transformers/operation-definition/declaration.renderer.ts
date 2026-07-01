@@ -43,16 +43,17 @@ export class DeclarationRenderer implements Renderer {
           return indent(2, `${statusCode}: ${responseAlias(refName)}`)
         }
 
-        const $value = Object.entries(response.content || {})
-          .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
-          .map(([mediaType, schema]) => {
-            if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
-            if (mediaType.includes('multipart/form-data')) return 'FormData'
-            if (!schema) return 'unknown'
+        const $value = R.uniq(
+          Object.entries(response.content || {})
+            .map(([mediaType, mediaTypeObject]) => <const>[mediaType, mediaTypeObject.schema])
+            .map(([mediaType, schema]) => {
+              if (mediaType.includes('text/event-stream')) return 'ReadableStream<ServerSentEvent>'
+              if (mediaType.includes('multipart/form-data')) return 'FormData'
+              if (!schema) return 'unknown'
 
-            return JsonSchemaTransformer.toDeclaration(schema, options)
-          })
-          .join(' | ')
+              return JsonSchemaTransformer.toDeclaration(schema, options)
+            }),
+        ).join(' | ')
 
         return indent(2, `${statusCode}: ${$value || 'void'}`)
       })
