@@ -73,6 +73,11 @@ export class KeqSharedContext implements KeqContext {
     return this[ContextLocationIdProperty]
   }
 
+  /** @deprecated Use `locationId` instead */
+  get identifier(): string | undefined {
+    return this[ContextLocationIdProperty]
+  }
+
   get request(): KeqRequestInit {
     return this[ContextRequestProperty]
   }

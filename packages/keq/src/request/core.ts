@@ -264,6 +264,17 @@ export class Core<
     }
   }
 
+  /** @deprecated Await the Keq instance directly or use `.fire()` for fire-and-forget. */
+  end(): Promise<RES_BODY> {
+    if (!this.__triggered__) {
+      this.__triggered__ = true
+      this.__execute__().then(this.__resolve__, this.__reject__)
+    }
+    return new Promise<RES_BODY>((resolve, reject) => {
+      super.then(resolve, reject)
+    })
+  }
+
   override then<TResult1 = RES_BODY, TResult2 = never>(
     onfulfilled?: ((value: RES_BODY) => TResult1 | PromiseLike<TResult1>) | null,
     onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
