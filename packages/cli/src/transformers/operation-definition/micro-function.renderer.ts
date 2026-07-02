@@ -10,6 +10,8 @@ import { OperationDefinitionSnippet, OperationDefinitionSnippetOptions } from '.
 
 
 export interface OperationDefinitionMicroFunctionRendererOptions extends OperationDefinitionSnippetOptions {
+  /** @deprecated */
+  v2Compat?: boolean
   getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string
   getRequestFilepath(): string
 }
@@ -55,12 +57,14 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
       '',
       $dependencies,
       '',
+      this.options.v2Compat ? `const moduleName = "${this.operationDefinition.module.name}"` : undefined,
       `const method = "${method}"`,
       `const pathname = "${pathname}"`,
       '',
       $comment || undefined,
       `export ${$operationDeclaration} {`,
       `  const req = request.${$method}<${this.typeName('ResponseBodies')}[STATUS]>("${pathname}")`,
+      this.options.v2Compat ? '    .option(\'module\', { name: moduleName, pathname, method })' : undefined,
       '',
       $mediaType ? indent(2, $mediaType) : undefined,
       '  /* @anchor:query:start */',

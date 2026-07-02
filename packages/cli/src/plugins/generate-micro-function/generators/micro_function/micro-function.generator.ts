@@ -74,6 +74,7 @@ export class MicroFunctionGenerator implements Generator {
       filepath,
       content: OperationDefinitionTransformer.toMicroFunction(operationDefinition, {
         esm: rc.rendering.esm,
+        v2Compat: rc.rendering.v2Compat,
         getOperationDefinitionDeclarationFilepath(operationDefinition: OperationDefinition): string {
           const relativePath = path.relative(
             dirpath,

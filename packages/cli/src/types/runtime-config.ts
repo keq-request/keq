@@ -88,6 +88,14 @@ export const RawConfig = Type.Object({
      * as auto-generated index files change frequently.
      */
     entrypoint: Type.Optional(Type.Boolean({ default: false })),
+
+    /**
+     * @deprecated This option exists solely for backward compatibility with v2 generated code.
+     * It will be removed in a future major version.
+     *
+     * When enabled, emits `.option('module', { name, pathname, method })` in generated micro-functions.
+     */
+    v2Compat: Type.Optional(Type.Boolean({ default: false })),
   }, { default: {} }),
 
   /**
