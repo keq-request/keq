@@ -26,6 +26,9 @@ export {
 
 export {
   type KeqRoute,
+  type KeqRoutePattern,
+  type KeqRouteTarget,
+  KeqMiddlewareApplicator,
   composeRoute,
 } from './router'
 

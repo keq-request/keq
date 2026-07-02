@@ -8,6 +8,7 @@ import { Validator } from '~/validator'
 import { KeqRequestInit, KeqRequestMethod } from '~/request-init'
 import { ExtractMethodOperations } from './types'
 import { KeqRouter } from '~/router'
+import { KeqMiddlewareApplicator } from '~/router/keq-middleware-applicator'
 import { keqFetchMiddleware, keqFlowControlMiddleware, keqTimeoutMiddleware } from '~/middlewares'
 
 
@@ -189,6 +190,16 @@ export class KeqRequest<SCHEMA extends KeqApiSchema = KeqApiSchema> {
     return this
   }
 
+  apply(middleware: KeqMiddleware[]): KeqMiddlewareApplicator<this>
+  apply(middleware: KeqMiddleware, ...additionalMiddlewares: KeqMiddleware[]): KeqMiddlewareApplicator<this>
+  apply(middleware: KeqMiddleware | KeqMiddleware[], ...additionalMiddlewares: KeqMiddleware[]): KeqMiddlewareApplicator<this> {
+    const list = Array.isArray(middleware) ? middleware : [middleware, ...additionalMiddlewares]
+    return new KeqMiddlewareApplicator(list, this.middlewares, this)
+  }
+
+  /**
+   * @deprecated Use `request.apply(...middlewares).forRoutes(...)` instead.
+   */
   useRouter(): KeqRouter {
     return new KeqRouter(this.middlewares)
   }

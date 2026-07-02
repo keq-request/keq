@@ -9,6 +9,9 @@ import type { KeqMiddleware } from '~/middleware/index.js'
 import type { KeqRoute } from '~/router/types/keq-route.js'
 
 
+/**
+ * @deprecated Use `request.apply(...middlewares).forRoutes(...)` instead.
+ */
 export class KeqRouter {
   constructor(
     private readonly middlewares: KeqMiddleware[] = [],
