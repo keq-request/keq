@@ -8,17 +8,31 @@ import { FileNamingStyle } from '~/constants/index.js'
 export const MICRO_FUNCTION_REQUEST_GENERATOR = 'microFunctionRequestGenerator'
 
 export class RequestGenerator implements Generator {
-  private generateRequestArtifact(moduleName: string, fileNamingStyle: FileNamingStyle): Artifact {
-    const content = [
-      '/* @anchor:file:start */',
-      '',
-      'import { KeqRequest } from "keq"',
-      '',
-      '/* @anchor:request-declaration */',
-      'export const request = new KeqRequest()',
-      '',
-      '/* @anchor:file:end */',
-    ].join('\n')
+  private generateRequestArtifact(moduleName: string, fileNamingStyle: FileNamingStyle, options?: { v2Compat?: boolean }): Artifact {
+    const v2Compat = options?.v2Compat ?? false
+
+    const content = v2Compat
+      ? [
+        '/* @anchor:file:start */',
+        '',
+        'import { KeqRequest, request as globalRequest } from "keq"',
+        '',
+        '/* @anchor:request-declaration */',
+        'export const request = new KeqRequest()',
+        'request.inherit(globalRequest)',
+        '',
+        '/* @anchor:file:end */',
+      ].join('\n')
+      : [
+        '/* @anchor:file:start */',
+        '',
+        'import { KeqRequest } from "keq"',
+        '',
+        '/* @anchor:request-declaration */',
+        'export const request = new KeqRequest()',
+        '',
+        '/* @anchor:file:end */',
+      ].join('\n')
 
     return new Artifact({
       id: RequestGenerator.getRequestArtifactId(moduleName),
@@ -39,7 +53,9 @@ export class RequestGenerator implements Generator {
     )]
 
     return moduleNames.map((moduleName) =>
-      this.generateRequestArtifact(moduleName, rc.rendering.fileNamingStyle),
+      this.generateRequestArtifact(moduleName, rc.rendering.fileNamingStyle, {
+        v2Compat: rc.rendering.v2Compat,
+      }),
     )
   }
 
