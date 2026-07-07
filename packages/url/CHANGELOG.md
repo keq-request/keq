@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.0.0-beta.16
+
+### Patch Changes
+
+- Updated dependencies [c2d4453]
+- Updated dependencies [a960073]
+- Updated dependencies [f84775d]
+  - keq@5.0.0-beta.16
+
 ## 5.0.0-beta.15
 
 ### Patch Changes

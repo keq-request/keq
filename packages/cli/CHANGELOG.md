@@ -1,3 +1,32 @@
+## 5.0.0-beta.16
+
+### Minor Changes
+
+- cec2bba: **Feat:** Add `DeclarationOnlyTranslator` that generates only TypeScript type declarations without any runtime code.
+- a960073: **Feat:** Align intelligent response parsing and CLI code generation by using `content-type` / media type as the primary signal for binary detection.
+
+  - `intelligentParseResponse` now returns `ArrayBuffer` for recognized binary content types: `image/*`, `audio/*`, `video/*`, `font/*`, `application/octet-stream`, and `application/pdf`
+  - Fixed a bug where `text/plain` responses were not correctly detected (`plain/text` → `text/` prefix check), and extended support to all `text/*` types
+  - Unknown content types still return `undefined` to encourage explicit handling via `.resolveWith()`
+  - CLI now checks the response's media type key at the response level in addition to schema-level `format: binary` / `contentMediaType` checks
+  - CLI generated types changed from `Blob | Buffer` to `ArrayBuffer` for binary schemas to match runtime behavior
+
+- f84775d: **Feat:** Add `rendering.v2Compat` option and restore `KeqRouter.module()` for v2 backward compatibility.
+
+  - `@keq-request/cli`: When `rendering.v2Compat` is `true`, generated micro-functions emit `.option('module', { name: moduleName, pathname, method })` matching v2 output.
+  - `keq`: Restore deprecated `KeqRouter.module()` instance/static method and `keqModuleRoute()` route factory, enabling module-based middleware routing for v2 consumers.
+
+### Patch Changes
+
+- 6f20a3d: **Fix:** deduplicate identical content-type union types in generated response type declarations.
+
+  When multiple content-types (e.g., `application/json`, `text/xml`, `application/vnd.api+json`) reference the same schema, the generated TypeScript type now produces `Schema` instead of `Schema | Schema | Schema`.
+
+- Updated dependencies [c2d4453]
+- Updated dependencies [a960073]
+- Updated dependencies [f84775d]
+  - keq@5.0.0-beta.16
+
 ## 5.0.0-beta.15
 
 ### Minor Changes
