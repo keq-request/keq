@@ -1,7 +1,6 @@
 
 import { fixSwagger } from 'swagger-fix'
 import { Compiler } from '~/compiler/index.js'
-import { ApiDocumentV3_1 } from '~/models/index.js'
 import { ChineseToPinyinPluginMetadata, MetadataStorage } from './constants/index.js'
 
 
@@ -10,18 +9,14 @@ export class ChineseToPinyinPlugin {
     const metadata = ChineseToPinyinPlugin.register(compiler)
     if (metadata.applied) return
 
-    // Mark as applied immediately to prevent re-entry
     metadata.applied = true
 
-    compiler.hooks.afterDownload.tap(ChineseToPinyinPlugin.name, (task) => {
-      const documents = compiler.context.documents!
-
-      compiler.context.documents = documents.map((doc) => {
-        return new ApiDocumentV3_1(
-          fixSwagger(doc.specification as any),
-          doc.module,
-        )
-      })
+    compiler.hooks.beforeValidate.tap(ChineseToPinyinPlugin.name, (spec) => {
+      const fixed = fixSwagger(spec as any)
+      for (const key of Object.keys(spec as any)) {
+        delete (spec as any)[key]
+      }
+      Object.assign(spec, fixed)
     })
   }
 
