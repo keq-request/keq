@@ -1,3 +1,13 @@
+## 5.0.0-beta.18
+
+### Minor Changes
+
+- 6e9c03f: **Feat:** Add API endpoint metadata comments (Method, Pathname, Summary, Description, Tags, Deprecated) to generated `.type.ts` declaration files, making it easy to identify which API endpoint a type file corresponds to.
+
+### Patch Changes
+
+- keq@5.0.0-beta.18
+
 ## 5.0.0-beta.17
 
 ### Patch Changes
