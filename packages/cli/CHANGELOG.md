@@ -1,3 +1,10 @@
+## 5.0.0-beta.17
+
+### Patch Changes
+
+- 91236ca: **Fix:** move ChineseToPinyinPlugin from `afterDownload` to `beforeValidate` hook to prevent validation failures caused by Chinese characters in the spec.
+  - keq@5.0.0-beta.17
+
 ## 5.0.0-beta.16
 
 ### Minor Changes
