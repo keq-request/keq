@@ -12,6 +12,7 @@
     "@keq-request/url": "5.0.0-beta.0"
   },
   "changesets": [
+    "add-declaration-file-comment",
     "add-declaration-only-translator",
     "add-download-cache-store",
     "add-middleware-applicator-api",

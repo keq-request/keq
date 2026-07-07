@@ -1,5 +1,11 @@
 # @keq-request/test
 
+## 5.0.0-beta.18
+
+### Patch Changes
+
+- keq@5.0.0-beta.18
+
 ## 5.0.0-beta.17
 
 ### Patch Changes
