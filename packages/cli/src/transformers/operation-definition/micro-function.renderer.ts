@@ -53,6 +53,7 @@ export class OperationDefinitionMicroFunctionRenderer implements Renderer {
     const $operationDeclaration = this.renderOperationDeclaration()
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       $dependencies,

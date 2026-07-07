@@ -51,6 +51,7 @@ export class SchemaDefinitionTransformer {
 
     if (typeof schemaDefinition.schema === 'boolean') {
       return [
+        '',
         '/* @anchor:file:start */',
         '',
         $dependencies,
@@ -69,6 +70,7 @@ export class SchemaDefinitionTransformer {
         : `export type ${schemaDefinition.name} = ${$schema}`
 
       return [
+        '',
         '/* @anchor:file:start */',
         '',
         $dependencies,
@@ -80,6 +82,7 @@ export class SchemaDefinitionTransformer {
     }
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       $dependencies,
@@ -139,6 +142,7 @@ export class SchemaDefinitionTransformer {
 
     if (typeof schemaDefinition.schema === 'boolean') {
       return [
+        '',
         '/* @anchor:file:start */',
         '',
         $valibotImport,
@@ -159,6 +163,7 @@ export class SchemaDefinitionTransformer {
       : `export type ${schemaDefinition.name} = ${$typeSchema}`
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       $valibotImport,

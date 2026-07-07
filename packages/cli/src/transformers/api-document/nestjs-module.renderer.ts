@@ -20,6 +20,7 @@ export class NestjsModuleRenderer {
       .replace(/(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?$/, this.options.esm ? '.js' : '')
 
     return [
+      '',
       '/* @anchor:file:start */',
       'import { Module, ConfigurableModuleBuilder, Provider } from "@nestjs/common"',
       'import { KeqRequest } from "keq"',

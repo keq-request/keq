@@ -13,6 +13,7 @@ export class RequestGenerator implements Generator {
 
     const content = v2Compat
       ? [
+        '',
         '/* @anchor:file:start */',
         '',
         'import { KeqRequest, request as globalRequest } from "keq"',
@@ -24,6 +25,7 @@ export class RequestGenerator implements Generator {
         '/* @anchor:file:end */',
       ].join('\n')
       : [
+        '',
         '/* @anchor:file:start */',
         '',
         'import { KeqRequest } from "keq"',

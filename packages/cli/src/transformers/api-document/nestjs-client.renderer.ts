@@ -50,6 +50,7 @@ export class NestjsClientRenderer implements Renderer {
       .join('\n\n')
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       $dependencies,

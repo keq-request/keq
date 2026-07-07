@@ -24,6 +24,7 @@ export class EntrypointTransformer {
     })
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       ...$exports,

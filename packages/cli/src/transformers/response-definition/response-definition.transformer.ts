@@ -51,6 +51,7 @@ export class ResponseDefinitionTransformer {
     )
 
     return [
+      '',
       '/* @anchor:file:start */',
       '',
       $dependencies,

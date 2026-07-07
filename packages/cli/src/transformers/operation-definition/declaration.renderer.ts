@@ -218,6 +218,50 @@ export class DeclarationRenderer implements Renderer {
     ].join('\n')
   }
 
+  private renderFileComment(): string {
+    const { operation, method, pathname } = this.operationDefinition
+
+    const lines: string[] = ['//']
+
+    if (operation.deprecated) {
+      lines.push('// This API has been deprecated.')
+      lines.push('//')
+    }
+
+    lines.push(`// Method: ${method.toUpperCase()}`)
+    lines.push(`// Pathname: ${pathname}`)
+
+    if (operation.summary && typeof operation.summary === 'string') {
+      const summary = operation.summary
+        .trim()
+        .replace(/\t/g, '  ')
+        .replace(/\r\n?/g, '\n')
+
+      lines.push(`// Summary: ${summary.split('\n')[0]}`)
+      for (const line of summary.split('\n').slice(1)) {
+        lines.push(`//   ${line.trimEnd()}`)
+      }
+    }
+
+    if (operation.description && typeof operation.description === 'string') {
+      const description = operation.description
+        .trim()
+        .replace(/\t/g, '  ')
+        .replace(/\r\n?/g, '\n')
+
+      lines.push(`// Description: ${description.split('\n')[0]}`)
+      for (const line of description.split('\n').slice(1)) {
+        lines.push(`//   ${line.trimEnd()}`)
+      }
+    }
+
+    if (operation.tags && operation.tags.length > 0) {
+      lines.push(`// Tags: ${operation.tags.join(', ')}`)
+    }
+
+    return lines.join('\n')
+  }
+
   render(): string {
     const { operation } = this.operationDefinition
 
@@ -257,7 +301,11 @@ export class DeclarationRenderer implements Renderer {
       jsonSchemaDeclarationRendererOptions,
     )
 
+    const $fileComment = this.renderFileComment()
+
     return [
+      $fileComment,
+      '',
       '/* @anchor:file:start */',
       '',
       $dependencies,
