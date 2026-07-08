@@ -1,5 +1,6 @@
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import { CONFIG_FILENAMES } from '~/constants/index.js'
 import { logger } from './utils/logger.js'
 
 
@@ -156,27 +157,7 @@ async function getConfigFileInfo(): Promise<{ filename: string; content: string 
  * Check if any config file already exists
  */
 async function findExistingConfigFile(): Promise<string | null> {
-  const possibleConfigFiles = [
-    '.keqrc',
-
-    '.keqrc.ts',
-    '.keqrc.js',
-    '.keqrc.mjs',
-    '.keqrc.cjs',
-    '.keqrc.json',
-    '.keqrc.yml',
-    '.keqrc.yaml',
-
-    'keq.config.ts',
-    'keq.config.js',
-    'keq.config.mjs',
-    'keq.config.cjs',
-    'keq.config.json',
-    'keq.config.yml',
-    'keq.config.yaml',
-  ]
-
-  for (const filename of possibleConfigFiles) {
+  for (const filename of CONFIG_FILENAMES) {
     const filePath = path.join(process.cwd(), filename)
     if (await fs.pathExists(filePath)) {
       return filename

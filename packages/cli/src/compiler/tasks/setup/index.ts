@@ -4,6 +4,7 @@ import { CosmiconfigResult } from 'cosmiconfig'
 import { cosmiconfig } from 'cosmiconfig'
 import { ListrTask } from 'listr2'
 import { Matcher, FilterRule } from '~/utils/matcher.js'
+import { ConfigNotFoundException } from '~/exceptions/index.js'
 import { findNearestPackageJson, getProjectModuleSystem } from './utils/index.js'
 import type { BaseTaskOptions } from '../types/base-task-options.js'
 import type { Compiler } from '../../compiler.js'
@@ -33,7 +34,7 @@ function main(compiler: Compiler, options: SetupTaskOptions): ListrTask<Compiler
         : await explore.search()
 
       if (!result || ('isEmpty' in result && result.isEmpty)) {
-        throw new Error('Cannot find config file.')
+        throw new ConfigNotFoundException(options?.config ?? process.cwd())
       }
 
       context.workdir = path.dirname(result.filepath)

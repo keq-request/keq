@@ -1,0 +1,17 @@
+export const CONFIG_FILENAMES = [
+  '.keqrc',
+  '.keqrc.ts',
+  '.keqrc.js',
+  '.keqrc.mjs',
+  '.keqrc.cjs',
+  '.keqrc.json',
+  '.keqrc.yml',
+  '.keqrc.yaml',
+  'keq.config.ts',
+  'keq.config.js',
+  'keq.config.mjs',
+  'keq.config.cjs',
+  'keq.config.json',
+  'keq.config.yml',
+  'keq.config.yaml',
+]

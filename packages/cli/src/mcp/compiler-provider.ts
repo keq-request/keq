@@ -7,6 +7,7 @@ import { EmbedderUnavailableError } from '~/search/embedder.js'
 import { Matcher } from '~/utils/matcher.js'
 import { getCacheDir } from '~/utils/get-cache-dir.js'
 import { FileSystemCacheStore } from '~/cache-store/index.js'
+import { ConfigNotFoundException } from '~/exceptions/index.js'
 import type { CacheStore } from '~/cache-store/index.js'
 import type { ApiDocumentV3_1 } from '~/models/api-document_v3_1.js'
 import type { CompilerContext } from '~/compiler/types/compiler-context.js'
@@ -72,7 +73,7 @@ export class CompilerProvider {
       : await explore.search()
 
     if (!result) {
-      throw new Error('Cannot find config file.')
+      throw new ConfigNotFoundException(options.config ?? process.cwd())
     }
 
     const configFilepath = result.filepath
