@@ -191,7 +191,7 @@ export class Core<
       const retryOn = typeof sharedContext.options.retry?.on === 'function'
         ? sharedContext.options.retry.on
         : (attempt, error) => {
-          if (error instanceof RequestException && error.retry === false) return false
+          if (error instanceof RequestException && error.fatal) return false
           return !!error
         }
       let retryTimes = sharedContext.options.retry?.times || 0

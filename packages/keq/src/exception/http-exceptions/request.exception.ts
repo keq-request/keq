@@ -11,8 +11,13 @@ export interface RequestExceptionOptions {
 
 export class RequestException extends Exception {
   statusCode: number | string
-  retry: boolean
+  fatal: boolean
   response?: Response
+
+  /** @deprecated Use `fatal` instead. `retry === true` is equivalent to `fatal === false`. */
+  get retry(): boolean {
+    return !this.fatal
+  }
 
   /** @deprecated Pass `RequestExceptionOptions` instead. `retry: true` maps to `{ fatal: false }`. */
   constructor(statusCode: number | string, message: string, retry: boolean)
@@ -25,7 +30,7 @@ export class RequestException extends Exception {
     }
 
     this.statusCode = statusCode
-    this.retry = !options?.fatal
+    this.fatal = options?.fatal ?? false
     this.response = options?.response
 
     Object.defineProperty(this, 'name', { value: 'RequestException' })
