@@ -1,3 +1,15 @@
+## 5.0.0-beta.19
+
+### Minor Changes
+
+- 0c5c01b: **Feat:** Add `raw` option to `FileNamingStyle` that preserves the original name without any transformation, and set it as the default file naming style.
+
+### Patch Changes
+
+- 7608f5f: improve "Cannot find config file" error message with search directory, valid config filenames, and actionable guidance (`keq init` or `--config <path>`)
+- Updated dependencies [cc017de]
+  - keq@5.0.0-beta.19
+
 ## 5.0.0-beta.18
 
 ### Minor Changes
