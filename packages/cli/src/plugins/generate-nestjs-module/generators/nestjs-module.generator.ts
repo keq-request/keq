@@ -1,9 +1,9 @@
 import * as path from 'path'
-import * as changeCase from 'change-case'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { ApiDocumentV3_1, Artifact } from '~/models/index.js'
 import { MetadataStorage } from '../constants/metadata-storage.js'
 import { FileNamingStyle } from '~/constants/index.js'
+import { convertFilename } from '~/utils/convert-filename.js'
 import { Generator, RuntimeConfig } from '~/types/index.js'
 import { ApiDocumentTransformer } from '~/transformers/index.js'
 import { OperationDeclarationGenerator } from '~/plugins/generate-declaration/index.js'
@@ -83,11 +83,11 @@ export class NestjsModuleGenerator implements Generator {
   }
 
   static getNestjsModuleArtifactFilepath(document: ApiDocumentV3_1, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](document.module.name)}.module.ts`
+    const filename = `${convertFilename(document.module.name, fileNamingStyle)}.module.ts`
 
     const filepath = [
       '.',
-      changeCase[fileNamingStyle](document.module.name),
+      convertFilename(document.module.name, fileNamingStyle),
       filename,
     ]
 
@@ -99,11 +99,11 @@ export class NestjsModuleGenerator implements Generator {
   }
 
   static getNestjsClientArtifactFilepath(document: ApiDocumentV3_1, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](document.module.name)}.client.ts`
+    const filename = `${convertFilename(document.module.name, fileNamingStyle)}.client.ts`
 
     const filepath = [
       '.',
-      changeCase[fileNamingStyle](document.module.name),
+      convertFilename(document.module.name, fileNamingStyle),
       filename,
     ]
 

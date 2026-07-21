@@ -1,8 +1,8 @@
-import * as changeCase from 'change-case'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { Artifact } from '~/models/index.js'
 import { Generator } from '~/types/index.js'
 import { FileNamingStyle } from '~/constants/index.js'
+import { convertFilename } from '~/utils/convert-filename.js'
 
 
 export const MICRO_FUNCTION_REQUEST_GENERATOR = 'microFunctionRequestGenerator'
@@ -62,7 +62,7 @@ export class RequestGenerator implements Generator {
   }
 
   static getRequestArtifactFilepath(moduleName: string, fileNamingStyle: FileNamingStyle): string {
-    return `./${changeCase[fileNamingStyle](moduleName)}/request.ts`
+    return `./${convertFilename(moduleName, fileNamingStyle)}/request.ts`
   }
 
   static getRequestArtifactId(moduleName: string): string {

@@ -69,7 +69,7 @@ export const RawConfig = Type.Object({
     /**
      * File naming style for generated files
      */
-    fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.snakeCase }),
+    fileNamingStyle: Type.Enum(FileNamingStyle, { default: FileNamingStyle.raw }),
 
     /**
      * Controls how `additionalProperties: true` (or undefined) is rendered in generated TypeScript types.

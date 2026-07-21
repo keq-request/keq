@@ -17,7 +17,7 @@ export default defineConfig({
   // Rendering options for code generation
   rendering: {
     // File naming style for generated files
-    fileNamingStyle: FileNamingStyle.kebabCase,
+    fileNamingStyle: FileNamingStyle.raw,
   },
 
   // OpenAPI/Swagger document sources
@@ -39,10 +39,10 @@ module.exports = defineConfig({
   // Rendering options for code generation
   rendering: {
     // File naming style for generated files
-    // Options: 'camelCase', 'capitalCase', 'constantCase', 'dotCase', 'headerCase',
+    // Options: 'raw', 'camelCase', 'capitalCase', 'constantCase', 'dotCase', 'headerCase',
     //          'noCase', 'paramCase', 'pascalCase', 'pathCase', 'sentenceCase',
     //          'snakeCase', 'kebabCase'
-    fileNamingStyle: 'kebabCase',
+    fileNamingStyle: 'raw',
   },
 
   // OpenAPI/Swagger document sources
@@ -64,7 +64,7 @@ export default defineConfig({
   // Rendering options for code generation
   rendering: {
     // File naming style for generated files
-    fileNamingStyle: FileNamingStyle.kebabCase,
+    fileNamingStyle: FileNamingStyle.raw,
   },
 
   // OpenAPI/Swagger document sources

@@ -2,6 +2,8 @@
  * File naming style options
  */
 export enum FileNamingStyle {
+  /** Raw style - keeps the original name without any transformation */
+  raw = 'raw',
   /** Camel case style (e.g., myFileName) */
   camelCase = 'camelCase',
   /** Capital case style (e.g., My File Name) */

@@ -5,7 +5,7 @@ import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { ResponseDefinitionTransformer } from '~/transformers/index.js'
 import { EntrypointTransformer } from '~/transformers/entrypoint/entrypoint.transformer.js'
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
-import * as changeCase from 'change-case'
+import { convertFilename } from '~/utils/convert-filename.js'
 import type { Generator, RuntimeConfig } from '~/types/index.js'
 import { MetadataStorage } from '../../constants/metadata-storage.js'
 import { SchemaDeclarationGenerator } from '../schema-declaration/index.js'
@@ -105,7 +105,7 @@ export class ResponseDeclarationGenerator implements Generator {
   static getEntrypointArtifactFilepath(moduleDefinition: ModuleDefinition, fileNamingStyle: FileNamingStyle): string {
     return [
       '.',
-      changeCase[fileNamingStyle](moduleDefinition.name),
+      convertFilename(moduleDefinition.name, fileNamingStyle),
       'types',
       'components',
       'responses',
@@ -118,10 +118,10 @@ export class ResponseDeclarationGenerator implements Generator {
   }
 
   static getResponseDefinitionArtifactFilepath(responseDefinition: ResponseDefinition, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](responseDefinition.name)}.response.ts`
+    const filename = `${convertFilename(responseDefinition.name, fileNamingStyle)}.response.ts`
     return [
       '.',
-      changeCase[fileNamingStyle](responseDefinition.module.name),
+      convertFilename(responseDefinition.module.name, fileNamingStyle),
       'types',
       'components',
       'responses',

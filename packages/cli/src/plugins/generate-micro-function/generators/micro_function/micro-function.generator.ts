@@ -1,6 +1,5 @@
 import * as R from 'ramda'
 import * as path from 'path'
-import * as changeCase from 'change-case'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { Generator, RuntimeConfig } from '~/types/index.js'
 import { Artifact, ModuleDefinition, OperationDefinition } from '~/models/index.js'
@@ -8,6 +7,7 @@ import { OperationDeclarationGenerator } from '~/plugins/generate-declaration/in
 import { OperationDefinitionTransformer } from '~/transformers/index.js'
 import { EntrypointTransformer } from '~/transformers/index.js'
 import { FileNamingStyle } from '~/constants/index.js'
+import { convertFilename } from '~/utils/convert-filename.js'
 import { MetadataStorage } from '../../constants/metadata-storage.js'
 import { RequestGenerator } from '../request/index.js'
 
@@ -113,10 +113,10 @@ export class MicroFunctionGenerator implements Generator {
 
 
   static getOperationDefinitionArtifactFilepath(operationDefinition: OperationDefinition, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](operationDefinition.operationId)}.fn.ts`
+    const filename = `${convertFilename(operationDefinition.operationId, fileNamingStyle)}.fn.ts`
     const filepath = [
       '.',
-      changeCase[fileNamingStyle](operationDefinition.module.name),
+      convertFilename(operationDefinition.module.name, fileNamingStyle),
       'operations',
       filename,
     ].join('/')
@@ -131,7 +131,7 @@ export class MicroFunctionGenerator implements Generator {
   static getEntrypointArtifactFilepath(moduleDefinition: ModuleDefinition, fileNamingStyle: FileNamingStyle): string {
     return [
       '.',
-      changeCase[fileNamingStyle](moduleDefinition.name),
+      convertFilename(moduleDefinition.name, fileNamingStyle),
       'operations',
       'index.ts',
     ].join('/')

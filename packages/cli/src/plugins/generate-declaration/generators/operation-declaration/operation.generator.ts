@@ -1,9 +1,9 @@
 import * as path from 'path'
-import * as changeCase from 'change-case'
 import { Artifact, ModuleDefinition, OperationDefinition } from '~/models/index.js'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
 import { OperationDefinitionTransformer, EntrypointTransformer } from '~/transformers/index.js'
 import { FileNamingStyle } from '~/constants/index.js'
+import { convertFilename } from '~/utils/convert-filename.js'
 import type { Generator, RuntimeConfig } from '~/types/index.js'
 import { SchemaDeclarationGenerator } from '../schema-declaration/index.js'
 import { ResponseDeclarationGenerator } from '../response-declaration/index.js'
@@ -90,10 +90,10 @@ export class OperationDeclarationGenerator implements Generator {
 
 
   static getOperationDefinitionArtifactFilepath(operationDefinition: OperationDefinition, fileNamingStyle: FileNamingStyle): string {
-    const filename = `${changeCase[fileNamingStyle](operationDefinition.operationId)}.type.ts`
+    const filename = `${convertFilename(operationDefinition.operationId, fileNamingStyle)}.type.ts`
     const filepath = [
       '.',
-      changeCase[fileNamingStyle](operationDefinition.module.name),
+      convertFilename(operationDefinition.module.name, fileNamingStyle),
       'types',
       'operations',
       filename,
@@ -109,7 +109,7 @@ export class OperationDeclarationGenerator implements Generator {
   static getEntrypointArtifactFilepath(moduleDefinition: ModuleDefinition, fileNamingStyle: FileNamingStyle): string {
     return [
       '.',
-      changeCase[fileNamingStyle](moduleDefinition.name),
+      convertFilename(moduleDefinition.name, fileNamingStyle),
       'types',
       'operations',
       'index.ts',
