@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/exception",
-  "version": "5.0.0-beta.18",
+  "version": "5.0.0-beta.19",
   "description": "Request exception for keq",
   "keywords": [
     "keq",
@@ -42,6 +42,6 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0-beta.18"
+    "keq": "^5.0.0-beta.19"
   }
 }

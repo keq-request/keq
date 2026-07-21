@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.0-beta.19
+
+### Patch Changes
+
+- Updated dependencies [cc017de]
+  - keq@5.0.0-beta.19
+
 ## 5.0.0-beta.18
 
 ### Patch Changes

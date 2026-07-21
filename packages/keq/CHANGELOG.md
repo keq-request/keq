@@ -1,3 +1,9 @@
+## 5.0.0-beta.19
+
+### Patch Changes
+
+- cc017de: Add `fatal` property to `RequestException` as replacement for the deprecated `retry` property. `fatal: true` means the error should not be retried (equivalent to old `retry: false`). The `retry` property is preserved as a deprecated getter for backward compatibility.
+
 ## 5.0.0-beta.18
 
 ## 5.0.0-beta.17
