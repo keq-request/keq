@@ -2,4 +2,4 @@
 "@keq-request/cli": minor
 ---
 
-**Feat:** support mcp.
+**Feat:** Add MCP (Model Context Protocol) server support, including monorepo project management.

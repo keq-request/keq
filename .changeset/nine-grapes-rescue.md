@@ -2,7 +2,7 @@
 "keq": major
 ---
 
-**BREAKING CHANGE:** refactor event emitter. `fetch` event has been removed, please use `fetch:before`/`fetch:after` instead.
+**BREAKING CHANGE:** Refactor event emitter. `fetch` event has been removed, please use `fetch:before`/`fetch:after` instead.
 
 - add new function `.on(eventName, callback)` listen keq events
 - add new event `fetch:before`
@@ -13,3 +13,4 @@
 - add new event `abort`
 - add new event `error`
 - add new event `retry`
+- add event listener support to `KeqRequest` instances

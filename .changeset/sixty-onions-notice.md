@@ -13,3 +13,5 @@
 - `next` cannot be run multi-times now.
 - Some typescript type names have changed.
 - `ctx.request.routeParams` is renamed to `ctx.request.pathParameters`
+- `appendMiddlewares` and `prependMiddlewares` removed from Keq.
+- Immutable properties of the context are now protected from modification.

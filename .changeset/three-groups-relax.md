@@ -2,4 +2,8 @@
 "keq": minor
 ---
 
-The forked orchestrator can be merged into original orchestrator.
+**Feat:** Orchestrator enhancements:
+
+- The forked orchestrator can be merged into the original orchestrator
+- `context.orchestration.middleware` can get current middleware status
+- Synchronous middleware can be written
