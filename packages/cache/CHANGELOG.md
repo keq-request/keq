@@ -1,5 +1,59 @@
 # Changelog
 
+## 5.0.0
+
+### Major Changes
+
+- 5f5bdd9: **BREAKING CHANGE:** Simplified KeqCacheStrategy interface.
+- 5175097: **BREAKING CHANGE:** group all packages under the @keq-request scope
+
+  - keq-cache => @keq-request/cache
+  - keq-headers => @keq-request/headers
+  - keq-cli => @keq-request/cli
+  - keq-url => @keq-request/url
+  - keq-exception => @keq-request/exception
+
+- 153244f: **BREAKING CHANGE:** `onNetworkResponse` has been removed, please use `.on('cache:update', callback)` instead.
+- 0a04864: **Fix:** fix: update browser targets to chrome91/firefox90/safari15/edge91 to resolve esbuild 0.27 destructuring build errors.
+
+### Minor Changes
+
+- 153244f: **Feat:** Add cache observability:
+
+  - Add `onCacheGet`, `onCacheSet`, `onCacheRemove`, `onCacheEvict` and `onCacheExpired` hooks for `MemoryStorage` and `IndexedDBStorage`
+  - Add `cache:hit`, `cache:miss` and `cache:update` keq events
+  - Add debug logs and `Server-Timing` header
+  - Add `print` method to display `MemoryStorage` entries
+
+- 54520a9: **Feat:** using `.option('cache', false)` can disable caching for request that are cached by default
+- 89274bd: **Feat:** add a Size enum make it easier to set the size
+- 9ab2c64: Convert non-essential cli tasks into plugins.
+
+### Patch Changes
+
+- Updated dependencies [c2d4453]
+- Updated dependencies [95908fd]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [a960073]
+- Updated dependencies [214ae66]
+- Updated dependencies [153244f]
+- Updated dependencies [7ff2162]
+- Updated dependencies [f84775d]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0
+
 ## 5.0.0-beta.19
 
 ### Patch Changes

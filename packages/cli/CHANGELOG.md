@@ -1,3 +1,126 @@
+## 5.0.0
+
+### Major Changes
+
+- 339b87d: **BREAKING CHANGE:** Rename the command keq-cli to keq.
+- 8077f32: **BREAKING CHANGE:** Move `fileNamingStyle`, `esm` and `additionalPropertiesType` into a `rendering` config object.
+
+  New options added to `rendering`:
+
+  - `additionalPropertiesType` - control how open object schemas render in generated types
+  - `entrypoint` - control index file generation (default: `false`)
+
+- 153244f: **BREAKING CHANGE:** the request option in keqrc config removed.
+- 5175097: **BREAKING CHANGE:** group all packages under the @keq-request scope
+
+  - keq-cache => @keq-request/cache
+  - keq-headers => @keq-request/headers
+  - keq-cli => @keq-request/cli
+  - keq-url => @keq-request/url
+  - keq-exception => @keq-request/exception
+
+- 1442fba: **BREAKING CHANGE:** exit 1 on build errors and make --tolerant control fault tolerance.
+- 2ead9d0: **BREAKING CHANGE:** operationIdFactory is removed, please use OverwriteOperationIdPlugin instead.
+- bbc3403: **BREAKING CHANGE:** drop support relative path and use 'file://' insteaded.
+- 09421c8: **BREAKING CHANGE:** replace `.keqignore` with `.keqfilter` using an INI-style format.
+
+  - New format uses `[deny]` / `[allow]` sections with `METHOD module:/pathname` lines
+  - CLI command renamed: `keq ignore` → `keq filter`, subcommands `add` → `deny`, `except` → `allow`
+  - Precompile glob matchers for better performance
+
+- bbc3403: **BREAKING CHANGE:** rename defineKeqConfig to defineConfig.
+
+### Minor Changes
+
+- 6e9c03f: **Feat:** Add API endpoint metadata comments (Method, Pathname, Summary, Description, Tags, Deprecated) to generated `.type.ts` declaration files, making it easy to identify which API endpoint a type file corresponds to.
+- cec2bba: **Feat:** Add `DeclarationOnlyTranslator` that generates only TypeScript type declarations without any runtime code.
+- aac3444: **Feat:** Add download cache store system with `FileSystemCacheStore`, `MemoryCacheStore`, `NullCacheStore`, and `NamespacedCacheStore` implementations.
+
+  - Supports `--no-cache` flag in `build` command and a new `cache clear` subcommand (with `--all` option) for managing cached downloads
+  - Cache stored in OS standard directory (`~/Library/Caches/keq-request/cli/v5/` on macOS, `$XDG_CACHE_HOME/keq-request/cli/v5/` on Linux, `%LOCALAPPDATA%/keq-request/cli/Cache/v5/` on Windows), isolated by project path hash
+  - Built-in 7-day max TTL to prevent cache files from accumulating indefinitely
+
+- 0c5c01b: **Feat:** Add `FileNamingStyle` options:
+
+  - `raw` - preserves the original name without any transformation (default)
+  - `kebabCase` - converts to kebab-case
+
+- 979a721: **Feat:** generate components.responses as independent interfaces.
+- d0033aa: **Feat:** add clean option to clean outdir before persisting generated files.
+- f2436b7: **Feat:** Add plugin system with built-in plugins:
+
+  - `EslintPlugin`
+  - `PrettierPlugin`
+  - `BodyFallbackPlugin`
+  - `OverwriteAdditionPropertiesPlugin` - control undefined additionalProperties
+  - `LintSchemaPlugin` - validate OpenAPI schema objects against JSON Schema Draft 2020-12 meta-schema
+  - `UseValibotPlugin`
+
+- 0a2eb2f: **Feat:** server-sent event support.
+- a960073: **Feat:** Align intelligent response parsing and CLI code generation by using `content-type` / media type as the primary signal for binary detection.
+
+  - `intelligentParseResponse` now returns `ArrayBuffer` for recognized binary content types: `image/*`, `audio/*`, `video/*`, `font/*`, `application/octet-stream`, and `application/pdf`
+  - Fixed a bug where `text/plain` responses were not correctly detected (`plain/text` → `text/` prefix check), and extended support to all `text/*` types
+  - Unknown content types still return `undefined` to encourage explicit handling via `.resolveWith()`
+  - CLI now checks the response's media type key at the response level in addition to schema-level `format: binary` / `contentMediaType` checks
+  - CLI generated types changed from `Blob | Buffer` to `ArrayBuffer` for binary schemas to match runtime behavior
+
+- d2b249f: **Perf:** add duplicate operation id validation.
+- b1e72c8: **Feat:** add init command.
+- b57933b: **Feat:** Add MCP (Model Context Protocol) server support, including monorepo project management.
+- b57933b: **Feat:** add search command.
+- f84775d: **Feat:** Add `rendering.v2Compat` option and restore `KeqRouter.module()` for v2 backward compatibility.
+
+  - `@keq-request/cli`: When `rendering.v2Compat` is `true`, generated micro-functions emit `.option('module', { name: moduleName, pathname, method })` matching v2 output.
+  - `keq`: Restore deprecated `KeqRouter.module()` instance/static method and `keqModuleRoute()` route factory, enabling module-based middleware routing for v2 consumers.
+
+- 23c971f: **BREAKING CHANGE:** Add NestJS integration with dependency injection pattern.
+
+  - Introduce `KeqMiddlewareConsumer` as an injectable service and `@InjectKeqConsumer()` decorator with `KeqConsumer<T>` for module-scoped middleware.
+  - Remove `KeqMiddlewareModule` interface and `configureKeqMiddleware()` lifecycle method. Middleware is now registered by injecting `KeqMiddlewareConsumer` or `KeqConsumer<T>` directly into services.
+  - Remove `KeqMiddlewareConsumer` interface — it is now a concrete `@Injectable()` class provided by `KeqModule`.
+  - Remove `hasConfigureKeqMiddleware()` utility function.
+  - Remove `forRoutes()` support for `KeqModuleClass` route targets. Use `KeqConsumer<T>` (injected via `@InjectKeqConsumer(ModuleClass)`) for module-scoped middleware.
+  - `KeqModuleClass` now requires a static `KEQ_CONSUMER: symbol` property in addition to `KEQ_REQUEST`.
+  - `KeqModule` no longer has a `register()` static method — it is now a bare `@Global()` module. Import `KeqModule` directly.
+  - Add `@InjectKeqConsumer(ModuleClass)` decorator, `KeqConsumer<T>` class, `KeqRouteTarget` type, and `KeqScopedConfigProxy<T>` interface.
+  - Add `exclude()` method to `KeqMiddlewareConfigProxy`, allowing middleware to skip specific routes.
+  - CLI-generated NestJS modules auto-import `KeqModule` and expose `KEQ_CONSUMER` symbol with `KeqConsumer` provider for `@InjectKeqConsumer()` injection.
+
+- 7469cea: **Feat:** add `mock` command to start a mock server based on OpenAPI specifications
+- a86d287: **Feat:** Add `apis` command to list operations and schemas.
+
+  - Support `format` option for output format control
+  - Print summary and description for each API
+
+- 7c8d5f0: **Feat:** add list command.
+
+### Patch Changes
+
+- 8b48350: **Fix:** operationPathname glob pattern from '\*' to '/\*\*' to correctlymatch multi-segment paths.
+- Updated dependencies [c2d4453]
+- Updated dependencies [95908fd]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [a960073]
+- Updated dependencies [214ae66]
+- Updated dependencies [153244f]
+- Updated dependencies [7ff2162]
+- Updated dependencies [f84775d]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0
+
 ## 5.0.0-beta.19
 
 ### Minor Changes
