@@ -1,5 +1,47 @@
 # @keq-request/nestjs
 
+## 5.0.0
+
+### Major Changes
+
+- 23c971f: **BREAKING CHANGE:** Add NestJS integration with dependency injection pattern.
+
+  - Introduce `KeqMiddlewareConsumer` as an injectable service and `@InjectKeqConsumer()` decorator with `KeqConsumer<T>` for module-scoped middleware.
+  - Remove `KeqMiddlewareModule` interface and `configureKeqMiddleware()` lifecycle method. Middleware is now registered by injecting `KeqMiddlewareConsumer` or `KeqConsumer<T>` directly into services.
+  - Remove `KeqMiddlewareConsumer` interface — it is now a concrete `@Injectable()` class provided by `KeqModule`.
+  - Remove `hasConfigureKeqMiddleware()` utility function.
+  - Remove `forRoutes()` support for `KeqModuleClass` route targets. Use `KeqConsumer<T>` (injected via `@InjectKeqConsumer(ModuleClass)`) for module-scoped middleware.
+  - `KeqModuleClass` now requires a static `KEQ_CONSUMER: symbol` property in addition to `KEQ_REQUEST`.
+  - `KeqModule` no longer has a `register()` static method — it is now a bare `@Global()` module. Import `KeqModule` directly.
+  - Add `@InjectKeqConsumer(ModuleClass)` decorator, `KeqConsumer<T>` class, `KeqRouteTarget` type, and `KeqScopedConfigProxy<T>` interface.
+  - Add `exclude()` method to `KeqMiddlewareConfigProxy`, allowing middleware to skip specific routes.
+  - CLI-generated NestJS modules auto-import `KeqModule` and expose `KEQ_CONSUMER` symbol with `KeqConsumer` provider for `@InjectKeqConsumer()` injection.
+
+### Patch Changes
+
+- Updated dependencies [c2d4453]
+- Updated dependencies [95908fd]
+- Updated dependencies [153244f]
+- Updated dependencies [0a2eb2f]
+- Updated dependencies [153244f]
+- Updated dependencies [a960073]
+- Updated dependencies [214ae66]
+- Updated dependencies [153244f]
+- Updated dependencies [7ff2162]
+- Updated dependencies [f84775d]
+- Updated dependencies [153244f]
+- Updated dependencies [a7a83da]
+- Updated dependencies [153244f]
+- Updated dependencies [153244f]
+- Updated dependencies [f8abc63]
+- Updated dependencies [153244f]
+- Updated dependencies [ca6c879]
+- Updated dependencies [b8d02ca]
+- Updated dependencies [0a04864]
+- Updated dependencies [153244f]
+- Updated dependencies [eed26f9]
+  - keq@5.0.0
+
 ## 5.0.0-beta.19
 
 ### Patch Changes

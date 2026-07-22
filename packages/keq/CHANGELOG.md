@@ -1,3 +1,119 @@
+## 5.0.0
+
+### Major Changes
+
+- 153244f: **BREAKING CHANGE:** Add an options to control query serialization.
+
+  - `.query({ a: [1, 2]})` => `?a[0]=1&a[1]=2`
+  - `.query({ a: [1, 2]}, { arrayFormat: 'brackets' })` => `?a[]=1&a[]=2`(default in keq@2)
+  - `.query({ a: [1, 2]}, { arrayFormat: 'repeat' })` => `?a=1&a=2`
+  - `.query({ a: [1, 2]}, { arrayFormat: 'comma' })` => `?a=1,2`
+
+- 153244f: **BREAKING CHANGE:** `.params(key, value)` will not encode value automatically, please replace it with `.params(key, encodeURIComponent(value)`, if necessary.
+- 214ae66: **BREAKING CHANGE:** Refactor `RequestException`:
+
+  - Third parameter changed from `retry: boolean` to `options: { fatal: boolean, response: Response }`
+  - `RequestException` moved from `@keq-request/exception` to `keq`
+  - Add `createExceptionByStatusCode` to create HTTP exceptions from a `Response` object
+  - Add `validateStatusCode` middleware and plugin to validate HTTP response and throw standard exception
+  - Add `clarifyFetchFailed` middleware
+
+  ```javascript
+  // Before
+  new RequestException(400, "Error message", true);
+
+  // After
+  new RequestException(400, "Error message", {
+    fatal: false,
+    response: someResponseObject,
+  });
+  ```
+
+- 153244f: **BREAKING CHANGE:** Refactor event emitter. `fetch` event has been removed, please use `fetch:before`/`fetch:after` instead.
+
+  - add new function `.on(eventName, callback)` listen keq events
+  - add new event `fetch:before`
+  - add new event `fetch:after`
+  - add new event `middleware:before`
+  - add new event `middleware:after`
+  - add new event `timeout`
+  - add new event `abort`
+  - add new event `error`
+  - add new event `retry`
+  - add event listener support to `KeqRequest` instances
+
+- 7ff2162: **BREAKING CHANGE:** Strictly adhere to URI template implementation (RFC 6570 compliant). Therefore, ':id' is no longer supported.
+- 153244f: **BREAKING CHANGE:** change KeqRequest from interface to class.
+
+  - `request` cannot be invoke directly, please use `request.fetch()` instead.
+  - `KeqOptions` renamed to `KeqMiddlewareOptions`.
+  - `KeqOperations` renamed to `KeqApiSchema`.
+  - `KeqBaseOperation` renamed to `KeqDefaultOperation`.
+
+- 153244f: **BREAKING CHANGE:** Refactoring keq middlewares
+
+  - `retryMiddleware`, `proxyResponseMiddleware`, `fetchArgumentMiddleware` be removed.
+  - `abortFlowControlMiddleware` and `serialFlowControlMiddleware` merged into `flowControlMiddleware`.
+  - `ctx.metadata` has been removed, please use `ctx.orchestrator` instead.
+  - `.retry()` will rerun all middlewares now, assert `ctx.data.retry.attempt` if middleware is not expect to be run.
+  - `ctx.options.retryOn`, `ctx.options.retryTimes` and `ctx.options.retryDelay` are replaced by `ctx.options.retry.on`, `ctx.options.retry.times` and `ctx.options.retry.delay`.
+  - `.option("resolveWithResponse")` had be removed, please use `.resolveWith('response')` instead.
+  - `next` cannot be run multi-times now.
+  - Some typescript type names have changed.
+  - `ctx.request.routeParams` is renamed to `ctx.request.pathParameters`
+  - `appendMiddlewares` and `prependMiddlewares` removed from Keq.
+  - Immutable properties of the context are now protected from modification.
+
+- 153244f: **BREAKING CHANGE:** Drop support node@18.
+- f8abc63: **BREAKING CHANGE:** Remove `end()`, add `derive()` for reusing request configuration and `fire()` for fire-and-forget invocation.
+- 0a04864: **Fix:** fix: update browser targets to chrome91/firefox90/safari15/edge91 to resolve esbuild 0.27 destructuring build errors.
+
+### Minor Changes
+
+- c2d4453: **Feat:** Add `request.apply(...middlewares).exclude(...).forRoutes(...)` chainable API for route-scoped middleware registration. Supports AND/OR combination of route patterns and exclusion rules. Deprecates `useRouter()` and its shorthand methods.
+- 95908fd: **Feat:** Enhance `.flowControl()` with new modes:
+
+  - Add `mutex` mode that rejects new requests when a request with the same signal key is already in-flight, throwing `MutexException`
+  - Add `concurrency` mode for controlling concurrent request limits
+
+- 0a2eb2f: **Feat:** server-sent event support.
+- a960073: **Feat:** Align intelligent response parsing and CLI code generation by using `content-type` / media type as the primary signal for binary detection.
+
+  - `intelligentParseResponse` now returns `ArrayBuffer` for recognized binary content types: `image/*`, `audio/*`, `video/*`, `font/*`, `application/octet-stream`, and `application/pdf`
+  - Fixed a bug where `text/plain` responses were not correctly detected (`plain/text` → `text/` prefix check), and extended support to all `text/*` types
+  - Unknown content types still return `undefined` to encourage explicit handling via `.resolveWith()`
+  - CLI now checks the response's media type key at the response level in addition to schema-level `format: binary` / `contentMediaType` checks
+  - CLI generated types changed from `Blob | Buffer` to `ArrayBuffer` for binary schemas to match runtime behavior
+
+- f84775d: **Feat:** Add `rendering.v2Compat` option and restore `KeqRouter.module()` for v2 backward compatibility.
+
+  - `@keq-request/cli`: When `rendering.v2Compat` is `true`, generated micro-functions emit `.option('module', { name: moduleName, pathname, method })` matching v2 output.
+  - `keq`: Restore deprecated `KeqRouter.module()` instance/static method and `keqModuleRoute()` route factory, enabling module-based middleware routing for v2 consumers.
+
+- a7a83da: **Perf:** Core now extends Promise, making keq instances true Promises instead of thenables.
+- 153244f: **Feat:** add `.headers` as an alias for `.set`
+- ca6c879: **Feat:** Orchestrator enhancements:
+
+  - The forked orchestrator can be merged into the original orchestrator
+  - `context.orchestration.middleware` can get current middleware status
+  - Synchronous middleware can be written
+
+- b8d02ca: **Perf:** allow `undefined` as query value in string index signature overloads.
+- 153244f: **Feat:** `.attach` can take multiple files.
+- eed26f9: **Feat:** add build-in http exceptions.
+
+  - `BadRequestException`
+  - `UnauthorizedException`
+  - `ForbiddenException`
+  - `NotFoundedException`
+  - `NotAcceptableException`
+  - `ConflictException`
+  - `GatewayTimeoutException`
+  - `InternalServerErrorException`
+  - `BadGatewayException`
+  - `ServiceUnavailableException`
+  - `PreconditionFailedException`
+
 ## 5.0.0-beta.19
 
 ### Patch Changes
