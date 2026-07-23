@@ -39,7 +39,7 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0"
+    "keq": "workspace:*"
   },
   "dependencies": {
     "dayjs": "^1.11.20",

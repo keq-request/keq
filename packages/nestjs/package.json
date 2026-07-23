@@ -54,7 +54,7 @@
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
-    "keq": "^5.0.0"
+    "keq": "workspace:*"
   },
   "engines": {
     "node": ">=20.0.0"

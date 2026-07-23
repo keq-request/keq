@@ -43,6 +43,6 @@
     "keq": "workspace:*"
   },
   "peerDependencies": {
-    "keq": "^5.0.0"
+    "keq": "workspace:*"
   }
 }
