@@ -1,3 +1,10 @@
+## 5.0.1
+
+### Patch Changes
+
+- 2c2a76b: **Perf:** Add `ensureJsonBody` option to `SpringdocCompatPlugin`. When enabled, generated code automatically sends an empty object `{}` for application/json requests, ensuring compatibility with Spring Boot Jackson which rejects requests without a body.
+- 56a9e1c: **Perf:** SpringdocCompatPlugin now adds `schema: {}` to parameters that are missing both `schema` and `content`, preventing OpenAPI validation errors with Springdoc-generated documents.
+
 ## 5.0.0
 
 ### Major Changes
