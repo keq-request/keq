@@ -116,7 +116,7 @@
     "zod": "^3.25.0"
   },
   "peerDependencies": {
-    "keq": "workspace:*"
+    "keq": "workspace:^"
   },
   "optionalDependencies": {
     "@huggingface/transformers": "^4.2.0",
