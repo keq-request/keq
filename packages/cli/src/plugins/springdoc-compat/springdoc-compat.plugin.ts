@@ -2,6 +2,7 @@ import { Compiler } from '~/compiler/index.js'
 import { Artifact, OperationDefinition } from '~/models/index.js'
 import { Plugin } from '~/types/plugin.js'
 import { GenerateMicroFunctionPlugin } from '../generate-micro-function/index.js'
+import { GenerateIsolatedPlugin } from '../generate-isolated/index.js'
 
 
 export interface SpringdocCompatPluginOptions {
@@ -125,14 +126,25 @@ export class SpringdocCompatPlugin implements Plugin {
 
   private applyEnsureJsonBody(compiler: Compiler): void {
     const metadata = GenerateMicroFunctionPlugin.of(compiler)
-    if (!metadata) return
+    if (metadata) {
+      metadata.hooks.afterMicroFunctionArtifactGenerated
+        .tap({ name: SpringdocCompatPlugin.name, stage: 100 }, (artifact: Artifact, operationDefinition: OperationDefinition) => {
+          if (hasJsonContent(operationDefinition)) {
+            artifact.anchor.block.prepend('body', '  void req.send({})')
+          }
+          return artifact
+        })
+    }
 
-    metadata.hooks.afterMicroFunctionArtifactGenerated
-      .tap({ name: SpringdocCompatPlugin.name, stage: 100 }, (artifact: Artifact, operationDefinition: OperationDefinition) => {
-        if (hasJsonContent(operationDefinition)) {
-          artifact.anchor.block.prepend('body', '  void req.send({})')
-        }
-        return artifact
-      })
+    const isolatedMetadata = GenerateIsolatedPlugin.of(compiler)
+    if (isolatedMetadata) {
+      isolatedMetadata.hooks.afterIsolatedOperationArtifactGenerated
+        .tap({ name: SpringdocCompatPlugin.name, stage: 100 }, (artifact: Artifact, operationDefinition: OperationDefinition) => {
+          if (hasJsonContent(operationDefinition)) {
+            artifact.anchor.block.prepend('body', '  void req.send({})')
+          }
+          return artifact
+        })
+    }
   }
 }

@@ -6,6 +6,7 @@ import { JsonSchemaUtils } from '~/utils/json-schema-utils/index.js'
 import { OpenAPIV3_1 } from '@scalar/openapi-types'
 
 import { GenerateMicroFunctionPlugin } from '../generate-micro-function/index.js'
+import { GenerateIsolatedPlugin } from '../generate-isolated/index.js'
 import { BodyFallbackPluginMetadata, MetadataStorage } from './constants/index.js'
 
 
@@ -26,37 +27,49 @@ export class BodyFallbackPlugin implements Plugin {
 
       generateMicroFunctionPluginMetadata.hooks.afterMicroFunctionArtifactGenerated
         .tap(BodyFallbackPlugin.name, (artifact: Artifact, operationDefinition: OperationDefinition) => {
-          const operation = operationDefinition.operation
-
-          const parameters = operation.parameters?.filter((p): p is OpenAPIV3_1.ParameterObject => !JsonSchemaUtils.isRef(p)) || []
-          const keys = parameters.map((p) => p.name).filter(R.isNotNil)
-
-          const $acc = !keys.length
-            ? '        acc[key] = args[key]'
-            : [
-              `        if (![${keys.map((k) => JSON.stringify(k)).join(', ')}].includes(key)) {`,
-              '          acc[key] = args[key]',
-              '        }',
-            ].join('\n')
-
-          artifact.anchor.block.replace('body', [
-            // $mediaType ? `${$mediaType}\n` : undefined,
-            '  if (typeof args === "object" && args !== null && !Array.isArray(args)) {',
-            '    const requestBody = Object.keys(args)',
-            '      .reduce((acc, key) => {',
-            $acc,
-            '        return acc',
-            '      }, {} as Record<string, unknown>)',
-            '',
-            '    if (Object.keys(requestBody).length > 0) {',
-            '      void req.send(requestBody)',
-            '    }',
-            '  }',
-          ].filter(R.isNotNil).join('\n'))
-
+          this.applyBodyFallback(artifact, operationDefinition)
           return artifact
         })
+
+      const generateIsolatedPluginMetadata = GenerateIsolatedPlugin.of(compiler)
+
+      if (generateIsolatedPluginMetadata) {
+        generateIsolatedPluginMetadata.hooks.afterIsolatedOperationArtifactGenerated
+          .tap(BodyFallbackPlugin.name, (artifact: Artifact, operationDefinition: OperationDefinition) => {
+            this.applyBodyFallback(artifact, operationDefinition)
+            return artifact
+          })
+      }
     })
+  }
+
+  private applyBodyFallback(artifact: Artifact, operationDefinition: OperationDefinition): void {
+    const operation = operationDefinition.operation
+
+    const parameters = operation.parameters?.filter((p): p is OpenAPIV3_1.ParameterObject => !JsonSchemaUtils.isRef(p)) || []
+    const keys = parameters.map((p) => p.name).filter(R.isNotNil)
+
+    const $acc = !keys.length
+      ? '        acc[key] = args[key]'
+      : [
+        `        if (![${keys.map((k) => JSON.stringify(k)).join(', ')}].includes(key)) {`,
+        '          acc[key] = args[key]',
+        '        }',
+      ].join('\n')
+
+    artifact.anchor.block.replace('body', [
+      '  if (typeof args === "object" && args !== null && !Array.isArray(args)) {',
+      '    const requestBody = Object.keys(args)',
+      '      .reduce((acc, key) => {',
+      $acc,
+      '        return acc',
+      '      }, {} as Record<string, unknown>)',
+      '',
+      '    if (Object.keys(requestBody).length > 0) {',
+      '      void req.send(requestBody)',
+      '    }',
+      '  }',
+    ].filter(R.isNotNil).join('\n'))
   }
 
   static register(compiler: Compiler): BodyFallbackPluginMetadata {
