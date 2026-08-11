@@ -68,6 +68,7 @@ export class IsolatedOperationGenerator implements Generator {
       filepath,
       content: OperationDefinitionTransformer.toIsolated(operationDefinition, {
         esm: rc.rendering.esm,
+        emptyJsonRequestBodyMode: rc.rendering.emptyJsonRequestBodyMode,
         additionalPropertiesType: rc.rendering.additionalPropertiesType,
         v2Compat: rc.rendering.v2Compat,
         getRequestFilepath(): string {

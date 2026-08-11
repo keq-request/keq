@@ -8,6 +8,7 @@ import { indent } from '~/utils/indent.js'
 
 export interface ApiDocumentNestjsClientRendererOptions {
   esm?: boolean
+  emptyJsonRequestBodyMode?: 'strict' | 'omit' | 'empty-object' | 'null'
 
   getOperationDefinitionDeclarationFilepath(this: void, operationDefinition: OperationDefinition): string
 }
@@ -46,6 +47,7 @@ export class NestjsClientRenderer implements Renderer {
     const $operations = this.document.operations
       .map((operation) => OperationDefinitionTransformer.toNestjsMethod(operation, {
         esm: this.options.esm,
+        emptyJsonRequestBodyMode: this.options.emptyJsonRequestBodyMode,
       }))
       .join('\n\n')
 

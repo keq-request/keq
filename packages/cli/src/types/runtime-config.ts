@@ -90,6 +90,24 @@ export const RawConfig = Type.Object({
     entrypoint: Type.Optional(Type.Boolean({ default: false })),
 
     /**
+     * Controls how empty request body is handled for application/json requests
+     * when all body properties are optional and none are provided.
+     *
+     * - `'strict'` (default): Always renders `req.type("application/json")`, no body fallback
+     * - `'omit'`: Skips `req.type("application/json")`; `req.send()` auto-sets Content-Type when needed
+     * - `'empty-object'`: Sends `req.send({})` when no body properties are provided
+     * - `'null'`: Sends `req.send(null)` when no body properties are provided
+     */
+    emptyJsonRequestBodyMode: Type.Optional(
+      Type.Union([
+        Type.Literal('strict'),
+        Type.Literal('omit'),
+        Type.Literal('empty-object'),
+        Type.Literal('null'),
+      ], { default: 'strict' }),
+    ),
+
+    /**
      * @deprecated This option exists solely for backward compatibility with v2 generated code.
      * It will be removed in a future major version.
      *

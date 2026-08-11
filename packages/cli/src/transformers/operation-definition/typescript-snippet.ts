@@ -10,6 +10,7 @@ import { typeNameFactory, TypeNameFn } from './utils/index.js'
 
 export interface OperationDefinitionSnippetOptions {
   esm?: boolean
+  emptyJsonRequestBodyMode?: 'strict' | 'omit' | 'empty-object' | 'null'
 }
 
 export class OperationDefinitionSnippet {
@@ -125,6 +126,9 @@ export class OperationDefinitionSnippet {
     const mediaTypes = this.getRequestMediaTypes()
 
     if (mediaTypes.length === 1 && !mediaTypes[0].endsWith('/*')) {
+      if (this.options.emptyJsonRequestBodyMode === 'omit' && mediaTypes[0] === 'application/json') {
+        return ''
+      }
       return `void req.type("${mediaTypes[0]}")\n`
     } else if (mediaTypes.some((mediaType) => mediaType === '*/*')) {
     // no-op
@@ -212,6 +216,39 @@ export class OperationDefinitionSnippet {
       })
       .filter(R.isNotNil)
       .join('\n')
+
+    // For emptyJsonRequestBodyMode 'empty-object' or 'null', add body fallback
+    if (
+      this.options.emptyJsonRequestBodyMode
+      && this.options.emptyJsonRequestBodyMode !== 'strict'
+      && this.options.emptyJsonRequestBodyMode !== 'omit'
+    ) {
+      const jsonContent = requestBodyContent['application/json']
+      if (jsonContent?.schema) {
+        const fallbackValue = this.options.emptyJsonRequestBodyMode === 'empty-object' ? '{}' : 'null'
+
+        try {
+          const schema = JsonSchemaUtils.isRef(jsonContent.schema)
+            ? OpenapiUtils.dereferenceDeep<OpenAPIV3_1.SchemaObject>(jsonContent.schema.$ref, this.operationDefinition.document.specification)
+            : jsonContent.schema
+
+          if (schema.type === 'object' && schema.properties) {
+            const propNames = Object.keys(schema.properties)
+            if (propNames.length > 0) {
+              const checks = propNames.map((p) => `"${p}" in args`).join(' || ')
+              const fallback = `if (!args || !((${checks}))) void req.send(${fallbackValue})`
+              return [fallback, $requestBody].filter(Boolean).join('\n')
+            }
+          }
+        } catch {
+          // If dereferencing fails, fallthrough to unconditional fallback
+        }
+
+        // No properties or deref failed: always send fallback
+        const fallback = `void req.send(${fallbackValue})`
+        return [fallback, $requestBody].filter(Boolean).join('\n')
+      }
+    }
 
     return $requestBody
   }

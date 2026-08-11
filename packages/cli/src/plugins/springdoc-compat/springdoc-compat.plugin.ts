@@ -11,6 +11,7 @@ export interface SpringdocCompatPluginOptions {
    * When enabled, an empty object `{}` is sent even if no body properties are provided.
    * Compatible with Spring Boot Jackson and other backends that require a JSON body.
    * @default false
+   * @deprecated Use `rendering.emptyJsonRequestBodyMode: 'empty-object'` instead.
    */
   ensureJsonBody?: boolean
 }
