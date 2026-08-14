@@ -519,7 +519,69 @@ export function registerMcpCommand(program: Command): void {
       )
 
       const transport = new StdioServerTransport()
+
+      // ── 进程生命周期管理 ──────────────────────────────────────
+      // stdio 传输下每个客户端都会 spawn 一个独立进程。onnxruntime 等原生
+      // 句柄会让事件循环常驻,若不在断连/父进程消失/收到信号/长时间空闲时
+      // 主动退出,孤儿进程会不断堆积直至内存耗尽。
+      const IDLE_TIMEOUT_MS = 30 * 60 * 1000
+      let idleTimer: NodeJS.Timeout | undefined
+      let closing = false
+
+      const shutdown = (code: number): void => {
+        if (closing) return
+        closing = true
+        if (idleTimer) clearTimeout(idleTimer)
+        void server.close()
+          .catch(() => {})
+          .finally(() => process.exit(code))
+      }
+
+      const touchIdle = (): void => {
+        if (idleTimer) clearTimeout(idleTimer)
+        idleTimer = setTimeout(() => shutdown(0), IDLE_TIMEOUT_MS)
+        idleTimer.unref()
+      }
+
       await server.connect(transport)
+
+      // 任何客户端活动都重置空闲计时;30 分钟无请求则自动退出,
+      // 下次使用时客户端会重新 spawn(仅一次模型冷加载延迟)。
+      // 透传全部参数(message, extra),避免丢失 SDK 依赖的 extra 信息。
+      const routeMessage = transport.onmessage?.bind(transport)
+      transport.onmessage = (...args) => {
+        touchIdle()
+        routeMessage?.(...args)
+      }
+
+      // 传输断开(客户端主动关闭连接)→ 退出
+      const handleClose = transport.onclose?.bind(transport)
+      transport.onclose = () => {
+        handleClose?.()
+        shutdown(0)
+      }
+
+      // stdin EOF —— 父进程消失时最直接的信号(仅监听结束事件,不消费数据)
+      process.stdin.on('end', () => shutdown(0))
+      process.stdin.on('close', () => shutdown(0))
+
+      // 终止信号 → 优雅退出
+      for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
+        process.on(signal, () => shutdown(0))
+      }
+
+      // 孤儿进程看门狗:父进程死亡后本进程被 reparent(ppid 变化或变为 1),
+      // 作为 stdin/onclose 的兜底,确保任何情况下都不会残留常驻进程。
+      const initialPpid = process.ppid
+      const watchdog = setInterval(() => {
+        if (process.ppid !== initialPpid || process.ppid === 1) {
+          shutdown(0)
+        }
+      }, 10_000)
+      watchdog.unref()
+
+      // 启动即武装空闲计时器:从未被调用的进程也会在超时后自动退出。
+      touchIdle()
 
       if (registry.list().length === 1) {
         registry.resolve().catch(() => {})

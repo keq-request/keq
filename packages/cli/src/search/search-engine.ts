@@ -3,62 +3,63 @@ import type { IndexedOperation, SearchResult, SearchResultDetail } from './types
 import { embed, embedDocuments, cosineSimilarity } from './embedder.js'
 
 export class SearchEngine {
-  private operations: IndexedOperation[] = []
-  private _lastFingerprints: string[] = []
+  private operations: IndexedOperation[]
+  private embeddingsReady = false
 
-  async buildIndex(documents: ApiDocumentV3_1[]): Promise<void> {
-    const fingerprints = documents.map((d) => d.fingerprint).sort()
-    if (
-      this.operations.length > 0 &&
-      fingerprints.length === this._lastFingerprints.length &&
-      fingerprints.every((fp, i) => fp === this._lastFingerprints[i])
-    ) {
-      return
-    }
+  /**
+   * 文档在构造时一次性解析为操作元数据(纯字符串处理,不加载语义模型)。
+   * embedding(检索索引)推迟到首次 `search` 时惰性构建。
+   */
+  constructor(documents: ApiDocumentV3_1[] = []) {
+    this.operations = documents.flatMap((document) => document.operations.map((op) => {
+      const tags = op.operation.tags || []
+      const summary = op.operation.summary || ''
+      const description = op.operation.description || ''
 
-    this.operations = []
-
-    for (const document of documents) {
-      for (const op of document.operations) {
-        const tags = op.operation.tags || []
-        const summary = op.operation.summary || ''
-        const description = op.operation.description || ''
-        const text = [
+      return {
+        id: `${document.module.name}:${op.method}:${op.pathname}`,
+        module: document.module.name,
+        method: op.method.toUpperCase(),
+        pathname: op.pathname,
+        operationId: op.operationId,
+        summary,
+        description,
+        tags,
+        text: [
           op.method.toUpperCase(),
           op.pathname,
           op.operationId,
           summary,
           description,
           ...tags,
-        ].filter(Boolean).join(' ')
+        ].filter(Boolean).join(' '),
+        operation: op.operation,
+      }
+    }))
+  }
 
-        this.operations.push({
-          id: `${document.module.name}:${op.method}:${op.pathname}`,
-          module: document.module.name,
-          method: op.method.toUpperCase(),
-          pathname: op.pathname,
-          operationId: op.operationId,
-          summary,
-          description,
-          tags,
-          text,
-          operation: op.operation,
-        })
+  /**
+   * 惰性构建 embedding —— 此处才首次加载语义模型,且只构建一次。
+   * 模型不可用时会抛出 EmbedderUnavailableError,由调用方处理。
+   */
+  private async ensureEmbeddings(): Promise<void> {
+    if (this.embeddingsReady) return
+
+    if (this.operations.length > 0) {
+      const embeddings = await embedDocuments(this.operations.map((op) => op.text))
+      for (let i = 0; i < this.operations.length; i++) {
+        this.operations[i].embedding = embeddings[i]
       }
     }
 
-    const texts = this.operations.map((op) => op.text)
-    const embeddings = await embedDocuments(texts)
-    for (let i = 0; i < this.operations.length; i++) {
-      this.operations[i].embedding = embeddings[i]
-    }
-
-    this._lastFingerprints = fingerprints
+    this.embeddingsReady = true
   }
 
   async search(query: string, options?: { limit?: number; module?: string[] }): Promise<SearchResult[]> {
     const limit = options?.limit ?? 10
     const modules = options?.module
+
+    await this.ensureEmbeddings()
 
     let candidates = this.operations
     if (modules && modules.length > 0) {

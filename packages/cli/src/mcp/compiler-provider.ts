@@ -3,7 +3,6 @@ import fs from 'fs-extra'
 import { cosmiconfig } from 'cosmiconfig'
 import { Compiler } from '~/compiler/compiler.js'
 import { SearchEngine } from '~/search/search-engine.js'
-import { EmbedderUnavailableError } from '~/search/embedder.js'
 import { Matcher } from '~/utils/matcher.js'
 import { getCacheDir } from '~/utils/get-cache-dir.js'
 import { FileSystemCacheStore } from '~/cache-store/index.js'
@@ -21,7 +20,6 @@ interface CompilerProviderOptions {
 
 export class CompilerProvider {
   private _engine: SearchEngine
-  private _engineAvailable: boolean
   private _documents: ApiDocumentV3_1[]
   private _context: CompilerContext
   private _matcher: Matcher
@@ -31,14 +29,12 @@ export class CompilerProvider {
     context: CompilerContext,
     documents: ApiDocumentV3_1[],
     engine: SearchEngine,
-    engineAvailable: boolean,
     matcher: Matcher,
     configPath: string,
   ) {
     this._context = context
     this._documents = documents
     this._engine = engine
-    this._engineAvailable = engineAvailable
     this._matcher = matcher
     this._configPath = configPath
   }
@@ -60,9 +56,6 @@ export class CompilerProvider {
   }
 
   getEngine(): SearchEngine {
-    if (!this._engineAvailable) {
-      throw new EmbedderUnavailableError()
-    }
     return this._engine
   }
 
@@ -97,21 +90,12 @@ export class CompilerProvider {
     const context = compiler.context
     const documents = context.documents || []
 
-    const engine = new SearchEngine()
-    let engineAvailable = false
-    try {
-      await engine.buildIndex(documents)
-      engineAvailable = true
-    } catch (e) {
-      if (!(e instanceof EmbedderUnavailableError)) {
-        throw e
-      }
-    }
+    const engine = new SearchEngine(documents)
 
     const matcher = await fs.exists(keqfilterPath)
       ? await Matcher.read(keqfilterPath)
       : new Matcher([])
 
-    return new CompilerProvider(context, documents, engine, engineAvailable, matcher, configFilepath)
+    return new CompilerProvider(context, documents, engine, matcher, configFilepath)
   }
 }
