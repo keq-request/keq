@@ -1,6 +1,6 @@
 {
   "name": "@keq-request/url",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "description": "Set request url",
   "keywords": [
     "request",
