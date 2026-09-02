@@ -3,6 +3,8 @@ import { Compiler } from '~/compiler/index.js'
 import { Plugin } from '~/types/plugin.js'
 import { DownloadHttpFilePlugin } from '../download-http-file/index.js'
 import { DownloadLocalFilePlugin } from '../download-local-file/index.js'
+import { DownloadByBashPlugin } from '../download-by-bash/index.js'
+import { DownloadByShPlugin } from '../download-by-sh/index.js'
 import { ShakingPlugin } from '../shaking/index.js'
 import { TerminalSelectPlugin, TerminalSelectPluginOptions } from '../terminal-select/index.js'
 import { CleanPlugin } from '../clean/index.js'
@@ -24,6 +26,8 @@ export class InitializePlugin implements Plugin {
       const plugins: Plugin[] = [
         new DownloadHttpFilePlugin(),
         new DownloadLocalFilePlugin(),
+        new DownloadByBashPlugin(),
+        new DownloadByShPlugin(),
       ]
 
       if (this.options.build) {
