@@ -2,7 +2,7 @@ import * as R from 'ramda'
 import * as path from 'path'
 import { Artifact, ModuleDefinition, SchemaDefinition } from '~/models/index.js'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
-import { SchemaDefinitionTransformer } from '~/transformers/index.js'
+import { SchemaDefinitionTransformer } from '~/transformers/schema-definition/index.js'
 import { EntrypointTransformer } from '~/transformers/entrypoint/entrypoint.transformer.js'
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import { convertFilename } from '~/utils/convert-filename.js'
@@ -39,13 +39,20 @@ export class SchemaDeclarationGenerator implements Generator {
       return [...artifactMap.values()]
     }
 
+    const schemaDefinitionsByModuleName = new Map<string, SchemaDefinition[]>()
+    for (const schemaDefinition of schemaDefinitions) {
+      const definitions = schemaDefinitionsByModuleName.get(schemaDefinition.module.name) ?? []
+      definitions.push(schemaDefinition)
+      schemaDefinitionsByModuleName.set(schemaDefinition.module.name, definitions)
+    }
+
     const entrypoints = R.collectBy(
-      (schemaDefinition) => schemaDefinition.module.name,
-      schemaDefinitions,
+      (document) => document.module.name,
+      documents,
     )
-      .map((schemaDefinitions) => <const>[
-        schemaDefinitions[0].module,
-        schemaDefinitions
+      .map((documents) => <const>[
+        documents[0].module,
+        (schemaDefinitionsByModuleName.get(documents[0].module.name) ?? [])
           .map((schemaDefinition) => artifactMap.get(schemaDefinition))
           .filter((artifact): artifact is Artifact => Boolean(artifact)),
       ])

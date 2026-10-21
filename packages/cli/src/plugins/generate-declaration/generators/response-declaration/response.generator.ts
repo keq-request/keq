@@ -2,7 +2,7 @@ import * as R from 'ramda'
 import * as path from 'path'
 import { Artifact, ModuleDefinition, ResponseDefinition, SchemaDefinition } from '~/models/index.js'
 import { Compiler, TaskWrapper } from '~/compiler/index.js'
-import { ResponseDefinitionTransformer } from '~/transformers/index.js'
+import { ResponseDefinitionTransformer } from '~/transformers/response-definition/index.js'
 import { EntrypointTransformer } from '~/transformers/entrypoint/entrypoint.transformer.js'
 import { FileNamingStyle } from '~/constants/file-naming-style.js'
 import { convertFilename } from '~/utils/convert-filename.js'
@@ -23,8 +23,6 @@ export class ResponseDeclarationGenerator implements Generator {
 
     const responseDefinitions = documents.flatMap((document) => document.responses)
 
-    if (responseDefinitions.length === 0) return []
-
     const artifactMap = new Map<ResponseDefinition, Artifact>(
       await Promise.all(
         responseDefinitions.map(async (responseDefinition) => (<const>[
@@ -42,13 +40,20 @@ export class ResponseDeclarationGenerator implements Generator {
       return [...artifactMap.values()]
     }
 
+    const responseDefinitionsByModuleName = new Map<string, ResponseDefinition[]>()
+    for (const responseDefinition of responseDefinitions) {
+      const definitions = responseDefinitionsByModuleName.get(responseDefinition.module.name) ?? []
+      definitions.push(responseDefinition)
+      responseDefinitionsByModuleName.set(responseDefinition.module.name, definitions)
+    }
+
     const entrypoints = R.collectBy(
-      (responseDefinition) => responseDefinition.module.name,
-      responseDefinitions,
+      (document) => document.module.name,
+      documents,
     )
-      .map((responseDefinitions) => <const>[
-        responseDefinitions[0].module,
-        responseDefinitions
+      .map((documents) => <const>[
+        documents[0].module,
+        (responseDefinitionsByModuleName.get(documents[0].module.name) ?? [])
           .map((responseDefinition) => artifactMap.get(responseDefinition))
           .filter((artifact): artifact is Artifact => Boolean(artifact)),
       ])

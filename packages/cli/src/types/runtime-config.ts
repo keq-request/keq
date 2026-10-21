@@ -84,6 +84,10 @@ export const RawConfig = Type.Object({
     /**
      * Whether to generate entrypoint (index) files that re-export all generated modules.
      *
+     * When enabled, entrypoint files are always generated. If a directory has no
+     * exportable content, the entrypoint contains `export {}` so the file still
+     * exists and remains a valid module.
+     *
      * Disable this to avoid merge conflicts in multi-branch collaborative development,
      * as auto-generated index files change frequently.
      */

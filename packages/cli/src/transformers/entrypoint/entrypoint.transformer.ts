@@ -11,17 +11,19 @@ interface EntrypointTypescriptRendererOptions {
 
 export class EntrypointTransformer {
   static toTypescript(exports: Artifact[], options: EntrypointTypescriptRendererOptions): string {
-    const $exports = exports.map((exportArtifact) => {
-      const relativePath = path.relative(
-        options.dirpath,
-        exportArtifact.filepath,
-      )
-        .replace(/(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?$/, options.esm ? '.js' : '')
+    const $exports = exports.length === 0
+      ? ['export {}']
+      : exports.map((exportArtifact) => {
+        const relativePath = path.relative(
+          options.dirpath,
+          exportArtifact.filepath,
+        )
+          .replace(/(\.ts|\.mts|\.cts|\.js|\.cjs|\.mjs)?$/, options.esm ? '.js' : '')
 
-      return relativePath.startsWith('.')
-        ? `export * from '${relativePath}'`
-        : `export * from './${relativePath}'`
-    })
+        return relativePath.startsWith('.')
+          ? `export * from '${relativePath}'`
+          : `export * from './${relativePath}'`
+      })
 
     return [
       '',

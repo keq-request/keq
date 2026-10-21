@@ -39,14 +39,21 @@ export class IsolatedOperationGenerator implements Generator {
       return [...artifactMap.values()]
     }
 
+    const operationDefinitionsByModuleName = new Map<string, OperationDefinition[]>()
+    for (const operationDefinition of operationDefinitions) {
+      const definitions = operationDefinitionsByModuleName.get(operationDefinition.module.name) ?? []
+      definitions.push(operationDefinition)
+      operationDefinitionsByModuleName.set(operationDefinition.module.name, definitions)
+    }
+
     const entrypoints = await Promise.all(
       R.collectBy(
-        (operationDefinition: OperationDefinition) => operationDefinition.module.name,
-        operationDefinitions,
+        (document) => document.module.name,
+        documents,
       )
-        .map((operationDefinitions) => (<const>[
-          operationDefinitions[0].module,
-          operationDefinitions
+        .map((documents) => (<const>[
+          documents[0].module,
+          (operationDefinitionsByModuleName.get(documents[0].module.name) ?? [])
             .map((operationDefinition) => artifactMap.get(operationDefinition))
             .filter((artifact): artifact is Artifact => Boolean(artifact)),
         ]))
