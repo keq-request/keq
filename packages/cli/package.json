@@ -83,7 +83,7 @@
   "dependencies": {
     "@inquirer/prompts": "^7.10.1",
     "@listr2/prompt-adapter-inquirer": "^3.0.5",
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@modelcontextprotocol/sdk": "^1.32.0",
     "@opendoc/openapi-shaking": "^1.5.3",
     "@scalar/openapi-parser": "^0.26.0",
     "@scalar/openapi-types": "^0.8.0",
