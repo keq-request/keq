@@ -1,3 +1,14 @@
+## 5.3.0
+
+### Minor Changes
+
+- a7976d0: **Feat:** Add `keq describe` command with `operation` and `schema` subcommands to display detailed API structure definitions including parameters, request body, and responses.
+- d42a8a7: **Feat:** Add `DownloadByBashPlugin` and `DownloadByShPlugin` as built-in plugins, enabling OpenAPI/Swagger spec retrieval by executing script files via `bash://` and `sh://` URL protocols. Ideal for monorepo setups where backend services don't need to be running.
+
+### Patch Changes
+
+- c22c86f: **Fix:** When `rendering.entrypoint` is enabled, entrypoint files are now always generated for each module. Directories with no exportable content (for example, when `components.schemas` is empty or all schemas are inline) produce an `export {}` module instead of a missing entrypoint, preventing build failures and keeping the generated entrypoint structure consistent.
+
 ## 5.2.2
 
 ## 5.2.1
