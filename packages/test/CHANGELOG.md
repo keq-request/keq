@@ -1,5 +1,12 @@
 # @keq-request/test
 
+## 5.3.0
+
+### Patch Changes
+
+- Updated dependencies [89b7a39]
+  - keq@5.3.0
+
 ## 5.2.2
 
 ### Patch Changes
