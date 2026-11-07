@@ -1,4 +1,4 @@
-import { expect, jest, test } from '@jest/globals'
+import { expect, test } from '@jest/globals'
 import { Mock } from 'jest-mock'
 import { request } from './request.js'
 import { sleep } from '@keq-request/test'
@@ -10,19 +10,19 @@ test('fire triggers the request', async () => {
   const req = request
     .get('http://test.com')
 
-  req.fire()
+  void req.fire()
 
   await sleep(50)
   expect(mockedFetch.mock.calls).toHaveLength(1)
 })
 
-test('fire returns void', () => {
+test('fire returns the request instance', () => {
   const req = request
     .get('http://test.com')
 
   const result = req.fire()
 
-  expect(result).toBeUndefined()
+  expect(result).toBe(req)
 })
 
 test('fire is idempotent', async () => {
@@ -31,9 +31,9 @@ test('fire is idempotent', async () => {
   const req = request
     .get('http://test.com')
 
-  req.fire()
-  req.fire()
-  req.fire()
+  void req.fire()
+  void req.fire()
+  void req.fire()
 
   await sleep(50)
   expect(mockedFetch.mock.calls).toHaveLength(1)
@@ -43,7 +43,7 @@ test('await after fire resolves with result', async () => {
   const req = request
     .get('http://test.com')
 
-  req.fire()
+  void req.fire()
 
   const result = await req
   expect(result).toEqual({ code: '200' })

@@ -147,6 +147,20 @@ export class Validator {
   }
 
   /**
+   * 检查是否为 AbortSignal
+   */
+  static isAbortSignal(obj: any): obj is AbortSignal {
+    if (typeof AbortSignal !== 'undefined' && obj instanceof AbortSignal) return true
+
+    return (
+      Validator.isObject(obj)
+      && typeof obj['aborted'] === 'boolean'
+      && Validator.isFunction(obj['addEventListener'])
+      && Validator.isFunction(obj['removeEventListener'])
+    )
+  }
+
+  /**
    * 检查是否为合法的 Header 值
    * 允许范围: HTAB(\t), 0x20-0x7E, 0x80-0xFF
    * 禁止换行等控制字符
