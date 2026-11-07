@@ -1,8 +1,22 @@
+import { SESSION_ABORTED_PROPERTY, SESSION_ABORT_CONTROLLER_PROPERTY } from '../constant.js'
+
 import type { KeqMiddleware } from '~/types/keq-middleware.js'
 import type { KeqRetryDelay } from '~/types/keq-retry.js'
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+function sleep(ms: number, signal?: AbortSignal): Promise<void> {
+  if (signal?.aborted) return Promise.resolve()
+
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => finish(), ms)
+
+    function finish(): void {
+      clearTimeout(timer)
+      signal?.removeEventListener('abort', finish)
+      resolve()
+    }
+
+    signal?.addEventListener('abort', finish, { once: true })
+  })
 }
 
 export function retryMiddleware(): KeqMiddleware {
@@ -36,6 +50,9 @@ export function retryMiddleware(): KeqMiddleware {
 
 
     for (let i = 0; i < retryTimes; i++) {
+      // The request has been aborted by user, stop retrying
+      if (ctx[SESSION_ABORTED_PROPERTY]) throw ctx[SESSION_ABORTED_PROPERTY]
+
       let err: unknown | null = null
 
       try {
@@ -48,6 +65,9 @@ export function retryMiddleware(): KeqMiddleware {
       } catch (e) {
         err = e
       }
+
+      // The request has been aborted by user, stop retrying
+      if (ctx[SESSION_ABORTED_PROPERTY]) throw ctx[SESSION_ABORTED_PROPERTY]
 
       if (i === retryTimes - 1) {
         if (err) throw err
@@ -64,7 +84,7 @@ export function retryMiddleware(): KeqMiddleware {
       ctx.retry = { attempt: i, error: err, delay }
       ctx.emitter.emit('retry', ctx)
 
-      if (delay > 0) await sleep(delay)
+      if (delay > 0) await sleep(delay, ctx[SESSION_ABORT_CONTROLLER_PROPERTY]?.signal)
     }
   }
 }

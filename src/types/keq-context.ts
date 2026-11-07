@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ABORT_PROPERTY, OUTPUT_PROPERTY } from '../constant.js'
+import { ABORT_PROPERTY, OUTPUT_PROPERTY, SESSION_ABORTED_PROPERTY, SESSION_ABORT_CONTROLLER_PROPERTY } from '../constant.js'
 
 import type { Emitter } from 'mitt'
 import type { KeqOptionsParameter } from './keq-options.js'
@@ -33,6 +33,17 @@ export interface KeqContext {
 
   [ABORT_PROPERTY]?: AbortController
   abort: (reason: any) => void
+
+  /**
+   * The reason of the request being aborted by user (abort/abortWhen)
+   */
+  [SESSION_ABORTED_PROPERTY]?: any
+
+  /**
+   * Aborts when the request is aborted (abort/abortWhen or context.abort()),
+   * used by middlewares (e.g. retry) to interrupt pending work
+   */
+  [SESSION_ABORT_CONTROLLER_PROPERTY]?: AbortController
 
   /**
    * The unique identifier of the request's location in the code

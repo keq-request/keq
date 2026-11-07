@@ -1,5 +1,5 @@
 import { Exception } from '../exception/exception.js'
-import { ABORT_PROPERTY } from '../constant.js'
+import { ABORT_PROPERTY, SESSION_ABORTED_PROPERTY } from '../constant.js'
 import { isBuffer } from '~/is/is-buffer.js'
 import { isBlob } from '~/is/is-blob.js'
 import { isArrayBuffer } from '~/is/is-array-buffer.js'
@@ -90,6 +90,10 @@ export function fetchArgumentsMiddleware(): KeqMiddleware {
 
     const abortController = new AbortController()
     ctx[ABORT_PROPERTY] = abortController
+
+    // The request may have been aborted before the abort controller was created
+    const sessionAbortReason = ctx[SESSION_ABORTED_PROPERTY]
+    if (sessionAbortReason) abortController.abort(sessionAbortReason)
 
     const requestInit: RequestInit = {
       method: request.method.toUpperCase(),

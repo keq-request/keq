@@ -1,3 +1,4 @@
+export { AbortException } from './exception/abort.exception.js'
 export { createRequest } from './create-request.js'
 export { Keq } from './keq.js'
 export { request } from './request.js'
