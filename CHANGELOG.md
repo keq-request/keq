@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.10.0](https://github.com/keq-request/keq/compare/v2.9.0...v2.10.0) (2026-11-07)
+
+
+### Features
+
+* add abort and abortWhen request methods ([29b4d9c](https://github.com/keq-request/keq/commit/29b4d9c668d0432944913e55043278efd09e05ce))
+
 ## [2.9.0](https://github.com/keq-request/keq/compare/v2.8.14...v2.9.0) (2026-06-17)
 
 
