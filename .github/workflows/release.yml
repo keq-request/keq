@@ -18,4 +18,4 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
       - run: pnpm install
-      - run: pnpm publish --publish-branch "2.x"
+      - run: pnpm publish --publish-branch "2.x" --tag legacy
