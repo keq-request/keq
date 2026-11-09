@@ -25,6 +25,10 @@ export {
 } from './middleware'
 
 export {
+  Semaphore,
+} from './utils'
+
+export {
   type KeqRoute,
   type KeqRoutePattern,
   type KeqRouteTarget,

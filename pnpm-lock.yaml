@@ -74,9 +74,6 @@ importers:
       dayjs:
         specifier: ^1.11.20
         version: 1.11.20
-      fastq:
-        specifier: ^1.20.1
-        version: 1.20.1
       idb:
         specifier: ^8.0.3
         version: 8.0.3
@@ -261,9 +258,6 @@ importers:
       eventsource-parser:
         specifier: ^3.0.8
         version: 3.0.8
-      fastq:
-        specifier: ^1.20.1
-        version: 1.20.1
       klona:
         specifier: ^2.0.6
         version: 2.0.6

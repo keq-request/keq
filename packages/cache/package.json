@@ -43,7 +43,6 @@
   },
   "dependencies": {
     "dayjs": "^1.11.20",
-    "fastq": "^1.20.1",
     "idb": "^8.0.3",
     "ramda": "^0.32.0",
     "type-fest": "^5.6.0"

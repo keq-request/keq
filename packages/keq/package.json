@@ -42,7 +42,6 @@
   "dependencies": {
     "@opendoc/uri-template": "^1.5.4",
     "eventsource-parser": "^3.0.8",
-    "fastq": "^1.20.1",
     "klona": "^2.0.6",
     "mitt": "^3.0.1",
     "picomatch": "^4.0.4",

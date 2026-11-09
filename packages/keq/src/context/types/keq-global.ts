@@ -1,10 +1,9 @@
-import type { queueAsPromised } from 'fastq'
-import type { KeqNext } from '~/middleware/index.js'
+import type { Semaphore } from '~/utils/index.js'
 
 
 export interface KeqGlobalCore {
   abortFlowControl?: Record<string, ((reason: any) => void) | undefined>
-  serialFlowControl?: Record<string, queueAsPromised<{ next: KeqNext }, void>>
+  serialFlowControl?: Record<string, Semaphore>
   mutexFlowControl?: Set<string>
 }
 

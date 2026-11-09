@@ -1,5 +1,4 @@
-import * as fastq from 'fastq'
-import { KeqGlobal } from '~/context'
+import { Semaphore } from '~/utils/index.js'
 import type { KeqMiddleware } from '~/middleware/types/index.js'
 
 
@@ -23,13 +22,16 @@ export function keqSerialFlowControlMiddleware(): KeqMiddleware {
     if (!ctx.global.core.serialFlowControl) ctx.global.core.serialFlowControl = {}
 
     if (!ctx.global.core.serialFlowControl[key]) {
-      ctx.global.core.serialFlowControl[key] = fastq.promise(async ({ next }) => {
-        await next()
-      }, concurrent)
+      ctx.global.core.serialFlowControl[key] = new Semaphore(concurrent)
     }
 
-    const queue: Required<Required<KeqGlobal>['core']>['serialFlowControl'][string] = ctx.global.core.serialFlowControl[key]
+    const semaphore = ctx.global.core.serialFlowControl[key]
 
-    await queue.push({ next })
+    await semaphore.acquire()
+    try {
+      await next()
+    } finally {
+      semaphore.release()
+    }
   }
 }

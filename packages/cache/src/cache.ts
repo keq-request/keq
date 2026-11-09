@@ -1,7 +1,6 @@
 import * as R from 'ramda'
-import * as fastq from 'fastq'
-import type { queueAsPromised } from 'fastq'
-import type { Keq, KeqMiddleware, KeqContext, KeqNext } from 'keq'
+import { Semaphore } from 'keq'
+import type { Keq, KeqMiddleware, KeqContext } from 'keq'
 import { KeqCacheStorage } from './storage/keq-cache-storage.js'
 import { RequestCacheHandler } from './request-cache-handler/index.js'
 import { KeqCacheKeyFactory, KeqCacheRule, RequestCacheOptions } from './types/index.js'
@@ -48,7 +47,7 @@ declare module 'keq' {
   }
 
   export interface KeqGlobalCore {
-    cache?: Record<string, queueAsPromised<{ next: KeqNext }, void>>
+    cache?: Record<string, Semaphore>
   }
 }
 
@@ -102,17 +101,16 @@ export function cache(options: KeqCacheOptions): KeqMiddleware {
       if (!ctx.global.core) ctx.global.core = {}
       if (!ctx.global.core.cache) ctx.global.core.cache = {}
       if (!ctx.global.core.cache[cacheKey]) {
-        ctx.global.core.cache[cacheKey] = fastq.promise(async ({ next }) => {
-          await next()
-        }, 1)
+        ctx.global.core.cache[cacheKey] = new Semaphore(1)
       }
 
-      const queue = ctx.global.core.cache[cacheKey]
-      await queue.push({
-        next: async () => {
-          await strategy(handler, ctx, next)
-        },
-      })
+      const semaphore = ctx.global.core.cache[cacheKey]
+      await semaphore.acquire()
+      try {
+        await strategy(handler, ctx, next)
+      } finally {
+        semaphore.release()
+      }
     }
   }
 }
