@@ -113,7 +113,7 @@
     "valid-url": "^1.0.9",
     "validator": "^13.15.35",
     "word-wrap": "^1.2.5",
-    "zod": "^3.25.0"
+    "zod": "^4.6.6"
   },
   "peerDependencies": {
     "keq": "workspace:^"
