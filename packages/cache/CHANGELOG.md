@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.3.0
+
+### Minor Changes
+
+- a96a3c5: **Feat:** Replace `fastq` with `Semaphore` in `flowControl` and cache middleware to preserve the caller's `AsyncLocalStorage` context, preventing queued requests from inheriting the wrong async context.
+
 ## 5.2.2
 
 ## 5.2.1
