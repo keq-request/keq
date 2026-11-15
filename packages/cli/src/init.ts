@@ -8,6 +8,10 @@ interface InitOptions {
   force?: boolean
 }
 
+// cosmiconfig's TypeScript loader needs the classic compiler API, which was
+// removed in TypeScript 7.
+const MAX_TYPESCRIPT_CLASSIC_MAJOR = 6
+
 const TS_CONFIG_TEMPLATE = `import { defineConfig, FileNamingStyle } from '@keq-request/cli'
 
 export default defineConfig({
@@ -99,18 +103,41 @@ async function findFileInParents(filename: string, startDir: string = process.cw
 }
 
 /**
- * Detect if project uses TypeScript by checking for tsconfig.json
+ * Detect if the project can load a TypeScript config file.
+ *
+ * A `.keqrc.ts` is loaded through cosmiconfig's TypeScript loader, which relies
+ * on the classic compiler API. That API still exists in TypeScript 5.x and 6.x,
+ * but was removed in TypeScript 7, and the loader also fails when `typescript`
+ * cannot be resolved from the project at all.
  */
-async function detectTypeScript(): Promise<boolean> {
-  const tsconfigPath = await findFileInParents('tsconfig.json')
-  return tsconfigPath !== null
+async function detectTypeScript(cwd: string): Promise<boolean> {
+  const tsconfigPath = await findFileInParents('tsconfig.json', cwd)
+  if (tsconfigPath === null) {
+    return false
+  }
+
+  const typescriptPackageJsonPath = await findFileInParents('node_modules/typescript/package.json', cwd)
+  if (typescriptPackageJsonPath === null) {
+    return false
+  }
+
+  try {
+    const { version } = await fs.readJson(typescriptPackageJsonPath)
+    if (typeof version !== 'string') {
+      return false
+    }
+
+    return Number.parseInt(version, 10) <= MAX_TYPESCRIPT_CLASSIC_MAJOR
+  } catch {
+    return false
+  }
 }
 
 /**
  * Detect project module system from package.json
  */
-async function detectModuleSystem(): Promise<'esm' | 'cjs'> {
-  const packageJsonPath = await findFileInParents('package.json')
+async function detectModuleSystem(cwd: string): Promise<'esm' | 'cjs'> {
+  const packageJsonPath = await findFileInParents('package.json', cwd)
 
   if (packageJsonPath) {
     try {
@@ -129,9 +156,9 @@ async function detectModuleSystem(): Promise<'esm' | 'cjs'> {
 /**
  * Get the appropriate config filename and content based on project setup
  */
-async function getConfigFileInfo(): Promise<{ filename: string; content: string }> {
-  const hasTypeScript = await detectTypeScript()
-  const moduleSystem = await detectModuleSystem()
+export async function getConfigFileInfo(cwd: string = process.cwd()): Promise<{ filename: string; content: string }> {
+  const hasTypeScript = await detectTypeScript(cwd)
+  const moduleSystem = await detectModuleSystem(cwd)
 
   if (hasTypeScript) {
     return {
