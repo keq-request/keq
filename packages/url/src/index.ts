@@ -1,6 +1,20 @@
 import { KeqMiddleware } from 'keq'
 
 
+/**
+ * Replace the origin (protocol, host and port) of `target` with that of `origin`.
+ */
+function applyOrigin(target: URL, origin: URL): void {
+  target.protocol = origin.protocol
+  target.host = origin.host
+  // Assign the port even when it is empty: assigning `host` alone keeps a port
+  // that was already on the request URL, and an empty port clears it. The
+  // chrome@74 workaround that skipped empty ports is unnecessary for the
+  // package's chrome91+ target.
+  target.port = origin.port
+}
+
+
 export function setBaseUrl(base: string): KeqMiddleware {
   if (!base.startsWith('//') && base.startsWith('/')) {
     const prefix = base.replace(/\/$/, '')
@@ -12,21 +26,11 @@ export function setBaseUrl(base: string): KeqMiddleware {
   }
 
   const url = new URL(base)
-  const protocol = url.protocol
-  const host = url.host
   const prefix = url.pathname.replace(/\/$/, '')
 
   return async function setBaseUrl(ctx, next) {
-    ctx.request.url.protocol = protocol
-    ctx.request.url.host = host
+    applyOrigin(ctx.request.url, url)
     ctx.request.url.pathname = `${prefix}/${ctx.request.url.pathname.replace(/^\//, '')}`
-
-    // Fix bug in chrome@74 bug:
-    //   url.port will return `""` if the base url not contain port.
-    //   And when ctx.response.url.port is set to `""`, `null` or `undefined`, it will return `:0` in ctx.response.url.href
-    if (url.port) {
-      ctx.request.url.port = url.port
-    }
 
     await next()
   }
@@ -36,15 +40,7 @@ export function setOrigin(origin: string): KeqMiddleware {
   const url = new URL(origin)
 
   return async function setOrigin(ctx, next) {
-    ctx.request.url.host = url.host
-    ctx.request.url.protocol = url.protocol
-
-    // Fix bug in chrome@74 bug:
-    //   url.port will return `""` if the base url not contain port.
-    //   And when ctx.response.url.port is set to `""`, `null` or `undefined`, it will return `:0` in ctx.response.url.href
-    if (url.port) {
-      ctx.request.url.port = url.port
-    }
+    applyOrigin(ctx.request.url, url)
 
     await next()
   }

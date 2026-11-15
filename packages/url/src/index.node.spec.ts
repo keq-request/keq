@@ -27,6 +27,50 @@ describe('setBaseUrl', () => {
     expect(fetchMiddleware).toHaveBeenCalledTimes(1)
   })
 
+  test('Clear the port inherited from the request url', async () => {
+    const sharedContext = createSharedContext({
+      request: {
+        url: new URL('http://localhost:5173/test'),
+      },
+    })
+    const fetchMiddleware = createMockFetchMiddleware()
+
+    const orchestrator = new KeqMiddlewareOrchestrator(
+      sharedContext,
+      [
+        setBaseUrl('http://example.com/api'),
+        fetchMiddleware,
+      ],
+    )
+
+    await orchestrator.execute()
+
+    expect(sharedContext.request.url.href).toBe('http://example.com/api/test')
+    expect(fetchMiddleware).toHaveBeenCalledTimes(1)
+  })
+
+  test('Use the port from the base url', async () => {
+    const sharedContext = createSharedContext({
+      request: {
+        url: new URL('http://localhost:5173/test'),
+      },
+    })
+    const fetchMiddleware = createMockFetchMiddleware()
+
+    const orchestrator = new KeqMiddlewareOrchestrator(
+      sharedContext,
+      [
+        setBaseUrl('https://example.com:8443/api'),
+        fetchMiddleware,
+      ],
+    )
+
+    await orchestrator.execute()
+
+    expect(sharedContext.request.url.href).toBe('https://example.com:8443/api/test')
+    expect(fetchMiddleware).toHaveBeenCalledTimes(1)
+  })
+
   test('Prefix pathname', async () => {
     const sharedContext = createSharedContext({
       request: {
@@ -46,6 +90,28 @@ describe('setBaseUrl', () => {
     await orchestrator.execute()
 
     expect(sharedContext.request.url.href).toBe('http://example.com/api/test')
+    expect(fetchMiddleware).toHaveBeenCalledTimes(1)
+  })
+
+  test('Keep the request port when prefixing pathname', async () => {
+    const sharedContext = createSharedContext({
+      request: {
+        url: new URL('http://localhost:5173/test'),
+      },
+    })
+    const fetchMiddleware = createMockFetchMiddleware()
+
+    const orchestrator = new KeqMiddlewareOrchestrator(
+      sharedContext,
+      [
+        setBaseUrl('/api'),
+        fetchMiddleware,
+      ],
+    )
+
+    await orchestrator.execute()
+
+    expect(sharedContext.request.url.href).toBe('http://localhost:5173/api/test')
     expect(fetchMiddleware).toHaveBeenCalledTimes(1)
   })
 })
@@ -68,6 +134,46 @@ test('setOrigin', async () => {
   await orchestrator.execute()
 
   expect(context.request.url.href).toBe('https://test.com/test')
+  expect(fetchMiddleware).toHaveBeenCalledTimes(1)
+})
+
+test('setOrigin clears the port inherited from the request url', async () => {
+  const context = createSharedContext({
+    request: {
+      url: new URL('http://test.com:8080/test'),
+    },
+  })
+  const fetchMiddleware = createMockFetchMiddleware()
+  const orchestrator = new KeqMiddlewareOrchestrator(
+    context,
+    [
+      setOrigin('https://example.com'),
+      fetchMiddleware,
+    ],
+  )
+  await orchestrator.execute()
+
+  expect(context.request.url.href).toBe('https://example.com/test')
+  expect(fetchMiddleware).toHaveBeenCalledTimes(1)
+})
+
+test('setOrigin uses the port from the origin', async () => {
+  const context = createSharedContext({
+    request: {
+      url: new URL('http://test.com:8080/test'),
+    },
+  })
+  const fetchMiddleware = createMockFetchMiddleware()
+  const orchestrator = new KeqMiddlewareOrchestrator(
+    context,
+    [
+      setOrigin('https://example.com:8443'),
+      fetchMiddleware,
+    ],
+  )
+  await orchestrator.execute()
+
+  expect(context.request.url.href).toBe('https://example.com:8443/test')
   expect(fetchMiddleware).toHaveBeenCalledTimes(1)
 })
 
