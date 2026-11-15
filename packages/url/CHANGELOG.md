@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.3.1
+
+### Patch Changes
+
+- 2870412: **Fix:** `setBaseUrl` and `setOrigin` no longer keep the request URL's port when the base URL or origin does not specify one.
+
 ## 5.3.0
 
 ## 5.2.2

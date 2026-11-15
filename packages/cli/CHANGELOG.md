@@ -1,3 +1,9 @@
+## 5.3.1
+
+### Patch Changes
+
+- 954b460: **Fix:** `keq init` now generates `.keqrc.mjs` / `.keqrc.js` instead of `.keqrc.ts` when `typescript` 5.x/6.x cannot be resolved, so the generated config always loads.
+
 ## 5.3.0
 
 ### Minor Changes
