@@ -40,14 +40,14 @@
     "test:update": "jest -u"
   },
   "dependencies": {
-    "picomatch": "^4.0.0"
+    "picomatch": "^4.0.7"
   },
   "devDependencies": {
-    "@nestjs/common": "^11.1.19",
-    "@nestjs/core": "^11.1.19",
-    "@nestjs/testing": "^11.1.27",
-    "@types/node": "^20.19.39",
-    "@types/picomatch": "^4.0.0",
+    "@nestjs/common": "^11.2.11",
+    "@nestjs/core": "^11.2.11",
+    "@nestjs/testing": "^11.2.11",
+    "@types/node": "^20.19.43",
+    "@types/picomatch": "^4.0.3",
     "keq": "workspace:*",
     "reflect-metadata": "^0.2.2"
   },
