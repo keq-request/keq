@@ -1,5 +1,11 @@
 # @keq-request/test
 
+## 5.3.2
+
+### Patch Changes
+
+- keq@5.3.2
+
 ## 5.3.1
 
 ### Patch Changes
