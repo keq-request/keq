@@ -1,5 +1,7 @@
 # Changelog
 
+## 5.3.2
+
 ## 5.3.1
 
 ### Patch Changes
