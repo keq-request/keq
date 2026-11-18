@@ -94,6 +94,21 @@ function ensureParameterSchema(spec: unknown): void {
   }
 }
 
+function dropEmptyContactEmail(spec: unknown): void {
+  if (typeof spec !== 'object' || spec === null) return
+
+  const info = (spec as Record<string, unknown>).info
+  if (typeof info !== 'object' || info === null) return
+
+  const contact = (info as Record<string, unknown>).contact
+  if (typeof contact !== 'object' || contact === null) return
+
+  const record = contact as Record<string, unknown>
+  if (record.email === '') {
+    delete record.email
+  }
+}
+
 function hasJsonContent(operation: OperationDefinition): boolean {
   const content = operation.operation.requestBody?.content
   if (!content || typeof content !== 'object') return false
@@ -109,6 +124,7 @@ function hasJsonContent(operation: OperationDefinition): boolean {
  * Current processing:
  * - Flatten nested `extensions` objects into sibling x-* properties
  * - Add `schema: {}` to parameters missing both `schema` and `content`
+ * - Remove an empty-string `info.contact.email`, which otherwise fails `format: "email"` validation
  * - (Optional) Ensure application/json requests always carry a body
  */
 export class SpringdocCompatPlugin implements Plugin {
@@ -118,6 +134,7 @@ export class SpringdocCompatPlugin implements Plugin {
     compiler.hooks.beforeValidate.tap(SpringdocCompatPlugin.name, (spec) => {
       flattenExtensions(spec)
       ensureParameterSchema(spec)
+      dropEmptyContactEmail(spec)
     })
 
     if (this.options.ensureJsonBody) {
